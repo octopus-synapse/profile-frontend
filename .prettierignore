@@ -1,0 +1,26 @@
+# Dependencies
+node_modules
+package-lock.json
+
+# Build outputs
+.next
+out
+dist
+build
+
+# Coverage
+coverage
+
+# Misc
+.DS_Store
+*.pem
+
+# Logs
+*.log
+
+# Environment files
+.env*
+
+# Git
+.git
+.gitignore
