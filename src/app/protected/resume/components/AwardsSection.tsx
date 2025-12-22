@@ -2,10 +2,10 @@ import Section from "@/components/Section";
 import { FaAward } from "react-icons/fa";
 import { isDarkBackground } from "@/utils/color";
 import { BgBannerColorName } from "@/styles/shared_style_constants";
-import type { AwardItem } from "@/core/store/useResumeStore";
+import type { Award } from "@/core/store/useResumeStore";
 
 interface AwardsSectionProps {
- awards?: AwardItem[];
+ awards?: Award[];
  selectedBg: BgBannerColorName;
  language: string;
 }
