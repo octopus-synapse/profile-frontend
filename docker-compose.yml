@@ -5,7 +5,7 @@ services:
   # Frontend (Next.js)
   # ==================================
   frontend:
-    image: ${DOCKER_IMAGE:-ghcr.io/efpatti/profile-frontend:${IMAGE_TAG:-latest}}
+    image: ${DOCKER_IMAGE:-ghcr.io/octopus-synapse/profile-frontend:${IMAGE_TAG:-latest}}
     container_name: profile-frontend
     restart: unless-stopped
     environment:
