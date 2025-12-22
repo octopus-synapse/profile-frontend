@@ -10,15 +10,13 @@ jobs:
     uses: efpatti/octopus-workflows/.github/workflows/cd.yml@main
     with:
       service-name: "profile-frontend"
-      service-port: "3000"
       deploy-path: "/opt/profile-frontend"
       has-database: false
     secrets:
-      # Octopus secrets (OCTOPUS_VM_*) inherited automatically
-      # Project-specific secrets below
+      SERVICE_PORT: ${{ secrets.FRONTEND_PORT }}
       ENV_VARS: |
         NODE_ENV=production
-        FRONTEND_PORT=3000
+        FRONTEND_PORT=${{ secrets.FRONTEND_PORT }}
         NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
         NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
         NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
