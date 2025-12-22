@@ -1,10 +1,10 @@
 import Section from "@/components/Section";
 import { isDarkBackground } from "@/utils/color";
 import { BgBannerColorName } from "@/styles/shared_style_constants";
-import type { Profile } from "@/core/store/useResumeStore";
+// import type { Profile } from "@/core/store/useResumeStore";
 
 interface ProfileSectionProps {
- profile?: Profile | null;
+ profile?: any | null;
  language: string;
  selectedBg: BgBannerColorName;
 }

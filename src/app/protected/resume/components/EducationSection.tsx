@@ -1,15 +1,15 @@
 import Section from "@/components/Section";
 import { isDarkBackground } from "@/utils/color";
 import { BgBannerColorName } from "@/styles/shared_style_constants";
-import type { EducationItem } from "@/core/store/useResumeStore";
+import type { Education } from "@/core/store/useResumeStore";
 
 interface EducationSectionProps {
- education?: EducationItem[];
+ education?: Education[];
  selectedBg: BgBannerColorName;
  language: string;
 }
 
-const formatPeriod = (item: EducationItem, language: string) => {
+const formatPeriod = (item: Education, language: string) => {
  const start = item.startDate || "";
  const end = item.endDate ?? (language === "pt-br" ? "Atual" : "Current");
  return `${start} • ${end}`;

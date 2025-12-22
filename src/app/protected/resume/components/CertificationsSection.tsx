@@ -2,10 +2,10 @@ import Section from "@/components/Section";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { isDarkBackground } from "@/utils/color";
 import { BgBannerColorName } from "@/styles/shared_style_constants";
-import type { CertificationItem } from "@/core/store/useResumeStore";
+import type { Certification } from "@/core/store/useResumeStore";
 
 interface CertificationsSectionProps {
- certifications?: CertificationItem[];
+ certifications?: Certification[];
  selectedBg: BgBannerColorName;
  language: string;
 }
@@ -46,7 +46,7 @@ export function CertificationsSection({
     <div className="mb-6 p-4 rounded-lg" key={item.id}>
      <h4 className={`${textStrong} font-bold`}>{item.name}</h4>
      <p className={`${textMuted} text-sm`}>{item.issuer}</p>
-     <p className={`${textMuted} text-xs mb-3`}>{item.date}</p>
+     <p className={`${textMuted} text-xs mb-3`}>{item.issueDate}</p>
      {item.url && (
       <a
        href={ensureUrl(item.url)}

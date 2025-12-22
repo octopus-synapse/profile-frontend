@@ -2,10 +2,10 @@ import Section from "@/components/Section";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { isDarkBackground } from "@/utils/color";
 import { BgBannerColorName } from "@/styles/shared_style_constants";
-import type { ProjectItem } from "@/core/store/useResumeStore";
+import type { Project } from "@/core/store/useResumeStore";
 
 interface ProjectsSectionProps {
- projects?: ProjectItem[];
+ projects?: Project[];
  selectedBg: BgBannerColorName;
  language: string;
 }
@@ -48,7 +48,7 @@ export function ProjectsSection({
      <p className={`${textClass} perfect-justify mb-3`}>
       {project.description}
      </p>
-     {project.technologies.length > 0 && (
+     {project?.technologies?.length > 0 && (
       <ul className="flex flex-wrap gap-2 text-xs uppercase tracking-wide text-[var(--accent)] mb-3">
        {project.technologies.map((tech) => (
         <li

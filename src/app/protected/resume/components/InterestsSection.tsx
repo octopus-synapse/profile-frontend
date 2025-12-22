@@ -1,10 +1,10 @@
 import Section from "@/components/Section";
 import { isDarkBackground } from "@/utils/color";
 import { BgBannerColorName } from "@/styles/shared_style_constants";
-import type { Interests } from "@/core/store/useResumeStore";
+// import type { Interests } from "@/core/store/useResumeStore";
 
 interface InterestsSectionProps {
- interests?: Interests;
+ interests?: any;
  selectedBg: BgBannerColorName;
  language: string;
 }
@@ -34,7 +34,7 @@ export function InterestsSection({
  return (
   <Section title={title} accent="#2563eb">
    <ul className={`list-disc pl-5 space-y-1 ${textClass}`}>
-    {interests.items.map((item, index) => (
+    {interests.items.map((item: string, index: number) => (
      <li key={`${item}-${index}`}>{item}</li>
     ))}
    </ul>

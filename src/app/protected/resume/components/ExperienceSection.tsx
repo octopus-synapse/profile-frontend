@@ -53,7 +53,7 @@ export function ExperienceSection({
  return (
   <Section title={title} accent="#2563eb">
    {experiences.map((item) => {
-    const endLabel = item.isCurrentJob
+    const endLabel = item.current
      ? language === "pt-br"
        ? "Presente"
        : "Present"
@@ -65,7 +65,7 @@ export function ExperienceSection({
       key={item.id}
      >
       <h4 className={`${textStrong} text-lg font-bold`}>
-       {item.role} - {item.company}
+       {item.position} - {item.company}
       </h4>
       <p className={`${textMuted} text-sm mb-3`}>
        {formatDate(item.startDate, language)} • {endLabel}
@@ -73,9 +73,9 @@ export function ExperienceSection({
       {item.description && (
        <p className={`${textMuted} mb-3`}>{item.description}</p>
       )}
-      {item.technologies.length > 0 && (
+      {item.type && (
        <ul className="flex flex-wrap gap-2 text-xs uppercase tracking-wide text-[var(--accent)]">
-        {item.technologies.map((tech) => (
+        {[item.type].map((tech) => (
          <li
           key={`${item.id}-${tech}`}
           className="px-2 py-1 rounded bg-[var(--accent)]/10"

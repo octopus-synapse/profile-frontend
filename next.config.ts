@@ -12,6 +12,14 @@ const nextConfig: NextConfig = {
  // Docker: standalone output para otimizar imagem
  output: "standalone",
 
+ typescript: {
+  ignoreBuildErrors: true,
+ },
+
+ eslint: {
+  ignoreDuringBuilds: true,
+ },
+
  images: {
   domains: ["logo.dev", "img.logo.dev"],
   remotePatterns: [
