@@ -15,4 +15,7 @@ jobs:
       image-tag: ${{ inputs.image_tag }}
       service-port: "3000"
       deploy-path: "/opt/profile-frontend"
-    # Octopus secrets (OCTOPUS_VM_*) inherited from octopus environment automatically
+    secrets:
+      OCTOPUS_SSH_PRIVATE_KEY: ${{ secrets.OCTOPUS_SSH_PRIVATE_KEY }}
+      OCTOPUS_VM_HOST: ${{ secrets.OCTOPUS_VM_HOST }}
+      OCTOPUS_VM_USER: ${{ secrets.OCTOPUS_VM_USER }}
