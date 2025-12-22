@@ -5,12 +5,7 @@ services:
   # Frontend (Next.js)
   # ==================================
   frontend:
-    image: ${DOCKER_IMAGE:-ghcr.io/ilelo/profile-frontend:${IMAGE_TAG:-latest}}
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        PORT: ${FRONTEND_PORT:-3000}
+    image: ${DOCKER_IMAGE:-ghcr.io/efpatti/profile-frontend:${IMAGE_TAG:-latest}}
     container_name: profile-frontend
     restart: unless-stopped
     environment:
