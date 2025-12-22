@@ -10,7 +10,7 @@ on:
 
 jobs:
   rollback:
-    uses: efpatti/octopus-workflows/.github/workflows/rollback.yml@main
+    uses: octopus-synapse/octopus-workflows/.github/workflows/rollback.yml@main
     with:
       image-tag: ${{ inputs.image_tag }}
       service-port: "3000"
