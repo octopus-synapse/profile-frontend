@@ -27,6 +27,10 @@ COPY --from=deps /app/node_modules ./node_modules
 # Copy source files
 COPY . .
 
+# Build-time arguments for NEXT_PUBLIC_* variables
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+
 # Set build-time environment variables
 ENV NEXT_TELEMETRY_DISABLED=1
 

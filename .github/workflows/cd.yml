@@ -17,6 +17,8 @@ jobs:
       service-name: "profile-frontend"
       deploy-path: "/opt/profile-frontend"
       has-database: false
+      build-args: |
+        NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
     secrets:
       SERVICE_PORT: ${{ secrets.FRONTEND_PORT }}
       OCTOPUS_SSH_PRIVATE_KEY: ${{ secrets.OCTOPUS_SSH_PRIVATE_KEY }}
