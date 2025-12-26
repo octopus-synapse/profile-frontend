@@ -5,17 +5,21 @@
  * Manages mobile menu state with body scroll lock
  */
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import type { MobileMenuState } from "../types";
 
 export function useMobileMenu(): MobileMenuState {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const previousPathname = useRef(pathname);
 
-  // Close menu on route change
+  // Close menu on route change using ref comparison to avoid setState in effect
   useEffect(() => {
-    setIsOpen(false);
+    if (previousPathname.current !== pathname) {
+      previousPathname.current = pathname;
+      setIsOpen(false);
+    }
   }, [pathname]);
 
   // Lock body scroll when menu is open

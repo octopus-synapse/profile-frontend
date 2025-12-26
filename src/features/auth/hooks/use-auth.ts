@@ -32,19 +32,23 @@ export function useAuth(): UseAuthReturn {
   const { data: session, status } = useSession();
   const router = useRouter();
 
+  // Extract user reference to satisfy React Compiler's memoization analysis
+  const sessionUser = session?.user;
+  const userId = sessionUser?.id;
+
   const user: SessionUser | null = useMemo(() => {
-    if (!session?.user) return null;
+    if (!userId || !sessionUser) return null;
 
     return {
-      id: session.user.id,
-      email: session.user.email,
-      name: session.user.name,
-      image: session.user.image,
-      role: session.user.role,
-      username: session.user.username,
-      hasCompletedOnboarding: session.user.hasCompletedOnboarding,
+      id: userId,
+      email: sessionUser.email ?? null,
+      name: sessionUser.name ?? null,
+      image: sessionUser.image ?? null,
+      role: sessionUser.role ?? "USER",
+      username: sessionUser.username ?? null,
+      hasCompletedOnboarding: sessionUser.hasCompletedOnboarding ?? false,
     };
-  }, [session?.user]);
+  }, [userId, sessionUser]);
 
   const isAuthenticated = status === "authenticated" && !!user;
   const isLoading = status === "loading";

@@ -3,5 +3,5 @@
  */
 
 export * from "./cn";
-export * from "./format";
-export { formatDistanceToNow, formatDateTime, formatDateRange } from "./date";
+export { formatRelativeTime, formatNumber, truncate, capitalize, slugify } from "./format";
+export * from "./date";

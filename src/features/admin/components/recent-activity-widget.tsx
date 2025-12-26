@@ -8,8 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import { EmptyState } from "@/shared/components/ui/empty-state";
 import { Activity, UserPlus, LogIn, FileText, User } from "lucide-react";
-import { formatDistanceToNow } from "@/shared/utils/date";
-import { cn } from "@/shared/utils/cn";
+import { formatDistanceToNow } from "@/shared/utils";
+import { cn } from "@/shared/utils";
 import type { RecentActivity } from "../types";
 
 interface RecentActivityWidgetProps {

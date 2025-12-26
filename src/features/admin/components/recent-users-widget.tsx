@@ -11,7 +11,7 @@ import { Badge } from "@/shared/components/ui/badge";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import { EmptyState } from "@/shared/components/ui/empty-state";
 import { Users, ChevronRight } from "lucide-react";
-import { formatDistanceToNow } from "@/shared/utils/date";
+import { formatDistanceToNow } from "@/shared/utils";
 import type { AdminUser } from "../types";
 
 interface RecentUsersWidgetProps {
