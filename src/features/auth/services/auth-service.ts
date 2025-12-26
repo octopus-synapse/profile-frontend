@@ -40,7 +40,7 @@ export const authService = {
    */
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     const response = await httpClient.post<BackendAuthResponse>("/auth/login", credentials);
-    return transformAuthResponse(response.data);
+    return transformAuthResponse(response);
   },
 
   /**
@@ -48,7 +48,7 @@ export const authService = {
    */
   async register(credentials: RegisterCredentials): Promise<AuthResponse> {
     const response = await httpClient.post<BackendAuthResponse>("/auth/signup", credentials);
-    return transformAuthResponse(response.data);
+    return transformAuthResponse(response);
   },
 
   /**
@@ -67,19 +67,19 @@ export const authService = {
 
     return {
       user: {
-        id: response.data.user.id,
-        email: response.data.user.email,
-        name: response.data.user.name,
-        username: response.data.user.username,
-        image: response.data.user.image ?? null,
-        role: response.data.user.role,
+        id: response.user.id,
+        email: response.user.email,
+        name: response.user.name,
+        username: response.user.username,
+        image: response.user.image ?? null,
+        role: response.user.role,
         emailVerified: null,
-        hasCompletedOnboarding: response.data.user.hasCompletedOnboarding,
+        hasCompletedOnboarding: response.user.hasCompletedOnboarding,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
-      accessToken: response.data.token,
-      refreshToken: response.data.token, // Backend uses same token
+      accessToken: response.token,
+      refreshToken: response.token, // Backend uses same token
     };
   },
 
