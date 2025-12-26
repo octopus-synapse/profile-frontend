@@ -28,6 +28,14 @@ export const navigation = {
   "nav.menu.settings": "Configurações",
   "nav.menu.admin": "Painel admin",
   "nav.menu.signOut": "Sair",
+  "nav.userMenu.yourProfile": "Seu perfil",
+  "nav.userMenu.yourResume": "Seu currículo",
+  "nav.userMenu.settings": "Configurações",
+  "nav.userMenu.adminPanel": "Painel admin",
+
+  // Groups
+  "nav.group.main": "Principal",
+  "nav.group.admin": "Administração",
 
   // Mobile
   "nav.mobile.menu": "Menu",

@@ -23,10 +23,19 @@ const dictionaries: Record<SupportedLanguage, Dictionary> = {
 // Context Types
 // ============================================================================
 
+interface LocaleInfo {
+  code: SupportedLanguage;
+  label: string;
+}
+
 interface I18nContextValue {
   language: SupportedLanguage;
   setLanguage: (lang: SupportedLanguage) => void;
   t: (key: DictionaryKey, params?: Record<string, string | number>) => string;
+  // Aliases for convenience
+  locale: SupportedLanguage;
+  setLocale: (lang: SupportedLanguage) => void;
+  locales: LocaleInfo[];
 }
 
 // ============================================================================
@@ -89,7 +98,26 @@ export function I18nProvider({ children, defaultLanguage }: I18nProviderProps) {
     [language]
   );
 
-  const value = useMemo(() => ({ language, setLanguage, t }), [language, setLanguage, t]);
+  const locales: LocaleInfo[] = useMemo(
+    () => [
+      { code: "en", label: "English" },
+      { code: "pt-BR", label: "Português" },
+    ],
+    []
+  );
+
+  const value = useMemo(
+    () => ({
+      language,
+      setLanguage,
+      t,
+      // Aliases
+      locale: language,
+      setLocale: setLanguage,
+      locales,
+    }),
+    [language, setLanguage, t, locales]
+  );
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }
