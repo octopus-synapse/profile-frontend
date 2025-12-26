@@ -8,6 +8,7 @@
 import type { ReactNode } from "react";
 import { QueryProvider } from "./query-provider";
 import { I18nProvider } from "@/features/i18n";
+import { AuthProvider } from "@/features/auth";
 
 interface RootProviderProps {
   children: ReactNode;
@@ -16,7 +17,9 @@ interface RootProviderProps {
 export function RootProvider({ children }: RootProviderProps) {
   return (
     <QueryProvider>
-      <I18nProvider>{children}</I18nProvider>
+      <AuthProvider>
+        <I18nProvider>{children}</I18nProvider>
+      </AuthProvider>
     </QueryProvider>
   );
 }

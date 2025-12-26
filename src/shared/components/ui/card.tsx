@@ -1,24 +1,42 @@
 import * as React from "react";
 import { cn } from "@/shared/utils";
+import { cva, type VariantProps } from "class-variance-authority";
 
 /**
  * Card component
  * GitHub-inspired container with border
  */
 
-const Card = React.forwardRef<
- HTMLDivElement,
- React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
- <div
-  ref={ref}
-  className={cn(
-   "rounded-md border border-zinc-800 bg-zinc-900/50 text-zinc-100 shadow-sm",
-   className
-  )}
-  {...props}
- />
-));
+const cardVariants = cva(
+ "rounded-md border text-zinc-100 shadow-sm",
+ {
+  variants: {
+   variant: {
+    default: "border-zinc-800 bg-zinc-900/50",
+    muted: "border-zinc-700 bg-zinc-800/50",
+    outline: "border-zinc-700 bg-transparent",
+    subtle: "border-transparent bg-zinc-800/30",
+   },
+  },
+  defaultVariants: {
+   variant: "default",
+  },
+ }
+);
+
+export interface CardProps 
+ extends React.HTMLAttributes<HTMLDivElement>,
+  VariantProps<typeof cardVariants> {}
+
+const Card = React.forwardRef<HTMLDivElement, CardProps>(
+ ({ className, variant, ...props }, ref) => (
+  <div
+   ref={ref}
+   className={cn(cardVariants({ variant }), className)}
+   {...props}
+  />
+ )
+);
 Card.displayName = "Card";
 
 const CardHeader = React.forwardRef<

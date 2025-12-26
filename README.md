@@ -41,16 +41,16 @@ npm run dev
 
 ## 📜 Scripts
 
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Build for production |
-| `npm run start` | Start production server |
-| `npm run lint` | Run ESLint |
-| `npm run lint:fix` | Fix ESLint issues |
-| `npm run format` | Format with Prettier |
-| `npm run type-check` | Run TypeScript check |
-| `npm run test` | Run tests |
+| Script               | Description              |
+| -------------------- | ------------------------ |
+| `npm run dev`        | Start development server |
+| `npm run build`      | Build for production     |
+| `npm run start`      | Start production server  |
+| `npm run lint`       | Run ESLint               |
+| `npm run lint:fix`   | Fix ESLint issues        |
+| `npm run format`     | Format with Prettier     |
+| `npm run type-check` | Run TypeScript check     |
+| `npm run test`       | Run tests                |
 
 ## 🎯 Milestones
 
