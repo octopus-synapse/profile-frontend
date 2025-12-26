@@ -55,9 +55,5 @@ export function QueryProvider({ children }: QueryProviderProps) {
   // Use stable client that persists across re-renders
   const [queryClient] = useState(() => getQueryClient());
 
-  return (
-    <QueryClientProvider client={queryClient}>
-      {children}
-    </QueryClientProvider>
-  );
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 }
