@@ -1,222 +1,73 @@
-"use client";
+/**
+ * Sign In Page
+ * Public authentication page for user login
+ */
 
-import { motion } from "framer-motion";
-import { FaGithub, FaGoogle } from "react-icons/fa";
-import { useState, useEffect } from "react";
-import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { Metadata } from "next";
+import { SignInForm } from "@/features/auth";
+import { Card, CardContent, CardHeader } from "@/shared/components/ui/card";
 import Link from "next/link";
+import { ROUTES } from "@/config/routes";
 
-const containerVariants = {
- hidden: { opacity: 0 },
- visible: {
-  opacity: 1,
-  transition: { staggerChildren: 0.1 },
- },
-};
-
-const itemVariants = {
- hidden: { y: 20, opacity: 0 },
- visible: {
-  y: 0,
-  opacity: 1,
-  transition: { type: "spring" as const, stiffness: 100 },
- },
+export const metadata: Metadata = {
+  title: "Sign In | Profile",
+  description: "Sign in to your account",
 };
 
 export default function SignInPage() {
- const router = useRouter();
- const { data: session, status } = useSession();
- const [loading, setLoading] = useState(false);
- const [error, setError] = useState("");
- const [email, setEmail] = useState("");
- const [password, setPassword] = useState("");
-
- useEffect(() => {
-  if (status === "authenticated") {
-   router.push("/protected/resume");
-  }
- }, [status, router]);
-
- const handleEmailSignIn = async (e: React.FormEvent) => {
-  e.preventDefault();
-  try {
-   setLoading(true);
-   setError("");
-
-   const result = await signIn("credentials", {
-    email,
-    password,
-    redirect: false,
-   });
-
-   if (result?.error) {
-    setError("Invalid email or password");
-   } else if (result?.ok) {
-    router.push("/protected/resume");
-   }
-  } catch (err) {
-   setError("Failed to sign in. Please try again.");
-   console.error("Sign-in error:", err);
-  } finally {
-   setLoading(false);
-  }
- };
-
- const handleOAuthSignIn = async (provider: "google" | "github") => {
-  try {
-   setLoading(true);
-   setError("");
-   await signIn(provider, { callbackUrl: "/protected/resume" });
-  } catch (err) {
-   setError("Failed to sign in. Please try again.");
-   console.error("Sign-in error:", err);
-  } finally {
-   setLoading(false);
-  }
- };
-
- if (status === "loading") {
   return (
-   <div className="flex items-center justify-center min-h-screen bg-zinc-900">
-    <div className="text-white">Loading...</div>
-   </div>
+    <div className="bg-canvas-default flex min-h-screen items-center justify-center p-4">
+      <div className="w-full max-w-md space-y-6">
+        {/* Logo */}
+        <div className="text-center">
+          <Link href={ROUTES.HOME} className="inline-block">
+            <h1 className="text-fg-default text-3xl font-bold">Profile</h1>
+          </Link>
+        </div>
+
+        {/* Sign In Card */}
+        <Card variant="muted">
+          <CardHeader>
+            <h2 className="text-fg-default text-center text-xl font-semibold">
+              Sign in to Profile
+            </h2>
+          </CardHeader>
+          <CardContent>
+            <SignInForm />
+          </CardContent>
+        </Card>
+
+        {/* Sign Up Link */}
+        <Card variant="outline" className="text-center">
+          <CardContent className="py-4">
+            <p className="text-fg-muted text-sm">
+              New to Profile?{" "}
+              <Link
+                href={ROUTES.AUTH.SIGN_UP}
+                className="text-accent-fg font-medium hover:underline"
+              >
+                Create an account
+              </Link>
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Footer Links */}
+        <div className="text-fg-muted space-x-3 text-center text-xs">
+          <Link href={ROUTES.HOME} className="hover:text-accent-fg">
+            Terms
+          </Link>
+          <Link href={ROUTES.HOME} className="hover:text-accent-fg">
+            Privacy
+          </Link>
+          <Link href={ROUTES.HOME} className="hover:text-accent-fg">
+            Security
+          </Link>
+          <Link href={ROUTES.HOME} className="hover:text-accent-fg">
+            Contact
+          </Link>
+        </div>
+      </div>
+    </div>
   );
- }
-
- return (
-  <div className="flex items-center justify-center min-h-screen bg-zinc-900 p-4">
-   <motion.div
-    variants={containerVariants}
-    initial="hidden"
-    animate="visible"
-    className="w-full max-w-md bg-zinc-800 rounded-2xl shadow-2xl overflow-hidden"
-   >
-    <motion.div variants={itemVariants} className="p-8 pb-6">
-     <h1 className="text-3xl font-bold text-center text-white mb-2">
-      Welcome Back
-     </h1>
-     <p className="text-zinc-400 text-center">Sign in to continue to ProFile</p>
-    </motion.div>
-
-    {error && (
-     <motion.div
-      variants={itemVariants}
-      className="mx-8 mb-4 p-4 bg-red-500/10 border border-red-500/50 rounded-lg"
-     >
-      <p className="text-red-400 text-sm text-center">{error}</p>
-     </motion.div>
-    )}
-
-    <motion.div variants={itemVariants} className="px-8 space-y-4">
-     <form onSubmit={handleEmailSignIn} className="space-y-4">
-      <div>
-       <label
-        htmlFor="email"
-        className="block text-sm font-medium text-zinc-400 mb-2"
-       >
-        Email
-       </label>
-       <input
-        id="email"
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-        className="w-full px-4 py-3 rounded-xl bg-zinc-700 border border-zinc-600 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        placeholder="your@email.com"
-       />
-      </div>
-
-      <div>
-       <label
-        htmlFor="password"
-        className="block text-sm font-medium text-zinc-400 mb-2"
-       >
-        Password
-       </label>
-       <input
-        id="password"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-        className="w-full px-4 py-3 rounded-xl bg-zinc-700 border border-zinc-600 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        placeholder="••••••••"
-       />
-      </div>
-
-      <button
-       type="submit"
-       disabled={loading}
-       className="w-full p-4 rounded-xl bg-blue-600 hover:bg-blue-700 transition-colors text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-       {loading ? "Signing in..." : "Sign in with Email"}
-      </button>
-     </form>
-
-     <div className="relative">
-      <div className="absolute inset-0 flex items-center">
-       <div className="w-full border-t border-zinc-700"></div>
-      </div>
-      <div className="relative flex justify-center text-sm">
-       <span className="px-4 bg-zinc-800 text-zinc-500">Or continue with</span>
-      </div>
-     </div>
-
-     <button
-      onClick={() => handleOAuthSignIn("google")}
-      disabled={loading}
-      className="w-full flex items-center justify-center gap-3 p-4 rounded-xl bg-white hover:bg-gray-100 transition-colors text-gray-900 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-     >
-      <FaGoogle className="text-xl" />
-      Continue with Google
-     </button>
-
-     <button
-      onClick={() => handleOAuthSignIn("github")}
-      disabled={loading}
-      className="w-full flex items-center justify-center gap-3 p-4 rounded-xl bg-zinc-700 hover:bg-zinc-600 transition-colors text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-     >
-      <FaGithub className="text-xl" />
-      Continue with GitHub
-     </button>
-    </motion.div>
-
-    <motion.div variants={itemVariants} className="px-8 py-6">
-     <div className="relative">
-      <div className="absolute inset-0 flex items-center">
-       <div className="w-full border-t border-zinc-700"></div>
-      </div>
-      <div className="relative flex justify-center text-sm">
-       <span className="px-4 bg-zinc-800 text-zinc-500">New to ProFile?</span>
-      </div>
-     </div>
-    </motion.div>
-
-    <motion.div variants={itemVariants} className="px-8 pb-8">
-     <Link
-      href="/auth/sign-up"
-      className="w-full flex items-center justify-center p-4 rounded-xl border-2 border-zinc-700 hover:border-zinc-600 transition-colors text-white font-medium"
-     >
-      Create an account
-     </Link>
-    </motion.div>
-
-    <motion.div variants={itemVariants} className="px-8 pb-8">
-     <p className="text-zinc-500 text-xs text-center">
-      By continuing, you agree to ProFile's{" "}
-      <Link href="/terms" className="underline hover:text-zinc-400">
-       Terms of Service
-      </Link>{" "}
-      and{" "}
-      <Link href="/privacy" className="underline hover:text-zinc-400">
-       Privacy Policy
-      </Link>
-      .
-     </p>
-    </motion.div>
-   </motion.div>
-  </div>
- );
 }
