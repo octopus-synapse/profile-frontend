@@ -11,8 +11,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "ProFile - Professional Developer Profiles",
-    template: "%s | ProFile",
+    default: "Profile - Professional Developer Profiles",
+    template: "%s | Profile",
   },
   description: "Create and share your professional developer profile and resume.",
   keywords: ["developer", "profile", "resume", "portfolio", "career"],

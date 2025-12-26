@@ -3,33 +3,41 @@
  */
 
 export const navigation = {
- // Main nav
- "nav.home": "Home",
- "nav.profile": "Profile",
- "nav.resume": "Resume",
- "nav.banner": "Banner",
- "nav.settings": "Settings",
- "nav.templates": "Templates",
- "nav.contact": "Contact",
+  // Main nav
+  "nav.home": "Home",
+  "nav.profile": "Profile",
+  "nav.resume": "Resume",
+  "nav.banner": "Banner",
+  "nav.settings": "Settings",
+  "nav.templates": "Templates",
+  "nav.contact": "Contact",
 
- // Auth nav
- "nav.signIn": "Sign in",
- "nav.signUp": "Sign up",
- "nav.signOut": "Sign out",
+  // Auth nav
+  "nav.signIn": "Sign in",
+  "nav.signUp": "Sign up",
+  "nav.signOut": "Sign out",
 
- // Admin nav
- "nav.admin.dashboard": "Dashboard",
- "nav.admin.users": "Users",
- "nav.admin.resumes": "Resumes",
- "nav.admin.settings": "Settings",
+  // Admin nav
+  "nav.admin.dashboard": "Dashboard",
+  "nav.admin.users": "Users",
+  "nav.admin.resumes": "Resumes",
+  "nav.admin.settings": "Settings",
 
- // User menu
- "nav.menu.profile": "Your profile",
- "nav.menu.settings": "Settings",
- "nav.menu.admin": "Admin panel",
- "nav.menu.signOut": "Sign out",
+  // User menu
+  "nav.menu.profile": "Your profile",
+  "nav.menu.settings": "Settings",
+  "nav.menu.admin": "Admin panel",
+  "nav.menu.signOut": "Sign out",
+  "nav.userMenu.yourProfile": "Your profile",
+  "nav.userMenu.yourResume": "Your resume",
+  "nav.userMenu.settings": "Settings",
+  "nav.userMenu.adminPanel": "Admin panel",
 
- // Mobile
- "nav.mobile.menu": "Menu",
- "nav.mobile.close": "Close menu",
+  // Groups
+  "nav.group.main": "Main",
+  "nav.group.admin": "Administration",
+
+  // Mobile
+  "nav.mobile.menu": "Menu",
+  "nav.mobile.close": "Close menu",
 } as const;
