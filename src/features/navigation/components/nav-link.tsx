@@ -2,7 +2,7 @@
 
 /**
  * NavLink Component
- * Navigation link with active state styling
+ * Developer-inspired navigation link with monospace font
  */
 
 import Link from "next/link";
@@ -16,15 +16,33 @@ interface NavLinkProps {
   item: NavItem;
   className?: string;
   onClick?: () => void;
+  variant?: "desktop" | "mobile";
 }
 
-export function NavLink({ item, className, onClick }: NavLinkProps) {
+export function NavLink({ item, className, onClick, variant = "desktop" }: NavLinkProps) {
   const { t } = useI18n();
   const pathname = usePathname();
 
   const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
 
-  const Icon = item.icon;
+  if (variant === "mobile") {
+    return (
+      <Link
+        href={item.href}
+        onClick={onClick}
+        target={item.external ? "_blank" : undefined}
+        rel={item.external ? "noopener noreferrer" : undefined}
+        className={cn(
+          "group flex items-center gap-4 py-3 font-mono text-lg transition-colors",
+          isActive ? "text-pf-fg-on-emphasis" : "text-pf-fg-on-emphasis/60 hover:text-pf-fg-on-emphasis",
+          className
+        )}
+      >
+        {isActive && <span className="text-code-string text-xs">●</span>}
+        <span>{t(item.labelKey as DictionaryKey).toLowerCase()}</span>
+      </Link>
+    );
+  }
 
   return (
     <Link
@@ -33,18 +51,13 @@ export function NavLink({ item, className, onClick }: NavLinkProps) {
       target={item.external ? "_blank" : undefined}
       rel={item.external ? "noopener noreferrer" : undefined}
       className={cn(
-        "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-        isActive ? "bg-zinc-800 text-white" : "text-zinc-400 hover:bg-zinc-800/50 hover:text-white",
+        "relative font-mono text-xs transition-colors",
+        isActive ? "text-pf-fg-default" : "text-pf-fg-muted hover:text-pf-fg-default",
         className
       )}
     >
-      {Icon && <Icon className="h-4 w-4" />}
-      <span>{t(item.labelKey as DictionaryKey)}</span>
-      {item.badge && (
-        <span className="ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full bg-blue-600 px-1.5 text-xs font-medium text-white">
-          {item.badge}
-        </span>
-      )}
+      {t(item.labelKey as DictionaryKey).toLowerCase()}
+      {isActive && <span className="text-code-string ml-2 text-xs">●</span>}
     </Link>
   );
 }

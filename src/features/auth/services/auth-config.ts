@@ -18,15 +18,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
+          console.log("[AUTH] Missing credentials");
           return null;
         }
 
         try {
+          console.log("[AUTH] Attempting login for:", credentials.email);
           const response = await authService.login({
             email: credentials.email as string,
             password: credentials.password as string,
           });
 
+          console.log("[AUTH] Login successful, user:", response.user.email);
           return {
             id: response.user.id,
             email: response.user.email,
@@ -37,7 +40,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             hasCompletedOnboarding: response.user.hasCompletedOnboarding,
             accessToken: response.accessToken,
           };
-        } catch {
+        } catch (error) {
+          console.error("[AUTH] Login failed:", error);
           return null;
         }
       },

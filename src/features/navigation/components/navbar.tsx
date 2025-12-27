@@ -2,21 +2,19 @@
 
 /**
  * Navbar Component
- * GitHub-inspired navigation bar
+ * Developer-inspired navigation bar with terminal aesthetic
  */
 
 import Link from "next/link";
-import { Menu } from "lucide-react";
+import { Menu, Terminal } from "lucide-react";
 import { useAuth } from "@/features/auth";
-import { useT } from "@/features/i18n";
-import { Button } from "@/shared/components/ui";
 import { ROUTES } from "@/config/routes";
 import { cn } from "@/shared/utils";
+import { ThemeToggleSimple } from "@/shared/components/ui/theme-toggle";
 import { Logo } from "./logo";
 import { NavLink } from "./nav-link";
 import { UserMenu } from "./user-menu";
 import { MobileMenu } from "./mobile-menu";
-import { LanguageSwitcher } from "./language-switcher";
 import { useNavigation } from "../hooks/use-navigation";
 import { useMobileMenu } from "../hooks/use-mobile-menu";
 
@@ -25,7 +23,6 @@ interface NavbarProps {
 }
 
 export function Navbar({ className }: NavbarProps) {
-  const t = useT();
   const { isAuthenticated, isLoading } = useAuth();
   const { mainNavItems } = useNavigation();
   const mobileMenu = useMobileMenu();
@@ -34,27 +31,25 @@ export function Navbar({ className }: NavbarProps) {
     <>
       <header
         className={cn(
-          "sticky top-0 z-40 w-full border-b border-zinc-800 bg-zinc-900/95 backdrop-blur supports-[backdrop-filter]:bg-zinc-900/80",
+          "border-pf-border-muted bg-pf-canvas-default/80 sticky top-0 z-40 w-full border-b backdrop-blur-sm",
           className
         )}
       >
-        <div className="mx-auto flex h-16 max-w-screen-xl items-center justify-between px-4">
-          {/* Left Section: Logo + Main Nav */}
-          <div className="flex items-center gap-6">
-            <Logo />
+        <div className="mx-auto flex h-14 items-center justify-between px-6 lg:px-10">
+          {/* Left Section: Logo */}
+          <Logo />
 
-            {/* Desktop Navigation */}
-            <nav className="hidden lg:flex lg:items-center lg:gap-1">
-              {mainNavItems.map((item) => (
-                <NavLink key={item.key} item={item} />
-              ))}
-            </nav>
-          </div>
+          {/* Center Section: Desktop Navigation */}
+          <nav className="hidden lg:flex lg:items-center lg:gap-8">
+            {mainNavItems.map((item) => (
+              <NavLink key={item.key} item={item} />
+            ))}
+          </nav>
 
           {/* Right Section: Actions */}
           <div className="flex items-center gap-2">
-            {/* Language Switcher */}
-            <LanguageSwitcher className="hidden sm:flex" />
+            {/* Theme Toggle */}
+            <ThemeToggleSimple />
 
             {/* Auth Actions */}
             {!isLoading && (
@@ -62,14 +57,21 @@ export function Navbar({ className }: NavbarProps) {
                 {isAuthenticated ? (
                   <UserMenu />
                 ) : (
-                  <div className="hidden sm:flex sm:items-center sm:gap-2">
-                    <Button variant="ghost" size="sm" asChild>
-                      <Link href={ROUTES.AUTH.SIGN_IN}>{t("nav.signIn")}</Link>
-                    </Button>
-                    <Button size="sm" asChild>
-                      <Link href={ROUTES.AUTH.SIGN_UP}>{t("nav.signUp")}</Link>
-                    </Button>
-                  </div>
+                  <>
+                    <Link
+                      href={ROUTES.AUTH.SIGN_IN}
+                      className="text-pf-fg-muted hover:text-pf-fg-default hidden font-mono text-xs transition-colors sm:block"
+                    >
+                      sign_in
+                    </Link>
+                    <Link
+                      href={ROUTES.AUTH.SIGN_UP}
+                      className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis hidden items-center gap-2 px-4 py-2 font-mono text-xs transition-opacity hover:opacity-90 sm:flex"
+                    >
+                      <Terminal className="h-3.5 w-3.5" strokeWidth={1.5} />
+                      get_started
+                    </Link>
+                  </>
                 )}
               </>
             )}
@@ -77,11 +79,11 @@ export function Navbar({ className }: NavbarProps) {
             {/* Mobile Menu Button */}
             <button
               onClick={mobileMenu.toggle}
-              className="flex items-center justify-center rounded-md p-2 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white lg:hidden"
+              className="text-pf-fg-default hover:text-pf-fg-muted flex h-9 w-9 items-center justify-center transition-colors lg:hidden"
               aria-label="Toggle menu"
               aria-expanded={mobileMenu.isOpen}
             >
-              <Menu className="h-5 w-5" />
+              <Menu className="h-5 w-5" strokeWidth={1.5} />
             </button>
           </div>
         </div>

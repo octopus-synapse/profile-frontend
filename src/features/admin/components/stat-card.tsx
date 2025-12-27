@@ -2,11 +2,10 @@
 
 /**
  * Admin Stat Card Component
+ * Developer-inspired design with code aesthetic
  */
 
 import { LucideIcon } from "lucide-react";
-import { Card } from "@/shared/components/ui/card";
-import { Skeleton } from "@/shared/components/ui/skeleton";
 import { cn } from "@/shared/utils/cn";
 
 interface StatCardProps {
@@ -21,29 +20,29 @@ interface StatCardProps {
 export function StatCard({ label, value, trend, trendUp, icon: Icon, loading }: StatCardProps) {
   if (loading) {
     return (
-      <Card className="p-6">
+      <div className="border-pf-border-default bg-pf-canvas-overlay border p-6">
         <div className="flex items-center justify-between">
-          <div className="space-y-2">
-            <Skeleton className="h-4 w-20" />
-            <Skeleton className="h-8 w-16" />
+          <div className="space-y-3">
+            <div className="bg-pf-canvas-subtle skeleton h-4 w-20" />
+            <div className="bg-pf-canvas-subtle skeleton h-8 w-16" />
           </div>
-          <Skeleton className="h-10 w-10 rounded-lg" />
+          <div className="bg-pf-canvas-subtle skeleton h-10 w-10" />
         </div>
-      </Card>
+      </div>
     );
   }
 
   return (
-    <Card className="p-6">
+    <div className="border-pf-border-default bg-pf-canvas-overlay hover:border-pf-border-emphasis border p-6 transition-colors">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-gh-fg-muted text-sm font-medium">{label}</p>
-          <p className="text-gh-fg-default mt-2 text-3xl font-bold">{value}</p>
+          <p className="text-pf-fg-muted font-mono text-xs">{label}</p>
+          <p className="text-pf-fg-default mt-2 font-mono text-3xl font-bold">{value}</p>
           {trend && (
             <p
               className={cn(
-                "mt-1 text-sm font-medium",
-                trendUp ? "text-gh-success-fg" : "text-gh-danger-fg"
+                "mt-1 font-mono text-xs",
+                trendUp ? "text-pf-success-fg" : "text-pf-danger-fg"
               )}
             >
               {trendUp ? "↑" : "↓"} {trend}
@@ -51,11 +50,11 @@ export function StatCard({ label, value, trend, trendUp, icon: Icon, loading }: 
           )}
         </div>
         {Icon && (
-          <div className="bg-gh-accent-subtle rounded-lg p-3">
-            <Icon className="text-gh-accent-fg h-6 w-6" />
+          <div className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis p-3">
+            <Icon className="h-6 w-6" strokeWidth={1.5} />
           </div>
         )}
       </div>
-    </Card>
+    </div>
   );
 }

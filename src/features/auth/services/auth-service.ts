@@ -3,8 +3,10 @@
  * Handles authentication API calls to the backend
  */
 
+import axios from "axios";
 import { httpClient } from "@/shared/lib/http-client";
 import type { LoginCredentials, RegisterCredentials, AuthResponse } from "@/shared/types/auth";
+import { API_URL } from "@/config/env";
 
 // ============================================================================
 // API Response Types
@@ -24,6 +26,15 @@ interface BackendAuthResponse {
   token: string;
 }
 
+// Server-safe axios instance (no session interceptors)
+const serverAxios = axios.create({
+  baseURL: API_URL,
+  timeout: 10000,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
 interface BackendRefreshResponse {
   success: boolean;
   token: string;
@@ -37,18 +48,20 @@ interface BackendRefreshResponse {
 export const authService = {
   /**
    * Login with email and password
+   * Uses server-safe axios to work in NextAuth authorize callback
    */
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    const response = await httpClient.post<BackendAuthResponse>("/auth/login", credentials);
-    return transformAuthResponse(response);
+    const response = await serverAxios.post<BackendAuthResponse>("/auth/login", credentials);
+    return transformAuthResponse(response.data);
   },
 
   /**
    * Register a new user
+   * Uses server-safe axios to work in NextAuth authorize callback
    */
   async register(credentials: RegisterCredentials): Promise<AuthResponse> {
-    const response = await httpClient.post<BackendAuthResponse>("/auth/signup", credentials);
-    return transformAuthResponse(response);
+    const response = await serverAxios.post<BackendAuthResponse>("/auth/signup", credentials);
+    return transformAuthResponse(response.data);
   },
 
   /**

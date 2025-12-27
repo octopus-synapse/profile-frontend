@@ -2,37 +2,46 @@
 
 /**
  * Admin Sidebar Navigation
+ * Developer-inspired design with code aesthetic
  */
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/shared/utils/cn";
-import { LayoutDashboard, Users, FileText, Settings, Activity, Shield } from "lucide-react";
+import {
+  LayoutDashboard,
+  Users,
+  FileText,
+  Settings,
+  Activity,
+  Shield,
+  Terminal,
+} from "lucide-react";
 
 const navItems = [
   {
-    label: "Dashboard",
+    label: "dashboard",
     href: "/admin",
     icon: LayoutDashboard,
     exact: true,
   },
   {
-    label: "Users",
+    label: "users",
     href: "/admin/users",
     icon: Users,
   },
   {
-    label: "Resumes",
+    label: "resumes",
     href: "/admin/resumes",
     icon: FileText,
   },
   {
-    label: "Activity",
+    label: "activity",
     href: "/admin/activity",
     icon: Activity,
   },
   {
-    label: "Settings",
+    label: "settings",
     href: "/admin/settings",
     icon: Settings,
   },
@@ -42,16 +51,16 @@ export function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="border-gh-border-default bg-gh-canvas-subtle w-64 shrink-0 border-r">
+    <aside className="border-pf-border-default bg-pf-canvas-subtle w-64 shrink-0 border-r">
       <div className="flex h-full flex-col">
         {/* Header */}
-        <div className="border-gh-border-default flex items-center gap-2 border-b px-4 py-4">
-          <div className="bg-gh-attention-subtle flex items-center justify-center rounded-lg p-2">
-            <Shield className="text-gh-attention-fg h-5 w-5" />
+        <div className="border-pf-border-default flex items-center gap-3 border-b px-4 py-4">
+          <div className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis flex items-center justify-center p-2">
+            <Shield className="h-5 w-5" strokeWidth={1.5} />
           </div>
           <div>
-            <p className="text-gh-fg-default text-sm font-semibold">Admin</p>
-            <p className="text-gh-fg-muted text-xs">Control Panel</p>
+            <p className="text-pf-fg-default font-mono text-sm font-semibold">admin</p>
+            <p className="text-pf-fg-muted font-mono text-xs">control_panel</p>
           </div>
         </div>
 
@@ -65,22 +74,26 @@ export function AdminSidebar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                  "flex items-center gap-3 px-3 py-2 font-mono text-sm transition-colors",
                   isActive
-                    ? "bg-gh-canvas-default text-gh-fg-default"
-                    : "text-gh-fg-muted hover:bg-gh-canvas-default hover:text-gh-fg-default"
+                    ? "bg-pf-canvas-default text-pf-fg-default border-pf-border-default border"
+                    : "text-pf-fg-muted hover:bg-pf-canvas-default hover:text-pf-fg-default"
                 )}
               >
-                <item.icon className="h-4 w-4" />
+                <item.icon className="h-4 w-4" strokeWidth={1.5} />
                 {item.label}
+                {isActive && <span className="text-code-string ml-auto text-xs">●</span>}
               </Link>
             );
           })}
         </nav>
 
         {/* Footer */}
-        <div className="border-gh-border-default border-t p-4">
-          <p className="text-gh-fg-subtle text-xs">Profile v2.0.0</p>
+        <div className="border-pf-border-default border-t p-4">
+          <div className="flex items-center gap-2">
+            <Terminal className="text-pf-fg-subtle h-3 w-3" strokeWidth={1.5} />
+            <p className="text-pf-fg-subtle font-mono text-xs">profile@v2.0.0</p>
+          </div>
         </div>
       </div>
     </aside>

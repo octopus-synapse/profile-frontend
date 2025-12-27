@@ -2,7 +2,7 @@
 
 /**
  * UserMenu Component
- * GitHub-style dropdown menu for authenticated users
+ * Developer-inspired dropdown menu with terminal aesthetic
  */
 
 import { useState, useRef, useEffect } from "react";
@@ -12,7 +12,7 @@ import { useI18n } from "@/features/i18n";
 import type { DictionaryKey } from "@/features/i18n/dictionaries/en";
 import { Avatar } from "@/shared/components/ui";
 import { cn } from "@/shared/utils";
-import { ChevronDown, LogOut, Shield } from "lucide-react";
+import { ChevronDown, LogOut, Shield, Terminal } from "lucide-react";
 import { USER_MENU_ITEMS, ADMIN_MENU_ITEMS } from "../config/nav-items";
 
 export function UserMenu() {
@@ -62,27 +62,35 @@ export function UserMenu() {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "flex items-center gap-1 rounded-full p-0.5 transition-colors",
-          "hover:bg-zinc-800 focus:ring-2 focus:ring-zinc-600 focus:outline-none",
-          isOpen && "bg-zinc-800"
+          "flex items-center gap-2 px-3 py-1.5 font-mono text-xs transition-colors",
+          "text-pf-fg-muted hover:text-pf-fg-default",
+          isOpen && "text-pf-fg-default"
         )}
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
-        <Avatar src={user.image} alt={displayName} fallback={initials} size="sm" />
+        <Avatar src={user.image} alt={displayName} fallback={initials} size="xs" />
+        <span className="hidden sm:inline">{(displayName.split(" ")[0] ?? displayName).toLowerCase()}</span>
         <ChevronDown
-          className={cn("h-4 w-4 text-zinc-400 transition-transform", isOpen && "rotate-180")}
+          className={cn("h-3 w-3 transition-transform", isOpen && "rotate-180")}
+          strokeWidth={1.5}
         />
       </button>
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="ring-opacity-5 absolute right-0 z-50 mt-2 w-56 origin-top-right rounded-lg border border-zinc-700 bg-zinc-900 shadow-lg ring-1 ring-black">
+        <div className="border-pf-border-default bg-pf-canvas-overlay absolute right-0 z-50 mt-2 w-56 origin-top-right border shadow-lg">
           {/* User Info Header */}
-          <div className="border-b border-zinc-700 px-4 py-3">
-            <p className="text-sm font-medium text-white">{displayName}</p>
-            <p className="truncate text-xs text-zinc-400">{user.email}</p>
-            {user.username && <p className="mt-1 text-xs text-zinc-500">@{user.username}</p>}
+          <div className="border-pf-border-default border-b px-4 py-3">
+            <div className="flex items-center gap-2">
+              <Terminal className="text-pf-fg-muted h-3 w-3" strokeWidth={1.5} />
+              <span className="text-pf-fg-muted font-mono text-xs">// user</span>
+            </div>
+            <p className="text-pf-fg-default mt-2 font-mono text-sm">{displayName}</p>
+            <p className="text-pf-fg-muted truncate font-mono text-xs">{user.email}</p>
+            {user.username && (
+              <p className="text-pf-fg-subtle mt-1 font-mono text-xs">@{user.username}</p>
+            )}
           </div>
 
           {/* Menu Items */}
@@ -92,9 +100,9 @@ export function UserMenu() {
                 key={item.key}
                 href={item.href}
                 onClick={() => setIsOpen(false)}
-                className="block px-4 py-2 text-sm text-zinc-300 transition-colors hover:bg-zinc-800 hover:text-white"
+                className="text-pf-fg-muted hover:bg-pf-canvas-subtle hover:text-pf-fg-default block px-4 py-2 font-mono text-xs transition-colors"
               >
-                {t(item.labelKey as DictionaryKey)}
+                {t(item.labelKey as DictionaryKey).toLowerCase()}
               </Link>
             ))}
           </div>
@@ -102,17 +110,17 @@ export function UserMenu() {
           {/* Admin Section */}
           {isAdmin && (
             <>
-              <div className="border-t border-zinc-700" />
+              <div className="border-pf-border-default border-t" />
               <div className="py-1">
                 {ADMIN_MENU_ITEMS.map((item) => (
                   <Link
                     key={item.key}
                     href={item.href}
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center gap-2 px-4 py-2 text-sm text-zinc-300 transition-colors hover:bg-zinc-800 hover:text-white"
+                    className="text-pf-fg-muted hover:bg-pf-canvas-subtle hover:text-pf-fg-default flex items-center gap-2 px-4 py-2 font-mono text-xs transition-colors"
                   >
-                    <Shield className="h-4 w-4 text-orange-500" />
-                    {t(item.labelKey as DictionaryKey)}
+                    <Shield className="text-pf-attention-fg h-3.5 w-3.5" strokeWidth={1.5} />
+                    {t(item.labelKey as DictionaryKey).toLowerCase()}
                   </Link>
                 ))}
               </div>
@@ -120,16 +128,16 @@ export function UserMenu() {
           )}
 
           {/* Sign Out */}
-          <div className="border-t border-zinc-700">
+          <div className="border-pf-border-default border-t">
             <button
               onClick={() => {
                 setIsOpen(false);
                 signOut();
               }}
-              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-zinc-300 transition-colors hover:bg-zinc-800 hover:text-white"
+              className="text-pf-fg-muted hover:bg-pf-canvas-subtle hover:text-pf-fg-default flex w-full items-center gap-2 px-4 py-2 font-mono text-xs transition-colors"
             >
-              <LogOut className="h-4 w-4" />
-              {t("nav.signOut")}
+              <LogOut className="h-3.5 w-3.5" strokeWidth={1.5} />
+              sign_out()
             </button>
           </div>
         </div>

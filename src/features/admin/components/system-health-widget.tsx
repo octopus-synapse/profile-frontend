@@ -2,12 +2,13 @@
 
 /**
  * System Health Widget
+ * Developer-inspired design with code aesthetic
  */
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import { cn } from "@/shared/utils/cn";
-import { Database, Server, HardDrive, CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
+import { Database, Server, HardDrive, CheckCircle2, AlertTriangle, XCircle, Code2 } from "lucide-react";
 import type { SystemHealth } from "../types";
 
 interface SystemHealthWidgetProps {
@@ -18,28 +19,31 @@ interface SystemHealthWidgetProps {
 const statusConfig = {
   healthy: {
     icon: CheckCircle2,
-    color: "text-gh-success-fg",
-    bgColor: "bg-gh-success-subtle",
-    label: "Healthy",
+    color: "text-pf-success-fg",
+    bgColor: "bg-pf-canvas-emphasis",
+    textColor: "text-pf-fg-on-emphasis",
+    label: "online",
   },
   degraded: {
     icon: AlertTriangle,
-    color: "text-gh-attention-fg",
-    bgColor: "bg-gh-attention-subtle",
-    label: "Degraded",
+    color: "text-pf-attention-fg",
+    bgColor: "bg-pf-attention-subtle",
+    textColor: "text-pf-attention-fg",
+    label: "degraded",
   },
   down: {
     icon: XCircle,
-    color: "text-gh-danger-fg",
-    bgColor: "bg-gh-danger-subtle",
-    label: "Down",
+    color: "text-pf-danger-fg",
+    bgColor: "bg-pf-danger-subtle",
+    textColor: "text-pf-danger-fg",
+    label: "offline",
   },
 };
 
 const services = [
-  { key: "database" as const, label: "Database", icon: Database },
-  { key: "api" as const, label: "API Server", icon: Server },
-  { key: "storage" as const, label: "Storage", icon: HardDrive },
+  { key: "database" as const, label: "database", icon: Database },
+  { key: "api" as const, label: "api_server", icon: Server },
+  { key: "storage" as const, label: "storage", icon: HardDrive },
 ];
 
 export function SystemHealthWidget({ health, loading }: SystemHealthWidgetProps) {
@@ -47,16 +51,19 @@ export function SystemHealthWidget({ health, loading }: SystemHealthWidgetProps)
     return (
       <Card>
         <CardHeader>
-          <CardTitle>System Health</CardTitle>
+          <div className="flex items-center gap-2">
+            <Code2 className="text-pf-fg-muted h-4 w-4" strokeWidth={1.5} />
+            <span className="text-pf-fg-muted font-mono text-xs">// system_health</span>
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           {[1, 2, 3].map((i) => (
             <div key={i} className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <Skeleton className="h-8 w-8 rounded-lg" />
+                <Skeleton className="h-8 w-8" />
                 <Skeleton className="h-4 w-24" />
               </div>
-              <Skeleton className="h-6 w-16 rounded-full" />
+              <Skeleton className="h-6 w-16" />
             </div>
           ))}
         </CardContent>
@@ -66,15 +73,16 @@ export function SystemHealthWidget({ health, loading }: SystemHealthWidgetProps)
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <span>System Health</span>
-          {health?.lastChecked && (
-            <span className="text-gh-fg-muted text-xs font-normal">
-              Updated {new Date(health.lastChecked).toLocaleTimeString()}
-            </span>
-          )}
-        </CardTitle>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Code2 className="text-pf-fg-muted h-4 w-4" strokeWidth={1.5} />
+          <CardTitle className="font-mono text-sm">system_health</CardTitle>
+        </div>
+        {health?.lastChecked && (
+          <span className="text-pf-fg-muted font-mono text-xs">
+            updated: {new Date(health.lastChecked).toLocaleTimeString()}
+          </span>
+        )}
       </CardHeader>
       <CardContent className="space-y-4">
         {services.map((service) => {
@@ -85,19 +93,19 @@ export function SystemHealthWidget({ health, loading }: SystemHealthWidgetProps)
           return (
             <div key={service.key} className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className={cn("rounded-lg p-2", config.bgColor)}>
-                  <service.icon className={cn("h-4 w-4", config.color)} />
+                <div className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis p-2">
+                  <service.icon className="h-4 w-4" strokeWidth={1.5} />
                 </div>
-                <span className="text-gh-fg-default text-sm font-medium">{service.label}</span>
+                <span className="text-pf-fg-default font-mono text-sm">{service.label}</span>
               </div>
               <div
                 className={cn(
-                  "flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium",
+                  "flex items-center gap-1.5 px-2 py-1 font-mono text-xs",
                   config.bgColor,
-                  config.color
+                  config.textColor
                 )}
               >
-                <StatusIcon className="h-3 w-3" />
+                <StatusIcon className="h-3 w-3" strokeWidth={1.5} />
                 {config.label}
               </div>
             </div>

@@ -31,8 +31,8 @@ export function LanguageSwitcher({ className }: LanguageSwitcherProps) {
     <button
       onClick={toggleLocale}
       className={cn(
-        "flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm text-zinc-400",
-        "transition-colors hover:bg-zinc-800 hover:text-white",
+        "text-pf-fg-muted flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm",
+        "hover:bg-pf-canvas-subtle hover:text-pf-fg-default transition-colors",
         className
       )}
       title={`Switch to ${locales.find((l) => l.code !== locale)?.label}`}

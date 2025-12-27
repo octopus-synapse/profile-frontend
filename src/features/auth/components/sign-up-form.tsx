@@ -2,18 +2,18 @@
 
 /**
  * Sign Up Form Component
- * Handles user registration
+ * GitHub + Cursor inspired design
  */
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { authService } from "../services/auth-service";
 import { useAuth } from "../hooks/use-auth";
 import { useT } from "@/features/i18n";
 import { Button, Input } from "@/shared/components/ui";
+import { Label } from "@/shared/components/ui/label";
 import { ROUTES } from "@/config/routes";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, User, Mail, Lock, Eye, EyeOff } from "lucide-react";
 
 export function SignUpForm() {
   const t = useT();
@@ -24,6 +24,8 @@ export function SignUpForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -70,86 +72,136 @@ export function SignUpForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Error Alert */}
       {error && (
-        <div className="flex items-center gap-2 rounded-md border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-400">
+        <div className="border-pf-danger-muted bg-pf-danger-subtle text-pf-danger-fg animate-fade-in flex items-center gap-3 rounded-md border p-3 text-sm">
           <AlertCircle className="h-4 w-4 shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
+      {/* Name Field */}
       <div className="space-y-2">
-        <label htmlFor="name" className="block text-sm font-medium text-zinc-300">
+        <Label htmlFor="name" className="text-pf-fg-default">
           {t("auth.signUp.name")}
-        </label>
-        <Input
-          id="name"
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="John Doe"
-          required
-          autoComplete="name"
-        />
+        </Label>
+        <div className="relative">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+            <User className="text-pf-fg-muted h-4 w-4" />
+          </div>
+          <Input
+            id="name"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="John Doe"
+            required
+            autoComplete="name"
+            className="pl-10"
+          />
+        </div>
       </div>
 
+      {/* Email Field */}
       <div className="space-y-2">
-        <label htmlFor="email" className="block text-sm font-medium text-zinc-300">
+        <Label htmlFor="email" className="text-pf-fg-default">
           {t("auth.signUp.email")}
-        </label>
-        <Input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@example.com"
-          required
-          autoComplete="email"
-          error={!!error}
-        />
+        </Label>
+        <div className="relative">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+            <Mail className="text-pf-fg-muted h-4 w-4" />
+          </div>
+          <Input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            required
+            autoComplete="email"
+            error={!!error}
+            className="pl-10"
+          />
+        </div>
       </div>
 
+      {/* Password Field */}
       <div className="space-y-2">
-        <label htmlFor="password" className="block text-sm font-medium text-zinc-300">
+        <Label htmlFor="password" className="text-pf-fg-default">
           {t("auth.signUp.password")}
-        </label>
-        <Input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="••••••••"
-          required
-          autoComplete="new-password"
-          error={!!error}
-        />
+        </Label>
+        <div className="relative">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+            <Lock className="text-pf-fg-muted h-4 w-4" />
+          </div>
+          <Input
+            id="password"
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            required
+            autoComplete="new-password"
+            error={!!error}
+            className="pr-10 pl-10"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="text-pf-fg-muted hover:text-pf-fg-default absolute inset-y-0 right-0 flex items-center pr-3 transition-colors"
+          >
+            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        </div>
+        <p className="text-pf-fg-subtle text-xs">Minimum 8 characters</p>
       </div>
 
+      {/* Confirm Password Field */}
       <div className="space-y-2">
-        <label htmlFor="confirmPassword" className="block text-sm font-medium text-zinc-300">
+        <Label htmlFor="confirmPassword" className="text-pf-fg-default">
           {t("auth.signUp.confirmPassword")}
-        </label>
-        <Input
-          id="confirmPassword"
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          placeholder="••••••••"
-          required
-          autoComplete="new-password"
-          error={!!error}
-        />
+        </Label>
+        <div className="relative">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+            <Lock className="text-pf-fg-muted h-4 w-4" />
+          </div>
+          <Input
+            id="confirmPassword"
+            type={showConfirmPassword ? "text" : "password"}
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="••••••••"
+            required
+            autoComplete="new-password"
+            error={!!error}
+            className="pr-10 pl-10"
+          />
+          <button
+            type="button"
+            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            className="text-pf-fg-muted hover:text-pf-fg-default absolute inset-y-0 right-0 flex items-center pr-3 transition-colors"
+          >
+            {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        </div>
       </div>
 
-      <Button type="submit" className="w-full" loading={isLoading}>
-        {t("auth.signUp.submit")}
+      {/* Submit Button */}
+      <Button type="submit" className="mt-6 w-full" size="lg" loading={isLoading}>
+        {isLoading ? "Creating account..." : t("auth.signUp.submit")}
       </Button>
 
-      <p className="text-center text-sm text-zinc-400">
-        {t("auth.signUp.hasAccount")}{" "}
-        <Link href={ROUTES.AUTH.SIGN_IN} className="font-medium text-blue-400 hover:text-blue-300">
-          {t("auth.signUp.signIn")}
-        </Link>
+      {/* Terms */}
+      <p className="text-pf-fg-muted pt-2 text-center text-xs">
+        By creating an account, you agree to our{" "}
+        <a href="#" className="text-pf-accent-fg hover:underline">
+          Terms of Service
+        </a>{" "}
+        and{" "}
+        <a href="#" className="text-pf-accent-fg hover:underline">
+          Privacy Policy
+        </a>
       </p>
     </form>
   );

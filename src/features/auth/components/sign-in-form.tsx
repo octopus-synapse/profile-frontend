@@ -2,7 +2,7 @@
 
 /**
  * Sign In Form Component
- * Handles user authentication
+ * GitHub + Cursor inspired design
  */
 
 import { Suspense, useState } from "react";
@@ -11,8 +11,9 @@ import Link from "next/link";
 import { useAuth } from "../hooks/use-auth";
 import { useT } from "@/features/i18n";
 import { Button, Input, Spinner } from "@/shared/components/ui";
+import { Label } from "@/shared/components/ui/label";
 import { ROUTES } from "@/config/routes";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Mail, Lock, Eye, EyeOff } from "lucide-react";
 
 function SignInFormContent() {
   const t = useT();
@@ -22,6 +23,7 @@ function SignInFormContent() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -44,64 +46,80 @@ function SignInFormContent() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Error Alert */}
       {error && (
-        <div className="flex items-center gap-2 rounded-md border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-400">
+        <div className="border-pf-danger-muted bg-pf-danger-subtle text-pf-danger-fg animate-fade-in flex items-center gap-3 rounded-md border p-3 text-sm">
           <AlertCircle className="h-4 w-4 shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
+      {/* Email Field */}
       <div className="space-y-2">
-        <label htmlFor="email" className="block text-sm font-medium text-zinc-300">
+        <Label htmlFor="email" className="text-pf-fg-default">
           {t("auth.signIn.email")}
-        </label>
-        <Input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@example.com"
-          required
-          autoComplete="email"
-          error={!!error}
-        />
+        </Label>
+        <div className="relative">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+            <Mail className="text-pf-fg-muted h-4 w-4" />
+          </div>
+          <Input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            required
+            autoComplete="email"
+            error={!!error}
+            className="pl-10"
+          />
+        </div>
       </div>
 
+      {/* Password Field */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <label htmlFor="password" className="block text-sm font-medium text-zinc-300">
+          <Label htmlFor="password" className="text-pf-fg-default">
             {t("auth.signIn.password")}
-          </label>
+          </Label>
           <Link
             href={ROUTES.AUTH.FORGOT_PASSWORD}
-            className="text-sm text-blue-400 hover:text-blue-300"
+            className="text-pf-accent-fg text-xs hover:underline"
           >
             {t("auth.signIn.forgotPassword")}
           </Link>
         </div>
-        <Input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="••••••••"
-          required
-          autoComplete="current-password"
-          error={!!error}
-        />
+        <div className="relative">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+            <Lock className="text-pf-fg-muted h-4 w-4" />
+          </div>
+          <Input
+            id="password"
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            required
+            autoComplete="current-password"
+            error={!!error}
+            className="pr-10 pl-10"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="text-pf-fg-muted hover:text-pf-fg-default absolute inset-y-0 right-0 flex items-center pr-3 transition-colors"
+          >
+            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        </div>
       </div>
 
-      <Button type="submit" className="w-full" loading={isLoading}>
-        {t("auth.signIn.submit")}
+      {/* Submit Button */}
+      <Button type="submit" className="mt-6 w-full" size="lg" loading={isLoading}>
+        {isLoading ? "Signing in..." : t("auth.signIn.submit")}
       </Button>
-
-      <p className="text-center text-sm text-zinc-400">
-        {t("auth.signIn.noAccount")}{" "}
-        <Link href={ROUTES.AUTH.SIGN_UP} className="font-medium text-blue-400 hover:text-blue-300">
-          {t("auth.signIn.createAccount")}
-        </Link>
-      </p>
     </form>
   );
 }

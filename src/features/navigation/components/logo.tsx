@@ -2,27 +2,37 @@
 
 /**
  * Logo Component
- * Application logo with link to home
+ * Developer-inspired design with Terminal icon
  */
 
 import Link from "next/link";
+import { Terminal } from "lucide-react";
 import { ROUTES } from "@/config/routes";
 
 interface LogoProps {
   className?: string;
+  variant?: "light" | "dark";
+  showBadge?: boolean;
 }
 
-export function Logo({ className }: LogoProps) {
+export function Logo({ className, variant = "dark", showBadge = true }: LogoProps) {
+  const isLight = variant === "light";
+
   return (
-    <Link
-      href={ROUTES.HOME}
-      className={`flex items-center gap-2 text-xl font-bold text-white transition-opacity hover:opacity-80 ${className ?? ""}`}
-    >
-      <svg className="h-8 w-8" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="32" height="32" rx="6" fill="currentColor" />
-        <path d="M8 10h4v12H8V10zm6 0h4v12h-4V10zm6 0h4v12h-4V10z" fill="#0d1117" />
-      </svg>
-      <span className="hidden sm:inline">Profile</span>
+    <Link href={ROUTES.HOME} className={`flex items-center gap-2 ${className ?? ""}`}>
+      <div
+        className={`flex h-7 w-7 items-center justify-center ${
+          isLight ? "bg-white text-[#0a0a0a]" : "bg-pf-canvas-emphasis text-pf-fg-on-emphasis"
+        }`}
+      >
+        <Terminal className="h-4 w-4" strokeWidth={1.5} />
+      </div>
+      <span
+        className={`font-mono text-sm font-semibold ${isLight ? "text-white" : "text-pf-fg-default"}`}
+      >
+        profile
+      </span>
+      {showBadge && <span className="dev-badge">dev</span>}
     </Link>
   );
 }

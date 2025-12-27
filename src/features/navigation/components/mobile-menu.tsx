@@ -2,15 +2,14 @@
 
 /**
  * MobileMenu Component
- * Full-screen mobile navigation menu
+ * Developer-inspired full-screen overlay menu with terminal aesthetic
  */
 
-import { X } from "lucide-react";
+import { X, Terminal, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/features/auth";
-import { useT } from "@/features/i18n";
-import { Avatar, Button } from "@/shared/components/ui";
 import { ROUTES } from "@/config/routes";
+import { Logo } from "./logo";
 import { NavLink } from "./nav-link";
 import { useNavigation } from "../hooks/use-navigation";
 import type { MobileMenuState } from "../types";
@@ -20,118 +19,107 @@ interface MobileMenuProps {
 }
 
 export function MobileMenu({ menu }: MobileMenuProps) {
-  const t = useT();
-  const { user, isAuthenticated, signOut } = useAuth();
+  const { isAuthenticated, signOut } = useAuth();
   const { mainNavItems, adminNavItems, canAccessAdmin } = useNavigation();
 
   if (!menu.isOpen) return null;
 
-  const displayName = user?.name || user?.email?.split("@")[0] || "User";
-  const initials = displayName
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
-
   return (
-    <div className="fixed inset-0 z-50 lg:hidden">
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={menu.close}
-        aria-hidden="true"
-      />
+    <div className="animate-in fade-in bg-pf-canvas-emphasis fixed inset-0 z-50 duration-300">
+      {/* Header */}
+      <div className="border-pf-border-muted flex items-center justify-between border-b border-white/10 px-6 py-4 lg:px-10">
+        <Logo variant="light" showBadge={true} />
+        <button
+          onClick={menu.close}
+          className="flex h-10 w-10 items-center justify-center text-white/80 transition-colors hover:text-white"
+          aria-label="Close menu"
+        >
+          <X className="h-5 w-5" strokeWidth={1.5} />
+        </button>
+      </div>
 
-      {/* Menu Panel */}
-      <div className="fixed inset-y-0 right-0 w-full max-w-sm bg-zinc-900 shadow-xl">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-4">
-          <span className="text-lg font-semibold text-white">Menu</span>
-          <button
-            onClick={menu.close}
-            className="rounded-md p-2 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
-          >
-            <X className="h-5 w-5" />
-            <span className="sr-only">Close menu</span>
-          </button>
+      {/* Content */}
+      <div className="flex h-[calc(100vh-73px)] flex-col px-6 py-8 lg:px-10">
+        {/* Terminal Header */}
+        <div className="mb-6 flex items-center gap-2">
+          <Terminal className="h-4 w-4 text-white/50" strokeWidth={1.5} />
+          <span className="font-mono text-xs text-white/50">// navigation</span>
         </div>
 
-        {/* User Info (if authenticated) */}
-        {isAuthenticated && user && (
-          <div className="border-b border-zinc-800 px-4 py-4">
-            <div className="flex items-center gap-3">
-              <Avatar src={user.image} alt={displayName} fallback={initials} size="md" />
-              <div>
-                <p className="font-medium text-white">{displayName}</p>
-                <p className="text-sm text-zinc-400">{user.email}</p>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Navigation Links */}
+        <nav className="flex-1 space-y-1">
+          {/* Home Link */}
+          <Link
+            href="/"
+            onClick={menu.close}
+            className="group flex items-center gap-4 py-3 font-mono text-lg text-white/60 transition-colors hover:text-white"
+          >
+            <span>home</span>
+          </Link>
 
-        {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto px-2 py-4">
           {/* Main Navigation */}
-          <div className="space-y-1">
-            {mainNavItems.map((item) => (
-              <NavLink
-                key={item.key}
-                item={item}
-                onClick={menu.close}
-                className="w-full justify-start"
-              />
-            ))}
-          </div>
+          {mainNavItems.map((item) => (
+            <NavLink key={item.key} item={item} onClick={menu.close} variant="mobile" />
+          ))}
 
           {/* Admin Navigation */}
           {canAccessAdmin && adminNavItems.length > 0 && (
             <>
-              <div className="my-4 border-t border-zinc-800" />
-              <p className="mb-2 px-3 text-xs font-semibold tracking-wider text-zinc-500 uppercase">
-                {t("nav.group.admin")}
-              </p>
-              <div className="space-y-1">
-                {adminNavItems.map((item) => (
-                  <NavLink
-                    key={item.key}
-                    item={item}
-                    onClick={menu.close}
-                    className="w-full justify-start"
-                  />
-                ))}
+              <div className="my-4 h-px bg-white/10" />
+              <div className="mb-2 flex items-center gap-2">
+                <span className="font-mono text-xs text-white/30">// admin</span>
               </div>
+              {adminNavItems.map((item) => (
+                <NavLink key={item.key} item={item} onClick={menu.close} variant="mobile" />
+              ))}
             </>
           )}
-        </nav>
 
-        {/* Footer Actions */}
-        <div className="border-t border-zinc-800 p-4">
+          {/* Auth Section */}
+          <div className="my-4 h-px bg-white/10" />
           {isAuthenticated ? (
-            <Button
-              variant="outline"
-              className="w-full"
+            <button
               onClick={() => {
                 menu.close();
                 signOut();
               }}
+              className="flex items-center py-3 font-mono text-lg text-white/60 transition-colors hover:text-white"
             >
-              {t("nav.signOut")}
-            </Button>
+              sign_out()
+            </button>
           ) : (
-            <div className="space-y-2">
-              <Button asChild className="w-full">
-                <Link href={ROUTES.AUTH.SIGN_IN} onClick={menu.close}>
-                  {t("nav.signIn")}
-                </Link>
-              </Button>
-              <Button asChild variant="outline" className="w-full">
-                <Link href={ROUTES.AUTH.SIGN_UP} onClick={menu.close}>
-                  {t("nav.signUp")}
-                </Link>
-              </Button>
-            </div>
+            <Link
+              href={ROUTES.AUTH.SIGN_IN}
+              onClick={menu.close}
+              className="flex items-center py-3 font-mono text-lg text-white/60 transition-colors hover:text-white"
+            >
+              sign_in()
+            </Link>
           )}
+        </nav>
+
+        {/* CTA Button */}
+        {!isAuthenticated && (
+          <div className="mt-auto pt-8">
+            <Link
+              href={ROUTES.AUTH.SIGN_UP}
+              onClick={menu.close}
+              className="group inline-flex w-full items-center justify-center gap-2 bg-white px-6 py-3 font-mono text-sm text-black transition-opacity hover:opacity-90"
+            >
+              <Terminal className="h-4 w-4" strokeWidth={1.5} />
+              get_started()
+              <ArrowRight
+                className="h-4 w-4 transition-transform group-hover:translate-x-1"
+                strokeWidth={1.5}
+              />
+            </Link>
+          </div>
+        )}
+
+        {/* Footer */}
+        <div className="mt-6 flex items-center gap-2">
+          <Terminal className="h-3 w-3 text-white/30" strokeWidth={1.5} />
+          <span className="font-mono text-xs text-white/30">profile@v2.0.0</span>
         </div>
       </div>
     </div>

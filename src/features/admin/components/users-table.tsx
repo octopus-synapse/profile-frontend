@@ -94,7 +94,7 @@ export function UsersTable() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-1 gap-4">
           <div className="relative max-w-sm flex-1">
-            <Search className="text-gh-fg-muted absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+            <Search className="text-pf-fg-muted absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
             <Input
               placeholder="Search users..."
               value={search}
@@ -132,23 +132,23 @@ export function UsersTable() {
       <Card className="overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gh-canvas-subtle border-gh-border-default border-b">
+            <thead className="bg-pf-canvas-subtle border-pf-border-default border-b">
               <tr>
-                <th className="text-gh-fg-muted px-4 py-3 text-left text-sm font-medium">User</th>
-                <th className="text-gh-fg-muted px-4 py-3 text-left text-sm font-medium">Role</th>
-                <th className="text-gh-fg-muted px-4 py-3 text-left text-sm font-medium">
+                <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">User</th>
+                <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">Role</th>
+                <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">
                   Resumes
                 </th>
-                <th className="text-gh-fg-muted px-4 py-3 text-left text-sm font-medium">Joined</th>
-                <th className="text-gh-fg-muted px-4 py-3 text-left text-sm font-medium">
+                <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">Joined</th>
+                <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">
                   Last Login
                 </th>
-                <th className="text-gh-fg-muted px-4 py-3 text-right text-sm font-medium">
+                <th className="text-pf-fg-muted px-4 py-3 text-right text-sm font-medium">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-gh-border-muted divide-y">
+            <tbody className="divide-pf-border-muted divide-y">
               {isLoading ? (
                 Array.from({ length: 5 }).map((_, i) => (
                   <tr key={i}>
@@ -194,7 +194,7 @@ export function UsersTable() {
                 </tr>
               ) : (
                 data.users.map((user) => (
-                  <tr key={user.id} className="hover:bg-gh-canvas-subtle/50 transition-colors">
+                  <tr key={user.id} className="hover:bg-pf-canvas-subtle/50 transition-colors">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <Avatar
@@ -204,10 +204,10 @@ export function UsersTable() {
                           size="md"
                         />
                         <div>
-                          <p className="text-gh-fg-default text-sm font-medium">
+                          <p className="text-pf-fg-default text-sm font-medium">
                             {user.name ?? "No name"}
                           </p>
-                          <p className="text-gh-fg-muted text-xs">{user.email}</p>
+                          <p className="text-pf-fg-muted text-xs">{user.email}</p>
                         </div>
                       </div>
                     </td>
@@ -216,11 +216,11 @@ export function UsersTable() {
                         {user.role}
                       </Badge>
                     </td>
-                    <td className="text-gh-fg-muted px-4 py-3 text-sm">{user.resumeCount}</td>
-                    <td className="text-gh-fg-muted px-4 py-3 text-sm">
+                    <td className="text-pf-fg-muted px-4 py-3 text-sm">{user.resumeCount}</td>
+                    <td className="text-pf-fg-muted px-4 py-3 text-sm">
                       {formatDate(new Date(user.createdAt))}
                     </td>
-                    <td className="text-gh-fg-muted px-4 py-3 text-sm">
+                    <td className="text-pf-fg-muted px-4 py-3 text-sm">
                       {user.lastLoginAt ? formatDistanceToNow(new Date(user.lastLoginAt)) : "Never"}
                     </td>
                     <td className="px-4 py-3 text-right">
@@ -246,7 +246,7 @@ export function UsersTable() {
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
                             onClick={() => setDeleteUserId(user.id)}
-                            className="text-gh-danger-fg focus:text-gh-danger-fg"
+                            className="text-pf-danger-fg focus:text-pf-danger-fg"
                           >
                             <Trash2 className="mr-2 h-4 w-4" />
                             Delete User
@@ -263,8 +263,8 @@ export function UsersTable() {
 
         {/* Pagination */}
         {data && data.totalPages > 1 && (
-          <div className="border-gh-border-default flex items-center justify-between border-t px-4 py-3">
-            <p className="text-gh-fg-muted text-sm">
+          <div className="border-pf-border-default flex items-center justify-between border-t px-4 py-3">
+            <p className="text-pf-fg-muted text-sm">
               Showing {(page - 1) * 10 + 1} to {Math.min(page * 10, data.total)} of {data.total}{" "}
               users
             </p>
@@ -277,7 +277,7 @@ export function UsersTable() {
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
-              <span className="text-gh-fg-muted text-sm">
+              <span className="text-pf-fg-muted text-sm">
                 Page {page} of {data.totalPages}
               </span>
               <Button
