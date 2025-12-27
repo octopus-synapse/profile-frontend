@@ -92,18 +92,29 @@ export type {
 export {
   onboardingRepository,
   onboardingKeys,
-  useOnboardingState,
-  useSaveOnboardingProgress,
+  useOnboardingStatus,
   useSubmitOnboarding,
-  useSkipOnboarding,
-  useResetOnboarding,
+  useOnboardingStore,
+  ONBOARDING_STEPS,
+  OnboardingWizard,
+  OnboardingShell,
+  StepNavigation,
 } from "./onboarding";
 export type {
   OnboardingStep,
-  OnboardingState,
   OnboardingData,
   PersonalInfoData,
   ProfessionalProfileData,
   SkillData,
   LanguageData,
+} from "./onboarding";
+// Onboarding types with aliases to avoid conflicts with Resume types
+export type {
+  PersonalInfo as OnboardingPersonalInfo,
+  ProfessionalProfile as OnboardingProfessionalProfile,
+  Experience as OnboardingExperience,
+  Education as OnboardingEducation,
+  Skill as OnboardingSkill,
+  Language as OnboardingLanguage,
+  TemplateSelection as OnboardingTemplateSelection,
 } from "./onboarding";

@@ -1,0 +1,10 @@
+export { WelcomeStep } from "./welcome-step";
+export { PersonalInfoStep } from "./personal-info-step";
+export { ProfessionalProfileStep } from "./professional-profile-step";
+export { ExperienceStep } from "./experience-step";
+export { EducationStep } from "./education-step";
+export { SkillsStep } from "./skills-step";
+export { LanguagesStep } from "./languages-step";
+export { TemplateStep } from "./template-step";
+export { ReviewStep } from "./review-step";
+export { CompleteStep } from "./complete-step";

@@ -4,5 +4,6 @@
 
 export const onboardingKeys = {
   all: ["onboarding"] as const,
-  state: () => [...onboardingKeys.all, "state"] as const,
+  status: () => [...onboardingKeys.all, "status"] as const,
+  progress: () => [...onboardingKeys.all, "progress"] as const,
 };

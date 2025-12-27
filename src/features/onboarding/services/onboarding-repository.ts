@@ -4,46 +4,78 @@
  */
 
 import { httpClient } from "@/shared/lib/http-client";
-import type { OnboardingState, SubmitOnboardingDto } from "../types";
+import type { SubmitOnboardingDto } from "../types";
+import type {
+  OnboardingStep,
+  PersonalInfo,
+  ProfessionalProfile,
+  Experience,
+  Education,
+  Skill,
+  Language,
+  TemplateSelection,
+} from "../stores";
 
 const BASE_URL = "/onboarding";
 
+interface OnboardingStatus {
+  hasCompletedOnboarding: boolean;
+  onboardingCompletedAt?: string;
+}
+
+interface OnboardingResult {
+  success: boolean;
+  resumeId: string;
+  message: string;
+}
+
+export interface OnboardingProgress {
+  currentStep: OnboardingStep;
+  completedSteps: OnboardingStep[];
+  personalInfo: PersonalInfo | null;
+  professionalProfile: ProfessionalProfile | null;
+  experiences: Experience[];
+  noExperience: boolean;
+  education: Education[];
+  noEducation: boolean;
+  skills: Skill[];
+  noSkills: boolean;
+  languages: Language[];
+  templateSelection: TemplateSelection | null;
+}
+
+interface SaveProgressResult {
+  success: boolean;
+  currentStep: string;
+  completedSteps: string[];
+}
+
 export const onboardingRepository = {
   /**
-   * Get current onboarding state
+   * Get current onboarding status
    */
-  async getState(): Promise<OnboardingState | null> {
-    return httpClient.get<OnboardingState | null>(`${BASE_URL}/state`);
+  async getStatus(): Promise<OnboardingStatus> {
+    return httpClient.get<OnboardingStatus>(`${BASE_URL}/status`);
   },
 
   /**
-   * Save onboarding progress (partial save)
+   * Get onboarding progress (checkpoint)
    */
-  async saveProgress(step: string, data: Record<string, unknown>): Promise<OnboardingState> {
-    return httpClient.patch<OnboardingState>(`${BASE_URL}/progress`, {
-      step,
-      data,
-    });
+  async getProgress(): Promise<OnboardingProgress> {
+    return httpClient.get<OnboardingProgress>(`${BASE_URL}/progress`);
+  },
+
+  /**
+   * Save onboarding progress (checkpoint)
+   */
+  async saveProgress(data: OnboardingProgress): Promise<SaveProgressResult> {
+    return httpClient.put<SaveProgressResult>(`${BASE_URL}/progress`, data);
   },
 
   /**
    * Submit complete onboarding
    */
-  async submit(data: SubmitOnboardingDto): Promise<{ success: boolean; resumeId: string }> {
-    return httpClient.post<{ success: boolean; resumeId: string }>(`${BASE_URL}/submit`, data);
-  },
-
-  /**
-   * Skip onboarding
-   */
-  async skip(): Promise<void> {
-    return httpClient.post(`${BASE_URL}/skip`);
-  },
-
-  /**
-   * Reset onboarding (start over)
-   */
-  async reset(): Promise<void> {
-    return httpClient.delete(`${BASE_URL}/state`);
+  async submit(data: SubmitOnboardingDto): Promise<OnboardingResult> {
+    return httpClient.post<OnboardingResult>(BASE_URL, data);
   },
 };

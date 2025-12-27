@@ -5,25 +5,13 @@
  */
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { onboardingRepository } from "../services/onboarding-repository";
+import {
+  onboardingRepository,
+  type OnboardingProgress,
+} from "../services/onboarding-repository";
 import { onboardingKeys } from "./query-keys";
 import { userKeys } from "../../users/hooks/query-keys";
-import type { OnboardingStep, OnboardingData, SubmitOnboardingDto } from "../types";
-
-/**
- * Save progress on current step
- */
-export function useSaveOnboardingProgress() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ step, data }: { step: OnboardingStep; data: Partial<OnboardingData> }) =>
-      onboardingRepository.saveProgress(step, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: onboardingKeys.state() });
-    },
-  });
-}
+import type { SubmitOnboardingDto } from "../types";
 
 /**
  * Submit onboarding (complete)
@@ -34,37 +22,23 @@ export function useSubmitOnboarding() {
   return useMutation({
     mutationFn: (data: SubmitOnboardingDto) => onboardingRepository.submit(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: onboardingKeys.state() });
+      queryClient.invalidateQueries({ queryKey: onboardingKeys.status() });
+      queryClient.invalidateQueries({ queryKey: onboardingKeys.progress() });
       queryClient.invalidateQueries({ queryKey: userKeys.me() });
     },
   });
 }
 
 /**
- * Skip onboarding
+ * Save onboarding progress (checkpoint)
  */
-export function useSkipOnboarding() {
+export function useSaveOnboardingProgress() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: () => onboardingRepository.skip(),
+    mutationFn: (data: OnboardingProgress) => onboardingRepository.saveProgress(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: onboardingKeys.state() });
-      queryClient.invalidateQueries({ queryKey: userKeys.me() });
-    },
-  });
-}
-
-/**
- * Reset onboarding
- */
-export function useResetOnboarding() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: () => onboardingRepository.reset(),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: onboardingKeys.state() });
+      queryClient.invalidateQueries({ queryKey: onboardingKeys.progress() });
     },
   });
 }

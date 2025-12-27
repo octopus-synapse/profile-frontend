@@ -1,8 +1,4 @@
 export { onboardingKeys } from "./query-keys";
-export { useOnboardingState } from "./use-onboarding-queries";
-export {
-  useSaveOnboardingProgress,
-  useSubmitOnboarding,
-  useSkipOnboarding,
-  useResetOnboarding,
-} from "./use-onboarding-mutations";
+export { useOnboardingStatus, useOnboardingProgress } from "./use-onboarding-queries";
+export { useSubmitOnboarding, useSaveOnboardingProgress } from "./use-onboarding-mutations";
+export { useOnboardingSync } from "./use-onboarding-sync";
