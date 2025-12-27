@@ -3,30 +3,28 @@ import { KeyRound, LogIn, UserPlus, Home, ArrowLeft } from "lucide-react";
 
 /**
  * Auth 404 Not Found Page
- * GitHub/Cursor-inspired design for authentication section
+ * Developer-inspired design with code aesthetic
  */
 export default function AuthNotFound() {
   return (
-    <div className="bg-gh-canvas-default flex min-h-screen flex-col items-center justify-center px-4">
-      {/* Background gradient effect */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="from-gh-accent-emphasis/10 absolute top-0 left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-gradient-to-b to-transparent blur-3xl" />
-      </div>
-
+    <div className="bg-pf-canvas-default flex min-h-screen flex-col items-center justify-center px-4">
       <div className="relative z-10 flex flex-col items-center text-center">
         {/* Icon */}
-        <div className="border-gh-border-default bg-gh-canvas-subtle mb-8 flex h-20 w-20 items-center justify-center rounded-full border">
-          <KeyRound className="text-gh-fg-muted h-10 w-10" />
+        <div className="relative mb-8">
+          <div className="border-pf-border-default bg-pf-canvas-subtle flex h-24 w-24 items-center justify-center border">
+            <KeyRound className="text-pf-fg-muted h-12 w-12" strokeWidth={1.5} />
+          </div>
+          <div className="bg-pf-attention-fg absolute -top-1 -right-1 h-4 w-4 animate-pulse rounded-full" />
         </div>
 
-        {/* 404 */}
-        <div className="text-gh-fg-default mb-4 font-mono text-6xl font-bold">404</div>
+        {/* Error Code */}
+        <div className="text-pf-fg-default mb-4 font-mono text-8xl font-bold tracking-tighter">
+          404
+        </div>
 
         {/* Message */}
-        <h1 className="text-gh-fg-default mb-3 text-xl font-semibold">
-          Authentication page not found
-        </h1>
-        <p className="text-gh-fg-muted mb-8 max-w-sm">
+        <h1 className="text-pf-fg-default mb-3 text-xl font-semibold">auth_page_not_found</h1>
+        <p className="text-pf-fg-muted mb-8 max-w-sm font-mono text-sm">
           The page you&apos;re looking for doesn&apos;t exist. Try signing in or creating a new
           account.
         </p>
@@ -35,37 +33,63 @@ export default function AuthNotFound() {
         <div className="flex flex-col gap-3 sm:flex-row">
           <Link
             href="/auth/sign-in"
-            className="bg-gh-accent-emphasis hover:bg-gh-accent-emphasis/90 inline-flex items-center justify-center gap-2 rounded-md px-6 py-3 text-sm font-medium text-white transition-all"
+            className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis inline-flex items-center justify-center gap-2 px-6 py-3 font-mono text-sm transition-opacity hover:opacity-90"
           >
-            <LogIn className="h-4 w-4" />
-            Sign In
+            <LogIn className="h-4 w-4" strokeWidth={1.5} />
+            sign_in()
           </Link>
           <Link
             href="/auth/sign-up"
-            className="border-gh-border-default bg-gh-canvas-subtle text-gh-fg-default hover:border-gh-border-muted hover:bg-gh-canvas-inset inline-flex items-center justify-center gap-2 rounded-md border px-6 py-3 text-sm font-medium transition-all"
+            className="border-pf-border-default text-pf-fg-default hover:bg-pf-canvas-subtle inline-flex items-center justify-center gap-2 border bg-transparent px-6 py-3 font-mono text-sm transition-colors"
           >
-            <UserPlus className="h-4 w-4" />
-            Create Account
+            <UserPlus className="h-4 w-4" strokeWidth={1.5} />
+            create_account()
           </Link>
         </div>
 
+        {/* Code Block */}
+        <div className="code-block mt-8 w-full max-w-sm">
+          <div className="code-block-header">
+            <div className="code-block-dots">
+              <span className="code-block-dot red" />
+              <span className="code-block-dot yellow" />
+              <span className="code-block-dot green" />
+            </div>
+            <span className="code-block-title">auth-error.ts</span>
+          </div>
+          <div className="code-block-content text-left">
+            <div>
+              <span className="code-keyword">const</span>{" "}
+              <span className="code-variable">error</span> = {"{"}
+            </div>
+            <div className="ml-4">
+              <span className="code-function">code</span>: <span className="code-number">404</span>,
+            </div>
+            <div className="ml-4">
+              <span className="code-function">message</span>:{" "}
+              <span className="code-string">&quot;Page not found&quot;</span>
+            </div>
+            <div>{"}"}</div>
+          </div>
+        </div>
+
         {/* Home link */}
-        <div className="mt-8 flex items-center gap-4 text-sm">
+        <div className="mt-8 flex items-center gap-4 font-mono text-xs">
           <Link
             href="/"
-            className="text-gh-fg-muted hover:text-gh-fg-default inline-flex items-center gap-2"
+            className="text-pf-fg-muted hover:text-pf-fg-default inline-flex items-center gap-2 transition-colors"
           >
-            <Home className="h-4 w-4" />
-            Back to Home
+            <Home className="h-3 w-3" strokeWidth={1.5} />
+            go_home
           </Link>
-          <span className="text-gh-border-muted">•</span>
-          <Link
-            href="javascript:history.back()"
-            className="text-gh-fg-muted hover:text-gh-fg-default inline-flex items-center gap-2"
+          <span className="text-pf-fg-subtle">|</span>
+          <button
+            onClick={() => history.back()}
+            className="text-pf-fg-muted hover:text-pf-fg-default inline-flex items-center gap-2 transition-colors"
           >
-            <ArrowLeft className="h-4 w-4" />
-            Go back
-          </Link>
+            <ArrowLeft className="h-3 w-3" strokeWidth={1.5} />
+            go_back
+          </button>
         </div>
       </div>
     </div>

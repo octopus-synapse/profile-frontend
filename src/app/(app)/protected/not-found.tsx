@@ -3,28 +3,28 @@ import { FileX, Home, User, FileText, Settings, ArrowLeft } from "lucide-react";
 
 /**
  * Protected Routes 404 Not Found Page
- * GitHub/Cursor-inspired design for authenticated users
+ * Developer-inspired design with code aesthetic
  */
 export default function ProtectedNotFound() {
   return (
     <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4">
-      {/* Background gradient effect */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="from-gh-accent-emphasis/5 absolute -top-1/2 left-1/3 h-[500px] w-[500px] rounded-full bg-gradient-to-b to-transparent blur-3xl" />
-      </div>
-
       <div className="relative z-10 flex flex-col items-center text-center">
         {/* Icon */}
-        <div className="border-gh-border-default bg-gh-canvas-subtle mb-8 flex h-24 w-24 items-center justify-center rounded-2xl border">
-          <FileX className="text-gh-fg-muted h-12 w-12" />
+        <div className="relative mb-8">
+          <div className="border-pf-border-default bg-pf-canvas-subtle flex h-24 w-24 items-center justify-center border">
+            <FileX className="text-pf-fg-muted h-12 w-12" strokeWidth={1.5} />
+          </div>
+          <div className="bg-pf-attention-fg absolute -top-1 -right-1 h-4 w-4 animate-pulse rounded-full" />
         </div>
 
-        {/* 404 */}
-        <div className="text-gh-fg-default mb-4 font-mono text-7xl font-bold">404</div>
+        {/* Error Code */}
+        <div className="text-pf-fg-default mb-4 font-mono text-8xl font-bold tracking-tighter">
+          404
+        </div>
 
         {/* Message */}
-        <h1 className="text-gh-fg-default mb-3 text-xl font-semibold">Page not found</h1>
-        <p className="text-gh-fg-muted mb-8 max-w-md">
+        <h1 className="text-pf-fg-default mb-3 text-xl font-semibold">page_not_found</h1>
+        <p className="text-pf-fg-muted mb-8 max-w-md font-mono text-sm">
           We couldn&apos;t find the page you&apos;re looking for. It might have been moved or
           deleted.
         </p>
@@ -33,51 +33,51 @@ export default function ProtectedNotFound() {
         <div className="mb-8 grid w-full max-w-md grid-cols-2 gap-3">
           <Link
             href="/protected/profile"
-            className="border-gh-border-default bg-gh-canvas-subtle text-gh-fg-default hover:border-gh-border-muted hover:bg-gh-canvas-inset flex items-center justify-center gap-2 rounded-lg border px-4 py-3 text-sm font-medium transition-all"
+            className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default hover:border-pf-border-emphasis flex items-center justify-center gap-2 border px-4 py-3 font-mono text-xs transition-all"
           >
-            <User className="h-4 w-4" />
-            Profile
+            <User className="h-4 w-4" strokeWidth={1.5} />
+            profile
           </Link>
           <Link
             href="/protected/resume"
-            className="border-gh-border-default bg-gh-canvas-subtle text-gh-fg-default hover:border-gh-border-muted hover:bg-gh-canvas-inset flex items-center justify-center gap-2 rounded-lg border px-4 py-3 text-sm font-medium transition-all"
+            className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default hover:border-pf-border-emphasis flex items-center justify-center gap-2 border px-4 py-3 font-mono text-xs transition-all"
           >
-            <FileText className="h-4 w-4" />
-            Resume
+            <FileText className="h-4 w-4" strokeWidth={1.5} />
+            resume
           </Link>
           <Link
-            href="/protected/dashboard"
-            className="border-gh-border-default bg-gh-canvas-subtle text-gh-fg-default hover:border-gh-border-muted hover:bg-gh-canvas-inset flex items-center justify-center gap-2 rounded-lg border px-4 py-3 text-sm font-medium transition-all"
+            href="/protected"
+            className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default hover:border-pf-border-emphasis flex items-center justify-center gap-2 border px-4 py-3 font-mono text-xs transition-all"
           >
-            <Home className="h-4 w-4" />
-            Dashboard
+            <Home className="h-4 w-4" strokeWidth={1.5} />
+            dashboard
           </Link>
           <Link
             href="/protected/settings"
-            className="border-gh-border-default bg-gh-canvas-subtle text-gh-fg-default hover:border-gh-border-muted hover:bg-gh-canvas-inset flex items-center justify-center gap-2 rounded-lg border px-4 py-3 text-sm font-medium transition-all"
+            className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default hover:border-pf-border-emphasis flex items-center justify-center gap-2 border px-4 py-3 font-mono text-xs transition-all"
           >
-            <Settings className="h-4 w-4" />
-            Settings
+            <Settings className="h-4 w-4" strokeWidth={1.5} />
+            settings
           </Link>
         </div>
 
         {/* Primary action */}
         <Link
-          href="/protected/dashboard"
-          className="bg-gh-accent-emphasis hover:bg-gh-accent-emphasis/90 inline-flex items-center justify-center gap-2 rounded-md px-6 py-3 text-sm font-medium text-white transition-all"
+          href="/protected"
+          className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis inline-flex items-center justify-center gap-2 px-6 py-3 font-mono text-sm transition-opacity hover:opacity-90"
         >
-          <Home className="h-4 w-4" />
-          Go to Dashboard
+          <Home className="h-4 w-4" strokeWidth={1.5} />
+          go_to_dashboard()
         </Link>
 
         {/* Back link */}
-        <Link
-          href="javascript:history.back()"
-          className="text-gh-fg-muted hover:text-gh-fg-default mt-6 inline-flex items-center gap-2 text-sm"
+        <button
+          onClick={() => history.back()}
+          className="text-pf-fg-muted hover:text-pf-fg-default mt-6 inline-flex items-center gap-2 font-mono text-xs transition-colors"
         >
-          <ArrowLeft className="h-4 w-4" />
-          Go back
-        </Link>
+          <ArrowLeft className="h-3 w-3" strokeWidth={1.5} />
+          go_back()
+        </button>
       </div>
     </div>
   );

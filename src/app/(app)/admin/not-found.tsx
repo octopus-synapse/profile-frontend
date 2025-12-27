@@ -1,93 +1,90 @@
 import Link from "next/link";
-import { ShieldAlert, LayoutDashboard, ArrowLeft, Users } from "lucide-react";
+import { ShieldAlert, LayoutDashboard, ArrowLeft, Users, Code2 } from "lucide-react";
 
 /**
  * Admin 404 Not Found Page
- * GitHub/Cursor-inspired design for admin section
+ * Developer-inspired design with code aesthetic
  */
 export default function AdminNotFound() {
   return (
-    <div className="bg-gh-canvas-default flex min-h-screen flex-col items-center justify-center px-4">
-      {/* Background gradient effect */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="from-gh-danger-subtle/20 absolute -top-1/2 right-0 h-[600px] w-[600px] rounded-full bg-gradient-to-b to-transparent blur-3xl" />
-        <div className="from-gh-accent-subtle/10 absolute bottom-0 left-0 h-[400px] w-[400px] rounded-full bg-gradient-to-t to-transparent blur-3xl" />
-      </div>
-
+    <div className="bg-pf-canvas-default flex min-h-screen flex-col items-center justify-center px-4">
       <div className="relative z-10 flex flex-col items-center text-center">
-        {/* Admin shield icon */}
+        {/* Icon */}
         <div className="relative mb-8">
-          <div className="border-gh-danger-muted/30 bg-gh-canvas-subtle flex h-28 w-28 items-center justify-center rounded-xl border shadow-lg">
-            <ShieldAlert className="text-gh-danger-fg h-14 w-14" />
+          <div className="border-pf-border-default bg-pf-canvas-subtle flex h-24 w-24 items-center justify-center border">
+            <ShieldAlert className="text-pf-fg-muted h-12 w-12" strokeWidth={1.5} />
           </div>
-          {/* Status indicator */}
-          <div className="border-gh-canvas-default bg-gh-danger-emphasis absolute -right-2 -bottom-2 flex h-8 w-8 items-center justify-center rounded-full border-2">
-            <span className="text-xs font-bold text-white">!</span>
-          </div>
+          <div className="bg-pf-danger-fg absolute -top-1 -right-1 h-4 w-4 animate-pulse rounded-full" />
         </div>
 
-        {/* Error code with admin badge */}
+        {/* Badge + Error Code */}
         <div className="mb-4 flex items-center gap-3">
-          <span className="bg-gh-danger-subtle text-gh-danger-fg rounded-full px-3 py-1 text-xs font-medium">
-            ADMIN
+          <span className="dev-badge text-[10px]">
+            <span className="text-code-number">●</span> admin
           </span>
-          <span className="text-gh-fg-default font-mono text-6xl font-bold">404</span>
+          <span className="text-pf-fg-default font-mono text-8xl font-bold tracking-tighter">
+            404
+          </span>
         </div>
 
         {/* Message */}
-        <h1 className="text-gh-fg-default mb-3 text-xl font-semibold">Admin Page Not Found</h1>
-        <p className="text-gh-fg-muted mb-8 max-w-md">
-          This admin resource doesn&apos;t exist or you may not have permission to access it. Return
-          to the admin dashboard or check your access level.
+        <h1 className="text-pf-fg-default mb-3 text-xl font-semibold">
+          admin_page_not_found
+        </h1>
+        <p className="text-pf-fg-muted mb-8 max-w-md font-mono text-sm">
+          This admin resource doesn&apos;t exist or you may not have permission to access it.
         </p>
 
         {/* Action Buttons */}
         <div className="flex flex-col gap-3 sm:flex-row">
           <Link
             href="/admin"
-            className="bg-gh-accent-emphasis hover:bg-gh-accent-emphasis/90 focus:ring-gh-accent-emphasis focus:ring-offset-gh-canvas-default inline-flex items-center justify-center gap-2 rounded-md px-6 py-3 text-sm font-medium text-white transition-all focus:ring-2 focus:ring-offset-2 focus:outline-none"
+            className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis inline-flex items-center justify-center gap-2 px-6 py-3 font-mono text-sm transition-opacity hover:opacity-90"
           >
-            <LayoutDashboard className="h-4 w-4" />
-            Admin Dashboard
+            <LayoutDashboard className="h-4 w-4" strokeWidth={1.5} />
+            admin.dashboard()
           </Link>
           <Link
             href="/admin/users"
-            className="border-gh-border-default bg-gh-canvas-subtle text-gh-fg-default hover:bg-gh-canvas-inset hover:border-gh-border-muted focus:ring-gh-accent-emphasis focus:ring-offset-gh-canvas-default inline-flex items-center justify-center gap-2 rounded-md border px-6 py-3 text-sm font-medium transition-all focus:ring-2 focus:ring-offset-2 focus:outline-none"
+            className="border-pf-border-default text-pf-fg-default hover:bg-pf-canvas-subtle inline-flex items-center justify-center gap-2 border bg-transparent px-6 py-3 font-mono text-sm transition-colors"
           >
-            <Users className="h-4 w-4" />
-            Manage Users
+            <Users className="h-4 w-4" strokeWidth={1.5} />
+            admin.users()
           </Link>
         </div>
 
-        {/* Quick navigation */}
-        <div className="border-gh-border-default bg-gh-canvas-subtle mt-10 rounded-lg border p-4">
-          <h3 className="text-gh-fg-default mb-3 text-sm font-medium">Quick Navigation</h3>
-          <div className="grid grid-cols-2 gap-2 text-sm">
+        {/* Quick Navigation */}
+        <div className="border-pf-border-default bg-pf-canvas-overlay mt-10 border p-4">
+          <div className="mb-3 flex items-center gap-2">
+            <Code2 className="text-pf-fg-muted h-4 w-4" strokeWidth={1.5} />
+            <span className="text-pf-fg-muted font-mono text-xs">// quick_navigation</span>
+          </div>
+          <div className="grid grid-cols-2 gap-2 font-mono text-xs">
             <Link
               href="/admin"
-              className="text-gh-fg-muted hover:bg-gh-canvas-inset hover:text-gh-fg-default flex items-center gap-2 rounded-md px-3 py-2"
+              className="text-pf-fg-muted hover:bg-pf-canvas-subtle hover:text-pf-fg-default flex items-center gap-2 px-3 py-2 transition-colors"
             >
-              <LayoutDashboard className="h-4 w-4" />
-              Dashboard
+              <LayoutDashboard className="h-3 w-3" strokeWidth={1.5} />
+              dashboard
             </Link>
             <Link
               href="/admin/users"
-              className="text-gh-fg-muted hover:bg-gh-canvas-inset hover:text-gh-fg-default flex items-center gap-2 rounded-md px-3 py-2"
+              className="text-pf-fg-muted hover:bg-pf-canvas-subtle hover:text-pf-fg-default flex items-center gap-2 px-3 py-2 transition-colors"
             >
-              <Users className="h-4 w-4" />
-              Users
+              <Users className="h-3 w-3" strokeWidth={1.5} />
+              users
             </Link>
           </div>
         </div>
 
         {/* Back link */}
-        <Link
-          href="javascript:history.back()"
-          className="text-gh-fg-muted hover:text-gh-fg-default mt-6 inline-flex items-center gap-2 text-sm"
+        <button
+          onClick={() => history.back()}
+          className="text-pf-fg-muted hover:text-pf-fg-default mt-6 inline-flex items-center gap-2 font-mono text-xs transition-colors"
         >
-          <ArrowLeft className="h-4 w-4" />
-          Go back to previous page
-        </Link>
+          <ArrowLeft className="h-3 w-3" strokeWidth={1.5} />
+          go_back()
+        </button>
       </div>
     </div>
   );

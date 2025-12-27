@@ -1,96 +1,229 @@
 "use client";
 
 import Link from "next/link";
-import { Github, FileText, User, ArrowRight } from "lucide-react";
-import { Button } from "@/shared/components/ui";
-import { useT } from "@/features/i18n";
+import {
+  Github,
+  FileText,
+  User,
+  ArrowRight,
+  Sparkles,
+  Zap,
+  Shield,
+  Terminal,
+  Code2,
+} from "lucide-react";
 import { ROUTES } from "@/config/routes";
 
 /**
- * Home Page
- * Landing page with call to action
+ * Home Page (App)
+ * Developer-inspired design with code aesthetic
+ * Consistent with landing page and not-found styles
  */
 export default function HomePage() {
-  const t = useT();
-
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="bg-pf-canvas-default flex min-h-screen flex-col">
       {/* Hero Section */}
-      <main className="flex flex-1 flex-col items-center justify-center px-4 py-16">
-        <div className="max-w-3xl space-y-8 text-center">
-          {/* Logo/Brand */}
-          <div className="mb-8 flex items-center justify-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-600">
-              <FileText className="h-6 w-6 text-white" />
+      <main className="relative z-10 flex flex-1 flex-col">
+        <section className="flex flex-1 flex-col items-center justify-center px-4 py-20">
+          <div className="max-w-4xl space-y-8 text-center">
+            {/* Terminal Badge */}
+            <div className="inline-flex items-center gap-2">
+              <span className="dev-badge">
+                <span className="text-code-string">●</span> ready
+              </span>
             </div>
-            <h1 className="text-4xl font-bold tracking-tight">ProFile</h1>
-          </div>
 
-          {/* Headline */}
-          <h2 className="text-4xl font-bold tracking-tight text-zinc-100 sm:text-5xl">
-            Your professional developer profile,{" "}
-            <span className="text-green-500">beautifully crafted</span>
-          </h2>
+            {/* Headline */}
+            <h1 className="text-pf-fg-default text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+              Your developer profile,
+              <br />
+              <span className="text-pf-fg-muted font-normal">beautifully crafted</span>
+            </h1>
 
-          {/* Subtitle */}
-          <p className="mx-auto max-w-2xl text-xl text-zinc-400">
-            Create a stunning portfolio and resume that showcases your skills, projects, and
-            experience. Stand out to recruiters and clients.
-          </p>
+            {/* Code Block Subtitle */}
+            <div className="mx-auto max-w-xl">
+              <div className="code-block text-left">
+                <div className="code-block-header">
+                  <div className="code-block-dots">
+                    <span className="code-block-dot red" />
+                    <span className="code-block-dot yellow" />
+                    <span className="code-block-dot green" />
+                  </div>
+                  <span className="code-block-title">welcome.ts</span>
+                </div>
+                <div className="code-block-content">
+                  <div>
+                    <span className="code-keyword">const</span>{" "}
+                    <span className="code-variable">features</span> = {"{"}
+                  </div>
+                  <div className="ml-4">
+                    <span className="code-function">portfolio</span>:{" "}
+                    <span className="code-string">&quot;showcase your work&quot;</span>,
+                  </div>
+                  <div className="ml-4">
+                    <span className="code-function">resume</span>:{" "}
+                    <span className="code-string">&quot;export to PDF/DOCX&quot;</span>,
+                  </div>
+                  <div className="ml-4">
+                    <span className="code-function">analytics</span>:{" "}
+                    <span className="code-string">&quot;track engagement&quot;</span>,
+                  </div>
+                  <div>{"}"}</div>
+                </div>
+              </div>
+            </div>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col justify-center gap-4 pt-4 sm:flex-row">
-            <Button asChild size="lg">
-              <Link href={ROUTES.AUTH.SIGN_UP}>
-                Get Started
-                <ArrowRight className="ml-2 h-4 w-4" />
+            {/* CTA Buttons */}
+            <div className="flex flex-col justify-center gap-4 pt-4 sm:flex-row">
+              <Link
+                href={ROUTES.AUTH.SIGN_UP}
+                className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis group inline-flex items-center justify-center gap-2 px-6 py-3 font-mono text-sm transition-opacity hover:opacity-90"
+              >
+                <Terminal className="h-4 w-4" strokeWidth={1.5} />
+                get_started()
+                <ArrowRight
+                  className="h-4 w-4 transition-transform group-hover:translate-x-1"
+                  strokeWidth={1.5}
+                />
               </Link>
-            </Button>
-            <Button variant="outline" size="lg" asChild>
-              <Link href={ROUTES.AUTH.SIGN_IN}>{t("nav.signIn")}</Link>
-            </Button>
-          </div>
+              <Link
+                href={ROUTES.AUTH.SIGN_IN}
+                className="border-pf-border-default text-pf-fg-default hover:bg-pf-canvas-subtle inline-flex items-center justify-center gap-2 border bg-transparent px-6 py-3 font-mono text-sm transition-colors"
+              >
+                <Github className="h-4 w-4" strokeWidth={1.5} />
+                sign_in_with_github
+              </Link>
+            </div>
 
-          {/* Features Grid */}
-          <div className="grid grid-cols-1 gap-6 pt-16 sm:grid-cols-3">
-            <FeatureCard
-              icon={<User className="h-6 w-6" />}
-              title="Professional Profile"
-              description="Showcase your skills, experience, and projects in a beautiful layout"
-            />
-            <FeatureCard
-              icon={<FileText className="h-6 w-6" />}
-              title="Resume Export"
-              description="Export your profile as PDF or DOCX with multiple templates"
-            />
-            <FeatureCard
-              icon={<Github className="h-6 w-6" />}
-              title="GitHub Integration"
-              description="Sync your repositories and contributions automatically"
-            />
+            {/* Social proof */}
+            <p className="text-pf-fg-subtle pt-4 font-mono text-xs">
+              <span className="text-pf-success-fg">✓</span> Trusted by{" "}
+              <span className="text-pf-fg-muted font-semibold">1,000+</span> developers
+            </p>
           </div>
-        </div>
+        </section>
+
+        {/* Features Section */}
+        <section className="border-pf-border-muted bg-pf-canvas-subtle/50 border-t py-24">
+          <div className="mx-auto max-w-7xl px-6 lg:px-10">
+            <div className="mb-16 text-center">
+              <div className="mb-4 inline-flex items-center gap-2">
+                <Code2 className="text-pf-fg-muted h-5 w-5" strokeWidth={1.5} />
+                <span className="text-pf-fg-muted font-mono text-xs">// Features</span>
+              </div>
+              <h2 className="text-pf-fg-default text-2xl font-bold tracking-tight sm:text-3xl">
+                Everything you need to stand out
+              </h2>
+              <p className="text-pf-fg-muted mt-4 font-mono text-sm">
+                Powerful features for building your professional presence
+              </p>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <FeatureCard
+                icon={<User className="h-5 w-5" />}
+                title="professional_profile"
+                description="Showcase your skills, experience, and projects in a beautiful, customizable layout."
+              />
+              <FeatureCard
+                icon={<FileText className="h-5 w-5" />}
+                title="resume_export"
+                description="Export your profile as PDF or DOCX with multiple templates. ATS-friendly."
+              />
+              <FeatureCard
+                icon={<Github className="h-5 w-5" />}
+                title="github_sync"
+                description="Sync your repositories, contributions, and activity automatically."
+              />
+              <FeatureCard
+                icon={<Zap className="h-5 w-5" />}
+                title="analytics"
+                description="Track profile views, link clicks, and engagement in real-time."
+              />
+              <FeatureCard
+                icon={<Shield className="h-5 w-5" />}
+                title="privacy_control"
+                description="Control exactly what's visible. Make sections public, private, or share with specific people."
+              />
+              <FeatureCard
+                icon={<Sparkles className="h-5 w-5" />}
+                title="ai_powered"
+                description="Get AI suggestions to improve your profile content and make it more impactful."
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Terminal CTA Section */}
+        <section className="border-pf-border-muted border-t py-24">
+          <div className="mx-auto max-w-4xl px-6 text-center lg:px-10">
+            <div className="terminal mx-auto max-w-lg text-left">
+              <div className="terminal-header">
+                <div className="code-block-dots">
+                  <span className="code-block-dot red" />
+                  <span className="code-block-dot yellow" />
+                  <span className="code-block-dot green" />
+                </div>
+                <span className="code-block-title">~/workspace</span>
+              </div>
+              <div className="terminal-content">
+                <div>
+                  <span className="terminal-prompt">➜</span>{" "}
+                  <span className="terminal-command">npx create-profile@latest</span>
+                </div>
+                <div className="terminal-output mt-2">
+                  <div className="text-pf-success-fg">✔ Profile created successfully!</div>
+                  <div className="text-pf-fg-muted mt-1">
+                    Your profile is live at: profile.dev/yourname
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="mt-10">
+              <Link
+                href={ROUTES.AUTH.SIGN_UP}
+                className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis group inline-flex items-center justify-center gap-2 px-6 py-3 font-mono text-sm transition-opacity hover:opacity-90"
+              >
+                Get Started for Free
+                <ArrowRight
+                  className="h-4 w-4 transition-transform group-hover:translate-x-1"
+                  strokeWidth={1.5}
+                />
+              </Link>
+            </div>
+          </div>
+        </section>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-zinc-800 px-4 py-6">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 text-sm text-zinc-500 sm:flex-row">
-          <p>© {new Date().getFullYear()} ProFile. All rights reserved.</p>
-          <div className="flex gap-6">
-            <Link href="/privacy" className="transition-colors hover:text-zinc-300">
-              Privacy
-            </Link>
-            <Link href="/terms" className="transition-colors hover:text-zinc-300">
-              Terms
-            </Link>
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition-colors hover:text-zinc-300"
-            >
-              GitHub
-            </a>
+      <footer className="border-pf-border-muted bg-pf-canvas-default relative z-10 border-t">
+        <div className="px-6 py-8 lg:px-10">
+          <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
+            <div className="flex items-center gap-2">
+              <div className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis flex h-6 w-6 items-center justify-center">
+                <Terminal className="h-3.5 w-3.5" strokeWidth={1.5} />
+              </div>
+              <span className="text-pf-fg-default font-mono text-xs font-semibold">profile</span>
+            </div>
+            <p className="text-pf-fg-muted font-mono text-xs">
+              © {new Date().getFullYear()} ProFile. All rights reserved.
+            </p>
+            <div className="text-pf-fg-muted flex gap-6 font-mono text-xs">
+              <Link href="/privacy" className="hover:text-pf-fg-default transition-colors">
+                privacy
+              </Link>
+              <Link href="/terms" className="hover:text-pf-fg-default transition-colors">
+                terms
+              </Link>
+              <a
+                href="https://github.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-pf-fg-default transition-colors"
+              >
+                github
+              </a>
+            </div>
           </div>
         </div>
       </footer>
@@ -106,12 +239,12 @@ interface FeatureCardProps {
 
 function FeatureCard({ icon, title, description }: FeatureCardProps) {
   return (
-    <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-6 text-left">
-      <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-800 text-green-500">
+    <div className="group border-pf-border-default bg-pf-canvas-overlay hover:border-pf-border-emphasis p-6 transition-all">
+      <div className="text-pf-fg-muted group-hover:text-pf-fg-default mb-4 transition-colors">
         {icon}
       </div>
-      <h3 className="mb-2 font-semibold text-zinc-100">{title}</h3>
-      <p className="text-sm text-zinc-400">{description}</p>
+      <h3 className="text-pf-fg-default mb-2 font-mono text-sm font-semibold">{title}</h3>
+      <p className="text-pf-fg-muted text-sm leading-relaxed">{description}</p>
     </div>
   );
 }
