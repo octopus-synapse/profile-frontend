@@ -4,9 +4,13 @@
  * Theme Provider
  * Manages light/dark mode with system preference detection
  * and localStorage persistence
+ *
+ * Note: The themeScript in layout.tsx applies the correct theme class
+ * BEFORE React hydrates, preventing any flash of wrong theme.
+ * This provider syncs React state with the already-applied theme.
  */
 
-import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, useCallback, useMemo, type ReactNode } from "react";
 
 type Theme = "light" | "dark" | "system";
 type ResolvedTheme = "light" | "dark";
@@ -27,7 +31,7 @@ function getSystemTheme(): ResolvedTheme {
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
-function getStoredTheme(): Theme {
+function getInitialTheme(): Theme {
   if (typeof window === "undefined") return "system";
   const stored = localStorage.getItem(THEME_KEY);
   if (stored === "light" || stored === "dark" || stored === "system") {
@@ -36,24 +40,32 @@ function getStoredTheme(): Theme {
   return "system";
 }
 
+function getInitialResolvedTheme(): ResolvedTheme {
+  if (typeof window === "undefined") return "light";
+  // Read from DOM - themeScript already applied the correct class
+  if (document.documentElement.classList.contains("dark")) return "dark";
+  return "light";
+}
+
 interface ThemeProviderProps {
   children: ReactNode;
   defaultTheme?: Theme;
 }
 
 export function ThemeProvider({ children, defaultTheme = "system" }: ThemeProviderProps) {
+  // Initialize with values that match what themeScript already applied
   const [theme, setThemeState] = useState<Theme>(defaultTheme);
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>("light");
   const [mounted, setMounted] = useState(false);
 
-  // Initialize theme from localStorage on mount
+  // Sync React state with already-applied theme on mount
   useEffect(() => {
-    const stored = getStoredTheme();
-    setThemeState(stored);
+    setThemeState(getInitialTheme());
+    setResolvedTheme(getInitialResolvedTheme());
     setMounted(true);
   }, []);
 
-  // Update resolved theme and apply to document
+  // Update resolved theme and apply to document when theme changes
   useEffect(() => {
     if (!mounted) return;
 
@@ -75,7 +87,10 @@ export function ThemeProvider({ children, defaultTheme = "system" }: ThemeProvid
 
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handleChange = () => {
-      setResolvedTheme(getSystemTheme());
+      const newResolved = getSystemTheme();
+      setResolvedTheme(newResolved);
+      document.documentElement.classList.remove("light", "dark");
+      document.documentElement.classList.add(newResolved);
     };
 
     mediaQuery.addEventListener("change", handleChange);
@@ -91,13 +106,15 @@ export function ThemeProvider({ children, defaultTheme = "system" }: ThemeProvid
     setTheme(resolvedTheme === "light" ? "dark" : "light");
   }, [resolvedTheme, setTheme]);
 
-  // Prevent flash of wrong theme
-  if (!mounted) {
-    return <div style={{ visibility: "hidden" }}>{children}</div>;
-  }
+  // Memoize context value to prevent unnecessary re-renders
+  const contextValue = useMemo(
+    () => ({ theme, resolvedTheme, setTheme, toggleTheme }),
+    [theme, resolvedTheme, setTheme, toggleTheme]
+  );
 
+  // Always render Provider - themeScript prevents flash, no need for visibility hidden
   return (
-    <ThemeContext.Provider value={{ theme, resolvedTheme, setTheme, toggleTheme }}>
+    <ThemeContext.Provider value={contextValue}>
       {children}
     </ThemeContext.Provider>
   );
