@@ -4,6 +4,7 @@
  */
 
 import axios, { type AxiosError, type AxiosInstance, type AxiosRequestConfig } from "axios";
+import { getSession } from "next-auth/react";
 import { API_URL } from "@/config/env";
 import { API } from "@/config/constants";
 import { type ApiError, createApiError, statusToErrorCode } from "@/shared/types/errors";
@@ -189,10 +190,29 @@ export async function withRetry<T>(
 }
 
 // ============================================================================
-// Default Client Instance
+// Default Client Instance (with NextAuth integration)
 // ============================================================================
 
-const axiosClient = createHttpClient();
+const axiosClient = createHttpClient({
+  getToken: () => {
+    // Token is fetched dynamically in the request interceptor
+    // This is just a placeholder for synchronous check
+    return null;
+  },
+});
+
+// Add async interceptor for NextAuth session token
+axiosClient.interceptors.request.use(
+  async (config) => {
+    // Get session with token from NextAuth
+    const session = await getSession();
+    if (session?.accessToken) {
+      config.headers.Authorization = `Bearer ${session.accessToken}`;
+    }
+    return config;
+  },
+  (error: unknown) => Promise.reject(error)
+);
 
 // Wrapper that extracts data from response
 export const httpClient = {

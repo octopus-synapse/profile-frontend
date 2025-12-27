@@ -18,16 +18,16 @@ function Toaster({ ...props }: ToasterProps) {
       toastOptions={{
         classNames: {
           toast:
-            "group toast group-[.toaster]:bg-gh-canvas-overlay group-[.toaster]:text-gh-fg-default group-[.toaster]:border-gh-border-default group-[.toaster]:shadow-lg group-[.toaster]:rounded-lg",
-          description: "group-[.toast]:text-gh-fg-muted",
-          actionButton: "group-[.toast]:bg-gh-accent-emphasis group-[.toast]:text-white",
-          cancelButton: "group-[.toast]:bg-gh-canvas-subtle group-[.toast]:text-gh-fg-muted",
+            "group toast group-[.toaster]:bg-pf-canvas-overlay group-[.toaster]:text-pf-fg-default group-[.toaster]:border-pf-border-default group-[.toaster]:shadow-lg group-[.toaster]:rounded-lg",
+          description: "group-[.toast]:text-pf-fg-muted",
+          actionButton: "group-[.toast]:bg-pf-accent-emphasis group-[.toast]:text-white",
+          cancelButton: "group-[.toast]:bg-pf-canvas-subtle group-[.toast]:text-pf-fg-muted",
           success:
-            "group-[.toaster]:border-gh-success-emphasis group-[.toaster]:text-gh-success-fg",
-          error: "group-[.toaster]:border-gh-danger-emphasis group-[.toaster]:text-gh-danger-fg",
+            "group-[.toaster]:border-pf-success-emphasis group-[.toaster]:text-pf-success-fg",
+          error: "group-[.toaster]:border-pf-danger-emphasis group-[.toaster]:text-pf-danger-fg",
           warning:
-            "group-[.toaster]:border-gh-attention-emphasis group-[.toaster]:text-gh-attention-fg",
-          info: "group-[.toaster]:border-gh-accent-emphasis group-[.toaster]:text-gh-accent-fg",
+            "group-[.toaster]:border-pf-attention-emphasis group-[.toaster]:text-pf-attention-fg",
+          info: "group-[.toaster]:border-pf-accent-emphasis group-[.toaster]:text-pf-accent-fg",
         },
       }}
       {...props}
@@ -40,25 +40,25 @@ const showToast = {
   success: (message: string, description?: string) => {
     toast.success(message, {
       description,
-      icon: <CheckCircle2 className="text-gh-success-fg h-5 w-5" />,
+      icon: <CheckCircle2 className="text-pf-success-fg h-5 w-5" />,
     });
   },
   error: (message: string, description?: string) => {
     toast.error(message, {
       description,
-      icon: <XCircle className="text-gh-danger-fg h-5 w-5" />,
+      icon: <XCircle className="text-pf-danger-fg h-5 w-5" />,
     });
   },
   warning: (message: string, description?: string) => {
     toast.warning(message, {
       description,
-      icon: <AlertTriangle className="text-gh-attention-fg h-5 w-5" />,
+      icon: <AlertTriangle className="text-pf-attention-fg h-5 w-5" />,
     });
   },
   info: (message: string, description?: string) => {
     toast.info(message, {
       description,
-      icon: <Info className="text-gh-accent-fg h-5 w-5" />,
+      icon: <Info className="text-pf-accent-fg h-5 w-5" />,
     });
   },
   promise: <T,>(

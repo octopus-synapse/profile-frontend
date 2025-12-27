@@ -32,9 +32,9 @@ const DropdownMenuSubTrigger = React.forwardRef<
     ref={ref}
     className={cn(
       "flex cursor-default items-center rounded-md px-2 py-1.5 text-sm outline-none select-none",
-      "text-gh-fg-default",
-      "focus:bg-gh-canvas-subtle",
-      "data-[state=open]:bg-gh-canvas-subtle",
+      "text-pf-fg-default",
+      "focus:bg-pf-canvas-subtle",
+      "data-[state=open]:bg-pf-canvas-subtle",
       inset && "pl-8",
       className
     )}
@@ -54,7 +54,7 @@ const DropdownMenuSubContent = React.forwardRef<
     ref={ref}
     className={cn(
       "z-50 min-w-[8rem] overflow-hidden rounded-lg p-1",
-      "bg-gh-canvas-overlay border-gh-border-default border shadow-lg",
+      "bg-pf-canvas-overlay border-pf-border-default border shadow-lg",
       "data-[state=open]:animate-in data-[state=closed]:animate-out",
       "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
@@ -79,7 +79,7 @@ const DropdownMenuContent = React.forwardRef<
       sideOffset={sideOffset}
       className={cn(
         "z-50 min-w-[8rem] overflow-hidden rounded-lg p-1",
-        "bg-gh-canvas-overlay border-gh-border-default border shadow-lg",
+        "bg-pf-canvas-overlay border-pf-border-default border shadow-lg",
         "data-[state=open]:animate-in data-[state=closed]:animate-out",
         "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
         "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
@@ -105,8 +105,8 @@ const DropdownMenuItem = React.forwardRef<
     ref={ref}
     className={cn(
       "relative flex cursor-pointer items-center rounded-md px-2 py-1.5 text-sm transition-colors outline-none select-none",
-      "text-gh-fg-default",
-      "focus:bg-gh-canvas-subtle focus:text-gh-fg-default",
+      "text-pf-fg-default",
+      "focus:bg-pf-canvas-subtle focus:text-pf-fg-default",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       inset && "pl-8",
       className
@@ -124,8 +124,8 @@ const DropdownMenuCheckboxItem = React.forwardRef<
     ref={ref}
     className={cn(
       "relative flex cursor-pointer items-center rounded-md py-1.5 pr-2 pl-8 text-sm transition-colors outline-none select-none",
-      "text-gh-fg-default",
-      "focus:bg-gh-canvas-subtle focus:text-gh-fg-default",
+      "text-pf-fg-default",
+      "focus:bg-pf-canvas-subtle focus:text-pf-fg-default",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className
     )}
@@ -134,7 +134,7 @@ const DropdownMenuCheckboxItem = React.forwardRef<
   >
     <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
       <DropdownMenuPrimitive.ItemIndicator>
-        <Check className="text-gh-accent-fg h-4 w-4" />
+        <Check className="text-pf-accent-fg h-4 w-4" />
       </DropdownMenuPrimitive.ItemIndicator>
     </span>
     {children}
@@ -150,8 +150,8 @@ const DropdownMenuRadioItem = React.forwardRef<
     ref={ref}
     className={cn(
       "relative flex cursor-pointer items-center rounded-md py-1.5 pr-2 pl-8 text-sm transition-colors outline-none select-none",
-      "text-gh-fg-default",
-      "focus:bg-gh-canvas-subtle focus:text-gh-fg-default",
+      "text-pf-fg-default",
+      "focus:bg-pf-canvas-subtle focus:text-pf-fg-default",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className
     )}
@@ -159,7 +159,7 @@ const DropdownMenuRadioItem = React.forwardRef<
   >
     <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
       <DropdownMenuPrimitive.ItemIndicator>
-        <Circle className="text-gh-accent-fg h-2 w-2 fill-current" />
+        <Circle className="text-pf-accent-fg h-2 w-2 fill-current" />
       </DropdownMenuPrimitive.ItemIndicator>
     </span>
     {children}
@@ -175,7 +175,7 @@ const DropdownMenuLabel = React.forwardRef<
 >(({ className, inset, ...props }, ref) => (
   <DropdownMenuPrimitive.Label
     ref={ref}
-    className={cn("text-gh-fg-muted px-2 py-1.5 text-sm font-semibold", inset && "pl-8", className)}
+    className={cn("text-pf-fg-muted px-2 py-1.5 text-sm font-semibold", inset && "pl-8", className)}
     {...props}
   />
 ));
@@ -187,7 +187,7 @@ const DropdownMenuSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DropdownMenuPrimitive.Separator
     ref={ref}
-    className={cn("bg-gh-border-muted -mx-1 my-1 h-px", className)}
+    className={cn("bg-pf-border-muted -mx-1 my-1 h-px", className)}
     {...props}
   />
 ));
@@ -196,7 +196,7 @@ DropdownMenuSeparator.displayName = DropdownMenuPrimitive.Separator.displayName;
 const DropdownMenuShortcut = ({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) => {
   return (
     <span
-      className={cn("text-gh-fg-subtle ml-auto text-xs tracking-widest", className)}
+      className={cn("text-pf-fg-subtle ml-auto text-xs tracking-widest", className)}
       {...props}
     />
   );

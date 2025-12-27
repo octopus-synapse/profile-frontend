@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import { RootProvider } from "@/shared/providers";
+import { themeScript } from "@/shared/providers/theme-provider";
 import "./globals.css";
 
 const inter = Inter({
@@ -9,10 +10,16 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
+const jetbrains = JetBrains_Mono({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-mono",
+});
+
 export const metadata: Metadata = {
   title: {
-    default: "Profile - Professional Developer Profiles",
-    template: "%s | Profile",
+    default: "ProFile - Professional Developer Profiles",
+    template: "%s | ProFile",
   },
   description: "Create and share your professional developer profile and resume.",
   keywords: ["developer", "profile", "resume", "portfolio", "career"],
@@ -21,7 +28,10 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#0d1117",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#faf9f7" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+  ],
 };
 
 export default function RootLayout({
@@ -30,9 +40,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body
-        className={`${inter.variable} min-h-screen bg-zinc-950 font-sans text-zinc-100 antialiased`}
+        className={`${inter.variable} ${jetbrains.variable} bg-pf-canvas-default text-pf-fg-default min-h-screen font-sans antialiased`}
       >
         <RootProvider>{children}</RootProvider>
       </body>

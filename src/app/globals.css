@@ -1,46 +1,352 @@
 @import "tailwindcss";
 
 /**
- * ProFile Design System
- * GitHub-inspired dark theme
+ * ProFile Design System v3.0
+ * Light theme (sandy white + black) as default with dark mode
+ * Developer-inspired aesthetic
+ * 
+ * Color naming convention:
+ * - canvas: backgrounds
+ * - fg: foreground/text
+ * - border: borders
+ * - accent: interactive elements (blue)
+ * - success: positive states (green)
+ * - attention: warning states (yellow)
+ * - danger: error states (red)
+ * - done: completed states (purple)
  */
 
+/* ========================================
+ * LIGHT THEME (Default) - Sandy White
+ * ======================================== */
 :root {
-  /* Base colors - GitHub dark */
-  --background: #0d1117;
-  --foreground: #f0f6fc;
-  --muted: #8b949e;
-  --border: #30363d;
-  --card: #161b22;
-  --card-foreground: #f0f6fc;
+  color-scheme: light;
 
-  /* Accent colors */
-  --primary: #238636;
-  --primary-foreground: #ffffff;
-  --secondary: #21262d;
-  --secondary-foreground: #f0f6fc;
-  --accent: #58a6ff;
-  --destructive: #f85149;
+  /* Canvas (Background) Colors - Sandy/Warm White */
+  --pf-canvas-default: #faf9f7;
+  --pf-canvas-subtle: #f5f3f0;
+  --pf-canvas-inset: #efeee9;
+  --pf-canvas-overlay: #ffffff;
+  --pf-canvas-emphasis: #1a1a1a;
 
-  /* Ring */
-  --ring: #58a6ff;
+  /* Foreground (Text) Colors */
+  --pf-fg-default: #1a1a1a;
+  --pf-fg-muted: #57534e;
+  --pf-fg-subtle: #78716c;
+  --pf-fg-on-emphasis: #ffffff;
+
+  /* Border Colors */
+  --pf-border-default: #d6d3d1;
+  --pf-border-muted: #e7e5e4;
+  --pf-border-subtle: rgba(0, 0, 0, 0.06);
+  --pf-border-emphasis: #1a1a1a;
+
+  /* Accent (Blue) - Primary Interactive */
+  --pf-accent-fg: #2563eb;
+  --pf-accent-emphasis: #1d4ed8;
+  --pf-accent-muted: rgba(37, 99, 235, 0.2);
+  --pf-accent-subtle: rgba(37, 99, 235, 0.08);
+
+  /* Success (Green) */
+  --pf-success-fg: #16a34a;
+  --pf-success-emphasis: #15803d;
+  --pf-success-muted: rgba(22, 163, 74, 0.2);
+  --pf-success-subtle: rgba(22, 163, 74, 0.08);
+
+  /* Attention (Amber) */
+  --pf-attention-fg: #d97706;
+  --pf-attention-emphasis: #b45309;
+  --pf-attention-muted: rgba(217, 119, 6, 0.2);
+  --pf-attention-subtle: rgba(217, 119, 6, 0.08);
+
+  /* Danger (Red) */
+  --pf-danger-fg: #dc2626;
+  --pf-danger-emphasis: #b91c1c;
+  --pf-danger-muted: rgba(220, 38, 38, 0.2);
+  --pf-danger-subtle: rgba(220, 38, 38, 0.08);
+
+  /* Done (Purple) */
+  --pf-done-fg: #9333ea;
+  --pf-done-emphasis: #7e22ce;
+  --pf-done-muted: rgba(147, 51, 234, 0.2);
+  --pf-done-subtle: rgba(147, 51, 234, 0.08);
+
+  /* Neutral */
+  --pf-neutral-emphasis: #78716c;
+  --pf-neutral-muted: rgba(120, 113, 108, 0.2);
+  --pf-neutral-subtle: rgba(120, 113, 108, 0.08);
+
+  /* Component Tokens */
+  --btn-primary-bg: #1a1a1a;
+  --btn-primary-bg-hover: #2d2d2d;
+  --btn-primary-border: #1a1a1a;
+  --btn-primary-text: #ffffff;
+
+  --btn-secondary-bg: #f5f3f0;
+  --btn-secondary-bg-hover: #efeee9;
+  --btn-secondary-border: #d6d3d1;
+  --btn-secondary-text: #1a1a1a;
+
+  --btn-outline-bg: transparent;
+  --btn-outline-bg-hover: #f5f3f0;
+  --btn-outline-border: #d6d3d1;
+  --btn-outline-text: #1a1a1a;
+
+  --btn-danger-bg: #fef2f2;
+  --btn-danger-bg-hover: #dc2626;
+  --btn-danger-border: #dc2626;
+  --btn-danger-text: #dc2626;
+  --btn-danger-text-hover: #ffffff;
+
+  /* Inputs */
+  --input-bg: #ffffff;
+  --input-bg-disabled: #f5f3f0;
+  --input-border: #d6d3d1;
+  --input-border-focus: #1a1a1a;
+  --input-border-error: #dc2626;
+  --input-text: #1a1a1a;
+  --input-placeholder: #a8a29e;
+
+  /* Cards */
+  --card-bg: #ffffff;
+  --card-bg-muted: #f5f3f0;
+  --card-border: #e7e5e4;
+
+  /* Code Block */
+  --code-bg: #1a1a1a;
+  --code-fg: #e5e5e5;
+  --code-comment: #6b7280;
+  --code-keyword: #c084fc;
+  --code-string: #86efac;
+  --code-function: #60a5fa;
+  --code-variable: #fbbf24;
+  --code-number: #f87171;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.08);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+
+  /* Overlay */
+  --overlay-backdrop: rgba(0, 0, 0, 0.4);
+
+  /* Animation */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-full: 9999px;
+
+  /* Focus Ring */
+  --ring-color: #1a1a1a;
+  --ring-offset: #faf9f7;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter);
-}
-
-/* Base styles */
-html {
-  background-color: var(--background);
+/* ========================================
+ * DARK THEME
+ * ======================================== */
+.dark {
   color-scheme: dark;
+
+  /* Canvas (Background) Colors */
+  --pf-canvas-default: #0a0a0a;
+  --pf-canvas-subtle: #141414;
+  --pf-canvas-inset: #050505;
+  --pf-canvas-overlay: #1c1c1c;
+  --pf-canvas-emphasis: #fafafa;
+
+  /* Foreground (Text) Colors */
+  --pf-fg-default: #fafafa;
+  --pf-fg-muted: #a1a1aa;
+  --pf-fg-subtle: #71717a;
+  --pf-fg-on-emphasis: #0a0a0a;
+
+  /* Border Colors */
+  --pf-border-default: #27272a;
+  --pf-border-muted: #1c1c1e;
+  --pf-border-subtle: rgba(255, 255, 255, 0.06);
+  --pf-border-emphasis: #fafafa;
+
+  /* Accent (Blue) */
+  --pf-accent-fg: #60a5fa;
+  --pf-accent-emphasis: #3b82f6;
+  --pf-accent-muted: rgba(96, 165, 250, 0.3);
+  --pf-accent-subtle: rgba(96, 165, 250, 0.1);
+
+  /* Success (Green) */
+  --pf-success-fg: #4ade80;
+  --pf-success-emphasis: #22c55e;
+  --pf-success-muted: rgba(74, 222, 128, 0.3);
+  --pf-success-subtle: rgba(74, 222, 128, 0.1);
+
+  /* Attention (Amber) */
+  --pf-attention-fg: #fbbf24;
+  --pf-attention-emphasis: #f59e0b;
+  --pf-attention-muted: rgba(251, 191, 36, 0.3);
+  --pf-attention-subtle: rgba(251, 191, 36, 0.1);
+
+  /* Danger (Red) */
+  --pf-danger-fg: #f87171;
+  --pf-danger-emphasis: #ef4444;
+  --pf-danger-muted: rgba(248, 113, 113, 0.3);
+  --pf-danger-subtle: rgba(248, 113, 113, 0.1);
+
+  /* Done (Purple) */
+  --pf-done-fg: #c084fc;
+  --pf-done-emphasis: #a855f7;
+  --pf-done-muted: rgba(192, 132, 252, 0.3);
+  --pf-done-subtle: rgba(192, 132, 252, 0.1);
+
+  /* Neutral */
+  --pf-neutral-emphasis: #71717a;
+  --pf-neutral-muted: rgba(113, 113, 122, 0.3);
+  --pf-neutral-subtle: rgba(113, 113, 122, 0.1);
+
+  /* Component Tokens */
+  --btn-primary-bg: #fafafa;
+  --btn-primary-bg-hover: #e5e5e5;
+  --btn-primary-border: #fafafa;
+  --btn-primary-text: #0a0a0a;
+
+  --btn-secondary-bg: #1c1c1c;
+  --btn-secondary-bg-hover: #262626;
+  --btn-secondary-border: #27272a;
+  --btn-secondary-text: #fafafa;
+
+  --btn-outline-bg: transparent;
+  --btn-outline-bg-hover: #1c1c1c;
+  --btn-outline-border: #27272a;
+  --btn-outline-text: #fafafa;
+
+  --btn-danger-bg: rgba(248, 113, 113, 0.1);
+  --btn-danger-bg-hover: #ef4444;
+  --btn-danger-border: #f87171;
+  --btn-danger-text: #f87171;
+  --btn-danger-text-hover: #0a0a0a;
+
+  /* Inputs */
+  --input-bg: #141414;
+  --input-bg-disabled: #1c1c1c;
+  --input-border: #27272a;
+  --input-border-focus: #fafafa;
+  --input-border-error: #f87171;
+  --input-text: #fafafa;
+  --input-placeholder: #52525b;
+
+  /* Cards */
+  --card-bg: #141414;
+  --card-bg-muted: #1c1c1c;
+  --card-border: #27272a;
+
+  /* Code Block - Same in both themes for consistency */
+  --code-bg: #0a0a0a;
+  --code-fg: #e5e5e5;
+
+  /* Shadows - darker for dark mode */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.6);
+
+  /* Overlay */
+  --overlay-backdrop: rgba(0, 0, 0, 0.7);
+
+  /* Focus Ring */
+  --ring-color: #fafafa;
+  --ring-offset: #0a0a0a;
+}
+
+/* ========================================
+ * Tailwind Theme Extensions
+ * ======================================== */
+@theme inline {
+  --color-background: var(--pf-canvas-default);
+  --color-foreground: var(--pf-fg-default);
+  --font-sans: var(--font-inter);
+  --font-mono:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* Canvas utilities */
+  --color-pf-canvas-default: var(--pf-canvas-default);
+  --color-pf-canvas-subtle: var(--pf-canvas-subtle);
+  --color-pf-canvas-inset: var(--pf-canvas-inset);
+  --color-pf-canvas-overlay: var(--pf-canvas-overlay);
+  --color-pf-canvas-emphasis: var(--pf-canvas-emphasis);
+
+  /* Foreground utilities */
+  --color-pf-fg-default: var(--pf-fg-default);
+  --color-pf-fg-muted: var(--pf-fg-muted);
+  --color-pf-fg-subtle: var(--pf-fg-subtle);
+  --color-pf-fg-on-emphasis: var(--pf-fg-on-emphasis);
+
+  /* Border utilities */
+  --color-pf-border-default: var(--pf-border-default);
+  --color-pf-border-muted: var(--pf-border-muted);
+  --color-pf-border-subtle: var(--pf-border-subtle);
+  --color-pf-border-emphasis: var(--pf-border-emphasis);
+
+  /* Accent */
+  --color-pf-accent-fg: var(--pf-accent-fg);
+  --color-pf-accent-emphasis: var(--pf-accent-emphasis);
+  --color-pf-accent-muted: var(--pf-accent-muted);
+  --color-pf-accent-subtle: var(--pf-accent-subtle);
+
+  /* Success */
+  --color-pf-success-fg: var(--pf-success-fg);
+  --color-pf-success-emphasis: var(--pf-success-emphasis);
+  --color-pf-success-muted: var(--pf-success-muted);
+  --color-pf-success-subtle: var(--pf-success-subtle);
+
+  /* Attention */
+  --color-pf-attention-fg: var(--pf-attention-fg);
+  --color-pf-attention-emphasis: var(--pf-attention-emphasis);
+  --color-pf-attention-muted: var(--pf-attention-muted);
+  --color-pf-attention-subtle: var(--pf-attention-subtle);
+
+  /* Danger */
+  --color-pf-danger-fg: var(--pf-danger-fg);
+  --color-pf-danger-emphasis: var(--pf-danger-emphasis);
+  --color-pf-danger-muted: var(--pf-danger-muted);
+  --color-pf-danger-subtle: var(--pf-danger-subtle);
+
+  /* Done */
+  --color-pf-done-fg: var(--pf-done-fg);
+  --color-pf-done-emphasis: var(--pf-done-emphasis);
+  --color-pf-done-muted: var(--pf-done-muted);
+  --color-pf-done-subtle: var(--pf-done-subtle);
+
+  /* Neutral */
+  --color-pf-neutral-emphasis: var(--pf-neutral-emphasis);
+  --color-pf-neutral-muted: var(--pf-neutral-muted);
+  --color-pf-neutral-subtle: var(--pf-neutral-subtle);
+
+  /* Code */
+  --color-code-bg: var(--code-bg);
+  --color-code-fg: var(--code-fg);
+  --color-code-comment: var(--code-comment);
+  --color-code-keyword: var(--code-keyword);
+  --color-code-string: var(--code-string);
+  --color-code-function: var(--code-function);
+  --color-code-variable: var(--code-variable);
+  --color-code-number: var(--code-number);
+}
+
+/* ========================================
+ * Base Styles
+ * ======================================== */
+html {
+  background-color: var(--pf-canvas-default);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--pf-canvas-default);
+  color: var(--pf-fg-default);
   font-family:
     var(--font-sans),
     -apple-system,
@@ -50,28 +356,462 @@ body {
     Helvetica,
     Arial,
     sans-serif;
+  font-feature-settings: "ss01", "ss02";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Focus ring utility */
+/* ========================================
+ * Focus Styles
+ * ======================================== */
 .focus-ring {
-  @apply focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 focus-visible:outline-none;
+  @apply outline-none;
 }
 
-/* Scrollbar styling */
+.focus-ring:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--ring-offset),
+    0 0 0 4px var(--ring-color);
+}
+
+/* ========================================
+ * Selection
+ * ======================================== */
+::selection {
+  background: var(--pf-accent-muted);
+  color: var(--pf-fg-default);
+}
+
+/* ========================================
+ * Scrollbar
+ * ======================================== */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--background);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
+  background: var(--pf-border-default);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--muted);
+  background: var(--pf-fg-muted);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--pf-border-default) transparent;
+}
+
+/* ========================================
+ * Links
+ * ======================================== */
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+/* ========================================
+ * Code - DEV Style
+ * ======================================== */
+code,
+kbd,
+pre,
+samp {
+  font-family: var(--font-mono);
+}
+
+code {
+  background: var(--pf-neutral-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.2em 0.4em;
+  font-size: 85%;
+  color: var(--pf-fg-default);
+}
+
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--pf-border-default);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  overflow-x: auto;
+  color: var(--code-fg);
+}
+
+pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+/* ========================================
+ * DEV-style Code Block Component
+ * ======================================== */
+.code-block {
+  background: var(--code-bg);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  font-family: var(--font-mono);
+}
+
+.code-block-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.code-block-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.code-block-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.code-block-dot.red {
+  background: #ff5f56;
+}
+.code-block-dot.yellow {
+  background: #ffbd2e;
+}
+.code-block-dot.green {
+  background: #27c93f;
+}
+
+.code-block-title {
+  color: var(--pf-fg-muted);
+  font-size: 12px;
+  margin-left: 8px;
+}
+
+.code-block-content {
+  padding: 16px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* Syntax highlighting */
+.code-keyword {
+  color: var(--code-keyword);
+}
+.code-string {
+  color: var(--code-string);
+}
+.code-function {
+  color: var(--code-function);
+}
+.code-variable {
+  color: var(--code-variable);
+}
+.code-number {
+  color: var(--code-number);
+}
+.code-comment {
+  color: var(--code-comment);
+  font-style: italic;
+}
+
+/* ========================================
+ * Terminal Style
+ * ======================================== */
+.terminal {
+  background: var(--code-bg);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  font-family: var(--font-mono);
+}
+
+.terminal-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.terminal-content {
+  padding: 16px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--code-fg);
+}
+
+.terminal-prompt {
+  color: var(--code-string);
+}
+
+.terminal-command {
+  color: var(--code-fg);
+}
+
+.terminal-output {
+  color: var(--pf-fg-muted);
+}
+
+/* ========================================
+ * Typography Utilities
+ * ======================================== */
+.text-gradient {
+  background: linear-gradient(135deg, var(--pf-fg-default), var(--pf-fg-muted));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-accent {
+  background: linear-gradient(135deg, var(--pf-accent-fg), var(--pf-done-fg));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ========================================
+ * Animation Utilities
+ * ======================================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn var(--transition-normal) ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp var(--transition-normal) ease-out;
+}
+
+.animate-slide-down {
+  animation: slideDown var(--transition-normal) ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn var(--transition-fast) ease-out;
+}
+
+.animate-blink {
+  animation: blink 1s step-end infinite;
+}
+
+/* ========================================
+ * Glass Effect
+ * ======================================== */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.dark .glass {
+  background: rgba(20, 20, 20, 0.8);
+}
+
+/* ========================================
+ * Glow Effects
+ * ======================================== */
+.glow-accent {
+  box-shadow: 0 0 20px var(--pf-accent-muted);
+}
+
+.glow-success {
+  box-shadow: 0 0 20px var(--pf-success-muted);
+}
+
+.glow-danger {
+  box-shadow: 0 0 20px var(--pf-danger-muted);
+}
+
+/* ========================================
+ * Loading States
+ * ======================================== */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--pf-canvas-subtle) 0%,
+    var(--pf-border-muted) 50%,
+    var(--pf-canvas-subtle) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ========================================
+ * Status Badge
+ * ======================================== */
+.status-online {
+  position: relative;
+}
+
+.status-online::before {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: var(--pf-success-fg);
+  border-radius: 50%;
+  top: 0;
+  right: 0;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* ========================================
+ * Utility Classes
+ * ======================================== */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.truncate-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ========================================
+ * DEV Badge
+ * ======================================== */
+.dev-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: var(--code-bg);
+  color: var(--code-string);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ========================================
+ * Cursor Blink
+ * ======================================== */
+.cursor-blink::after {
+  content: "▊";
+  animation: blink 1s step-end infinite;
+  color: var(--pf-accent-fg);
+}
+
+/* ========================================
+ * Monospace Text
+ * ======================================== */
+.font-mono {
+  font-family: var(--font-mono);
 }

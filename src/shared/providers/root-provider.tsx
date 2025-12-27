@@ -7,6 +7,7 @@
 
 import type { ReactNode } from "react";
 import { QueryProvider } from "./query-provider";
+import { ThemeProvider } from "./theme-provider";
 import { I18nProvider } from "@/features/i18n";
 import { AuthProvider } from "@/features/auth";
 import { Toaster } from "@/shared/components/ui/toast";
@@ -18,15 +19,17 @@ interface RootProviderProps {
 
 export function RootProvider({ children }: RootProviderProps) {
   return (
-    <QueryProvider>
-      <AuthProvider>
-        <I18nProvider>
-          <TooltipProvider>
-            {children}
-            <Toaster position="bottom-right" />
-          </TooltipProvider>
-        </I18nProvider>
-      </AuthProvider>
-    </QueryProvider>
+    <ThemeProvider defaultTheme="system">
+      <QueryProvider>
+        <AuthProvider>
+          <I18nProvider>
+            <TooltipProvider>
+              {children}
+              <Toaster position="bottom-right" />
+            </TooltipProvider>
+          </I18nProvider>
+        </AuthProvider>
+      </QueryProvider>
+    </ThemeProvider>
   );
 }

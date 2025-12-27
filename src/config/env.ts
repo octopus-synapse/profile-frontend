@@ -40,11 +40,13 @@ function getServerEnv() {
 
 // Validate client environment
 function getClientEnv() {
- const parsed = clientEnvSchema.safeParse({
-  NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
-  NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
-  NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME,
- });
+ // Filter out undefined values so Zod defaults can apply
+ const envInput: Record<string, string> = {};
+ if (process.env.NEXT_PUBLIC_API_URL) envInput.NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL;
+ if (process.env.NEXT_PUBLIC_APP_URL) envInput.NEXT_PUBLIC_APP_URL = process.env.NEXT_PUBLIC_APP_URL;
+ if (process.env.NEXT_PUBLIC_APP_NAME) envInput.NEXT_PUBLIC_APP_NAME = process.env.NEXT_PUBLIC_APP_NAME;
+
+ const parsed = clientEnvSchema.safeParse(envInput);
 
  if (!parsed.success) {
   console.error(

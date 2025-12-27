@@ -11,12 +11,12 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-gh-accent-subtle text-gh-accent-fg border border-gh-accent-muted",
-        secondary: "bg-gh-canvas-subtle text-gh-fg-muted border border-gh-border-default",
-        success: "bg-gh-success-subtle text-gh-success-fg border border-gh-success-muted",
-        warning: "bg-gh-attention-subtle text-gh-attention-fg border border-gh-attention-muted",
-        danger: "bg-gh-danger-subtle text-gh-danger-fg border border-gh-danger-muted",
-        outline: "bg-transparent text-gh-fg-default border border-gh-border-default",
+        default: "bg-pf-accent-subtle text-pf-accent-fg border border-pf-accent-muted",
+        secondary: "bg-pf-canvas-subtle text-pf-fg-muted border border-pf-border-default",
+        success: "bg-pf-success-subtle text-pf-success-fg border border-pf-success-muted",
+        warning: "bg-pf-attention-subtle text-pf-attention-fg border border-pf-attention-muted",
+        danger: "bg-pf-danger-subtle text-pf-danger-fg border border-pf-danger-muted",
+        outline: "bg-transparent text-pf-fg-default border border-pf-border-default",
       },
       size: {
         sm: "px-2 py-px text-[10px]",
