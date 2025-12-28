@@ -3,6 +3,10 @@
  * Based on profile-services Prisma schema
  */
 
+// Style Configuration System (modular)
+export * from "./config";
+export * from "./presets";
+
 export type ResumeTemplate = "MODERN" | "CLASSIC" | "MINIMAL" | "PROFESSIONAL";
 export type SkillLevel = "BEGINNER" | "INTERMEDIATE" | "ADVANCED" | "EXPERT";
 export type LanguageLevel = "BASIC" | "INTERMEDIATE" | "ADVANCED" | "FLUENT" | "NATIVE";
@@ -17,6 +21,19 @@ export interface Resume {
   slug: string | null;
   createdAt: string;
   updatedAt: string;
+
+  // Personal info
+  fullName: string | null;
+  jobTitle: string | null;
+  phone: string | null;
+  emailContact: string | null;
+  location: string | null;
+  linkedin: string | null;
+  github: string | null;
+  website: string | null;
+
+  // Theme
+  activeThemeId: string | null;
 
   // Relations
   experiences: Experience[];

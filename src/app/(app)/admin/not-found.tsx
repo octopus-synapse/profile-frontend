@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { ShieldAlert, LayoutDashboard, ArrowLeft, Users, Code2 } from "lucide-react";
 

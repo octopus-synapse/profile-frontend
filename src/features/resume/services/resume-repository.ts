@@ -219,15 +219,15 @@ export const resumeRepository = {
   // Export
   // ============================================================================
 
-  async exportPDF(resumeId: string): Promise<Blob> {
-    const response = await httpClient.get<Blob>(`${BASE_URL}/${resumeId}/export/pdf`, {
+  async exportPDF(_resumeId: string): Promise<Blob> {
+    const response = await httpClient.get<Blob>(`/export/resume/pdf`, {
       responseType: "blob",
     });
     return response;
   },
 
-  async exportDOCX(resumeId: string): Promise<Blob> {
-    const response = await httpClient.get<Blob>(`${BASE_URL}/${resumeId}/export/docx`, {
+  async exportDOCX(_resumeId: string): Promise<Blob> {
+    const response = await httpClient.get<Blob>(`/export/resume/docx`, {
       responseType: "blob",
     });
     return response;

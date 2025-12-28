@@ -10,6 +10,7 @@ export * from "./label";
 export * from "./checkbox";
 export * from "./switch";
 export * from "./select";
+export * from "./autocomplete";
 
 // Layout
 export * from "./card";

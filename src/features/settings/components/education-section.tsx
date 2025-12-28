@@ -6,25 +6,22 @@
 "use client";
 
 import { useState } from "react";
-import {
-  GraduationCap,
-  Plus,
-  Trash2,
-  Pencil,
-  Calendar,
-  BookOpen,
-  X,
-  Loader2,
-} from "lucide-react";
-import {
-  useEducation,
-  useCreateEducation,
-  useUpdateEducation,
-  useDeleteEducation,
-} from "../hooks";
+import { GraduationCap, Plus, Trash2, Pencil, Calendar, BookOpen, X, Loader2 } from "lucide-react";
+import { useEducation, useCreateEducation, useUpdateEducation, useDeleteEducation } from "../hooks";
 import type { Education, CreateEducationPayload } from "../types";
+import {
+  InstitutionAutocomplete,
+  CourseAutocomplete,
+  type MecInstitution,
+  type MecCourse,
+} from "@/features/mec";
 
-const emptyEducation: Partial<CreateEducationPayload> = {
+interface FormData extends Partial<CreateEducationPayload> {
+  institutionCode?: number | null;
+  courseCode?: number | null;
+}
+
+const emptyEducation: FormData = {
   institution: "",
   degree: "",
   field: "",
@@ -32,6 +29,8 @@ const emptyEducation: Partial<CreateEducationPayload> = {
   endDate: "",
   isCurrent: false,
   description: "",
+  institutionCode: null,
+  courseCode: null,
 };
 
 export function EducationSection() {
@@ -42,9 +41,32 @@ export function EducationSection() {
 
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [formData, setFormData] = useState<Partial<CreateEducationPayload>>(emptyEducation);
+  const [formData, setFormData] = useState<FormData>(emptyEducation);
 
   const educationList = data?.data || [];
+
+  const handleInstitutionChange = (codigoIes: number | null, institution?: MecInstitution) => {
+    setFormData((prev) => ({
+      ...prev,
+      institutionCode: codigoIes,
+      institution: institution
+        ? institution.siglaIes
+          ? `${institution.siglaIes} - ${institution.nomeIes}`
+          : institution.nomeIes
+        : "",
+      // Reset course when institution changes
+      courseCode: null,
+      field: "",
+    }));
+  };
+
+  const handleCourseChange = (codigoCurso: number | null, course?: MecCourse) => {
+    setFormData((prev) => ({
+      ...prev,
+      courseCode: codigoCurso,
+      field: course?.nomeCurso || "",
+    }));
+  };
 
   const handleStartAdd = () => {
     setFormData(emptyEducation);
@@ -80,7 +102,7 @@ export function EducationSection() {
       degree: formData.degree,
       field: formData.field,
       startDate: formData.startDate,
-      endDate: formData.isCurrent ? null : (formData.endDate || null),
+      endDate: formData.isCurrent ? null : formData.endDate || null,
       isCurrent: formData.isCurrent || false,
       description: formData.description || null,
     };
@@ -130,7 +152,7 @@ export function EducationSection() {
         <div>
           <div className="flex items-center gap-2">
             <GraduationCap className="text-pf-accent-fg h-4 w-4" strokeWidth={1.5} />
-            <span className="text-pf-fg-muted font-mono text-xs">// Education</span>
+            <span className="text-pf-fg-muted font-mono text-xs"> Education</span>
           </div>
           <p className="text-pf-fg-subtle mt-1 font-mono text-xs">
             {educationList.length} entr{educationList.length !== 1 ? "ies" : "y"} added
@@ -170,7 +192,7 @@ export function EducationSection() {
                     {edu.isCurrent ? "Present" : formatDate(edu.endDate || "")}
                   </p>
                   {edu.description && (
-                    <p className="text-pf-fg-muted mt-2 border-t border-dashed border-pf-border-default pt-2 font-mono text-xs">
+                    <p className="text-pf-fg-muted border-pf-border-default mt-2 border-t border-dashed pt-2 font-mono text-xs">
                       {edu.description}
                     </p>
                   )}
@@ -229,12 +251,12 @@ export function EducationSection() {
             <label className="text-pf-fg-default mb-1 block font-mono text-xs">
               institution<span className="text-pf-danger-fg">*</span>
             </label>
-            <input
-              type="text"
-              value={formData.institution}
-              onChange={(e) => setFormData((p) => ({ ...p, institution: e.target.value }))}
-              placeholder="Stanford University"
-              className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-accent-fg w-full border px-3 py-2 font-mono text-sm focus:outline-none"
+            <InstitutionAutocomplete
+              value={formData.institutionCode}
+              displayValue={formData.institution}
+              onValueChange={handleInstitutionChange}
+              placeholder="Buscar instituição..."
+              className="font-mono text-sm"
             />
           </div>
 
@@ -256,12 +278,18 @@ export function EducationSection() {
               <label className="text-pf-fg-default mb-1 block font-mono text-xs">
                 field<span className="text-pf-danger-fg">*</span>
               </label>
-              <input
-                type="text"
-                value={formData.field}
-                onChange={(e) => setFormData((p) => ({ ...p, field: e.target.value }))}
-                placeholder="Computer Science"
-                className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-accent-fg w-full border px-3 py-2 font-mono text-sm focus:outline-none"
+              <CourseAutocomplete
+                value={formData.courseCode}
+                displayValue={formData.field}
+                institutionCode={formData.institutionCode}
+                onValueChange={handleCourseChange}
+                placeholder={
+                  formData.institutionCode
+                    ? "Selecionar curso..."
+                    : "Selecione a instituição primeiro"
+                }
+                disabled={!formData.institutionCode}
+                className="font-mono text-sm"
               />
             </div>
           </div>

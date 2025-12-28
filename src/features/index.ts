@@ -118,3 +118,22 @@ export type {
   Language as OnboardingLanguage,
   TemplateSelection as OnboardingTemplateSelection,
 } from "./onboarding";
+
+// MEC - Brazilian Ministry of Education data
+export {
+  InstitutionAutocomplete,
+  CourseAutocomplete,
+  useSearchInstitutions,
+  useSearchCourses,
+  useCoursesByInstitution,
+  useInstitution,
+  mecKeys,
+} from "./mec";
+export type {
+  MecInstitution,
+  MecCourse,
+  MecInstitutionSearchResult,
+  MecCourseSearchResult,
+  InstitutionAutocompleteProps,
+  CourseAutocompleteProps,
+} from "./mec";

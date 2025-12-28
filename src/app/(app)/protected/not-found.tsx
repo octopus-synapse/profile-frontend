@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { FileX, Home, User, FileText, Settings, ArrowLeft } from "lucide-react";
 

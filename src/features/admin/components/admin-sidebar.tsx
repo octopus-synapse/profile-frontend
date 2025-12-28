@@ -16,6 +16,7 @@ import {
   Activity,
   Shield,
   Terminal,
+  Palette,
 } from "lucide-react";
 
 const navItems = [
@@ -34,6 +35,11 @@ const navItems = [
     label: "resumes",
     href: "/admin/resumes",
     icon: FileText,
+  },
+  {
+    label: "themes",
+    href: "/admin/themes",
+    icon: Palette,
   },
   {
     label: "activity",

@@ -11,6 +11,12 @@ import { useOnboardingStore, type Education } from "../../stores";
 import { StepNavigation } from "../step-navigation";
 import { Plus, Trash2, Calendar, Building } from "lucide-react";
 import { nanoid } from "nanoid";
+import {
+  InstitutionAutocomplete,
+  CourseAutocomplete,
+  type MecInstitution,
+  type MecCourse,
+} from "@/features/mec";
 
 export function EducationStep() {
   const {
@@ -24,14 +30,44 @@ export function EducationStep() {
   } = useOnboardingStore();
 
   const [isAdding, setIsAdding] = useState(false);
-  const [newEdu, setNewEdu] = useState<Partial<Education>>({
+  const [newEdu, setNewEdu] = useState<
+    Partial<Education> & {
+      institutionCode?: number | null;
+      courseCode?: number | null;
+    }
+  >({
     institution: "",
     degree: "",
     field: "",
     startDate: "",
     endDate: "",
     isCurrent: false,
+    institutionCode: null,
+    courseCode: null,
   });
+
+  const handleInstitutionChange = (codigoIes: number | null, institution?: MecInstitution) => {
+    setNewEdu((prev) => ({
+      ...prev,
+      institutionCode: codigoIes,
+      institution: institution
+        ? institution.siglaIes
+          ? `${institution.siglaIes} - ${institution.nomeIes}`
+          : institution.nomeIes
+        : "",
+      // Reset course when institution changes
+      courseCode: null,
+      field: "",
+    }));
+  };
+
+  const handleCourseChange = (codigoCurso: number | null, course?: MecCourse) => {
+    setNewEdu((prev) => ({
+      ...prev,
+      courseCode: codigoCurso,
+      field: course?.nomeCurso || "",
+    }));
+  };
 
   const handleAddEducation = () => {
     if (!newEdu.institution || !newEdu.degree || !newEdu.field || !newEdu.startDate) return;
@@ -53,6 +89,8 @@ export function EducationStep() {
       startDate: "",
       endDate: "",
       isCurrent: false,
+      institutionCode: null,
+      courseCode: null,
     });
     setIsAdding(false);
   };
@@ -161,17 +199,12 @@ export function EducationStep() {
                 <label className="text-pf-fg-default mb-1 block font-mono text-xs">
                   institution<span className="text-pf-danger-fg">*</span>
                 </label>
-                <input
-                  type="text"
-                  value={newEdu.institution}
-                  onChange={(e) =>
-                    setNewEdu((prev: Partial<Education>) => ({
-                      ...prev,
-                      institution: e.target.value,
-                    }))
-                  }
-                  placeholder="MIT, Stanford, Bootcamp XYZ..."
-                  className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-accent-fg w-full border px-3 py-2 font-mono text-sm focus:outline-none"
+                <InstitutionAutocomplete
+                  value={newEdu.institutionCode}
+                  displayValue={newEdu.institution}
+                  onValueChange={handleInstitutionChange}
+                  placeholder="Buscar instituição..."
+                  className="font-mono text-sm"
                 />
               </div>
 
@@ -200,14 +233,18 @@ export function EducationStep() {
                   <label className="text-pf-fg-default mb-1 block font-mono text-xs">
                     field<span className="text-pf-danger-fg">*</span>
                   </label>
-                  <input
-                    type="text"
-                    value={newEdu.field}
-                    onChange={(e) =>
-                      setNewEdu((prev: Partial<Education>) => ({ ...prev, field: e.target.value }))
+                  <CourseAutocomplete
+                    value={newEdu.courseCode}
+                    displayValue={newEdu.field}
+                    institutionCode={newEdu.institutionCode}
+                    onValueChange={handleCourseChange}
+                    placeholder={
+                      newEdu.institutionCode
+                        ? "Selecionar curso..."
+                        : "Selecione a instituição primeiro"
                     }
-                    placeholder="Computer Science"
-                    className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-accent-fg w-full border px-3 py-2 font-mono text-sm focus:outline-none"
+                    disabled={!newEdu.institutionCode}
+                    className="font-mono text-sm"
                   />
                 </div>
               </div>

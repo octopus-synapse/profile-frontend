@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { KeyRound, LogIn, UserPlus, Home, ArrowLeft } from "lucide-react";
 
