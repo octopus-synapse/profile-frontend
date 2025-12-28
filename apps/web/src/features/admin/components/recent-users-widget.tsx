@@ -6,9 +6,7 @@
  */
 
 import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
-import { Avatar } from "@/shared/components/ui/avatar";
-import { Skeleton } from "@/shared/components/ui/skeleton";
+import { Card, CardContent, CardHeader, CardTitle, Avatar, Skeleton } from "@/shared/components/ui";
 import { EmptyState } from "@/shared/components/ui/empty-state";
 import { Users, ChevronRight, Code2 } from "lucide-react";
 import { formatDistanceToNow } from "@/shared/utils";
@@ -82,9 +80,7 @@ export function RecentUsersWidget({ users, loading }: RecentUsersWidgetProps) {
                     <p className="text-pf-fg-default truncate font-mono text-sm">
                       {user.name ?? "no_name"}
                     </p>
-                    {user.role === "ADMIN" && (
-                      <span className="dev-badge text-[10px]">admin</span>
-                    )}
+                    {user.role === "ADMIN" && <span className="dev-badge text-[10px]">admin</span>}
                   </div>
                   <p className="text-pf-fg-muted truncate font-mono text-xs">{user.email}</p>
                 </div>

@@ -5,8 +5,7 @@
  * Developer-inspired design with code aesthetic
  */
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
-import { Skeleton } from "@/shared/components/ui/skeleton";
+import { Card, CardContent, CardHeader, CardTitle, Skeleton } from "@/shared/components/ui";
 import { EmptyState } from "@/shared/components/ui/empty-state";
 import { Activity, UserPlus, LogIn, FileText, User, Code2 } from "lucide-react";
 import { formatDistanceToNow } from "@/shared/utils";

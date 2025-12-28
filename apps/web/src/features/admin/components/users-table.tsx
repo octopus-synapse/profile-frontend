@@ -5,12 +5,7 @@
  */
 
 import { useState } from "react";
-import { Card } from "@/shared/components/ui/card";
-import { Input } from "@/shared/components/ui/input";
-import { Button } from "@/shared/components/ui/button";
-import { Badge } from "@/shared/components/ui/badge";
-import { Avatar } from "@/shared/components/ui/avatar";
-import { Skeleton } from "@/shared/components/ui/skeleton";
+import { Card, Input, Button, Badge, Avatar, Skeleton } from "@/shared/components/ui";
 import { EmptyState } from "@/shared/components/ui/empty-state";
 import {
   Select,

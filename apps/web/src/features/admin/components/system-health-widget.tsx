@@ -5,10 +5,17 @@
  * Developer-inspired design with code aesthetic
  */
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
-import { Skeleton } from "@/shared/components/ui/skeleton";
+import { Card, CardContent, CardHeader, CardTitle, Skeleton } from "@/shared/components/ui";
 import { cn } from "@/shared/utils/cn";
-import { Database, Server, HardDrive, CheckCircle2, AlertTriangle, XCircle, Code2 } from "lucide-react";
+import {
+  Database,
+  Server,
+  HardDrive,
+  CheckCircle2,
+  AlertTriangle,
+  XCircle,
+  Code2,
+} from "lucide-react";
 import type { SystemHealth } from "../types";
 
 interface SystemHealthWidgetProps {
