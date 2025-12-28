@@ -18,6 +18,19 @@ import {
   type MecCourse,
 } from "@/features/mec";
 
+// Map MEC grau to degree options
+const mapGrauToDegree = (grau: string | null): string => {
+  if (!grau) return "";
+  const mapping: Record<string, string> = {
+    Bacharelado: "Bachelor's",
+    Licenciatura: "Bachelor's",
+    Tecnológico: "Associate's",
+    Sequencial: "Certificate",
+    "Área Básica de Ingresso (ABI)": "Bachelor's",
+  };
+  return mapping[grau] || "";
+};
+
 export function EducationStep() {
   const {
     education,
@@ -73,6 +86,8 @@ export function EducationStep() {
       ...prev,
       courseCode: codigoCurso,
       field: course?.nome || "",
+      // Auto-fill degree from course grau if not already set
+      degree: prev.degree || mapGrauToDegree(course?.grau ?? null),
     }));
   };
 
