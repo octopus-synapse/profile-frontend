@@ -59,7 +59,7 @@ export function CourseAutocomplete({
       if (search.length >= 2) {
         const searchLower = search.toLowerCase();
         return institutionCourses.filter((course) =>
-          course.nomeCurso.toLowerCase().includes(searchLower)
+          course.nome.toLowerCase().includes(searchLower)
         );
       }
       return institutionCourses;
@@ -73,8 +73,8 @@ export function CourseAutocomplete({
   const options: AutocompleteOption[] = React.useMemo(() => {
     return courses.map((course) => ({
       value: String(course.codigoCurso),
-      label: course.nomeCurso,
-      description: `${course.grau} • ${course.modalidade}`,
+      label: course.nome,
+      description: [course.grau, course.modalidade].filter(Boolean).join(" • ") || "Curso",
     }));
   }, [courses]);
 

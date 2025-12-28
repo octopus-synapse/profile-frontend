@@ -47,8 +47,12 @@ export function InstitutionAutocomplete({
   const options: AutocompleteOption[] = React.useMemo(() => {
     return institutions.map((inst) => ({
       value: String(inst.codigoIes),
-      label: inst.siglaIes ? `${inst.siglaIes} - ${inst.nomeIes}` : inst.nomeIes,
-      description: `${inst.categoriaAdministrativa} • ${inst.municipio}, ${inst.uf}`,
+      label: inst.sigla ? `${inst.sigla} - ${inst.nome}` : inst.nome,
+      description:
+        `${inst.categoria ?? "Instituição"} • ${inst.municipio ?? ""}, ${inst.uf}`.replace(
+          " , ",
+          " "
+        ),
     }));
   }, [institutions]);
 

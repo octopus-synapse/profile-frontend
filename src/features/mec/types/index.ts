@@ -4,25 +4,28 @@
  */
 
 export interface MecInstitution {
+  id: string;
   codigoIes: number;
-  nomeIes: string;
-  siglaIes?: string;
-  categoriaAdministrativa: string;
-  organizacaoAcademica: string;
+  nome: string;
+  sigla: string | null;
   uf: string;
-  municipio: string;
+  municipio: string | null;
+  categoria: string | null;
+  organizacao: string | null;
 }
 
 export interface MecCourse {
+  id: string;
   codigoCurso: number;
-  nomeCurso: string;
-  grau: string;
-  modalidade: string;
-  areaOcde: string;
-  situacaoCurso: string;
-  codigoIes: number;
-  nomeIes?: string;
-  uf?: string;
+  nome: string;
+  grau: string | null;
+  modalidade: string | null;
+  areaConhecimento: string | null;
+  institution: {
+    nome: string;
+    sigla: string | null;
+    uf: string;
+  };
 }
 
 export interface MecSearchParams {

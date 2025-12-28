@@ -34,6 +34,7 @@ export function EducationStep() {
     Partial<Education> & {
       institutionCode?: number | null;
       courseCode?: number | null;
+      location?: string;
     }
   >({
     institution: "",
@@ -44,6 +45,7 @@ export function EducationStep() {
     isCurrent: false,
     institutionCode: null,
     courseCode: null,
+    location: "",
   });
 
   const handleInstitutionChange = (codigoIes: number | null, institution?: MecInstitution) => {
@@ -51,10 +53,15 @@ export function EducationStep() {
       ...prev,
       institutionCode: codigoIes,
       institution: institution
-        ? institution.siglaIes
-          ? `${institution.siglaIes} - ${institution.nomeIes}`
-          : institution.nomeIes
+        ? institution.sigla
+          ? `${institution.sigla} - ${institution.nome}`
+          : institution.nome
         : "",
+      // Auto-fill location from institution data
+      location:
+        institution?.municipio && institution?.uf
+          ? `${institution.municipio}, ${institution.uf}`
+          : institution?.uf || "",
       // Reset course when institution changes
       courseCode: null,
       field: "",
@@ -65,7 +72,7 @@ export function EducationStep() {
     setNewEdu((prev) => ({
       ...prev,
       courseCode: codigoCurso,
-      field: course?.nomeCurso || "",
+      field: course?.nome || "",
     }));
   };
 
@@ -91,6 +98,7 @@ export function EducationStep() {
       isCurrent: false,
       institutionCode: null,
       courseCode: null,
+      location: "",
     });
     setIsAdding(false);
   };

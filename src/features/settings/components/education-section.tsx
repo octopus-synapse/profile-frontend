@@ -19,6 +19,7 @@ import {
 interface FormData extends Partial<CreateEducationPayload> {
   institutionCode?: number | null;
   courseCode?: number | null;
+  location?: string;
 }
 
 const emptyEducation: FormData = {
@@ -31,6 +32,7 @@ const emptyEducation: FormData = {
   description: "",
   institutionCode: null,
   courseCode: null,
+  location: "",
 };
 
 export function EducationSection() {
@@ -50,10 +52,15 @@ export function EducationSection() {
       ...prev,
       institutionCode: codigoIes,
       institution: institution
-        ? institution.siglaIes
-          ? `${institution.siglaIes} - ${institution.nomeIes}`
-          : institution.nomeIes
+        ? institution.sigla
+          ? `${institution.sigla} - ${institution.nome}`
+          : institution.nome
         : "",
+      // Auto-fill location from institution data
+      location:
+        institution?.municipio && institution?.uf
+          ? `${institution.municipio}, ${institution.uf}`
+          : institution?.uf || "",
       // Reset course when institution changes
       courseCode: null,
       field: "",
@@ -64,7 +71,7 @@ export function EducationSection() {
     setFormData((prev) => ({
       ...prev,
       courseCode: codigoCurso,
-      field: course?.nomeCurso || "",
+      field: course?.nome || "",
     }));
   };
 
