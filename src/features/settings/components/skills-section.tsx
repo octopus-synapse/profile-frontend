@@ -1,27 +1,15 @@
 /**
  * Skills Section
- * Manage technical skills
+ * Manage technical skills with API-powered autocomplete
  */
 
 "use client";
 
-import { useState } from "react";
-import { Code2, Plus, Trash2, Pencil, X, Loader2 } from "lucide-react";
+import { useState, useMemo } from "react";
+import { Code2, Plus, Trash2, Pencil, X, Loader2, Search } from "lucide-react";
 import { useSkills, useCreateSkill, useUpdateSkill, useDeleteSkill } from "../hooks";
 import type { Skill, CreateSkillPayload } from "../types";
-
-const SKILL_CATEGORIES = [
-  "Programming Languages",
-  "Frontend",
-  "Backend",
-  "Database",
-  "DevOps",
-  "Cloud",
-  "Mobile",
-  "Tools",
-  "Soft Skills",
-  "Other",
-];
+import { useTechNiches, useSearchAllTechSkills } from "@/features/tech-skills";
 
 const emptySkill: Partial<CreateSkillPayload> = {
   name: "",
@@ -38,8 +26,52 @@ export function SkillsSection() {
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<CreateSkillPayload>>(emptySkill);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Fetch niches for categories
+  const { data: niches } = useTechNiches();
+
+  // Search skills
+  const { data: searchResults, isLoading: searchLoading } = useSearchAllTechSkills(searchQuery, 15);
 
   const skills = data?.data || [];
+
+  // Build skill categories from niches
+  const SKILL_CATEGORIES = useMemo(() => {
+    const categories = ["Programming Languages"];
+    if (niches) {
+      categories.push(...niches.map((n) => n.nameEn));
+    }
+    categories.push("Other");
+    return categories;
+  }, [niches]);
+
+  // Search results
+  const searchSuggestions = useMemo(() => {
+    if (!searchResults || searchQuery.length < 1) return [];
+
+    const suggestions: Array<{ name: string; category: string; color?: string }> = [];
+
+    // Add languages
+    for (const lang of searchResults.languages) {
+      suggestions.push({
+        name: lang.nameEn,
+        category: "Programming Languages",
+        color: lang.color ?? undefined,
+      });
+    }
+
+    // Add skills
+    for (const skill of searchResults.skills) {
+      suggestions.push({
+        name: skill.nameEn,
+        category: skill.niche?.nameEn ?? skill.type,
+        color: skill.color ?? undefined,
+      });
+    }
+
+    return suggestions;
+  }, [searchResults, searchQuery]);
 
   // Group skills by category
   const groupedSkills = skills.reduce(
@@ -56,6 +88,7 @@ export function SkillsSection() {
     setFormData(emptySkill);
     setEditingId(null);
     setIsAdding(true);
+    setSearchQuery("");
   };
 
   const handleStartEdit = (skill: Skill) => {
@@ -66,12 +99,23 @@ export function SkillsSection() {
     });
     setEditingId(skill.id);
     setIsAdding(false);
+    setSearchQuery("");
   };
 
   const handleCancel = () => {
     setFormData(emptySkill);
     setEditingId(null);
     setIsAdding(false);
+    setSearchQuery("");
+  };
+
+  const handleSelectSuggestion = (suggestion: { name: string; category: string }) => {
+    setFormData((p) => ({
+      ...p,
+      name: suggestion.name,
+      category: suggestion.category,
+    }));
+    setSearchQuery("");
   };
 
   const handleSave = async () => {
@@ -206,13 +250,51 @@ export function SkillsSection() {
         <div className="border-pf-accent-fg/30 bg-pf-canvas-subtle space-y-4 border p-4">
           <div className="flex items-center justify-between">
             <span className="text-pf-accent-fg font-mono text-xs">
-              <span className="opacity-60">{"//"}</span>{" "}
-              {editingId ? "Edit skill" : "New skill"}
+              <span className="opacity-60">{"//"}</span> {editingId ? "Edit skill" : "New skill"}
             </span>
             <button onClick={handleCancel} className="text-pf-fg-muted hover:text-pf-fg-default">
               <X className="h-4 w-4" strokeWidth={1.5} />
             </button>
           </div>
+
+          {/* Search for skills */}
+          {!editingId && (
+            <div className="relative">
+              <Search className="text-pf-fg-subtle absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search skills (React, Python, Docker...)"
+                className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-accent-fg w-full border py-2 pr-4 pl-10 font-mono text-sm focus:outline-none"
+              />
+              {searchLoading && (
+                <Loader2 className="text-pf-fg-subtle absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 animate-spin" />
+              )}
+
+              {/* Search suggestions dropdown */}
+              {searchQuery.length >= 1 && searchSuggestions.length > 0 && (
+                <div className="border-pf-border-default bg-pf-canvas-overlay absolute top-full right-0 left-0 z-10 mt-1 max-h-48 overflow-y-auto border shadow-lg">
+                  {searchSuggestions.map((suggestion, index) => (
+                    <button
+                      key={`${suggestion.name}-${index}`}
+                      onClick={() => handleSelectSuggestion(suggestion)}
+                      className="hover:bg-pf-canvas-subtle text-pf-fg-default flex w-full items-center gap-2 px-3 py-2 text-left font-mono text-sm"
+                    >
+                      {suggestion.color && (
+                        <span
+                          className="h-3 w-3 rounded-full"
+                          style={{ backgroundColor: suggestion.color }}
+                        />
+                      )}
+                      <span>{suggestion.name}</span>
+                      <span className="text-pf-fg-subtle text-xs">({suggestion.category})</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>

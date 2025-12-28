@@ -1,92 +1,18 @@
 /**
  * Skills Step
  *
- * Nielsen: Recognition rather than recall (predefined categories & skills)
+ * Nielsen: Recognition rather than recall (predefined categories & skills from API)
+ * Uses tech-skills API for pre-populated skills catalog
  */
 
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useOnboardingStore, type Skill } from "../../stores";
 import { StepNavigation } from "../step-navigation";
-import { Plus, X, Zap } from "lucide-react";
+import { Plus, X, Zap, Search, Loader2 } from "lucide-react";
 import { nanoid } from "nanoid";
-
-// Predefined skill categories and common skills
-const SKILL_CATEGORIES = {
-  "Programming Languages": [
-    "JavaScript",
-    "TypeScript",
-    "Python",
-    "Java",
-    "Go",
-    "Rust",
-    "C++",
-    "C#",
-    "PHP",
-    "Ruby",
-    "Swift",
-    "Kotlin",
-  ],
-  Frontend: [
-    "React",
-    "Vue.js",
-    "Angular",
-    "Next.js",
-    "Svelte",
-    "Tailwind CSS",
-    "HTML/CSS",
-    "SASS",
-    "Redux",
-    "React Query",
-  ],
-  Backend: [
-    "Node.js",
-    "Express",
-    "NestJS",
-    "Django",
-    "FastAPI",
-    "Spring Boot",
-    "Laravel",
-    ".NET",
-    "Rails",
-    "GraphQL",
-  ],
-  Database: [
-    "PostgreSQL",
-    "MySQL",
-    "MongoDB",
-    "Redis",
-    "Elasticsearch",
-    "Prisma",
-    "TypeORM",
-    "DynamoDB",
-    "SQLite",
-  ],
-  "Cloud & DevOps": [
-    "AWS",
-    "GCP",
-    "Azure",
-    "Docker",
-    "Kubernetes",
-    "CI/CD",
-    "Terraform",
-    "Linux",
-    "Nginx",
-    "Git",
-  ],
-  Mobile: ["React Native", "Flutter", "iOS/Swift", "Android/Kotlin", "Expo", "Ionic"],
-  "Tools & Other": [
-    "VS Code",
-    "Figma",
-    "Jira",
-    "Agile/Scrum",
-    "REST APIs",
-    "Testing",
-    "Security",
-    "AI/ML",
-  ],
-};
+import { useTechNiches, useSearchAllTechSkills, useSkillsByNiche } from "@/features/tech-skills";
 
 const SKILL_LEVELS = [
   { value: 1, label: "Beginner", color: "text-pf-fg-subtle" },
@@ -100,11 +26,80 @@ export function SkillsStep() {
   const { skills, noSkills, setNoSkills, addSkill, removeSkill, goToNextStep, markStepComplete } =
     useOnboardingStore();
 
-  const [selectedCategory, setSelectedCategory] = useState<string>(
-    Object.keys(SKILL_CATEGORIES)[0] ?? "Programming Languages"
-  );
+  const [selectedNiche, setSelectedNiche] = useState<string>("frontend");
+  const [searchQuery, setSearchQuery] = useState("");
   const [customSkill, setCustomSkill] = useState("");
   const [customCategory, setCustomCategory] = useState("");
+
+  // Fetch niches from API
+  const { data: niches, isLoading: nichesLoading } = useTechNiches();
+
+  // Fetch skills for selected niche
+  const { data: nicheSkills, isLoading: nicheSkillsLoading } = useSkillsByNiche(selectedNiche);
+
+  // Search all skills
+  const { data: searchResults, isLoading: searchLoading } = useSearchAllTechSkills(searchQuery, 20);
+
+  // Get display niches (filter to main dev niches)
+  const displayNiches = useMemo(() => {
+    if (!niches) return [];
+    const mainNiches = [
+      "frontend",
+      "backend",
+      "mobile",
+      "devops",
+      "data-engineering",
+      "machine-learning",
+      "qa-testing",
+      "security",
+    ];
+    return niches.filter((n) => mainNiches.includes(n.slug)).sort((a, b) => a.order - b.order);
+  }, [niches]);
+
+  // Get custom categories for dropdown
+  const customCategories = useMemo(() => {
+    if (!niches) return ["Programming Languages", "Other"];
+    return ["Programming Languages", ...niches.map((n) => n.nameEn), "Other"];
+  }, [niches]);
+
+  // Combined skills to display (from niche or search)
+  const displaySkills = useMemo(() => {
+    if (searchQuery.length >= 1 && searchResults) {
+      // Show search results
+      const combined: Array<{ slug: string; name: string; category: string; color?: string }> = [];
+
+      // Add languages
+      for (const lang of searchResults.languages) {
+        combined.push({
+          slug: lang.slug,
+          name: lang.nameEn,
+          category: "Programming Languages",
+          color: lang.color ?? undefined,
+        });
+      }
+
+      // Add skills
+      for (const skill of searchResults.skills) {
+        combined.push({
+          slug: skill.slug,
+          name: skill.nameEn,
+          category: skill.niche?.nameEn ?? skill.type,
+          color: skill.color ?? undefined,
+        });
+      }
+
+      return combined;
+    }
+
+    // Show niche skills
+    if (!nicheSkills) return [];
+    return nicheSkills.map((s) => ({
+      slug: s.slug,
+      name: s.nameEn,
+      category: s.niche?.nameEn ?? s.type,
+      color: s.color ?? undefined,
+    }));
+  }, [searchQuery, searchResults, nicheSkills]);
 
   const handleAddSkill = (name: string, category: string, level: number = 3) => {
     // Check if already added
@@ -138,6 +133,8 @@ export function SkillsStep() {
   const isSkillAdded = (name: string) =>
     skills.some((s: Skill) => s.name.toLowerCase() === name.toLowerCase());
 
+  const isLoading = nichesLoading || nicheSkillsLoading || searchLoading;
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -147,7 +144,7 @@ export function SkillsStep() {
           <h2 className="text-pf-fg-default text-xl font-bold">Technical Skills</h2>
         </div>
         <p className="text-pf-fg-muted mt-1 font-mono text-xs">
-          Select your skills or add custom ones
+          Select your skills or search from our catalog
         </p>
       </div>
 
@@ -197,50 +194,118 @@ export function SkillsStep() {
             </div>
           )}
 
-          {/* Category Tabs */}
-          <div className="border-pf-border-default border">
-            <div className="border-pf-border-muted flex flex-wrap gap-1 border-b p-2">
-              {Object.keys(SKILL_CATEGORIES).map((category) => (
-                <button
-                  key={category}
-                  onClick={() => setSelectedCategory(category)}
-                  className={`px-2 py-1 font-mono text-xs transition-colors ${
-                    selectedCategory === category
-                      ? "bg-pf-accent-subtle text-pf-accent-fg"
-                      : "text-pf-fg-muted hover:text-pf-fg-default"
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
+          {/* Search Bar */}
+          <div className="relative">
+            <Search className="text-pf-fg-subtle absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search skills (React, Python, Docker...)"
+              className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-accent-fg w-full border py-2 pr-4 pl-10 font-mono text-sm focus:outline-none"
+            />
+            {isLoading && searchQuery && (
+              <Loader2 className="text-pf-fg-subtle absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 animate-spin" />
+            )}
+          </div>
 
-            {/* Skills Grid */}
-            <div className="p-4">
-              <div className="flex flex-wrap gap-2">
-                {SKILL_CATEGORIES[selectedCategory as keyof typeof SKILL_CATEGORIES].map(
-                  (skill) => {
-                    const added = isSkillAdded(skill);
+          {/* Category Tabs (only when not searching) */}
+          {!searchQuery && (
+            <div className="border-pf-border-default border">
+              <div className="border-pf-border-muted flex flex-wrap gap-1 border-b p-2">
+                {displayNiches.map((niche) => (
+                  <button
+                    key={niche.slug}
+                    onClick={() => setSelectedNiche(niche.slug)}
+                    className={`px-2 py-1 font-mono text-xs transition-colors ${
+                      selectedNiche === niche.slug
+                        ? "bg-pf-accent-subtle text-pf-accent-fg"
+                        : "text-pf-fg-muted hover:text-pf-fg-default"
+                    }`}
+                  >
+                    {niche.nameEn}
+                  </button>
+                ))}
+              </div>
+
+              {/* Skills Grid */}
+              <div className="p-4">
+                {nicheSkillsLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="text-pf-fg-subtle h-6 w-6 animate-spin" />
+                  </div>
+                ) : (
+                  <div className="flex flex-wrap gap-2">
+                    {displaySkills.slice(0, 30).map((skill) => {
+                      const added = isSkillAdded(skill.name);
+                      return (
+                        <button
+                          key={skill.slug}
+                          onClick={() => !added && handleAddSkill(skill.name, skill.category)}
+                          disabled={added}
+                          className={`flex items-center gap-1 px-2 py-1 font-mono text-xs transition-all ${
+                            added
+                              ? "bg-pf-success-subtle text-pf-success-fg cursor-default"
+                              : "border-pf-border-default text-pf-fg-muted hover:border-pf-accent-fg hover:text-pf-accent-fg border"
+                          }`}
+                          style={
+                            skill.color && !added
+                              ? { borderColor: skill.color, color: skill.color }
+                              : undefined
+                          }
+                        >
+                          {added && <Zap className="h-3 w-3" />}
+                          {skill.name}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Search Results */}
+          {searchQuery && (
+            <div className="border-pf-border-default border p-4">
+              {searchLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="text-pf-fg-subtle h-6 w-6 animate-spin" />
+                </div>
+              ) : displaySkills.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {displaySkills.map((skill) => {
+                    const added = isSkillAdded(skill.name);
                     return (
                       <button
-                        key={skill}
-                        onClick={() => !added && handleAddSkill(skill, selectedCategory)}
+                        key={skill.slug}
+                        onClick={() => !added && handleAddSkill(skill.name, skill.category)}
                         disabled={added}
                         className={`flex items-center gap-1 px-2 py-1 font-mono text-xs transition-all ${
                           added
                             ? "bg-pf-success-subtle text-pf-success-fg cursor-default"
                             : "border-pf-border-default text-pf-fg-muted hover:border-pf-accent-fg hover:text-pf-accent-fg border"
                         }`}
+                        style={
+                          skill.color && !added
+                            ? { borderColor: skill.color, color: skill.color }
+                            : undefined
+                        }
                       >
                         {added && <Zap className="h-3 w-3" />}
-                        {skill}
+                        {skill.name}
+                        <span className="text-pf-fg-subtle text-[10px]">({skill.category})</span>
                       </button>
                     );
-                  }
-                )}
-              </div>
+                  })}
+                </div>
+              ) : (
+                <p className="text-pf-fg-muted py-4 text-center font-mono text-sm">
+                  No skills found for &quot;{searchQuery}&quot;
+                </p>
+              )}
             </div>
-          </div>
+          )}
 
           {/* Custom Skill Input */}
           <div className="border-pf-border-default bg-pf-canvas-subtle border p-4">
@@ -262,12 +327,11 @@ export function SkillsStep() {
                 className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default focus:border-pf-accent-fg border px-2 py-2 font-mono text-xs focus:outline-none"
               >
                 <option value="">Category</option>
-                {Object.keys(SKILL_CATEGORIES).map((cat) => (
+                {customCategories.map((cat) => (
                   <option key={cat} value={cat}>
                     {cat}
                   </option>
                 ))}
-                <option value="Other">Other</option>
               </select>
               <button
                 onClick={handleAddCustomSkill}

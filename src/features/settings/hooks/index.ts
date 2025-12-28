@@ -8,3 +8,4 @@ export * from "./use-experiences";
 export * from "./use-education";
 export * from "./use-skills";
 export * from "./use-languages";
+export * from "./use-spoken-languages-catalog";

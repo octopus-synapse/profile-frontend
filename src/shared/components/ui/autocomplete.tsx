@@ -14,6 +14,7 @@ export interface AutocompleteOption {
   value: string;
   label: string;
   description?: string;
+  color?: string;
 }
 
 export interface AutocompleteProps {

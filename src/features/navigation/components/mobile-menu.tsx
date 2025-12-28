@@ -5,10 +5,13 @@
  * Developer-inspired full-screen overlay menu with terminal aesthetic
  */
 
-import { X, Terminal, ArrowRight } from "lucide-react";
-import Link from "next/link";
+import { X, Terminal, ArrowRight, Moon, Sun, Globe } from "lucide-react";
+import { LocalizedLink } from "@/shared/components/localized-link";
 import { useAuth } from "@/features/auth";
+import { useI18n } from "@/features/i18n";
+import { useThemeOptional } from "@/shared/providers/theme-provider";
 import { ROUTES } from "@/config/routes";
+import { cn } from "@/shared/utils";
 import { Logo } from "./logo";
 import { NavLink } from "./nav-link";
 import { useNavigation } from "../hooks/use-navigation";
@@ -20,6 +23,8 @@ interface MobileMenuProps {
 
 export function MobileMenu({ menu }: MobileMenuProps) {
   const { isAuthenticated, signOut } = useAuth();
+  const { language, setLanguage, locales } = useI18n();
+  const themeContext = useThemeOptional();
   const { mainNavItems, adminNavItems, canAccessAdmin } = useNavigation();
 
   if (!menu.isOpen) return null;
@@ -49,13 +54,13 @@ export function MobileMenu({ menu }: MobileMenuProps) {
         {/* Navigation Links */}
         <nav className="flex-1 space-y-1">
           {/* Home Link */}
-          <Link
+          <LocalizedLink
             href="/"
             onClick={menu.close}
             className="group flex items-center gap-4 py-3 font-mono text-lg text-white/60 transition-colors hover:text-white"
           >
             <span>home</span>
-          </Link>
+          </LocalizedLink>
 
           {/* Main Navigation */}
           {mainNavItems.map((item) => (
@@ -75,6 +80,72 @@ export function MobileMenu({ menu }: MobileMenuProps) {
             </>
           )}
 
+          {/* Preferences Section */}
+          <div className="my-4 h-px bg-white/10" />
+          <div className="mb-2 flex items-center gap-2">
+            <span className="font-mono text-xs text-white/30">// preferences</span>
+          </div>
+
+          {/* Theme Toggle */}
+          <div className="flex items-center justify-between py-2">
+            <div className="flex items-center gap-2">
+              {themeContext?.resolvedTheme === "dark" ? (
+                <Moon className="h-4 w-4 text-white/60" strokeWidth={1.5} />
+              ) : (
+                <Sun className="h-4 w-4 text-white/60" strokeWidth={1.5} />
+              )}
+              <span className="font-mono text-sm text-white/60">theme</span>
+            </div>
+            <div className="flex gap-1">
+              <button
+                onClick={() => themeContext?.setTheme("light")}
+                className={cn(
+                  "px-3 py-1 font-mono text-xs transition-colors",
+                  themeContext?.theme === "light"
+                    ? "bg-white text-black"
+                    : "text-white/60 hover:text-white"
+                )}
+              >
+                light
+              </button>
+              <button
+                onClick={() => themeContext?.setTheme("dark")}
+                className={cn(
+                  "px-3 py-1 font-mono text-xs transition-colors",
+                  themeContext?.theme === "dark"
+                    ? "bg-white text-black"
+                    : "text-white/60 hover:text-white"
+                )}
+              >
+                dark
+              </button>
+            </div>
+          </div>
+
+          {/* Language Toggle */}
+          <div className="flex items-center justify-between py-2">
+            <div className="flex items-center gap-2">
+              <Globe className="h-4 w-4 text-white/60" strokeWidth={1.5} />
+              <span className="font-mono text-sm text-white/60">language</span>
+            </div>
+            <div className="flex gap-1">
+              {locales.map((locale) => (
+                <button
+                  key={locale.code}
+                  onClick={() => setLanguage(locale.code)}
+                  className={cn(
+                    "px-3 py-1 font-mono text-xs transition-colors",
+                    language === locale.code
+                      ? "bg-white text-black"
+                      : "text-white/60 hover:text-white"
+                  )}
+                >
+                  {locale.code === "pt-BR" ? "PT" : locale.code.toUpperCase()}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Auth Section */}
           <div className="my-4 h-px bg-white/10" />
           {isAuthenticated ? (
@@ -88,20 +159,20 @@ export function MobileMenu({ menu }: MobileMenuProps) {
               sign_out()
             </button>
           ) : (
-            <Link
+            <LocalizedLink
               href={ROUTES.AUTH.SIGN_IN}
               onClick={menu.close}
               className="flex items-center py-3 font-mono text-lg text-white/60 transition-colors hover:text-white"
             >
               sign_in()
-            </Link>
+            </LocalizedLink>
           )}
         </nav>
 
         {/* CTA Button */}
         {!isAuthenticated && (
           <div className="mt-auto pt-8">
-            <Link
+            <LocalizedLink
               href={ROUTES.AUTH.SIGN_UP}
               onClick={menu.close}
               className="group inline-flex w-full items-center justify-center gap-2 bg-white px-6 py-3 font-mono text-sm text-black transition-opacity hover:opacity-90"
@@ -112,7 +183,7 @@ export function MobileMenu({ menu }: MobileMenuProps) {
                 className="h-4 w-4 transition-transform group-hover:translate-x-1"
                 strokeWidth={1.5}
               />
-            </Link>
+            </LocalizedLink>
           </div>
         )}
 

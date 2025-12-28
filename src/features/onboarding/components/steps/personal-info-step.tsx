@@ -10,6 +10,7 @@ import { useState, useMemo } from "react";
 import { useOnboardingStore } from "../../stores";
 import { StepNavigation } from "../step-navigation";
 import { User, Mail, Phone, MapPin, AlertCircle } from "lucide-react";
+import { PhoneInput } from "@/shared/components/ui";
 
 export function PersonalInfoStep() {
   const { personalInfo, setPersonalInfo, goToNextStep, markStepComplete } = useOnboardingStore();
@@ -149,12 +150,11 @@ export function PersonalInfoStep() {
             <Phone className="h-4 w-4" strokeWidth={1.5} />
             phone<span className="text-pf-fg-subtle ml-1 text-xs">(optional)</span>
           </label>
-          <input
-            type="tel"
+          <PhoneInput
             value={formData.phone}
-            onChange={(e) => handleChange("phone", e.target.value)}
-            placeholder="+55 11 99999-9999"
-            className="border-pf-border-default bg-pf-canvas-subtle text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-accent-fg w-full border px-3 py-2 font-mono text-sm focus:outline-none"
+            onChange={(value) => handleChange("phone", value)}
+            countryFormat="BR"
+            className="bg-pf-canvas-subtle"
           />
         </div>
 

@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import { headers } from "next/headers";
 import { RootProvider } from "@/shared/providers";
 import { themeScript } from "@/shared/providers/theme-provider";
+import { i18nConfig, type Locale } from "@/config/i18n.config";
 import "./globals.css";
 
 const inter = Inter({
@@ -34,13 +36,30 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({
+/**
+ * Extract locale from pathname
+ */
+function getLocaleFromPath(pathname: string): Locale {
+  const segments = pathname.split("/").filter(Boolean);
+  const firstSegment = segments[0];
+  if (firstSegment && i18nConfig.locales.includes(firstSegment as Locale)) {
+    return firstSegment as Locale;
+  }
+  return i18nConfig.defaultLocale;
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Get locale from URL path via headers
+  const headersList = await headers();
+  const pathname = headersList.get("x-pathname") || headersList.get("x-invoke-path") || "/";
+  const locale = getLocaleFromPath(pathname);
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

@@ -1,21 +1,111 @@
 /**
  * Next.js Middleware
- * Protects routes based on authentication and role
+ * Handles i18n routing and protects routes based on authentication and role
  */
 
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { auth } from "@/features/auth/services/auth-config";
 import { ROUTES } from "@/config/routes";
+import {
+  i18nConfig,
+  getLocaleFromHeaders,
+  getLocaleFromPathname,
+  type Locale,
+} from "@/config/i18n.config";
 
-// Routes that require authentication
+// Cookie name for storing user's preferred locale
+const LOCALE_COOKIE = "NEXT_LOCALE";
+
+// Routes that require authentication (without locale prefix)
 const protectedRoutes = ["/protected", "/onboarding"];
 
-// Routes only for unauthenticated users
+// Routes only for unauthenticated users (without locale prefix)
 const authRoutes = ["/auth/sign-in", "/auth/sign-up"];
+
+/**
+ * Get the preferred locale from request
+ * Priority: 1. URL path, 2. Cookie, 3. Accept-Language header, 4. Default
+ */
+function getPreferredLocale(request: NextRequest): Locale {
+  // 1. Check cookie
+  const cookieLocale = request.cookies.get(LOCALE_COOKIE)?.value as Locale | undefined;
+  if (cookieLocale && i18nConfig.locales.includes(cookieLocale)) {
+    return cookieLocale;
+  }
+
+  // 2. Check Accept-Language header
+  const acceptLanguage = request.headers.get("Accept-Language");
+  return getLocaleFromHeaders(acceptLanguage);
+}
+
+/**
+ * Remove locale prefix from pathname for route matching
+ */
+function getPathnameWithoutLocale(pathname: string): string {
+  for (const locale of i18nConfig.locales) {
+    if (pathname.startsWith(`/${locale}/`)) {
+      return pathname.slice(locale.length + 1);
+    }
+    if (pathname === `/${locale}`) {
+      return "/";
+    }
+  }
+  return pathname;
+}
 
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // ========================================
+  // i18n Routing
+  // ========================================
+
+  // Check if path already has a locale
+  const pathnameLocale = getLocaleFromPathname(pathname);
+
+  if (!pathnameLocale) {
+    // No locale in URL - redirect to localized URL
+    const preferredLocale = getPreferredLocale(request);
+    const newUrl = new URL(`/${preferredLocale}${pathname}`, request.url);
+
+    // Preserve query params
+    newUrl.search = request.nextUrl.search;
+
+    const response = NextResponse.redirect(newUrl);
+
+    // Set cookie to remember preference
+    response.cookies.set(LOCALE_COOKIE, preferredLocale, {
+      maxAge: 60 * 60 * 24 * 365, // 1 year
+      path: "/",
+    });
+
+    return response;
+  }
+
+  // Update cookie if user manually changed locale and pass pathname header
+  const response = NextResponse.next({
+    request: {
+      headers: new Headers({
+        ...Object.fromEntries(request.headers),
+        "x-pathname": pathname,
+      }),
+    },
+  });
+  const currentCookie = request.cookies.get(LOCALE_COOKIE)?.value;
+  if (currentCookie !== pathnameLocale) {
+    response.cookies.set(LOCALE_COOKIE, pathnameLocale, {
+      maxAge: 60 * 60 * 24 * 365,
+      path: "/",
+    });
+  }
+
+  // ========================================
+  // Authentication & Authorization
+  // ========================================
+
+  // Get pathname without locale for route matching
+  const pathnameWithoutLocale = getPathnameWithoutLocale(pathname);
 
   // Get session
   const session = await auth();
@@ -23,31 +113,36 @@ export default async function middleware(request: NextRequest) {
   const userRole = session?.user?.role;
   const hasCompletedOnboarding = session?.user?.hasCompletedOnboarding;
 
+  // Helper to create localized URL
+  const createLocalizedUrl = (path: string) => {
+    return new URL(`/${pathnameLocale}${path}`, request.url);
+  };
+
   // Check if user is accessing auth routes while authenticated
-  if (isAuthenticated && authRoutes.some((route) => pathname.startsWith(route))) {
+  if (isAuthenticated && authRoutes.some((route) => pathnameWithoutLocale.startsWith(route))) {
     // Redirect to onboarding if not completed, otherwise to protected area
     const redirectTo = hasCompletedOnboarding ? ROUTES.PROTECTED.PROFILE : ROUTES.ONBOARDING;
-    return NextResponse.redirect(new URL(redirectTo, request.url));
+    return NextResponse.redirect(createLocalizedUrl(redirectTo));
   }
 
   // Check if user is accessing protected routes without authentication
-  if (!isAuthenticated && protectedRoutes.some((route) => pathname.startsWith(route))) {
-    const signInUrl = new URL(ROUTES.AUTH.SIGN_IN, request.url);
+  if (!isAuthenticated && protectedRoutes.some((route) => pathnameWithoutLocale.startsWith(route))) {
+    const signInUrl = createLocalizedUrl(ROUTES.AUTH.SIGN_IN);
     signInUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(signInUrl);
   }
 
   // Check if user is accessing admin routes
-  if (pathname.startsWith("/admin")) {
+  if (pathnameWithoutLocale.startsWith("/admin")) {
     if (!isAuthenticated) {
-      const signInUrl = new URL(ROUTES.AUTH.SIGN_IN, request.url);
+      const signInUrl = createLocalizedUrl(ROUTES.AUTH.SIGN_IN);
       signInUrl.searchParams.set("callbackUrl", pathname);
       return NextResponse.redirect(signInUrl);
     }
 
     if (userRole !== "ADMIN") {
       // Redirect non-admin users to home with error
-      return NextResponse.redirect(new URL(ROUTES.HOME, request.url));
+      return NextResponse.redirect(createLocalizedUrl(ROUTES.HOME));
     }
   }
 
@@ -55,13 +150,13 @@ export default async function middleware(request: NextRequest) {
   if (
     isAuthenticated &&
     !hasCompletedOnboarding &&
-    pathname.startsWith("/protected") &&
-    !pathname.startsWith("/onboarding")
+    pathnameWithoutLocale.startsWith("/protected") &&
+    !pathnameWithoutLocale.startsWith("/onboarding")
   ) {
-    return NextResponse.redirect(new URL(ROUTES.ONBOARDING, request.url));
+    return NextResponse.redirect(createLocalizedUrl(ROUTES.ONBOARDING));
   }
 
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {

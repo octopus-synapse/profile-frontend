@@ -5,8 +5,8 @@
  * Developer-inspired navigation link with monospace font
  */
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LocalizedLink } from "@/shared/components/localized-link";
 import { cn } from "@/shared/utils";
 import { useI18n } from "@/features/i18n";
 import type { NavItem } from "../types";
@@ -27,7 +27,7 @@ export function NavLink({ item, className, onClick, variant = "desktop" }: NavLi
 
   if (variant === "mobile") {
     return (
-      <Link
+      <LocalizedLink
         href={item.href}
         onClick={onClick}
         target={item.external ? "_blank" : undefined}
@@ -40,12 +40,12 @@ export function NavLink({ item, className, onClick, variant = "desktop" }: NavLi
       >
         {isActive && <span className="text-code-string text-xs">●</span>}
         <span>{t(item.labelKey as DictionaryKey).toLowerCase()}</span>
-      </Link>
+      </LocalizedLink>
     );
   }
 
   return (
-    <Link
+    <LocalizedLink
       href={item.href}
       onClick={onClick}
       target={item.external ? "_blank" : undefined}
@@ -58,6 +58,6 @@ export function NavLink({ item, className, onClick, variant = "desktop" }: NavLi
     >
       {t(item.labelKey as DictionaryKey).toLowerCase()}
       {isActive && <span className="text-code-string ml-2 text-xs">●</span>}
-    </Link>
+    </LocalizedLink>
   );
 }

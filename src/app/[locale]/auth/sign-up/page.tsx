@@ -1,18 +1,14 @@
+"use client";
+
 /**
  * Sign Up Page
  * Developer-inspired design with code aesthetic
  */
 
-import { Metadata } from "next";
 import { SignUpForm } from "@/features/auth";
-import Link from "next/link";
+import { LocalizedLink } from "@/shared/components/localized-link";
 import { ROUTES } from "@/config/routes";
 import { Terminal, Github, ArrowLeft, Check } from "lucide-react";
-
-export const metadata: Metadata = {
-  title: "Sign Up | Profile",
-  description: "Create a new account",
-};
 
 export default function SignUpPage() {
   return (
@@ -20,13 +16,13 @@ export default function SignUpPage() {
       {/* Left side - Terminal/Code aesthetic (hidden on mobile) */}
       <div className="bg-pf-canvas-subtle border-pf-border-muted hidden flex-col justify-between border-r p-12 lg:flex lg:w-1/2">
         <div>
-          <Link href={ROUTES.HOME} className="flex items-center gap-2">
+          <LocalizedLink href={ROUTES.HOME} className="flex items-center gap-2">
             <div className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis flex h-8 w-8 items-center justify-center">
               <Terminal className="h-4 w-4" strokeWidth={1.5} />
             </div>
             <span className="text-pf-fg-default font-mono text-lg font-semibold">profile</span>
             <span className="dev-badge">dev</span>
-          </Link>
+          </LocalizedLink>
         </div>
 
         <div className="space-y-8">
@@ -90,16 +86,16 @@ export default function SignUpPage() {
         {/* Header */}
         <header className="border-pf-border-muted border-b p-4 lg:border-b-0">
           <div className="flex items-center justify-between">
-            <Link href={ROUTES.HOME} className="flex items-center gap-2">
+            <LocalizedLink href={ROUTES.HOME} className="flex items-center gap-2">
               <ArrowLeft className="text-pf-fg-muted h-4 w-4" strokeWidth={1.5} />
               <span className="text-pf-fg-muted font-mono text-xs">back</span>
-            </Link>
-            <Link href={ROUTES.HOME} className="flex items-center gap-2 lg:hidden">
+            </LocalizedLink>
+            <LocalizedLink href={ROUTES.HOME} className="flex items-center gap-2 lg:hidden">
               <div className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis flex h-7 w-7 items-center justify-center">
                 <Terminal className="h-4 w-4" strokeWidth={1.5} />
               </div>
               <span className="text-pf-fg-default font-mono text-sm font-semibold">profile</span>
-            </Link>
+            </LocalizedLink>
             <div className="w-16 lg:hidden" />
           </div>
         </header>
@@ -116,12 +112,12 @@ export default function SignUpPage() {
               <h2 className="text-pf-fg-default mt-4 text-2xl font-bold">Create your account</h2>
               <p className="text-pf-fg-muted mt-2 font-mono text-xs">
                 Already have an account?{" "}
-                <Link
+                <LocalizedLink
                   href={ROUTES.AUTH.SIGN_IN}
                   className="text-pf-fg-default font-semibold hover:underline"
                 >
                   Sign in
-                </Link>
+                </LocalizedLink>
               </p>
             </div>
 
@@ -144,13 +140,13 @@ export default function SignUpPage() {
             {/* Terms */}
             <p className="text-pf-fg-subtle mt-6 text-center font-mono text-xs">
               By signing up, you agree to our{" "}
-              <Link href="/terms" className="hover:text-pf-fg-default underline">
+              <LocalizedLink href="/terms" className="hover:text-pf-fg-default underline">
                 Terms
-              </Link>{" "}
+              </LocalizedLink>{" "}
               and{" "}
-              <Link href="/privacy" className="hover:text-pf-fg-default underline">
+              <LocalizedLink href="/privacy" className="hover:text-pf-fg-default underline">
                 Privacy Policy
-              </Link>
+              </LocalizedLink>
             </p>
           </div>
         </div>

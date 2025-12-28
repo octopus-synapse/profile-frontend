@@ -8,6 +8,7 @@
 import { useState, useEffect } from "react";
 import { User, MapPin, Phone, Globe, Linkedin, Github, Save, Loader2 } from "lucide-react";
 import { useProfile, useUpdateProfile } from "../hooks";
+import { PhoneInput } from "@/shared/components/ui";
 import type { UpdateProfilePayload } from "../types";
 
 export function ProfileSection() {
@@ -141,12 +142,10 @@ export function ProfileSection() {
               <Phone className="h-3 w-3" strokeWidth={1.5} />
               phone
             </label>
-            <input
-              type="tel"
+            <PhoneInput
               value={formData.phone}
-              onChange={(e) => handleChange("phone", e.target.value)}
-              placeholder="+1 (555) 123-4567"
-              className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-accent-fg w-full border px-3 py-2 font-mono text-sm focus:outline-none"
+              onChange={(value) => handleChange("phone", value)}
+              countryFormat="BR"
             />
           </div>
         </div>

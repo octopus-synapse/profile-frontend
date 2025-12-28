@@ -2,21 +2,35 @@
 
 /**
  * i18n Context and Provider
- * Handles language switching and translation lookup
+ * Handles language switching and translation lookup with dynamic imports
  */
 
-import { createContext, useContext, useState, useCallback, useMemo, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useMemo,
+  useEffect,
+  type ReactNode,
+} from "react";
+import { useParams, useRouter, usePathname } from "next/navigation";
 import { en, type Dictionary, type DictionaryKey } from "./dictionaries/en";
-import { ptBR } from "./dictionaries/pt-BR";
-import { LANGUAGES, type SupportedLanguage } from "@/config/constants";
+import { i18nConfig, type Locale } from "@/config/i18n.config";
 
 // ============================================================================
-// Dictionaries Map
+// Dictionary Loaders (Dynamic Imports)
 // ============================================================================
 
-const dictionaries: Record<SupportedLanguage, Dictionary> = {
-  en,
-  "pt-BR": ptBR as unknown as Dictionary,
+const dictionaryLoaders: Record<Locale, () => Promise<Dictionary>> = {
+  en: () => import("./dictionaries/en").then((mod) => mod.en),
+  "pt-BR": () => import("./dictionaries/pt-BR").then((mod) => mod.ptBR as unknown as Dictionary),
+  es: () => import("./dictionaries/es").then((mod) => mod.es as unknown as Dictionary),
+};
+
+// Cache for loaded dictionaries
+const dictionaryCache: Partial<Record<Locale, Dictionary>> = {
+  en, // Pre-load English as default
 };
 
 // ============================================================================
@@ -24,18 +38,19 @@ const dictionaries: Record<SupportedLanguage, Dictionary> = {
 // ============================================================================
 
 interface LocaleInfo {
-  code: SupportedLanguage;
+  code: Locale;
   label: string;
 }
 
 interface I18nContextValue {
-  language: SupportedLanguage;
-  setLanguage: (lang: SupportedLanguage) => void;
+  language: Locale;
+  setLanguage: (lang: Locale) => void;
   t: (key: DictionaryKey, params?: Record<string, string | number>) => string;
   // Aliases for convenience
-  locale: SupportedLanguage;
-  setLocale: (lang: SupportedLanguage) => void;
+  locale: Locale;
+  setLocale: (lang: Locale) => void;
   locales: LocaleInfo[];
+  isLoading: boolean;
 }
 
 // ============================================================================
@@ -50,41 +65,94 @@ const I18nContext = createContext<I18nContextValue | null>(null);
 
 interface I18nProviderProps {
   children: ReactNode;
-  defaultLanguage?: SupportedLanguage;
+  initialLocale?: Locale;
 }
 
-export function I18nProvider({ children, defaultLanguage }: I18nProviderProps) {
-  const [language, setLanguageState] = useState<SupportedLanguage>(() => {
-    if (defaultLanguage) return defaultLanguage;
+export function I18nProvider({ children, initialLocale }: I18nProviderProps) {
+  const params = useParams();
+  const router = useRouter();
+  const pathname = usePathname();
 
-    // Check localStorage on client
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("language") as SupportedLanguage | null;
-      if (stored && LANGUAGES.SUPPORTED.includes(stored)) {
-        return stored;
+  // Get locale from URL params or use initial/default
+  const urlLocale = params?.locale as Locale | undefined;
+  const defaultLocale = initialLocale || urlLocale || i18nConfig.defaultLocale;
+
+  const [language, setLanguageState] = useState<Locale>(defaultLocale);
+  const [dictionary, setDictionary] = useState<Dictionary>(dictionaryCache[defaultLocale] || en);
+  const [isLoading, setIsLoading] = useState(!dictionaryCache[defaultLocale]);
+
+  // Load dictionary when language changes
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadDictionary() {
+      // Check cache first
+      if (dictionaryCache[language]) {
+        setDictionary(dictionaryCache[language]!);
+        setIsLoading(false);
+        return;
       }
 
-      // Check browser language
-      const browserLang = navigator.language;
-      if (browserLang.startsWith("pt")) {
-        return "pt-BR";
+      setIsLoading(true);
+      try {
+        const loaded = await dictionaryLoaders[language]();
+        if (!cancelled) {
+          dictionaryCache[language] = loaded;
+          setDictionary(loaded);
+        }
+      } catch (error) {
+        console.error(`Failed to load dictionary for ${language}:`, error);
+        // Fallback to English
+        if (!cancelled) {
+          setDictionary(en);
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
       }
     }
 
-    return LANGUAGES.DEFAULT;
-  });
+    loadDictionary();
 
-  const setLanguage = useCallback((lang: SupportedLanguage) => {
-    setLanguageState(lang);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("language", lang);
+    return () => {
+      cancelled = true;
+    };
+  }, [language]);
+
+  // Sync with URL locale
+  useEffect(() => {
+    if (urlLocale && urlLocale !== language && i18nConfig.locales.includes(urlLocale)) {
+      setLanguageState(urlLocale);
     }
-  }, []);
+  }, [urlLocale, language]);
+
+  const setLanguage = useCallback(
+    (lang: Locale) => {
+      if (!i18nConfig.locales.includes(lang)) {
+        console.warn(`Invalid locale: ${lang}`);
+        return;
+      }
+
+      setLanguageState(lang);
+
+      // Update URL to reflect new locale
+      if (pathname) {
+        // Replace current locale in path with new locale
+        const segments = pathname.split("/");
+        if (segments[1] && i18nConfig.locales.includes(segments[1] as Locale)) {
+          segments[1] = lang;
+          const newPath = segments.join("/");
+          router.push(newPath);
+        }
+      }
+    },
+    [pathname, router]
+  );
 
   const t = useCallback(
     (key: DictionaryKey, params?: Record<string, string | number>): string => {
-      const dictionary = dictionaries[language];
-      let text: string = dictionary[key] ?? dictionaries[LANGUAGES.DEFAULT][key] ?? key;
+      let text: string = dictionary[key] ?? en[key] ?? key;
 
       // Replace params like {name} with actual values
       if (params) {
@@ -95,14 +163,15 @@ export function I18nProvider({ children, defaultLanguage }: I18nProviderProps) {
 
       return text;
     },
-    [language]
+    [dictionary]
   );
 
   const locales: LocaleInfo[] = useMemo(
-    () => [
-      { code: "en", label: "English" },
-      { code: "pt-BR", label: "Português" },
-    ],
+    () =>
+      i18nConfig.locales.map((code) => ({
+        code,
+        label: i18nConfig.localeNames[code],
+      })),
     []
   );
 
@@ -115,8 +184,9 @@ export function I18nProvider({ children, defaultLanguage }: I18nProviderProps) {
       locale: language,
       setLocale: setLanguage,
       locales,
+      isLoading,
     }),
-    [language, setLanguage, t, locales]
+    [language, setLanguage, t, locales, isLoading]
   );
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;

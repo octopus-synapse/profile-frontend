@@ -1,18 +1,14 @@
+"use client";
+
 /**
  * Sign In Page
  * Developer-inspired design with code aesthetic
  */
 
-import { Metadata } from "next";
 import { SignInForm } from "@/features/auth";
-import Link from "next/link";
+import { LocalizedLink } from "@/shared/components/localized-link";
 import { ROUTES } from "@/config/routes";
 import { Terminal, Github, ArrowLeft } from "lucide-react";
-
-export const metadata: Metadata = {
-  title: "Sign In | Profile",
-  description: "Sign in to your account",
-};
 
 export default function SignInPage() {
   return (
@@ -20,16 +16,16 @@ export default function SignInPage() {
       {/* Header */}
       <header className="border-pf-border-muted border-b p-4">
         <div className="mx-auto flex max-w-7xl items-center justify-between">
-          <Link href={ROUTES.HOME} className="flex items-center gap-2">
+          <LocalizedLink href={ROUTES.HOME} className="flex items-center gap-2">
             <ArrowLeft className="text-pf-fg-muted h-4 w-4" strokeWidth={1.5} />
             <span className="text-pf-fg-muted font-mono text-xs">back</span>
-          </Link>
-          <Link href={ROUTES.HOME} className="flex items-center gap-2">
+          </LocalizedLink>
+          <LocalizedLink href={ROUTES.HOME} className="flex items-center gap-2">
             <div className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis flex h-7 w-7 items-center justify-center">
               <Terminal className="h-4 w-4" strokeWidth={1.5} />
             </div>
             <span className="text-pf-fg-default font-mono text-sm font-semibold">profile</span>
-          </Link>
+          </LocalizedLink>
           <div className="w-16" /> {/* Spacer for centering */}
         </div>
       </header>
@@ -69,28 +65,28 @@ export default function SignInPage() {
           <div className="border-pf-border-default bg-pf-canvas-subtle mt-6 border p-4 text-center">
             <p className="text-pf-fg-muted font-mono text-xs">
               New here?{" "}
-              <Link
+              <LocalizedLink
                 href={ROUTES.AUTH.SIGN_UP}
                 className="text-pf-fg-default font-semibold hover:underline"
               >
                 Create an account
-              </Link>
+              </LocalizedLink>
             </p>
           </div>
 
           {/* Footer Links */}
           <div className="text-pf-fg-subtle mt-8 flex items-center justify-center gap-4 font-mono text-xs">
-            <Link href={ROUTES.HOME} className="hover:text-pf-fg-default transition-colors">
+            <LocalizedLink href={ROUTES.HOME} className="hover:text-pf-fg-default transition-colors">
               terms
-            </Link>
+            </LocalizedLink>
             <span className="text-pf-border-default">·</span>
-            <Link href={ROUTES.HOME} className="hover:text-pf-fg-default transition-colors">
+            <LocalizedLink href={ROUTES.HOME} className="hover:text-pf-fg-default transition-colors">
               privacy
-            </Link>
+            </LocalizedLink>
             <span className="text-pf-border-default">·</span>
-            <Link href={ROUTES.HOME} className="hover:text-pf-fg-default transition-colors">
+            <LocalizedLink href={ROUTES.HOME} className="hover:text-pf-fg-default transition-colors">
               docs
-            </Link>
+            </LocalizedLink>
           </div>
         </div>
       </main>

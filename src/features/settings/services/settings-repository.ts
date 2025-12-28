@@ -17,6 +17,7 @@ import type {
   Language,
   CreateLanguagePayload,
   PaginatedResponse,
+  SpokenLanguageCatalog,
 } from "../types";
 
 // ============================================================================
@@ -233,5 +234,22 @@ export const languagesRepository = {
   async reorder(ids: string[], resumeId?: string): Promise<void> {
     const id = resumeId || await getResumeId();
     await httpClient.post(`/resumes/${id}/languages/reorder`, { ids });
+  },
+};
+
+// ============================================================================
+// Spoken Languages Catalog (Pre-populated list)
+// ============================================================================
+
+export const spokenLanguagesCatalogRepository = {
+  async getAll(): Promise<SpokenLanguageCatalog[]> {
+    return httpClient.get<SpokenLanguageCatalog[]>("/spoken-languages");
+  },
+
+  async search(query: string, limit = 20): Promise<SpokenLanguageCatalog[]> {
+    if (!query || query.length < 1) {
+      return this.getAll();
+    }
+    return httpClient.get<SpokenLanguageCatalog[]>(`/spoken-languages/search?q=${encodeURIComponent(query)}&limit=${limit}`);
   },
 };

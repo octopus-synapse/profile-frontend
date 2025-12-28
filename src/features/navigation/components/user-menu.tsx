@@ -6,18 +6,20 @@
  */
 
 import { useState, useRef, useEffect } from "react";
-import Link from "next/link";
+import { LocalizedLink } from "@/shared/components/localized-link";
 import { useAuth } from "@/features/auth";
 import { useI18n } from "@/features/i18n";
 import type { DictionaryKey } from "@/features/i18n/dictionaries/en";
 import { Avatar } from "@/shared/components/ui";
+import { useThemeOptional } from "@/shared/providers/theme-provider";
 import { cn } from "@/shared/utils";
-import { ChevronDown, LogOut, Shield, Terminal } from "lucide-react";
+import { ChevronDown, LogOut, Shield, Terminal, Moon, Sun, Globe } from "lucide-react";
 import { USER_MENU_ITEMS, ADMIN_MENU_ITEMS } from "../config/nav-items";
 
 export function UserMenu() {
-  const { t } = useI18n();
+  const { t, language, setLanguage, locales } = useI18n();
   const { user, signOut, hasRole } = useAuth();
+  const themeContext = useThemeOptional();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -96,14 +98,14 @@ export function UserMenu() {
           {/* Menu Items */}
           <div className="py-1">
             {USER_MENU_ITEMS.map((item) => (
-              <Link
+              <LocalizedLink
                 key={item.key}
                 href={item.href}
                 onClick={() => setIsOpen(false)}
                 className="text-pf-fg-muted hover:bg-pf-canvas-subtle hover:text-pf-fg-default block px-4 py-2 font-mono text-xs transition-colors"
               >
                 {t(item.labelKey as DictionaryKey).toLowerCase()}
-              </Link>
+              </LocalizedLink>
             ))}
           </div>
 
@@ -113,7 +115,7 @@ export function UserMenu() {
               <div className="border-pf-border-default border-t" />
               <div className="py-1">
                 {ADMIN_MENU_ITEMS.map((item) => (
-                  <Link
+                  <LocalizedLink
                     key={item.key}
                     href={item.href}
                     onClick={() => setIsOpen(false)}
@@ -121,11 +123,78 @@ export function UserMenu() {
                   >
                     <Shield className="text-pf-attention-fg h-3.5 w-3.5" strokeWidth={1.5} />
                     {t(item.labelKey as DictionaryKey).toLowerCase()}
-                  </Link>
+                  </LocalizedLink>
                 ))}
               </div>
             </>
           )}
+
+          {/* Preferences Section */}
+          <div className="border-pf-border-default border-t">
+            <div className="px-4 py-2">
+              <span className="text-pf-fg-subtle font-mono text-xs">// preferences</span>
+            </div>
+
+            {/* Theme Toggle */}
+            <div className="flex items-center justify-between px-4 py-2">
+              <div className="flex items-center gap-2">
+                {themeContext?.resolvedTheme === "dark" ? (
+                  <Moon className="text-pf-fg-muted h-3.5 w-3.5" strokeWidth={1.5} />
+                ) : (
+                  <Sun className="text-pf-fg-muted h-3.5 w-3.5" strokeWidth={1.5} />
+                )}
+                <span className="text-pf-fg-muted font-mono text-xs">theme</span>
+              </div>
+              <div className="flex gap-1">
+                <button
+                  onClick={() => themeContext?.setTheme("light")}
+                  className={cn(
+                    "px-2 py-1 font-mono text-xs transition-colors",
+                    themeContext?.theme === "light"
+                      ? "bg-pf-canvas-emphasis text-pf-fg-on-emphasis"
+                      : "text-pf-fg-muted hover:text-pf-fg-default hover:bg-pf-canvas-subtle"
+                  )}
+                >
+                  light
+                </button>
+                <button
+                  onClick={() => themeContext?.setTheme("dark")}
+                  className={cn(
+                    "px-2 py-1 font-mono text-xs transition-colors",
+                    themeContext?.theme === "dark"
+                      ? "bg-pf-canvas-emphasis text-pf-fg-on-emphasis"
+                      : "text-pf-fg-muted hover:text-pf-fg-default hover:bg-pf-canvas-subtle"
+                  )}
+                >
+                  dark
+                </button>
+              </div>
+            </div>
+
+            {/* Language Toggle */}
+            <div className="flex items-center justify-between px-4 py-2">
+              <div className="flex items-center gap-2">
+                <Globe className="text-pf-fg-muted h-3.5 w-3.5" strokeWidth={1.5} />
+                <span className="text-pf-fg-muted font-mono text-xs">language</span>
+              </div>
+              <div className="flex gap-1">
+                {locales.map((locale) => (
+                  <button
+                    key={locale.code}
+                    onClick={() => setLanguage(locale.code)}
+                    className={cn(
+                      "px-2 py-1 font-mono text-xs transition-colors",
+                      language === locale.code
+                        ? "bg-pf-canvas-emphasis text-pf-fg-on-emphasis"
+                        : "text-pf-fg-muted hover:text-pf-fg-default hover:bg-pf-canvas-subtle"
+                    )}
+                  >
+                    {locale.code === "pt-BR" ? "PT" : locale.code.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
 
           {/* Sign Out */}
           <div className="border-pf-border-default border-t">

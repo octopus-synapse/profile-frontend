@@ -5,12 +5,11 @@
  * Developer-inspired navigation bar with terminal aesthetic
  */
 
-import Link from "next/link";
 import { Menu, Terminal } from "lucide-react";
 import { useAuth } from "@/features/auth";
 import { ROUTES } from "@/config/routes";
+import { LocalizedLink } from "@/shared/components/localized-link";
 import { cn } from "@/shared/utils";
-import { ThemeToggleSimple } from "@/shared/components/ui/theme-toggle";
 import { Logo } from "./logo";
 import { NavLink } from "./nav-link";
 import { UserMenu } from "./user-menu";
@@ -48,9 +47,6 @@ export function Navbar({ className }: NavbarProps) {
 
           {/* Right Section: Actions */}
           <div className="flex items-center gap-2">
-            {/* Theme Toggle */}
-            <ThemeToggleSimple />
-
             {/* Auth Actions */}
             {!isLoading && (
               <>
@@ -58,19 +54,19 @@ export function Navbar({ className }: NavbarProps) {
                   <UserMenu />
                 ) : (
                   <>
-                    <Link
+                    <LocalizedLink
                       href={ROUTES.AUTH.SIGN_IN}
                       className="text-pf-fg-muted hover:text-pf-fg-default hidden font-mono text-xs transition-colors sm:block"
                     >
                       sign_in
-                    </Link>
-                    <Link
+                    </LocalizedLink>
+                    <LocalizedLink
                       href={ROUTES.AUTH.SIGN_UP}
                       className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis hidden items-center gap-2 px-4 py-2 font-mono text-xs transition-opacity hover:opacity-90 sm:flex"
                     >
                       <Terminal className="h-3.5 w-3.5" strokeWidth={1.5} />
                       get_started
-                    </Link>
+                    </LocalizedLink>
                   </>
                 )}
               </>

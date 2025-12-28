@@ -100,12 +100,14 @@ export interface Language {
   id: string;
   name: string;
   level: "basic" | "intermediate" | "advanced" | "fluent" | "native";
+  cefrLevel?: "A1" | "A2" | "B1" | "B2" | "C1" | "C2" | null;
   order?: number;
 }
 
 export interface CreateLanguagePayload {
   name: string;
   level: "basic" | "intermediate" | "advanced" | "fluent" | "native";
+  cefrLevel?: "A1" | "A2" | "B1" | "B2" | "C1" | "C2" | null;
 }
 
 // Resume Info
@@ -130,4 +132,13 @@ export interface PaginatedResponse<T> {
   total: number;
   page: number;
   limit: number;
+}
+
+// Spoken Languages Catalog (pre-populated list of languages)
+export interface SpokenLanguageCatalog {
+  code: string;
+  nameEn: string;
+  namePtBr: string;
+  nameEs: string;
+  nativeName: string | null;
 }

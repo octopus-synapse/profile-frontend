@@ -137,3 +137,31 @@ export type {
   InstitutionAutocompleteProps,
   CourseAutocompleteProps,
 } from "./mec";
+
+// Tech Skills - Pre-populated tech skills catalog
+export {
+  techSkillsRepository,
+  techSkillsKeys,
+  useTechAreas,
+  useTechNiches,
+  useTechNichesByArea,
+  useProgrammingLanguages,
+  useSearchLanguages,
+  useTechSkills,
+  useSearchTechSkills,
+  useSkillsByNiche,
+  useSkillsByType,
+  useSearchAllTechSkills,
+  TechSkillAutocomplete,
+} from "./tech-skills";
+export type {
+  TechAreaType,
+  SkillType,
+  TechAreaDto,
+  TechNicheDto,
+  TechSkillDto,
+  ProgrammingLanguageDto,
+  TechSkillsSearchResult,
+  TechSkillDisplayItem,
+  TechSkillAutocompleteProps,
+} from "./tech-skills";

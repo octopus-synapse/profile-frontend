@@ -78,8 +78,8 @@ export const THEME = {
 // ============================================================================
 
 export const LANGUAGES = {
- DEFAULT: "en" as const,
- SUPPORTED: ["en", "pt-BR"] as const,
+  DEFAULT: "en" as const,
+  SUPPORTED: ["en", "pt-BR", "es"] as const,
 } as const;
 
 export type SupportedLanguage = (typeof LANGUAGES.SUPPORTED)[number];

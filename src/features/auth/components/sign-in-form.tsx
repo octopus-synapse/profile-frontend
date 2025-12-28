@@ -7,7 +7,7 @@
 
 import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import Link from "next/link";
+import { LocalizedLink } from "@/shared/components/localized-link";
 import { useAuth } from "../hooks/use-auth";
 import { useT } from "@/features/i18n";
 import { Button, Input, Spinner } from "@/shared/components/ui";
@@ -84,12 +84,12 @@ function SignInFormContent() {
           <Label htmlFor="password" className="text-pf-fg-default">
             {t("auth.signIn.password")}
           </Label>
-          <Link
+          <LocalizedLink
             href={ROUTES.AUTH.FORGOT_PASSWORD}
             className="text-pf-accent-fg text-xs hover:underline"
           >
             {t("auth.signIn.forgotPassword")}
-          </Link>
+          </LocalizedLink>
         </div>
         <div className="relative">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
