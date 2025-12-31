@@ -12,18 +12,25 @@ import { API_URL } from "@/config/env";
 // API Response Types
 // ============================================================================
 
+/**
+ * Backend auth response format
+ * The backend wraps auth data inside a `data` object
+ */
 interface BackendAuthResponse {
   success: boolean;
-  user: {
-    id: string;
-    email: string;
-    name: string | null;
-    role: "USER" | "ADMIN";
-    username: string | null;
-    hasCompletedOnboarding: boolean;
-    image?: string | null;
+  data: {
+    accessToken: string;
+    refreshToken: string;
+    user: {
+      id: string;
+      email: string;
+      name: string | null;
+      role: "USER" | "ADMIN";
+      username: string | null;
+      hasCompletedOnboarding: boolean;
+      image?: string | null;
+    };
   };
-  token: string;
 }
 
 // Server-safe axios instance (no session interceptors)
@@ -37,8 +44,16 @@ const serverAxios = axios.create({
 
 interface BackendRefreshResponse {
   success: boolean;
-  token: string;
-  user: BackendAuthResponse["user"];
+  data: {
+    accessToken: string;
+    refreshToken: string;
+    user: {
+      id: string;
+      email: string;
+      name: string | null;
+      hasCompletedOnboarding: boolean;
+    };
+  };
 }
 
 // ============================================================================
@@ -66,48 +81,46 @@ export const authService = {
 
   /**
    * Refresh the access token
+   * Sends the refresh token in the request body as expected by the backend
    */
   async refreshToken(currentToken: string): Promise<AuthResponse> {
-    const response = await httpClient.post<BackendRefreshResponse>(
-      "/auth/refresh",
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${currentToken}`,
-        },
-      }
-    );
+    const response = await httpClient.post<BackendRefreshResponse>("/auth/refresh", {
+      refreshToken: currentToken,
+    });
 
+    const { data } = response;
     return {
       user: {
-        id: response.user.id,
-        email: response.user.email,
-        name: response.user.name,
-        username: response.user.username,
-        image: response.user.image ?? null,
-        role: response.user.role,
+        id: data.user.id,
+        email: data.user.email,
+        name: data.user.name ?? null,
+        username: null, // Refresh endpoint doesn't return username
+        image: null, // Refresh endpoint doesn't return image
+        role: "USER", // Refresh endpoint doesn't return role
         emailVerified: null,
-        hasCompletedOnboarding: response.user.hasCompletedOnboarding,
+        hasCompletedOnboarding: data.user.hasCompletedOnboarding,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
-      accessToken: response.token,
-      refreshToken: response.token, // Backend uses same token
+      accessToken: data.accessToken,
+      refreshToken: data.refreshToken,
     };
   },
 
   /**
    * Request password reset email
+   * Returns object with success status and whether email was actually sent
    */
-  async forgotPassword(email: string): Promise<void> {
-    await httpClient.post("/auth/forgot-password", { email });
+  async forgotPassword(email: string): Promise<{ success: boolean; emailSent: boolean; message: string }> {
+    const response = await httpClient.post<{ success: boolean; emailSent: boolean; message: string }>("/auth/forgot-password", { email });
+    return response;
   },
 
   /**
    * Reset password with token
    */
   async resetPassword(token: string, newPassword: string): Promise<void> {
-    await httpClient.post("/auth/reset-password", { token, newPassword });
+    await httpClient.post("/auth/reset-password", { token, password: newPassword });
   },
 };
 
@@ -115,7 +128,8 @@ export const authService = {
 // Helpers
 // ============================================================================
 
-function transformAuthResponse(data: BackendAuthResponse): AuthResponse {
+function transformAuthResponse(response: BackendAuthResponse): AuthResponse {
+  const { data } = response;
   return {
     user: {
       id: data.user.id,
@@ -129,7 +143,7 @@ function transformAuthResponse(data: BackendAuthResponse): AuthResponse {
       createdAt: new Date(),
       updatedAt: new Date(),
     },
-    accessToken: data.token,
-    refreshToken: data.token, // Backend uses same token for both
+    accessToken: data.accessToken,
+    refreshToken: data.refreshToken,
   };
 }

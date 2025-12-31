@@ -43,10 +43,25 @@ export const auth = {
   "auth.forgotPassword.email": "Email address",
   "auth.forgotPassword.submit": "Send reset link",
   "auth.forgotPassword.backToSignIn": "Back to sign in",
+  "auth.forgotPassword.success": "If an account exists, a reset link has been sent to your email.",
+
+  // Reset password
+  "auth.resetPassword.title": "Set new password",
+  "auth.resetPassword.subtitle": "Enter your new password below.",
+  "auth.resetPassword.password": "New password",
+  "auth.resetPassword.confirmPassword": "Confirm new password",
+  "auth.resetPassword.submit": "Reset password",
+  "auth.resetPassword.success": "Password reset successfully. Redirecting to sign in...",
+  "auth.resetPassword.backToSignIn": "Back to sign in",
 
   // Errors
   "auth.error.invalidCredentials": "Invalid email or password",
   "auth.error.emailExists": "An account with this email already exists",
   "auth.error.weakPassword": "Password is too weak",
+  "auth.error.passwordRequirements": "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&)",
   "auth.error.passwordMismatch": "Passwords do not match",
+  "auth.error.invalidToken": "Invalid or expired reset token. Please request a new reset link.",
+  "auth.error.resetFailed": "Failed to reset password. Please try again.",
+  "auth.error.emailNotSent": "Unable to send reset email. Please verify your email address and try again.",
+  "auth.error.emailServiceError": "Email service is temporarily unavailable. Please try again later.",
 } as const;

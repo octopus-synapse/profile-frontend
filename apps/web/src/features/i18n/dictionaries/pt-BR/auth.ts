@@ -43,10 +43,25 @@ export const auth = {
   "auth.forgotPassword.email": "Endereço de email",
   "auth.forgotPassword.submit": "Enviar link",
   "auth.forgotPassword.backToSignIn": "Voltar para entrar",
+  "auth.forgotPassword.success": "Se a conta existir, um link de redefinição foi enviado para seu email.",
+
+  // Reset password
+  "auth.resetPassword.title": "Definir nova senha",
+  "auth.resetPassword.subtitle": "Digite sua nova senha abaixo.",
+  "auth.resetPassword.password": "Nova senha",
+  "auth.resetPassword.confirmPassword": "Confirmar nova senha",
+  "auth.resetPassword.submit": "Redefinir senha",
+  "auth.resetPassword.success": "Senha redefinida com sucesso. Redirecionando para entrar...",
+  "auth.resetPassword.backToSignIn": "Voltar para entrar",
 
   // Errors
   "auth.error.invalidCredentials": "Email ou senha inválidos",
   "auth.error.emailExists": "Já existe uma conta com este email",
   "auth.error.weakPassword": "A senha é muito fraca",
+  "auth.error.passwordRequirements": "A senha deve conter pelo menos uma letra maiúscula, uma letra minúscula, um número e um caractere especial (@$!%*?&)",
   "auth.error.passwordMismatch": "As senhas não coincidem",
+  "auth.error.invalidToken": "Token inválido ou expirado. Por favor, solicite um novo link de redefinição.",
+  "auth.error.resetFailed": "Falha ao redefinir senha. Por favor, tente novamente.",
+  "auth.error.emailNotSent": "Não foi possível enviar o email de redefinição. Por favor, verifique seu endereço de email e tente novamente.",
+  "auth.error.emailServiceError": "O serviço de email está temporariamente indisponível. Por favor, tente novamente mais tarde.",
 } as const;
