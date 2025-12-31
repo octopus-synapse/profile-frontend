@@ -16,57 +16,56 @@ import { ROUTES } from "@/config/routes";
 
 /**
  * Home Page (App)
- * Developer-inspired design with code aesthetic
- * Consistent with landing page and not-found styles
+ * Dark theme matching landing page
  */
 export default function HomePage() {
   return (
-    <div className="bg-pf-canvas-default flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col">
       {/* Hero Section */}
       <main className="relative z-10 flex flex-1 flex-col">
         <section className="flex flex-1 flex-col items-center justify-center px-4 py-20">
           <div className="max-w-4xl space-y-8 text-center">
             {/* Terminal Badge */}
             <div className="inline-flex items-center gap-2">
-              <span className="dev-badge">
-                <span className="text-code-string">●</span> ready
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 font-mono text-[10px] text-zinc-400">
+                <span className="text-cyan-400">●</span> ready
               </span>
             </div>
 
             {/* Headline */}
-            <h1 className="text-pf-fg-default text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+            <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
               Your developer profile,
               <br />
-              <span className="text-pf-fg-muted font-normal">beautifully crafted</span>
+              <span className="font-normal text-zinc-500">beautifully crafted</span>
             </h1>
 
             {/* Code Block Subtitle */}
             <div className="mx-auto max-w-xl">
-              <div className="code-block text-left">
-                <div className="code-block-header">
-                  <div className="code-block-dots">
-                    <span className="code-block-dot red" />
-                    <span className="code-block-dot yellow" />
-                    <span className="code-block-dot green" />
+              <div className="overflow-hidden rounded-lg border border-white/10 bg-black/50 backdrop-blur-sm">
+                <div className="flex items-center gap-2 border-b border-white/5 bg-black/30 px-4 py-2.5">
+                  <div className="flex gap-1.5">
+                    <span className="h-2.5 w-2.5 rounded-full bg-red-500/80" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-yellow-500/80" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-green-500/80" />
                   </div>
-                  <span className="code-block-title">welcome.ts</span>
+                  <span className="font-mono text-[10px] text-zinc-500">welcome.ts</span>
                 </div>
-                <div className="code-block-content">
+                <div className="p-4 font-mono text-[11px] leading-relaxed text-zinc-400">
                   <div>
-                    <span className="code-keyword">const</span>{" "}
-                    <span className="code-variable">features</span> = {"{"}
+                    <span className="text-pink-400">const</span>{" "}
+                    <span className="text-cyan-300">features</span> = {"{"}
                   </div>
                   <div className="ml-4">
-                    <span className="code-function">portfolio</span>:{" "}
-                    <span className="code-string">&quot;showcase your work&quot;</span>,
+                    <span className="text-blue-400">portfolio</span>:{" "}
+                    <span className="text-emerald-400">&quot;showcase your work&quot;</span>,
                   </div>
                   <div className="ml-4">
-                    <span className="code-function">resume</span>:{" "}
-                    <span className="code-string">&quot;export to PDF/DOCX&quot;</span>,
+                    <span className="text-blue-400">resume</span>:{" "}
+                    <span className="text-emerald-400">&quot;export to PDF/DOCX&quot;</span>,
                   </div>
                   <div className="ml-4">
-                    <span className="code-function">analytics</span>:{" "}
-                    <span className="code-string">&quot;track engagement&quot;</span>,
+                    <span className="text-blue-400">analytics</span>:{" "}
+                    <span className="text-emerald-400">&quot;track engagement&quot;</span>,
                   </div>
                   <div>{"}"}</div>
                 </div>
@@ -77,7 +76,7 @@ export default function HomePage() {
             <div className="flex flex-col justify-center gap-4 pt-4 sm:flex-row">
               <Link
                 href={ROUTES.AUTH.SIGN_UP}
-                className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis group inline-flex items-center justify-center gap-2 px-6 py-3 font-mono text-sm transition-opacity hover:opacity-90"
+                className="group inline-flex items-center justify-center gap-2 rounded-md bg-cyan-500 px-6 py-3 font-mono text-sm text-white transition-all hover:bg-cyan-400"
               >
                 <Terminal className="h-4 w-4" strokeWidth={1.5} />
                 get_started()
@@ -88,7 +87,7 @@ export default function HomePage() {
               </Link>
               <Link
                 href={ROUTES.AUTH.SIGN_IN}
-                className="border-pf-border-default text-pf-fg-default hover:bg-pf-canvas-subtle inline-flex items-center justify-center gap-2 border bg-transparent px-6 py-3 font-mono text-sm transition-colors"
+                className="inline-flex items-center justify-center gap-2 rounded-md border border-white/10 bg-white/5 px-6 py-3 font-mono text-sm text-zinc-300 transition-all hover:bg-white/10"
               >
                 <Github className="h-4 w-4" strokeWidth={1.5} />
                 sign_in_with_github
@@ -96,25 +95,25 @@ export default function HomePage() {
             </div>
 
             {/* Social proof */}
-            <p className="text-pf-fg-subtle pt-4 font-mono text-xs">
-              <span className="text-pf-success-fg">✓</span> Trusted by{" "}
-              <span className="text-pf-fg-muted font-semibold">1,000+</span> developers
+            <p className="pt-4 font-mono text-xs text-zinc-500">
+              <span className="text-cyan-400">✓</span> Trusted by{" "}
+              <span className="font-semibold text-zinc-400">1,000+</span> developers
             </p>
           </div>
         </section>
 
         {/* Features Section */}
-        <section className="border-pf-border-muted bg-pf-canvas-subtle/50 border-t py-24">
+        <section className="border-t border-white/5 bg-black/30 py-24">
           <div className="mx-auto max-w-7xl px-6 lg:px-10">
             <div className="mb-16 text-center">
               <div className="mb-4 inline-flex items-center gap-2">
-                <Code2 className="text-pf-fg-muted h-5 w-5" strokeWidth={1.5} />
-                <span className="text-pf-fg-muted font-mono text-xs">// Features</span>
+                <Code2 className="h-5 w-5 text-zinc-500" strokeWidth={1.5} />
+                <span className="font-mono text-xs text-zinc-500">// Features</span>
               </div>
-              <h2 className="text-pf-fg-default text-2xl font-bold tracking-tight sm:text-3xl">
+              <h2 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
                 Everything you need to stand out
               </h2>
-              <p className="text-pf-fg-muted mt-4 font-mono text-sm">
+              <p className="mt-4 font-mono text-sm text-zinc-500">
                 Powerful features for building your professional presence
               </p>
             </div>
@@ -155,26 +154,26 @@ export default function HomePage() {
         </section>
 
         {/* Terminal CTA Section */}
-        <section className="border-pf-border-muted border-t py-24">
+        <section className="border-t border-white/5 py-24">
           <div className="mx-auto max-w-4xl px-6 text-center lg:px-10">
-            <div className="terminal mx-auto max-w-lg text-left">
-              <div className="terminal-header">
-                <div className="code-block-dots">
-                  <span className="code-block-dot red" />
-                  <span className="code-block-dot yellow" />
-                  <span className="code-block-dot green" />
+            <div className="mx-auto max-w-lg overflow-hidden rounded-lg border border-white/10 bg-black/50 backdrop-blur-sm">
+              <div className="flex items-center gap-2 border-b border-white/5 bg-black/30 px-4 py-2.5">
+                <div className="flex gap-1.5">
+                  <span className="h-2.5 w-2.5 rounded-full bg-red-500/80" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-yellow-500/80" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-green-500/80" />
                 </div>
-                <span className="code-block-title">~/workspace</span>
+                <span className="font-mono text-[10px] text-zinc-500">~/workspace</span>
               </div>
-              <div className="terminal-content">
+              <div className="p-4 text-left font-mono text-[11px] leading-relaxed text-zinc-400">
                 <div>
-                  <span className="terminal-prompt">➜</span>{" "}
-                  <span className="terminal-command">npx create-profile@latest</span>
+                  <span className="text-cyan-400">➜</span>{" "}
+                  <span className="text-white">npx create-patch@latest</span>
                 </div>
-                <div className="terminal-output mt-2">
-                  <div className="text-pf-success-fg">✔ Profile created successfully!</div>
-                  <div className="text-pf-fg-muted mt-1">
-                    Your profile is live at: profile.dev/yourname
+                <div className="mt-2">
+                  <div className="text-emerald-400">✔ Profile created successfully!</div>
+                  <div className="mt-1 text-zinc-500">
+                    Your profile is live at: patch.dev/yourname
                   </div>
                 </div>
               </div>
@@ -182,7 +181,7 @@ export default function HomePage() {
             <div className="mt-10">
               <Link
                 href={ROUTES.AUTH.SIGN_UP}
-                className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis group inline-flex items-center justify-center gap-2 px-6 py-3 font-mono text-sm transition-opacity hover:opacity-90"
+                className="group inline-flex items-center justify-center gap-2 rounded-md bg-cyan-500 px-6 py-3 font-mono text-sm text-white transition-all hover:bg-cyan-400"
               >
                 Get Started for Free
                 <ArrowRight
@@ -196,30 +195,30 @@ export default function HomePage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-pf-border-muted bg-pf-canvas-default relative z-10 border-t">
+      <footer className="relative z-10 border-t border-white/5">
         <div className="px-6 py-8 lg:px-10">
           <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
             <div className="flex items-center gap-2">
-              <div className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis flex h-6 w-6 items-center justify-center">
-                <Terminal className="h-3.5 w-3.5" strokeWidth={1.5} />
+              <div className="flex h-6 w-6 items-center justify-center rounded-md bg-cyan-500">
+                <Zap className="h-3.5 w-3.5 text-white" strokeWidth={1.5} />
               </div>
-              <span className="text-pf-fg-default font-mono text-xs font-semibold">profile</span>
+              <span className="font-mono text-xs font-bold text-white">PATCH</span>
             </div>
-            <p className="text-pf-fg-muted font-mono text-xs">
-              © {new Date().getFullYear()} ProFile. All rights reserved.
+            <p className="font-mono text-xs text-zinc-500">
+              © {new Date().getFullYear()} PATCH. All rights reserved.
             </p>
-            <div className="text-pf-fg-muted flex gap-6 font-mono text-xs">
-              <Link href="/privacy" className="hover:text-pf-fg-default transition-colors">
+            <div className="flex gap-6 font-mono text-xs text-zinc-500">
+              <Link href="/privacy" className="transition-colors hover:text-white">
                 privacy
               </Link>
-              <Link href="/terms" className="hover:text-pf-fg-default transition-colors">
+              <Link href="/terms" className="transition-colors hover:text-white">
                 terms
               </Link>
               <a
                 href="https://github.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-pf-fg-default transition-colors"
+                className="transition-colors hover:text-white"
               >
                 github
               </a>
@@ -239,12 +238,10 @@ interface FeatureCardProps {
 
 function FeatureCard({ icon, title, description }: FeatureCardProps) {
   return (
-    <div className="group border-pf-border-default bg-pf-canvas-overlay hover:border-pf-border-emphasis p-6 transition-all">
-      <div className="text-pf-fg-muted group-hover:text-pf-fg-default mb-4 transition-colors">
-        {icon}
-      </div>
-      <h3 className="text-pf-fg-default mb-2 font-mono text-sm font-semibold">{title}</h3>
-      <p className="text-pf-fg-muted text-sm leading-relaxed">{description}</p>
+    <div className="group rounded-lg border border-white/10 bg-white/5 p-6 transition-all hover:border-cyan-500/30 hover:bg-white/10">
+      <div className="mb-4 text-zinc-500 transition-colors group-hover:text-cyan-400">{icon}</div>
+      <h3 className="mb-2 font-mono text-sm font-semibold text-white">{title}</h3>
+      <p className="text-sm leading-relaxed text-zinc-400">{description}</p>
     </div>
   );
 }

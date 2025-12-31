@@ -23,6 +23,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { useI18n } from "@/features/i18n";
+import { Navbar } from "@/features/navigation";
 import type { Locale } from "@/config/i18n.config";
 
 // ============================================
@@ -301,28 +302,25 @@ export default function PatchLanding() {
   return (
     <div className="bg-[#020202] font-sans text-zinc-300 antialiased selection:bg-cyan-500/30">
       {/* ATMOSPHERE - Subtle grid background */}
-      <div className="fixed inset-0 z-0 bg-[linear-gradient(to_right,#80808005_1px,transparent_1px),linear-gradient(to_bottom,#80808005_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_0%,#000_70%,transparent_100%)] bg-[size:40px_40px]" />
+      <div className="pointer-events-none fixed inset-0 z-0 bg-[linear-gradient(to_right,#80808005_1px,transparent_1px),linear-gradient(to_bottom,#80808005_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_0%,#000_70%,transparent_100%)] bg-[size:40px_40px]" />
 
       {/* ============================================
-          NAVBAR
+          NAVBAR - Using unified component
           ============================================ */}
-      <nav className="fixed top-0 z-50 flex w-full items-center justify-between border-b border-white/5 bg-black/60 px-8 py-4 backdrop-blur-md">
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-500">
-            <Zap size={16} className="text-white" />
+      <Navbar
+        variant="landing"
+        rightSection={
+          <div className="flex items-center gap-4">
+            <LanguageSwitcher currentLocale={currentLocale} onSwitch={handleLanguageSwitch} />
+            <button
+              onClick={() => router.push(`/${currentLocale}/auth/sign-up`)}
+              className="rounded-md bg-white px-4 py-1.5 text-[11px] font-bold text-black transition-all hover:scale-[1.02] hover:bg-cyan-400"
+            >
+              {t("landing.nav.access")}
+            </button>
           </div>
-          <span className="text-lg font-bold tracking-tighter text-white">PATCH</span>
-        </div>
-        <div className="flex items-center gap-4">
-          <LanguageSwitcher currentLocale={currentLocale} onSwitch={handleLanguageSwitch} />
-          <button
-            onClick={() => router.push(`/${currentLocale}/auth/sign-up`)}
-            className="rounded-md bg-white px-4 py-1.5 text-[11px] font-bold text-black transition-all hover:scale-[1.02] hover:bg-cyan-400"
-          >
-            {t("landing.nav.access")}
-          </button>
-        </div>
-      </nav>
+        }
+      />
 
       {/* ============================================
           HERO SECTION

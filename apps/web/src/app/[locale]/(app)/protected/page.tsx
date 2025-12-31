@@ -18,13 +18,13 @@ export default function ProtectedPage() {
       {/* Header */}
       <div>
         <div className="mb-4 inline-flex items-center gap-2">
-          <Code2 className="text-pf-fg-muted h-5 w-5" strokeWidth={1.5} />
-          <span className="text-pf-fg-muted font-mono text-xs">// Dashboard</span>
+          <Code2 className="h-5 w-5 text-zinc-400" strokeWidth={1.5} />
+          <span className="font-mono text-xs text-zinc-400">// Dashboard</span>
         </div>
-        <h1 className="text-pf-fg-default text-3xl font-bold">
-          Welcome back, <span className="text-pf-fg-muted font-normal">developer</span>
+        <h1 className="text-3xl font-bold text-white">
+          Welcome back, <span className="font-normal text-zinc-400">developer</span>
         </h1>
-        <p className="text-pf-fg-muted mt-2 font-mono text-sm">
+        <p className="mt-2 font-mono text-sm text-zinc-400">
           <span className="text-pf-success-fg">●</span> authenticated: true
         </p>
       </div>
@@ -90,22 +90,22 @@ export default function ProtectedPage() {
             <span className="code-block-dot yellow" />
             <span className="code-block-dot green" />
           </div>
-          <span className="code-block-title">~/profile</span>
+          <span className="code-block-title">~/patch</span>
         </div>
         <div className="terminal-content">
           <div>
             <span className="terminal-prompt">➜</span>{" "}
-            <span className="terminal-command">profile --help</span>
+            <span className="terminal-command">patch --help</span>
           </div>
           <div className="terminal-output mt-2">
-            <div className="text-pf-fg-muted">Available commands:</div>
-            <div className="text-pf-fg-muted mt-1 ml-4">
+            <div className="text-zinc-400">Available commands:</div>
+            <div className="mt-1 ml-4 text-zinc-400">
               <span className="text-code-function">edit</span> - Edit your profile
             </div>
-            <div className="text-pf-fg-muted ml-4">
+            <div className="ml-4 text-zinc-400">
               <span className="text-code-function">export</span> - Export resume to PDF
             </div>
-            <div className="text-pf-fg-muted ml-4">
+            <div className="ml-4 text-zinc-400">
               <span className="text-code-function">publish</span> - Make profile public
             </div>
           </div>
@@ -126,17 +126,15 @@ function DashboardCard({ icon, title, description, href }: DashboardCardProps) {
   return (
     <Link
       href={href}
-      className="group border-pf-border-default bg-pf-canvas-overlay hover:border-pf-border-emphasis flex flex-col border p-6 transition-all"
+      className="group hover:border-pf-border-emphasis flex flex-col border border-white/10 bg-[#0A0A0A]/95 p-6 transition-all"
     >
-      <div className="text-pf-fg-muted group-hover:text-pf-fg-default mb-4 flex items-center gap-3 transition-colors">
-        <div className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis flex h-8 w-8 items-center justify-center">
-          {icon}
-        </div>
-        <Terminal className="text-pf-fg-subtle h-4 w-4" strokeWidth={1.5} />
+      <div className="mb-4 flex items-center gap-3 text-zinc-400 transition-colors group-hover:text-white">
+        <div className="flex h-8 w-8 items-center justify-center bg-white text-black">{icon}</div>
+        <Terminal className="h-4 w-4 text-zinc-500" strokeWidth={1.5} />
       </div>
-      <h3 className="text-pf-fg-default mb-2 font-mono text-sm font-semibold">{title}</h3>
-      <p className="text-pf-fg-muted flex-1 text-sm">{description}</p>
-      <div className="text-pf-fg-muted group-hover:text-pf-fg-default mt-4 flex items-center font-mono text-xs transition-colors">
+      <h3 className="mb-2 font-mono text-sm font-semibold text-white">{title}</h3>
+      <p className="flex-1 text-sm text-zinc-400">{description}</p>
+      <div className="mt-4 flex items-center font-mono text-xs text-zinc-400 transition-colors group-hover:text-white">
         <span>execute</span>
         <ArrowRight className="ml-1 h-3 w-3 transition-transform group-hover:translate-x-1" />
       </div>

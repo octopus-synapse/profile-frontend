@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: PageProps) {
   const { username } = await params;
 
   return {
-    title: `@${username} | ProFile`,
-    description: `View ${username}'s professional profile`,
+    title: `@${username} | PATCH`,
+    description: `View ${username}'s professional profile on PATCH`,
   };
 }
