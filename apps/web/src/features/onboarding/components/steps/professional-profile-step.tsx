@@ -9,19 +9,37 @@
 import { useState, useMemo } from "react";
 import { useOnboardingStore } from "../../stores";
 import { StepNavigation } from "../step-navigation";
-import { Briefcase, FileText, Linkedin, Github, Globe, AlertCircle } from "lucide-react";
+import { useGitHubUser } from "../../hooks/use-github-user";
+import { Briefcase, FileText, Linkedin, Github, Globe, AlertCircle, Loader2, Check, ExternalLink } from "lucide-react";
 
 export function ProfessionalProfileStep() {
   const { professionalProfile, setProfessionalProfile, goToNextStep, markStepComplete } =
     useOnboardingStore();
 
+  // Extract GitHub username from URL if it's a full URL
+  const extractGitHubUsername = (url: string | undefined): string => {
+    if (!url) return "";
+    // If it's already just a username, return it
+    if (!url.includes("github.com")) return url.trim();
+    // Extract username from URL
+    const match = url.match(/github\.com\/([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)/);
+    return match ? match[1] : url.replace(/^https?:\/\/(www\.)?github\.com\//, "").trim();
+  };
+
+  const initialGithub = extractGitHubUsername(professionalProfile?.github);
+
   const [formData, setFormData] = useState({
     jobTitle: professionalProfile?.jobTitle || "",
     summary: professionalProfile?.summary || "",
     linkedin: professionalProfile?.linkedin || "",
-    github: professionalProfile?.github || "",
+    github: initialGithub,
     website: professionalProfile?.website || "",
   });
+
+  // Fetch GitHub user data
+  const { user: githubUser, isLoading: isGithubLoading, error: githubError } = useGitHubUser(
+    formData.github || null
+  );
 
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
@@ -46,8 +64,8 @@ export function ProfessionalProfileStep() {
       }
     }
 
-    // URL validations
-    const urlFields = ["linkedin", "github", "website"] as const;
+    // URL validations (only for linkedin and website, github is validated via API)
+    const urlFields = ["linkedin", "website"] as const;
     urlFields.forEach((field) => {
       if (touched[field] && formData[field]) {
         try {
@@ -57,6 +75,11 @@ export function ProfessionalProfileStep() {
         }
       }
     });
+
+    // GitHub validation: show error if user not found
+    if (touched.github && formData.github && githubError && !isGithubLoading) {
+      newErrors.github = githubError;
+    }
 
     return newErrors;
   }, [formData, touched, summaryLength]);
@@ -76,12 +99,41 @@ export function ProfessionalProfileStep() {
       return;
     }
 
+    // Validate URLs even if not touched (only linkedin and website)
+    const urlFields = ["linkedin", "website"] as const;
+    const urlErrors: Record<string, string> = {};
+    urlFields.forEach((field) => {
+      if (formData[field]) {
+        try {
+          new URL(formData[field]);
+        } catch {
+          urlErrors[field] = "Invalid URL format";
+        }
+      }
+    });
+
+    if (Object.keys(urlErrors).length > 0) {
+      // Show errors but don't prevent proceeding if URLs are optional
+      console.warn("URL validation errors:", urlErrors);
+    }
+
+    // Normalize empty URLs to undefined
+    const normalizeUrl = (url: string | undefined): string | undefined => {
+      if (!url || url.trim() === "") return undefined;
+      return url;
+    };
+
+    // Build GitHub URL from username if provided
+    const githubUrl = formData.github
+      ? `https://github.com/${formData.github.trim()}`
+      : undefined;
+
     setProfessionalProfile({
       jobTitle: formData.jobTitle,
       summary: formData.summary,
-      linkedin: formData.linkedin || undefined,
-      github: formData.github || undefined,
-      website: formData.website || undefined,
+      linkedin: normalizeUrl(formData.linkedin),
+      github: normalizeUrl(githubUrl),
+      website: normalizeUrl(formData.website),
     });
     markStepComplete("professional-profile");
     goToNextStep();
@@ -95,10 +147,10 @@ export function ProfessionalProfileStep() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-2">
-          <span className="text-pf-accent-fg font-mono text-sm">{`>`}</span>
-          <h2 className="text-pf-fg-default text-xl font-bold">Professional Profile</h2>
+          <span className="text-cyan-400 font-mono text-sm">{`>`}</span>
+          <h2 className="text-white text-xl font-bold">Professional Profile</h2>
         </div>
-        <p className="text-pf-fg-muted mt-1 font-mono text-xs">
+        <p className="text-zinc-400 mt-1 font-mono text-xs">
           Tell us about your career and online presence
         </p>
       </div>
@@ -107,9 +159,9 @@ export function ProfessionalProfileStep() {
       <div className="space-y-4">
         {/* Job Title */}
         <div>
-          <label className="text-pf-fg-default mb-1.5 flex items-center gap-2 font-mono text-sm">
+          <label className="text-white mb-1.5 flex items-center gap-2 font-mono text-sm">
             <Briefcase className="h-4 w-4" strokeWidth={1.5} />
-            jobTitle<span className="text-pf-danger-fg">*</span>
+            jobTitle<span className="text-red-500">*</span>
           </label>
           <input
             type="text"
@@ -117,10 +169,10 @@ export function ProfessionalProfileStep() {
             onChange={(e) => handleChange("jobTitle", e.target.value)}
             onBlur={() => handleBlur("jobTitle")}
             placeholder="Senior Software Engineer"
-            className={`border-pf-border-default bg-pf-canvas-subtle text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-accent-fg w-full border px-3 py-2 font-mono text-sm focus:outline-none ${errors.jobTitle ? "border-pf-danger-fg" : ""} `}
+            className={`border-white/10 bg-white/5 text-white placeholder:text-zinc-500 focus:border-cyan-500 w-full border px-3 py-2 font-mono text-sm focus:outline-none ${errors.jobTitle ? "border-red-500" : ""} `}
           />
           {errors.jobTitle && (
-            <p className="text-pf-danger-fg mt-1 flex items-center gap-1 font-mono text-xs">
+            <p className="text-red-500 mt-1 flex items-center gap-1 font-mono text-xs">
               <AlertCircle className="h-3 w-3" />
               {errors.jobTitle}
             </p>
@@ -129,9 +181,9 @@ export function ProfessionalProfileStep() {
 
         {/* Summary */}
         <div>
-          <label className="text-pf-fg-default mb-1.5 flex items-center gap-2 font-mono text-sm">
+          <label className="text-white mb-1.5 flex items-center gap-2 font-mono text-sm">
             <FileText className="h-4 w-4" strokeWidth={1.5} />
-            summary<span className="text-pf-danger-fg">*</span>
+            summary<span className="text-red-500">*</span>
           </label>
           <textarea
             value={formData.summary}
@@ -139,24 +191,24 @@ export function ProfessionalProfileStep() {
             onBlur={() => handleBlur("summary")}
             placeholder="Passionate full-stack developer with 5+ years of experience building scalable web applications. Specialized in React, Node.js, and cloud infrastructure..."
             rows={4}
-            className={`border-pf-border-default bg-pf-canvas-subtle text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-accent-fg w-full resize-none border px-3 py-2 font-mono text-sm focus:outline-none ${errors.summary ? "border-pf-danger-fg" : ""} `}
+            className={`border-white/10 bg-white/5 text-white placeholder:text-zinc-500 focus:border-cyan-500 w-full resize-none border px-3 py-2 font-mono text-sm focus:outline-none ${errors.summary ? "border-red-500" : ""} `}
           />
           <div className="mt-1 flex items-center justify-between">
             {errors.summary ? (
-              <p className="text-pf-danger-fg flex items-center gap-1 font-mono text-xs">
+              <p className="text-red-500 flex items-center gap-1 font-mono text-xs">
                 <AlertCircle className="h-3 w-3" />
                 {errors.summary}
               </p>
             ) : (
-              <span className="text-pf-fg-subtle font-mono text-xs">min {minSummary} chars</span>
+              <span className="text-zinc-500 font-mono text-xs">min {minSummary} chars</span>
             )}
             <span
               className={`font-mono text-xs ${
                 summaryLength < minSummary
-                  ? "text-pf-attention-fg"
+                  ? "text-amber-500"
                   : summaryLength > maxSummary
-                    ? "text-pf-danger-fg"
-                    : "text-pf-success-fg"
+                    ? "text-red-500"
+                    : "text-emerald-500"
               }`}
             >
               {summaryLength}/{maxSummary}
@@ -165,15 +217,15 @@ export function ProfessionalProfileStep() {
         </div>
 
         {/* Divider */}
-        <div className="border-pf-border-muted flex items-center gap-3 border-t pt-4">
-          <span className="text-pf-fg-subtle font-mono text-xs">
+        <div className="border-white/10 flex items-center gap-3 border-t pt-4">
+          <span className="text-zinc-500 font-mono text-xs">
             <span className="opacity-60">{"//"}</span> Social links (optional)
           </span>
         </div>
 
         {/* LinkedIn */}
         <div>
-          <label className="text-pf-fg-default mb-1.5 flex items-center gap-2 font-mono text-sm">
+          <label className="text-white mb-1.5 flex items-center gap-2 font-mono text-sm">
             <Linkedin className="h-4 w-4" strokeWidth={1.5} />
             linkedin
           </label>
@@ -183,10 +235,10 @@ export function ProfessionalProfileStep() {
             onChange={(e) => handleChange("linkedin", e.target.value)}
             onBlur={() => handleBlur("linkedin")}
             placeholder="https://linkedin.com/in/username"
-            className={`border-pf-border-default bg-pf-canvas-subtle text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-accent-fg w-full border px-3 py-2 font-mono text-sm focus:outline-none ${errors.linkedin ? "border-pf-danger-fg" : ""} `}
+            className={`border-white/10 bg-white/5 text-white placeholder:text-zinc-500 focus:border-cyan-500 w-full border px-3 py-2 font-mono text-sm focus:outline-none ${errors.linkedin ? "border-red-500" : ""} `}
           />
           {errors.linkedin && (
-            <p className="text-pf-danger-fg mt-1 flex items-center gap-1 font-mono text-xs">
+            <p className="text-red-500 mt-1 flex items-center gap-1 font-mono text-xs">
               <AlertCircle className="h-3 w-3" />
               {errors.linkedin}
             </p>
@@ -195,29 +247,96 @@ export function ProfessionalProfileStep() {
 
         {/* GitHub */}
         <div>
-          <label className="text-pf-fg-default mb-1.5 flex items-center gap-2 font-mono text-sm">
+          <label className="text-white mb-1.5 flex items-center gap-2 font-mono text-sm">
             <Github className="h-4 w-4" strokeWidth={1.5} />
             github
           </label>
-          <input
-            type="url"
-            value={formData.github}
-            onChange={(e) => handleChange("github", e.target.value)}
-            onBlur={() => handleBlur("github")}
-            placeholder="https://github.com/username"
-            className={`border-pf-border-default bg-pf-canvas-subtle text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-accent-fg w-full border px-3 py-2 font-mono text-sm focus:outline-none ${errors.github ? "border-pf-danger-fg" : ""} `}
-          />
+          <div className="relative">
+            <input
+              type="search"
+              value={formData.github}
+              onChange={(e) => {
+                // Only allow alphanumeric, hyphens, and underscores
+                const value = e.target.value.replace(/[^a-zA-Z0-9_-]/g, "");
+                handleChange("github", value);
+              }}
+              onBlur={() => handleBlur("github")}
+              placeholder="username"
+              className={`border-white/10 bg-white/5 text-white placeholder:text-zinc-500 focus:border-cyan-500 w-full border px-3 py-2 pr-10 font-mono text-sm focus:outline-none ${
+                errors.github
+                  ? "border-red-500"
+                  : githubUser
+                    ? "border-emerald-500"
+                    : ""
+              }`}
+            />
+            <div className="absolute top-1/2 right-3 -translate-y-1/2">
+              {isGithubLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin text-zinc-400" />
+              ) : githubUser ? (
+                <Check className="h-4 w-4 text-emerald-500" />
+              ) : githubError && formData.github ? (
+                <AlertCircle className="h-4 w-4 text-red-500" />
+              ) : null}
+            </div>
+          </div>
           {errors.github && (
-            <p className="text-pf-danger-fg mt-1 flex items-center gap-1 font-mono text-xs">
+            <p className="text-red-500 mt-1 flex items-center gap-1 font-mono text-xs">
               <AlertCircle className="h-3 w-3" />
               {errors.github}
+            </p>
+          )}
+
+          {/* GitHub User Preview */}
+          {githubUser && !isGithubLoading && (
+            <div className="border-emerald-500/20 bg-emerald-500/5 mt-3 flex items-center gap-3 border p-3">
+              <img
+                src={githubUser.avatar_url}
+                alt={githubUser.login}
+                className="h-10 w-10 rounded-full"
+              />
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-white font-mono text-sm font-semibold">
+                    {githubUser.login}
+                  </span>
+                  {githubUser.name && (
+                    <span className="text-zinc-400 font-mono text-xs">
+                      ({githubUser.name})
+                    </span>
+                  )}
+                </div>
+                <a
+                  href={githubUser.html_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-cyan-400 hover:text-cyan-300 mt-0.5 flex items-center gap-1 font-mono text-xs transition-colors"
+                >
+                  <ExternalLink className="h-3 w-3" />
+                  {githubUser.html_url}
+                </a>
+              </div>
+            </div>
+          )}
+
+          {/* Non-intrusive error message when user not found */}
+          {githubError && formData.github && !isGithubLoading && !githubUser && (
+            <p className="text-amber-500 mt-1 font-mono text-xs">
+              {githubError}
+            </p>
+          )}
+
+          {/* Helper text */}
+          {!formData.github && !githubError && (
+            <p className="text-zinc-500 mt-1 font-mono text-xs">
+              Digite apenas o username (ex: octocat)
             </p>
           )}
         </div>
 
         {/* Website */}
         <div>
-          <label className="text-pf-fg-default mb-1.5 flex items-center gap-2 font-mono text-sm">
+          <label className="text-white mb-1.5 flex items-center gap-2 font-mono text-sm">
             <Globe className="h-4 w-4" strokeWidth={1.5} />
             website
           </label>
@@ -227,10 +346,10 @@ export function ProfessionalProfileStep() {
             onChange={(e) => handleChange("website", e.target.value)}
             onBlur={() => handleBlur("website")}
             placeholder="https://yoursite.dev"
-            className={`border-pf-border-default bg-pf-canvas-subtle text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-accent-fg w-full border px-3 py-2 font-mono text-sm focus:outline-none ${errors.website ? "border-pf-danger-fg" : ""} `}
+            className={`border-white/10 bg-white/5 text-white placeholder:text-zinc-500 focus:border-cyan-500 w-full border px-3 py-2 font-mono text-sm focus:outline-none ${errors.website ? "border-red-500" : ""} `}
           />
           {errors.website && (
-            <p className="text-pf-danger-fg mt-1 flex items-center gap-1 font-mono text-xs">
+            <p className="text-red-500 mt-1 flex items-center gap-1 font-mono text-xs">
               <AlertCircle className="h-3 w-3" />
               {errors.website}
             </p>
