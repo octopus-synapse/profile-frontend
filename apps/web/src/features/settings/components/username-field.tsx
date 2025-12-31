@@ -6,16 +6,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import {
-  AtSign,
-  Check,
-  X,
-  Loader2,
-  AlertCircle,
-  ExternalLink,
-  Lock,
-  Calendar,
-} from "lucide-react";
+import { AtSign, Check, X, Loader2, AlertCircle, ExternalLink, Lock, Calendar } from "lucide-react";
 import { useDebounce } from "@/shared/hooks/use-debounce";
 import { useProfile, useUpdateUsername } from "../hooks";
 import { profileRepository } from "../services/settings-repository";
@@ -145,22 +136,23 @@ export function UsernameField() {
     }
   };
 
-  const canSave = validation.valid && isAvailable === true && hasChanged && !updateUsername.isPending;
+  const canSave =
+    validation.valid && isAvailable === true && hasChanged && !updateUsername.isPending;
 
   const getStatusIcon = () => {
     if (!isEditing || !hasChanged) return null;
 
     if (isChecking) {
-      return <Loader2 className="h-4 w-4 animate-spin text-pf-fg-muted" />;
+      return <Loader2 className="h-4 w-4 animate-spin text-zinc-400" />;
     }
     if (!validation.valid && touched) {
-      return <X className="h-4 w-4 text-pf-danger-fg" />;
+      return <X className="h-4 w-4 text-red-500" />;
     }
     if (isAvailable === true) {
-      return <Check className="h-4 w-4 text-pf-success-fg" />;
+      return <Check className="h-4 w-4 text-emerald-500" />;
     }
     if (isAvailable === false) {
-      return <X className="h-4 w-4 text-pf-danger-fg" />;
+      return <X className="h-4 w-4 text-red-500" />;
     }
     return null;
   };
@@ -186,8 +178,8 @@ export function UsernameField() {
   if (profileLoading) {
     return (
       <div className="flex items-center gap-2 py-2">
-        <Loader2 className="h-4 w-4 animate-spin text-pf-fg-muted" />
-        <span className="text-sm text-pf-fg-muted">Loading...</span>
+        <Loader2 className="h-4 w-4 animate-spin text-zinc-400" />
+        <span className="text-sm text-zinc-400">Loading...</span>
       </div>
     );
   }
@@ -198,8 +190,8 @@ export function UsernameField() {
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <label className="text-pf-fg-default flex items-center gap-2 text-sm font-medium">
-          <AtSign className="h-4 w-4 text-pf-fg-muted" strokeWidth={1.5} />
+        <label className="flex items-center gap-2 text-sm font-medium text-white">
+          <AtSign className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
           Username
         </label>
 
@@ -209,7 +201,7 @@ export function UsernameField() {
             href={`/${profile.username}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1 text-xs text-pf-accent-fg hover:underline"
+            className="flex items-center gap-1 text-xs text-cyan-400 hover:underline"
           >
             <ExternalLink className="h-3 w-3" />
             View public profile
@@ -219,17 +211,15 @@ export function UsernameField() {
 
       {/* Restriction Warning */}
       {isRestricted && nextChangeDate && (
-        <div className="bg-pf-warning-subtle border-pf-warning-muted flex items-start gap-3 rounded-lg border p-3">
-          <Lock className="mt-0.5 h-4 w-4 flex-shrink-0 text-pf-warning-fg" />
+        <div className="flex items-start gap-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3">
+          <Lock className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-500" />
           <div className="space-y-1">
-            <p className="text-sm font-medium text-pf-warning-fg">
-              Username change restricted
-            </p>
-            <p className="text-xs text-pf-warning-fg/80">
+            <p className="text-sm font-medium text-amber-500">Username change restricted</p>
+            <p className="text-xs text-amber-500/80">
               You can change your username again{" "}
               {formatDistanceToNow(nextChangeDate, { addSuffix: true })}
             </p>
-            <p className="flex items-center gap-1.5 text-xs text-pf-warning-fg/60">
+            <p className="flex items-center gap-1.5 text-xs text-amber-500/60">
               <Calendar className="h-3 w-3" />
               {nextChangeDate.toLocaleDateString()}
             </p>
@@ -248,17 +238,15 @@ export function UsernameField() {
             disabled={isRestricted}
             maxLength={MAX_LENGTH}
             placeholder="username"
-            className={`border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-fg-muted w-full rounded-lg border px-4 py-2.5 pr-10 text-sm focus:outline-none disabled:cursor-not-allowed disabled:opacity-60 ${
+            className={`w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 pr-10 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60 ${
               touched && isEditing && (!validation.valid || isAvailable === false)
-                ? "border-pf-danger-fg"
+                ? "border-red-500"
                 : isAvailable === true && isEditing
-                  ? "border-pf-success-fg"
+                  ? "border-emerald-500"
                   : ""
             }`}
           />
-          <div className="absolute right-3 top-1/2 -translate-y-1/2">
-            {getStatusIcon()}
-          </div>
+          <div className="absolute top-1/2 right-3 -translate-y-1/2">{getStatusIcon()}</div>
         </div>
 
         {/* Status Message */}
@@ -266,10 +254,10 @@ export function UsernameField() {
           <p
             className={`mt-1.5 flex items-center gap-1 text-xs ${
               statusMessage.type === "error"
-                ? "text-pf-danger-fg"
+                ? "text-red-500"
                 : statusMessage.type === "success"
-                  ? "text-pf-success-fg"
-                  : "text-pf-fg-muted"
+                  ? "text-emerald-500"
+                  : "text-zinc-400"
             }`}
           >
             {statusMessage.type === "error" && <AlertCircle className="h-3 w-3" />}
@@ -280,11 +268,9 @@ export function UsernameField() {
 
         {/* URL Preview */}
         {profile?.username && (
-          <p className="mt-2 text-xs text-pf-fg-muted">
+          <p className="mt-2 text-xs text-zinc-400">
             Your profile URL:{" "}
-            <span className="text-pf-fg-default">
-              profile.app/{inputValue || profile.username}
-            </span>
+            <span className="text-white">profile.app/{inputValue || profile.username}</span>
           </p>
         )}
       </div>
@@ -295,7 +281,7 @@ export function UsernameField() {
           <button
             onClick={handleSave}
             disabled={!canSave}
-            className="bg-pf-fg-default text-pf-canvas-default flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {updateUsername.isPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -307,7 +293,7 @@ export function UsernameField() {
           <button
             onClick={handleCancel}
             disabled={updateUsername.isPending}
-            className="text-pf-fg-muted hover:text-pf-fg-default rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+            className="rounded-lg px-4 py-2 text-sm font-medium text-zinc-400 transition-colors hover:text-white"
           >
             Cancel
           </button>
@@ -316,7 +302,7 @@ export function UsernameField() {
 
       {/* Update Error */}
       {updateUsername.isError && (
-        <div className="flex items-center gap-2 text-sm text-pf-danger-fg">
+        <div className="flex items-center gap-2 text-sm text-red-500">
           <AlertCircle className="h-4 w-4" />
           Failed to update username. Please try again.
         </div>

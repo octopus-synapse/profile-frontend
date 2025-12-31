@@ -141,15 +141,15 @@ export function SpokenLanguageAutocomplete({
           aria-controls={listboxId}
           className={cn(
             "flex h-10 w-full items-center justify-between px-3 py-2 text-left text-sm",
-            "bg-pf-canvas-overlay border-pf-border-default border",
-            "text-pf-fg-default font-mono",
-            "focus:border-pf-accent-fg focus:outline-none",
+            "border border-white/10 bg-[#0A0A0A]/95",
+            "font-mono text-white",
+            "focus:border-cyan-500 focus:outline-none",
             "disabled:cursor-not-allowed disabled:opacity-50",
-            error && "border-pf-danger-emphasis",
+            error && "border-red-500",
             className
           )}
         >
-          <span className={cn("flex-1 truncate", !value && "text-pf-fg-subtle")}>
+          <span className={cn("flex-1 truncate", !value && "text-zinc-500")}>
             {value || labels.placeholder}
           </span>
           <div className="ml-2 flex items-center gap-1">
@@ -166,33 +166,33 @@ export function SpokenLanguageAutocomplete({
       <PopoverContent
         className={cn(
           "z-50 w-[--radix-popover-trigger-width] overflow-hidden p-0",
-          "bg-pf-canvas-overlay border-pf-border-default border shadow-lg",
+          "border border-white/10 bg-[#0A0A0A]/95 shadow-lg",
           "animate-in fade-in-0 zoom-in-95"
         )}
         align="start"
         sideOffset={4}
       >
         {/* Search Input */}
-        <div className="border-pf-border-default flex items-center border-b px-3">
-          <Search className="text-pf-fg-muted mr-2 h-4 w-4" />
+        <div className="flex items-center border-b border-white/10 px-3">
+          <Search className="mr-2 h-4 w-4 text-zinc-400" />
           <input
             ref={inputRef}
             type="text"
             className={cn(
               "flex h-10 w-full bg-transparent py-3 font-mono text-sm outline-none",
-              "placeholder:text-pf-fg-subtle text-pf-fg-default"
+              "text-white placeholder:text-zinc-600"
             )}
             placeholder={labels.searchPlaceholder}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          {isLoading && <Loader2 className="text-pf-fg-muted h-4 w-4 animate-spin" />}
+          {isLoading && <Loader2 className="h-4 w-4 animate-spin text-zinc-400" />}
         </div>
 
         {/* Options List */}
         <div id={listboxId} role="listbox" className="max-h-[300px] overflow-y-auto p-1">
           {isLoading ? (
-            <div className="text-pf-fg-muted py-6 text-center font-mono text-sm">
+            <div className="py-6 text-center font-mono text-sm text-zinc-400">
               {labels.searching}
             </div>
           ) : (
@@ -204,8 +204,8 @@ export function SpokenLanguageAutocomplete({
                   type="button"
                   className={cn(
                     "relative flex w-full cursor-pointer items-center px-2 py-2 text-sm outline-none select-none",
-                    "hover:bg-pf-canvas-subtle font-mono",
-                    value === option.label && "bg-pf-accent-subtle"
+                    "font-mono hover:bg-white/5",
+                    value === option.label && "bg-cyan-500/10"
                   )}
                   onClick={() => handleSelect(option.label, option.language)}
                 >
@@ -218,7 +218,7 @@ export function SpokenLanguageAutocomplete({
                   <div className="flex flex-1 items-center justify-between overflow-hidden">
                     <span className="truncate">{option.label}</span>
                     {option.nativeName && option.nativeName !== option.label && (
-                      <span className="text-pf-fg-muted ml-2 text-xs">{option.nativeName}</span>
+                      <span className="ml-2 text-xs text-zinc-400">{option.nativeName}</span>
                     )}
                   </div>
                 </button>
@@ -230,8 +230,8 @@ export function SpokenLanguageAutocomplete({
                   type="button"
                   className={cn(
                     "relative flex w-full cursor-pointer items-center px-2 py-2 text-sm outline-none select-none",
-                    "hover:bg-pf-accent-subtle border-pf-border-default border-t font-mono",
-                    "text-pf-accent-fg"
+                    "border-t border-white/10 font-mono hover:bg-cyan-500/10",
+                    "text-cyan-400"
                   )}
                   onClick={handleAddCustom}
                 >
@@ -244,7 +244,7 @@ export function SpokenLanguageAutocomplete({
 
               {/* No results message */}
               {filteredOptions.length === 0 && !search.trim() && (
-                <div className="text-pf-fg-muted py-6 text-center font-mono text-sm">
+                <div className="py-6 text-center font-mono text-sm text-zinc-400">
                   {labels.noResults}
                 </div>
               )}

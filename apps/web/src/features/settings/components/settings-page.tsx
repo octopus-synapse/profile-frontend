@@ -23,13 +23,7 @@ import { SkillsSection } from "./skills-section";
 import { LanguagesSection } from "./languages-section";
 import { PreferencesSection } from "./preferences-section";
 
-type SettingsTab =
-  | "profile"
-  | "experiences"
-  | "education"
-  | "skills"
-  | "languages"
-  | "preferences";
+type SettingsTab = "profile" | "experiences" | "education" | "skills" | "languages" | "preferences";
 
 const TABS: { id: SettingsTab; label: string; icon: typeof User }[] = [
   { id: "profile", label: "Profile", icon: User },
@@ -63,35 +57,33 @@ export function SettingsPage() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="mx-auto max-w-5xl space-y-8 px-6 py-8">
       {/* Header */}
       <div>
         <Link
           href="/protected"
-          className="text-pf-fg-muted hover:text-pf-fg-default mb-4 inline-flex items-center gap-2 text-sm transition-colors"
+          className="mb-4 inline-flex items-center gap-2 text-sm text-zinc-500 transition-colors hover:text-white"
         >
           <ArrowLeft className="h-4 w-4" strokeWidth={1.5} />
           Back to Dashboard
         </Link>
-        <h1 className="text-pf-fg-default mt-6 text-3xl font-bold tracking-tight">
-          Settings
-        </h1>
-        <p className="text-pf-fg-muted mt-2 text-base">
+        <h1 className="mt-6 text-3xl font-bold tracking-tight text-white">Settings</h1>
+        <p className="mt-2 text-base text-zinc-500">
           Manage your profile, career information, and preferences
         </p>
       </div>
 
       {/* Tab Navigation */}
-      <div className="border-pf-border-default border-b">
+      <div className="border-b border-white/10">
         <nav className="-mb-px flex gap-1 overflow-x-auto">
           {TABS.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
               onClick={() => setActiveTab(id)}
-              className={`flex items-center gap-2 whitespace-nowrap border-b-2 px-4 py-3 text-sm font-medium transition-colors ${
+              className={`flex items-center gap-2 border-b-2 px-4 py-3 font-mono text-sm whitespace-nowrap transition-colors ${
                 activeTab === id
-                  ? "border-pf-fg-default text-pf-fg-default"
-                  : "border-transparent text-pf-fg-muted hover:text-pf-fg-default hover:border-pf-border-emphasis"
+                  ? "border-cyan-500 text-white"
+                  : "border-transparent text-zinc-500 hover:border-white/20 hover:text-white"
               }`}
             >
               <Icon className="h-4 w-4" strokeWidth={1.5} />

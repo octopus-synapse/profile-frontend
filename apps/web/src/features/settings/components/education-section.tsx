@@ -162,7 +162,7 @@ export function EducationSection() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="text-pf-fg-muted h-6 w-6 animate-spin" />
+        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
       </div>
     );
   }
@@ -172,15 +172,15 @@ export function EducationSection() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-pf-fg-default text-lg font-semibold">Education</h2>
-          <p className="text-pf-fg-muted mt-1 text-sm">
+          <h2 className="text-lg font-semibold text-white">Education</h2>
+          <p className="mt-1 text-sm text-zinc-400">
             {educationList.length} entr{educationList.length !== 1 ? "ies" : "y"} added
           </p>
         </div>
         {!isFormOpen && (
           <button
             onClick={handleStartAdd}
-            className="text-pf-fg-default hover:bg-pf-canvas-subtle flex items-center gap-2 rounded-lg border border-pf-border-default px-4 py-2 text-sm font-medium transition-colors"
+            className="flex items-center gap-2 rounded-lg border border-white/10 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/5"
           >
             <Plus className="h-4 w-4" strokeWidth={1.5} />
             Add Education
@@ -192,25 +192,23 @@ export function EducationSection() {
       {educationList.length > 0 && !isFormOpen && (
         <div className="space-y-3">
           {educationList.map((edu: Education) => (
-            <div
-              key={edu.id}
-              className="border-pf-border-default bg-pf-canvas-subtle group rounded-xl border p-5"
-            >
+            <div key={edu.id} className="group rounded-xl border border-white/10 bg-white/5 p-5">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <h4 className="text-pf-fg-default text-base font-semibold">
+                  <h4 className="text-base font-semibold text-white">
                     {edu.degree} in {edu.field}
                   </h4>
-                  <p className="text-pf-fg-muted mt-1 flex items-center gap-2 text-sm">
+                  <p className="mt-1 flex items-center gap-2 text-sm text-zinc-400">
                     <BookOpen className="h-4 w-4" />
                     {edu.institution}
                   </p>
-                  <p className="text-pf-fg-subtle mt-2 flex items-center gap-1.5 text-sm">
+                  <p className="mt-2 flex items-center gap-1.5 text-sm text-zinc-500">
                     <Calendar className="h-4 w-4" />
-                    {formatDate(edu.startDate)} – {edu.isCurrent ? "Present" : formatDate(edu.endDate || "")}
+                    {formatDate(edu.startDate)} –{" "}
+                    {edu.isCurrent ? "Present" : formatDate(edu.endDate || "")}
                   </p>
                   {edu.description && (
-                    <p className="text-pf-fg-muted border-pf-border-default mt-3 border-t pt-3 text-sm leading-relaxed">
+                    <p className="mt-3 border-t border-white/10 pt-3 text-sm leading-relaxed text-zinc-400">
                       {edu.description}
                     </p>
                   )}
@@ -218,7 +216,7 @@ export function EducationSection() {
                 <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                   <button
                     onClick={() => handleStartEdit(edu)}
-                    className="text-pf-fg-muted hover:text-pf-fg-default rounded-lg p-2 transition-colors hover:bg-pf-canvas-overlay"
+                    className="rounded-lg p-2 text-zinc-400 transition-colors hover:bg-[#0A0A0A]/80 hover:text-white"
                     title="Edit"
                   >
                     <Pencil className="h-4 w-4" strokeWidth={1.5} />
@@ -226,7 +224,7 @@ export function EducationSection() {
                   <button
                     onClick={() => handleDelete(edu.id)}
                     disabled={deleteEducation.isPending}
-                    className="text-pf-fg-muted hover:text-pf-danger-fg rounded-lg p-2 transition-colors hover:bg-pf-canvas-overlay disabled:opacity-50"
+                    className="rounded-lg p-2 text-zinc-400 transition-colors hover:bg-[#0A0A0A]/80 hover:text-red-500 disabled:opacity-50"
                     title="Delete"
                   >
                     <Trash2 className="h-4 w-4" strokeWidth={1.5} />
@@ -240,12 +238,12 @@ export function EducationSection() {
 
       {/* Empty State */}
       {educationList.length === 0 && !isFormOpen && (
-        <div className="border-pf-border-default rounded-xl border border-dashed p-10 text-center">
-          <GraduationCap className="text-pf-fg-subtle mx-auto h-10 w-10" strokeWidth={1} />
-          <p className="text-pf-fg-muted mt-3 text-sm">No education entries yet</p>
+        <div className="rounded-xl border border-dashed border-white/10 p-10 text-center">
+          <GraduationCap className="mx-auto h-10 w-10 text-zinc-500" strokeWidth={1} />
+          <p className="mt-3 text-sm text-zinc-400">No education entries yet</p>
           <button
             onClick={handleStartAdd}
-            className="text-pf-fg-default mt-4 text-sm font-medium underline-offset-4 hover:underline"
+            className="mt-4 text-sm font-medium text-white underline-offset-4 hover:underline"
           >
             Add your first education
           </button>
@@ -254,19 +252,22 @@ export function EducationSection() {
 
       {/* Add/Edit Form */}
       {isFormOpen && (
-        <div className="border-pf-border-default bg-pf-canvas-subtle space-y-5 rounded-xl border p-6">
+        <div className="space-y-5 rounded-xl border border-white/10 bg-white/5 p-6">
           <div className="flex items-center justify-between">
-            <h3 className="text-pf-fg-default text-base font-semibold">
+            <h3 className="text-base font-semibold text-white">
               {editingId ? "Edit Education" : "New Education"}
             </h3>
-            <button onClick={handleCancel} className="text-pf-fg-muted hover:text-pf-fg-default rounded-lg p-1 transition-colors">
+            <button
+              onClick={handleCancel}
+              className="rounded-lg p-1 text-zinc-400 transition-colors hover:text-white"
+            >
               <X className="h-5 w-5" strokeWidth={1.5} />
             </button>
           </div>
 
           <div>
-            <label className="text-pf-fg-default mb-2 block text-sm font-medium">
-              Institution <span className="text-pf-danger-fg">*</span>
+            <label className="mb-2 block text-sm font-medium text-white">
+              Institution <span className="text-red-500">*</span>
             </label>
             <InstitutionAutocomplete
               value={formData.institutionCode}
@@ -279,21 +280,21 @@ export function EducationSection() {
 
           <div className="grid gap-5 sm:grid-cols-2">
             <div>
-              <label className="text-pf-fg-default mb-2 block text-sm font-medium">
-                Degree <span className="text-pf-danger-fg">*</span>
+              <label className="mb-2 block text-sm font-medium text-white">
+                Degree <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 value={formData.degree}
                 onChange={(e) => setFormData((p) => ({ ...p, degree: e.target.value }))}
                 placeholder="Bachelor's"
-                className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-fg-muted w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
+                className="w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="text-pf-fg-default mb-2 block text-sm font-medium">
-                Field of Study <span className="text-pf-danger-fg">*</span>
+              <label className="mb-2 block text-sm font-medium text-white">
+                Field of Study <span className="text-red-500">*</span>
               </label>
               <CourseAutocomplete
                 value={formData.courseCode}
@@ -301,9 +302,7 @@ export function EducationSection() {
                 institutionCode={formData.institutionCode}
                 onValueChange={handleCourseChange}
                 placeholder={
-                  formData.institutionCode
-                    ? "Select course..."
-                    : "Select institution first"
+                  formData.institutionCode ? "Select course..." : "Select institution first"
                 }
                 disabled={!formData.institutionCode}
                 className="text-sm"
@@ -313,25 +312,25 @@ export function EducationSection() {
 
           <div className="grid gap-5 sm:grid-cols-2">
             <div>
-              <label className="text-pf-fg-default mb-2 block text-sm font-medium">
-                Start Date <span className="text-pf-danger-fg">*</span>
+              <label className="mb-2 block text-sm font-medium text-white">
+                Start Date <span className="text-red-500">*</span>
               </label>
               <input
                 type="date"
                 value={formData.startDate}
                 onChange={(e) => setFormData((p) => ({ ...p, startDate: e.target.value }))}
-                className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default focus:border-pf-fg-muted w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
+                className="w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white focus:border-white/20 focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="text-pf-fg-default mb-2 block text-sm font-medium">End Date</label>
+              <label className="mb-2 block text-sm font-medium text-white">End Date</label>
               <input
                 type="date"
                 value={formData.endDate || ""}
                 onChange={(e) => setFormData((p) => ({ ...p, endDate: e.target.value }))}
                 disabled={formData.isCurrent}
-                className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default focus:border-pf-fg-muted w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none disabled:opacity-50"
+                className="w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white focus:border-white/20 focus:outline-none disabled:opacity-50"
               />
             </div>
           </div>
@@ -341,26 +340,26 @@ export function EducationSection() {
               type="checkbox"
               checked={formData.isCurrent}
               onChange={(e) => setFormData((p) => ({ ...p, isCurrent: e.target.checked }))}
-              className="h-4 w-4 rounded border-pf-border-default"
+              className="h-4 w-4 rounded border-white/10"
             />
-            <span className="text-pf-fg-muted text-sm">Currently studying here</span>
+            <span className="text-sm text-zinc-400">Currently studying here</span>
           </label>
 
           <div>
-            <label className="text-pf-fg-default mb-2 block text-sm font-medium">Description</label>
+            <label className="mb-2 block text-sm font-medium text-white">Description</label>
             <textarea
               value={formData.description || ""}
               onChange={(e) => setFormData((p) => ({ ...p, description: e.target.value }))}
               placeholder="Notable achievements, activities, or coursework..."
               rows={3}
-              className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-fg-muted w-full resize-none rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
+              className="w-full resize-none rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
             />
           </div>
 
           <div className="flex justify-end gap-3 pt-2">
             <button
               onClick={handleCancel}
-              className="text-pf-fg-muted hover:text-pf-fg-default px-4 py-2 text-sm font-medium transition-colors"
+              className="px-4 py-2 text-sm font-medium text-zinc-400 transition-colors hover:text-white"
             >
               Cancel
             </button>
@@ -373,7 +372,7 @@ export function EducationSection() {
                 !formData.startDate ||
                 isSaving
               }
-              className="bg-pf-fg-default text-pf-canvas-default flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-50"
+              className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition-opacity hover:opacity-90 disabled:opacity-50"
             >
               {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
               {editingId ? "Update" : "Add"}

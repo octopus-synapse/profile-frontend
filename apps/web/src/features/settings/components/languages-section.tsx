@@ -113,13 +113,13 @@ export function LanguagesSection() {
   const getLevelColor = (level: string) => {
     switch (level) {
       case "native":
-        return "text-pf-success-fg";
+        return "text-emerald-500";
       case "fluent":
-        return "text-pf-accent-fg";
+        return "text-cyan-400";
       case "advanced":
-        return "text-pf-attention-fg";
+        return "text-amber-400";
       default:
-        return "text-pf-fg-subtle";
+        return "text-zinc-500";
     }
   };
 
@@ -150,7 +150,7 @@ export function LanguagesSection() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="text-pf-fg-muted h-6 w-6 animate-spin" />
+        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
       </div>
     );
   }
@@ -160,13 +160,13 @@ export function LanguagesSection() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-pf-fg-default text-lg font-semibold">{labels.title}</h2>
-          <p className="text-pf-fg-muted mt-1 text-sm">{labels.added}</p>
+          <h2 className="text-lg font-semibold text-white">{labels.title}</h2>
+          <p className="mt-1 text-sm text-zinc-400">{labels.added}</p>
         </div>
         {!isFormOpen && (
           <button
             onClick={handleStartAdd}
-            className="text-pf-fg-default hover:bg-pf-canvas-subtle border-pf-border-default flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors"
+            className="flex items-center gap-2 rounded-lg border border-white/10 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/5"
           >
             <Plus className="h-4 w-4" strokeWidth={1.5} />
             {labels.addLanguage}
@@ -180,16 +180,16 @@ export function LanguagesSection() {
           {languages.map((lang: Language) => (
             <div
               key={lang.id}
-              className="border-pf-border-default bg-pf-canvas-subtle group flex items-center justify-between rounded-xl border p-4"
+              className="group flex items-center justify-between rounded-xl border border-white/10 bg-white/5 p-4"
             >
               <div>
-                <h4 className="text-pf-fg-default text-sm font-semibold">{lang.name}</h4>
+                <h4 className="text-sm font-semibold text-white">{lang.name}</h4>
                 <div className="mt-1 flex items-center gap-2">
                   <span className={`text-xs ${getLevelColor(lang.level)}`}>
                     {getLevelLabel(lang.level, locale)}
                   </span>
                   {lang.cefrLevel && (
-                    <span className="bg-pf-canvas-overlay text-pf-fg-muted rounded px-1.5 py-0.5 text-xs">
+                    <span className="rounded bg-[#0A0A0A]/80 px-1.5 py-0.5 text-xs text-zinc-400">
                       {lang.cefrLevel}
                     </span>
                   )}
@@ -198,7 +198,7 @@ export function LanguagesSection() {
               <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                 <button
                   onClick={() => handleStartEdit(lang)}
-                  className="text-pf-fg-muted hover:text-pf-fg-default hover:bg-pf-canvas-overlay rounded-lg p-2 transition-colors"
+                  className="rounded-lg p-2 text-zinc-400 transition-colors hover:bg-[#0A0A0A]/80 hover:text-white"
                   title="Edit"
                 >
                   <Pencil className="h-4 w-4" strokeWidth={1.5} />
@@ -206,7 +206,7 @@ export function LanguagesSection() {
                 <button
                   onClick={() => handleDelete(lang.id)}
                   disabled={deleteLanguage.isPending}
-                  className="text-pf-fg-muted hover:text-pf-danger-fg hover:bg-pf-canvas-overlay rounded-lg p-2 transition-colors disabled:opacity-50"
+                  className="rounded-lg p-2 text-zinc-400 transition-colors hover:bg-[#0A0A0A]/80 hover:text-red-500 disabled:opacity-50"
                   title="Delete"
                 >
                   <Trash2 className="h-4 w-4" strokeWidth={1.5} />
@@ -219,12 +219,12 @@ export function LanguagesSection() {
 
       {/* Empty State */}
       {languages.length === 0 && !isFormOpen && (
-        <div className="border-pf-border-default rounded-xl border border-dashed p-10 text-center">
-          <Languages className="text-pf-fg-subtle mx-auto h-10 w-10" strokeWidth={1} />
-          <p className="text-pf-fg-muted mt-3 text-sm">{labels.noLanguages}</p>
+        <div className="rounded-xl border border-dashed border-white/10 p-10 text-center">
+          <Languages className="mx-auto h-10 w-10 text-zinc-500" strokeWidth={1} />
+          <p className="mt-3 text-sm text-zinc-400">{labels.noLanguages}</p>
           <button
             onClick={handleStartAdd}
-            className="text-pf-fg-default mt-4 text-sm font-medium underline-offset-4 hover:underline"
+            className="mt-4 text-sm font-medium text-white underline-offset-4 hover:underline"
           >
             {labels.addFirst}
           </button>
@@ -233,22 +233,22 @@ export function LanguagesSection() {
 
       {/* Add/Edit Form */}
       {isFormOpen && (
-        <div className="border-pf-border-default bg-pf-canvas-subtle space-y-5 rounded-xl border p-6">
+        <div className="space-y-5 rounded-xl border border-white/10 bg-white/5 p-6">
           <div className="flex items-center justify-between">
-            <h3 className="text-pf-fg-default text-base font-semibold">
+            <h3 className="text-base font-semibold text-white">
               {editingId ? labels.editLanguage : labels.newLanguage}
             </h3>
             <button
               onClick={handleCancel}
-              className="text-pf-fg-muted hover:text-pf-fg-default rounded-lg p-1 transition-colors"
+              className="rounded-lg p-1 text-zinc-400 transition-colors hover:text-white"
             >
               <X className="h-5 w-5" strokeWidth={1.5} />
             </button>
           </div>
 
           <div>
-            <label className="text-pf-fg-default mb-2 block text-sm font-medium">
-              {labels.language} <span className="text-pf-danger-fg">*</span>
+            <label className="mb-2 block text-sm font-medium text-white">
+              {labels.language} <span className="text-red-500">*</span>
             </label>
             <SpokenLanguageAutocomplete
               value={formData.name}
@@ -259,8 +259,8 @@ export function LanguagesSection() {
 
           <div className="grid gap-5 sm:grid-cols-2">
             <div>
-              <label className="text-pf-fg-default mb-2 block text-sm font-medium">
-                {labels.level} <span className="text-pf-danger-fg">*</span>
+              <label className="mb-2 block text-sm font-medium text-white">
+                {labels.level} <span className="text-red-500">*</span>
               </label>
               <select
                 value={formData.level}
@@ -270,7 +270,7 @@ export function LanguagesSection() {
                     level: e.target.value as CreateLanguagePayload["level"],
                   }))
                 }
-                className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default focus:border-pf-fg-muted w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
+                className="w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white focus:border-white/20 focus:outline-none"
               >
                 {LANGUAGE_LEVELS.map((level) => (
                   <option key={level.value} value={level.value}>
@@ -281,7 +281,7 @@ export function LanguagesSection() {
             </div>
 
             <div>
-              <label className="text-pf-fg-default mb-2 block text-sm font-medium">
+              <label className="mb-2 block text-sm font-medium text-white">
                 {labels.cefrLevel}
               </label>
               <select
@@ -292,7 +292,7 @@ export function LanguagesSection() {
                     cefrLevel: (e.target.value || null) as CreateLanguagePayload["cefrLevel"],
                   }))
                 }
-                className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default focus:border-pf-fg-muted w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
+                className="w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white focus:border-white/20 focus:outline-none"
               >
                 <option value="">{labels.selectCefr}</option>
                 {CEFR_LEVELS.map((level) => (
@@ -307,14 +307,14 @@ export function LanguagesSection() {
           <div className="flex justify-end gap-3 pt-2">
             <button
               onClick={handleCancel}
-              className="text-pf-fg-muted hover:text-pf-fg-default px-4 py-2 text-sm font-medium transition-colors"
+              className="px-4 py-2 text-sm font-medium text-zinc-400 transition-colors hover:text-white"
             >
               {labels.cancel}
             </button>
             <button
               onClick={handleSave}
               disabled={!formData.name || !formData.level || isSaving}
-              className="bg-pf-fg-default text-pf-canvas-default flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-50"
+              className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition-opacity hover:opacity-90 disabled:opacity-50"
             >
               {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
               {editingId ? labels.update : labels.add}

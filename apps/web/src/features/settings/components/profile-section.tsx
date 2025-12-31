@@ -6,7 +6,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { User, MapPin, Phone, Globe, Linkedin, Github, Save, Loader2, Check, AlertCircle } from "lucide-react";
+import {
+  User,
+  MapPin,
+  Phone,
+  Globe,
+  Linkedin,
+  Github,
+  Save,
+  Loader2,
+  Check,
+  AlertCircle,
+} from "lucide-react";
 import { useProfile, useUpdateProfile } from "../hooks";
 import { PhoneInput, HelpTooltip } from "@/shared/components/ui";
 import { UsernameField } from "./username-field";
@@ -59,7 +70,7 @@ export function ProfileSection() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="text-pf-fg-muted h-6 w-6 animate-spin" />
+        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
       </div>
     );
   }
@@ -69,16 +80,14 @@ export function ProfileSection() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-pf-fg-default text-lg font-semibold">Profile Information</h2>
-          <p className="text-pf-fg-muted mt-1 text-sm">
-            Your public profile details
-          </p>
+          <h2 className="text-lg font-semibold text-white">Profile Information</h2>
+          <p className="mt-1 text-sm text-zinc-400">Your public profile details</p>
         </div>
         {isDirty && (
           <button
             onClick={handleSave}
             disabled={updateProfile.isPending}
-            className="bg-pf-fg-default text-pf-canvas-default flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-50"
+            className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition-opacity hover:opacity-90 disabled:opacity-50"
           >
             {updateProfile.isPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -91,16 +100,16 @@ export function ProfileSection() {
       </div>
 
       {/* Username Field (separate from main form) */}
-      <div className="border-pf-border-default bg-pf-canvas-subtle rounded-xl border p-6">
+      <div className="rounded-xl border border-white/10 bg-white/5 p-6">
         <UsernameField />
       </div>
 
       {/* Form */}
-      <div className="border-pf-border-default bg-pf-canvas-subtle space-y-5 rounded-xl border p-6">
+      <div className="space-y-5 rounded-xl border border-white/10 bg-white/5 p-6">
         {/* Display Name */}
         <div>
-          <label className="text-pf-fg-default mb-2 flex items-center gap-2 text-sm font-medium">
-            <User className="h-4 w-4 text-pf-fg-muted" strokeWidth={1.5} />
+          <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
+            <User className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
             Display Name
           </label>
           <input
@@ -108,13 +117,13 @@ export function ProfileSection() {
             value={formData.displayName}
             onChange={(e) => handleChange("displayName", e.target.value)}
             placeholder="John Doe"
-            className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-fg-muted w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
+            className="w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
           />
         </div>
 
         {/* Bio */}
         <div>
-          <label className="text-pf-fg-default mb-2 flex items-center gap-2 text-sm font-medium">
+          <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
             Bio
             <HelpTooltip content="A brief description visible on your public profile. Keep it concise and professional." />
           </label>
@@ -123,15 +132,15 @@ export function ProfileSection() {
             onChange={(e) => handleChange("bio", e.target.value)}
             placeholder="A brief description about yourself..."
             rows={3}
-            className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-fg-muted w-full resize-none rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
+            className="w-full resize-none rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
           />
         </div>
 
         {/* Location & Phone */}
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
-            <label className="text-pf-fg-default mb-2 flex items-center gap-2 text-sm font-medium">
-              <MapPin className="h-4 w-4 text-pf-fg-muted" strokeWidth={1.5} />
+            <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
+              <MapPin className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
               Location
             </label>
             <input
@@ -139,13 +148,13 @@ export function ProfileSection() {
               value={formData.location}
               onChange={(e) => handleChange("location", e.target.value)}
               placeholder="San Francisco, CA"
-              className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-fg-muted w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
+              className="w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="text-pf-fg-default mb-2 flex items-center gap-2 text-sm font-medium">
-              <Phone className="h-4 w-4 text-pf-fg-muted" strokeWidth={1.5} />
+            <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
+              <Phone className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
               Phone
             </label>
             <PhoneInput
@@ -158,8 +167,8 @@ export function ProfileSection() {
 
         {/* Website */}
         <div>
-          <label className="text-pf-fg-default mb-2 flex items-center gap-2 text-sm font-medium">
-            <Globe className="h-4 w-4 text-pf-fg-muted" strokeWidth={1.5} />
+          <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
+            <Globe className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
             Website
           </label>
           <input
@@ -167,15 +176,15 @@ export function ProfileSection() {
             value={formData.website}
             onChange={(e) => handleChange("website", e.target.value)}
             placeholder="https://yoursite.com"
-            className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-fg-muted w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
+            className="w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
           />
         </div>
 
         {/* Social Links */}
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
-            <label className="text-pf-fg-default mb-2 flex items-center gap-2 text-sm font-medium">
-              <Linkedin className="h-4 w-4 text-pf-fg-muted" strokeWidth={1.5} />
+            <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
+              <Linkedin className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
               LinkedIn
               <HelpTooltip content="Link to your LinkedIn profile. Visible as a social link on your public profile." />
             </label>
@@ -184,13 +193,13 @@ export function ProfileSection() {
               value={formData.linkedin}
               onChange={(e) => handleChange("linkedin", e.target.value)}
               placeholder="https://linkedin.com/in/username"
-              className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-fg-muted w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
+              className="w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="text-pf-fg-default mb-2 flex items-center gap-2 text-sm font-medium">
-              <Github className="h-4 w-4 text-pf-fg-muted" strokeWidth={1.5} />
+            <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
+              <Github className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
               GitHub
               <HelpTooltip content="Link to your GitHub profile. Great for showcasing your open source contributions." />
             </label>
@@ -199,7 +208,7 @@ export function ProfileSection() {
               value={formData.github}
               onChange={(e) => handleChange("github", e.target.value)}
               placeholder="https://github.com/username"
-              className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-fg-muted w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
+              className="w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
             />
           </div>
         </div>
@@ -207,14 +216,14 @@ export function ProfileSection() {
 
       {/* Status */}
       {updateProfile.isSuccess && !isDirty && (
-        <div className="text-pf-success-fg flex items-center gap-2 text-sm">
+        <div className="flex items-center gap-2 text-sm text-emerald-500">
           <Check className="h-4 w-4" />
           Changes saved successfully
         </div>
       )}
 
       {updateProfile.isError && (
-        <div className="text-pf-danger-fg flex items-center gap-2 text-sm">
+        <div className="flex items-center gap-2 text-sm text-red-500">
           <AlertCircle className="h-4 w-4" />
           Failed to save changes
         </div>

@@ -166,7 +166,7 @@ export function SkillsSection() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="text-pf-fg-muted h-6 w-6 animate-spin" />
+        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
       </div>
     );
   }
@@ -176,15 +176,15 @@ export function SkillsSection() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-pf-fg-default text-lg font-semibold">Skills</h2>
-          <p className="text-pf-fg-muted mt-1 text-sm">
+          <h2 className="text-lg font-semibold text-white">Skills</h2>
+          <p className="mt-1 text-sm text-zinc-400">
             {skills.length} skill{skills.length !== 1 ? "s" : ""} added
           </p>
         </div>
         {!isFormOpen && (
           <button
             onClick={handleStartAdd}
-            className="text-pf-fg-default hover:bg-pf-canvas-subtle flex items-center gap-2 rounded-lg border border-pf-border-default px-4 py-2 text-sm font-medium transition-colors"
+            className="flex items-center gap-2 rounded-lg border border-white/10 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/5"
           >
             <Plus className="h-4 w-4" strokeWidth={1.5} />
             Add Skill
@@ -196,24 +196,22 @@ export function SkillsSection() {
       {Object.keys(groupedSkills).length > 0 && !isFormOpen && (
         <div className="space-y-4">
           {Object.entries(groupedSkills).map(([category, categorySkills]) => (
-            <div key={category} className="border-pf-border-default bg-pf-canvas-subtle rounded-xl border p-5">
-              <h4 className="text-pf-fg-muted mb-3 text-sm font-medium">{category}</h4>
+            <div key={category} className="rounded-xl border border-white/10 bg-white/5 p-5">
+              <h4 className="mb-3 text-sm font-medium text-zinc-400">{category}</h4>
               <div className="flex flex-wrap gap-2">
                 {categorySkills.map((skill: Skill) => (
                   <div
                     key={skill.id}
-                    className="bg-pf-canvas-overlay border-pf-border-default group flex items-center gap-2 rounded-lg border px-3 py-2"
+                    className="group flex items-center gap-2 rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-3 py-2"
                   >
-                    <span className="text-pf-fg-default text-sm">{skill.name}</span>
+                    <span className="text-sm text-white">{skill.name}</span>
                     {skill.level && (
-                      <span className="text-pf-fg-subtle text-xs">
-                        • {getLevelLabel(skill.level)}
-                      </span>
+                      <span className="text-xs text-zinc-500">• {getLevelLabel(skill.level)}</span>
                     )}
                     <div className="flex gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
                       <button
                         onClick={() => handleStartEdit(skill)}
-                        className="text-pf-fg-muted hover:text-pf-fg-default p-1 transition-colors"
+                        className="p-1 text-zinc-400 transition-colors hover:text-white"
                         title="Edit"
                       >
                         <Pencil className="h-3.5 w-3.5" strokeWidth={1.5} />
@@ -221,7 +219,7 @@ export function SkillsSection() {
                       <button
                         onClick={() => handleDelete(skill.id)}
                         disabled={deleteSkill.isPending}
-                        className="text-pf-fg-muted hover:text-pf-danger-fg p-1 transition-colors disabled:opacity-50"
+                        className="p-1 text-zinc-400 transition-colors hover:text-red-500 disabled:opacity-50"
                         title="Delete"
                       >
                         <Trash2 className="h-3.5 w-3.5" strokeWidth={1.5} />
@@ -237,12 +235,12 @@ export function SkillsSection() {
 
       {/* Empty State */}
       {skills.length === 0 && !isFormOpen && (
-        <div className="border-pf-border-default rounded-xl border border-dashed p-10 text-center">
-          <Sparkles className="text-pf-fg-subtle mx-auto h-10 w-10" strokeWidth={1} />
-          <p className="text-pf-fg-muted mt-3 text-sm">No skills added yet</p>
+        <div className="rounded-xl border border-dashed border-white/10 p-10 text-center">
+          <Sparkles className="mx-auto h-10 w-10 text-zinc-500" strokeWidth={1} />
+          <p className="mt-3 text-sm text-zinc-400">No skills added yet</p>
           <button
             onClick={handleStartAdd}
-            className="text-pf-fg-default mt-4 text-sm font-medium underline-offset-4 hover:underline"
+            className="mt-4 text-sm font-medium text-white underline-offset-4 hover:underline"
           >
             Add your first skill
           </button>
@@ -251,12 +249,15 @@ export function SkillsSection() {
 
       {/* Add/Edit Form */}
       {isFormOpen && (
-        <div className="border-pf-border-default bg-pf-canvas-subtle space-y-5 rounded-xl border p-6">
+        <div className="space-y-5 rounded-xl border border-white/10 bg-white/5 p-6">
           <div className="flex items-center justify-between">
-            <h3 className="text-pf-fg-default text-base font-semibold">
+            <h3 className="text-base font-semibold text-white">
               {editingId ? "Edit Skill" : "New Skill"}
             </h3>
-            <button onClick={handleCancel} className="text-pf-fg-muted hover:text-pf-fg-default rounded-lg p-1 transition-colors">
+            <button
+              onClick={handleCancel}
+              className="rounded-lg p-1 text-zinc-400 transition-colors hover:text-white"
+            >
               <X className="h-5 w-5" strokeWidth={1.5} />
             </button>
           </div>
@@ -264,26 +265,26 @@ export function SkillsSection() {
           {/* Search for skills */}
           {!editingId && (
             <div className="relative">
-              <Search className="text-pf-fg-subtle absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2" />
+              <Search className="absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-zinc-500" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search skills (Figma, Python, SQL, Agile...)"
-                className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-fg-muted w-full rounded-lg border py-2.5 pr-4 pl-11 text-sm focus:outline-none"
+                className="w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 py-2.5 pr-4 pl-11 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
               />
               {searchLoading && (
-                <Loader2 className="text-pf-fg-subtle absolute top-1/2 right-4 h-4 w-4 -translate-y-1/2 animate-spin" />
+                <Loader2 className="absolute top-1/2 right-4 h-4 w-4 -translate-y-1/2 animate-spin text-zinc-500" />
               )}
 
               {/* Search suggestions dropdown */}
               {searchQuery.length >= 1 && searchSuggestions.length > 0 && (
-                <div className="border-pf-border-default bg-pf-canvas-overlay absolute top-full right-0 left-0 z-10 mt-1 max-h-48 overflow-y-auto rounded-lg border shadow-lg">
+                <div className="absolute top-full right-0 left-0 z-10 mt-1 max-h-48 overflow-y-auto rounded-lg border border-white/10 bg-[#0A0A0A]/80 shadow-lg">
                   {searchSuggestions.map((suggestion, index) => (
                     <button
                       key={`${suggestion.name}-${index}`}
                       onClick={() => handleSelectSuggestion(suggestion)}
-                      className="hover:bg-pf-canvas-subtle text-pf-fg-default flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm"
+                      className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm text-white hover:bg-white/5"
                     >
                       {suggestion.color && (
                         <span
@@ -292,7 +293,7 @@ export function SkillsSection() {
                         />
                       )}
                       <span>{suggestion.name}</span>
-                      <span className="text-pf-fg-subtle text-xs">({suggestion.category})</span>
+                      <span className="text-xs text-zinc-500">({suggestion.category})</span>
                     </button>
                   ))}
                 </div>
@@ -302,26 +303,26 @@ export function SkillsSection() {
 
           <div className="grid gap-5 sm:grid-cols-2">
             <div>
-              <label className="text-pf-fg-default mb-2 block text-sm font-medium">
-                Skill Name <span className="text-pf-danger-fg">*</span>
+              <label className="mb-2 block text-sm font-medium text-white">
+                Skill Name <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData((p) => ({ ...p, name: e.target.value }))}
                 placeholder="e.g. Project Management, Figma, SQL"
-                className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-fg-muted w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
+                className="w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="text-pf-fg-default mb-2 block text-sm font-medium">
-                Category <span className="text-pf-danger-fg">*</span>
+              <label className="mb-2 block text-sm font-medium text-white">
+                Category <span className="text-red-500">*</span>
               </label>
               <select
                 value={formData.category}
                 onChange={(e) => setFormData((p) => ({ ...p, category: e.target.value }))}
-                className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default focus:border-pf-fg-muted w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
+                className="w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white focus:border-white/20 focus:outline-none"
               >
                 {SKILL_CATEGORIES.map((cat) => (
                   <option key={cat} value={cat}>
@@ -333,7 +334,7 @@ export function SkillsSection() {
           </div>
 
           <div>
-            <label className="text-pf-fg-default mb-3 block text-sm font-medium">
+            <label className="mb-3 block text-sm font-medium text-white">
               Proficiency: {getLevelLabel(formData.level || 3)}
             </label>
             <input
@@ -342,9 +343,9 @@ export function SkillsSection() {
               max="5"
               value={formData.level || 3}
               onChange={(e) => setFormData((p) => ({ ...p, level: parseInt(e.target.value) }))}
-              className="w-full accent-pf-fg-default"
+              className="w-full accent-white"
             />
-            <div className="text-pf-fg-subtle mt-2 flex justify-between text-xs">
+            <div className="mt-2 flex justify-between text-xs text-zinc-500">
               <span>Beginner</span>
               <span>Expert</span>
             </div>
@@ -353,14 +354,14 @@ export function SkillsSection() {
           <div className="flex justify-end gap-3 pt-2">
             <button
               onClick={handleCancel}
-              className="text-pf-fg-muted hover:text-pf-fg-default px-4 py-2 text-sm font-medium transition-colors"
+              className="px-4 py-2 text-sm font-medium text-zinc-400 transition-colors hover:text-white"
             >
               Cancel
             </button>
             <button
               onClick={handleSave}
               disabled={!formData.name || !formData.category || isSaving}
-              className="bg-pf-fg-default text-pf-canvas-default flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-50"
+              className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition-opacity hover:opacity-90 disabled:opacity-50"
             >
               {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
               {editingId ? "Update" : "Add"}
