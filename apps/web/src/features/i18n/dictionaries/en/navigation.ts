@@ -5,6 +5,7 @@
 export const navigation = {
   // Main nav
   "nav.home": "Home",
+  "nav.onboarding": "Onboarding",
   "nav.profile": "Profile",
   "nav.resume": "Resume",
   "nav.banner": "Banner",
