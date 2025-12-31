@@ -1,0 +1,207 @@
+{
+  "nav": {
+    "features": "Funcionalidades",
+    "howItWorks": "Como Funciona",
+    "pricing": "Precos",
+    "signIn": "Entrar",
+    "getStarted": "Comecar Gratis"
+  },
+  "hero": {
+    "badge": "Infraestrutura de Execução de Carreira",
+    "title": "Sua carreira,",
+    "titleHighlight": "recompilada.",
+    "subtitle": "Um sistema contínuo que adapta como sua experiência é apresentada e executada em tempo real no mercado de trabalho.",
+    "cta": "Solicitar Acesso",
+    "ctaSecondary": "Saiba Mais",
+    "premiumBadge": "Limitado: Premium grátis para os 100 primeiros usuários",
+    "trustedBy": "Confiado por",
+    "professionals": "profissionais",
+    "scrollHint": "Descubra como funciona"
+  },
+  "heroFeatures": {
+    "automation": {
+      "title": "Auto-Candidatura",
+      "description": "Candidate-se automaticamente as vagas certas. Foque no que realmente importa: se preparar para seu proximo desafio.",
+      "highlight": "1-clique aplica"
+    },
+    "resume": {
+      "title": "CV em 60s",
+      "description": "Seu curriculo perfeito, pronto em menos de um minuto. Impressione recrutadores sem esforco.",
+      "highlight": "Movido a IA"
+    },
+    "tailored": {
+      "title": "CVs Sob Medida",
+      "description": "Cada vaga merece um curriculo que fale a lingua do recrutador.",
+      "highlight": "85% mais respostas"
+    },
+    "ats": {
+      "title": "Score ATS",
+      "description": "Saiba antes de enviar: seu CV passa nos sistemas de triagem ou nao?",
+      "highlight": "95% aprovacao"
+    }
+  },
+  "features": {
+    "title": "Tudo que voce precisa para conquistar o emprego dos sonhos",
+    "subtitle": "Quatro ferramentas poderosas trabalhando juntas para maximizar suas chances",
+    "automation": {
+      "badge": "Revolucionario",
+      "title": "Deixe sua carreira avancar sozinha",
+      "description": "Aplique automaticamente nas melhores vagas com 1 clique e aumente suas chances de conquistar seu proximo desafio profissional. Seu CV e enviado para dezenas de oportunidades perfeitamente compativeis enquanto voce se prepara para o que vem a seguir.",
+      "stat": "10x",
+      "statLabel": "mais candidaturas",
+      "visualTitle": "Candidatando...",
+      "companies": ["Google", "Microsoft", "Apple", "Meta", "Amazon", "Stripe"]
+    },
+    "resume": {
+      "badge": "Ultra Rapido",
+      "title": "Seu curriculo perfeito, pronto em menos de um minuto",
+      "description": "Impressione recrutadores sem esforco com nosso construtor intuitivo. Templates profissionais, sugestoes inteligentes e formatacao instantanea — seu CV vencedor esta a segundos de distancia.",
+      "stat": "< 1min",
+      "statLabel": "para criar",
+      "steps": ["Dados Pessoais", "Experiencia", "Habilidades", "Download!"]
+    },
+    "tailored": {
+      "badge": "IA Avancada",
+      "title": "Cada vaga merece um curriculo que fale a lingua do recrutador",
+      "description": "Nossa IA analisa cada oportunidade e adapta automaticamente seu CV para destacar exatamente o que aquele recrutador especifico esta buscando. O mesmo voce, apresentacao perfeita.",
+      "stat": "85%",
+      "statLabel": "mais respostas",
+      "comparison": {
+        "generic": "CV Generico",
+        "tailored": "CV Sob Medida",
+        "match": "compativel"
+      }
+    },
+    "ats": {
+      "badge": "Verificacao ATS",
+      "title": "Saiba antes de enviar: aprova ou reprova?",
+      "description": "Nao desperdice candidaturas. Nosso analisador ATS escaneia seu CV da mesma forma que os sistemas de recrutamento fazem, dando feedback instantaneo e melhorias acionaveis.",
+      "stat": "95%",
+      "statLabel": "taxa aprovacao",
+      "checks": ["Palavras-chave", "Formato", "Estrutura", "Tamanho"]
+    }
+  },
+  "swipe": {
+    "title": "Encontre vagas que voce vai amar — de forma divertida",
+    "subtitle": "Deslize por oportunidades como nunca antes. Buscar emprego nao precisa ser chato.",
+    "tinderTitle": "Modo Tinder de Vagas",
+    "tinderDescription": "Escolha oportunidades com um toque. Divertido, rapido e inteligente. Deslize para direita para aplicar instantaneamente, esquerda para pular. Seu proximo emprego dos sonhos esta a um swipe de distancia.",
+    "matchTitle": "Matching Inteligente",
+    "matchDescription": "Descubra onde seu talento realmente brilha. Veja sua compatibilidade com cada vaga antes de aplicar. Sem mais candidaturas desperdicadas.",
+    "swipeRight": "Aplicar",
+    "swipeLeft": "Pular",
+    "matchScore": "compativel",
+    "applied": "Aplicado!",
+    "skipped": "Pulou"
+  },
+  "gamification": {
+    "title": "Evolua sua carreira com cada candidatura",
+    "subtitle": "Sinta seu crescimento real. Acompanhe seu progresso, ganhe conquistas e mantenha a motivacao durante toda sua jornada de busca.",
+    "progress": "Score de Carreira",
+    "applications": "Candidaturas Enviadas",
+    "interviews": "Entrevistas Agendadas",
+    "badges": "Conquistas",
+    "streakTitle": "Voce esta em chamas!",
+    "streakDescription": "7 dias de candidaturas seguidas",
+    "profileComplete": "Perfil Completo",
+    "weeklyGoal": "Meta Semanal",
+    "milestone": "Nova Conquista!"
+  },
+  "social": {
+    "title": "Junte-se a milhares que ja transformaram suas carreiras",
+    "subtitle": "Resultados reais de profissionais reais. Sua historia de sucesso e a proxima.",
+    "stat1": "50K+",
+    "stat1Label": "Usuarios Ativos",
+    "stat2": "1M+",
+    "stat2Label": "Curriculos Criados",
+    "stat3": "500K+",
+    "stat3Label": "Candidaturas Enviadas",
+    "stat4": "89%",
+    "stat4Label": "Taxa de Sucesso"
+  },
+  "testimonials": {
+    "title": "Amado por profissionais no mundo todo",
+    "t1": {
+      "quote": "Recebi 3 chamadas para entrevista na primeira semana. O auto-apply e revolucionario! Eu gastava horas aplicando manualmente antes — agora foco inteiramente na preparacao para entrevistas.",
+      "name": "Sarah Chen",
+      "role": "Engenheira de Software",
+      "company": "Agora no Google",
+      "metric": "3 entrevistas em 1 semana"
+    },
+    "t2": {
+      "quote": "Finalmente, uma ferramenta que entende como funciona a busca moderna por emprego. A pontuacao ATS me salvou de inumeras rejeicoes. Minha taxa de resposta foi de 2% para 15%!",
+      "name": "Marcus Johnson",
+      "role": "Product Manager",
+      "company": "Agora na Stripe",
+      "metric": "7.5x mais respostas"
+    },
+    "t3": {
+      "quote": "O modo swipe torna a busca por emprego realmente divertida. Candidatei-me a 50 vagas em uma noite! E os CVs personalizados? Cada candidatura parece feita sob medida.",
+      "name": "Ana Rodriguez",
+      "role": "UX Designer",
+      "company": "Agora na Figma",
+      "metric": "50 candidaturas em 1 noite"
+    }
+  },
+  "consent": {
+    "title": "Ativar Auto-Candidatura",
+    "description": "Para candidatar-se automaticamente a vagas em seu nome, precisamos de sua permissao para:",
+    "permissions": [
+      "Acessar informacoes do seu perfil",
+      "Enviar candidaturas usando seus dados",
+      "Enviar notificacoes sobre status das candidaturas"
+    ],
+    "revoke": "Voce pode revogar o acesso a qualquer momento em Configuracoes → Servicos Conectados",
+    "accept": "Concordo & Ativar",
+    "decline": "Agora Nao",
+    "privacyLink": "Leia nossa Politica de Privacidade"
+  },
+  "cta": {
+    "title": "Seu emprego dos sonhos esta esperando",
+    "titleHighlight": "Comece hoje.",
+    "subtitle": "Junte-se a milhares de profissionais que pararam de correr atras de vagas e deixaram as oportunidades virem ate eles. Os primeiros 100 usuarios ganham Premium gratis — para sempre.",
+    "button": "Comecar Gratis",
+    "noCard": "Sem cartao de credito • Configuracao em 2 minutos",
+    "urgency": "Apenas {count} vagas Premium restantes",
+    "guarantee": "Cancele quando quiser • Exportacao completa de dados"
+  },
+  "footer": {
+    "rights": "Todos os direitos reservados.",
+    "privacy": "Privacidade",
+    "terms": "Termos",
+    "tagline": "Tornando a busca por emprego humana novamente."
+  },
+  "animations": {
+    "sending": "Enviando...",
+    "applied": "Aplicado!",
+    "analyzing": "Analisando...",
+    "optimizing": "Otimizando...",
+    "perfect": "Perfeito!",
+    "generating": "Gerando...",
+    "matching": "Encontrando matches..."
+  },
+  "username": {
+    "title": "Escolha Seu Username",
+    "subtitle": "Este sera o URL do seu perfil publico",
+    "label": "Username",
+    "placeholder": "joaosilva",
+    "available": "Username disponivel!",
+    "taken": "Este username ja esta em uso",
+    "checking": "Verificando disponibilidade...",
+    "required": "Username e obrigatorio",
+    "minLength": "Minimo de {min} caracteres",
+    "maxLength": "Maximo de {max} caracteres",
+    "invalidChars": "Apenas letras, numeros e underscores",
+    "restrictionTitle": "Alteracao de username restrita",
+    "restrictionMessage": "Voce pode alterar seu username novamente {timeUntil}",
+    "viewProfile": "Ver seu perfil publico",
+    "urlPreview": "URL do seu perfil:",
+    "rules": {
+      "title": "Regras do username:",
+      "minChars": "Minimo de {min} caracteres",
+      "maxChars": "Maximo de {max} caracteres",
+      "validChars": "Apenas letras, numeros e underscores",
+      "unique": "Deve ser unico"
+    }
+  }
+}
