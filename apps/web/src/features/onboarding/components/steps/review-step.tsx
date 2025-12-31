@@ -9,7 +9,7 @@
 import { useState } from "react";
 import { useOnboardingStore, type OnboardingStep, type Experience, type Skill } from "../../stores";
 import { StepNavigation } from "../step-navigation";
-import { httpClient } from "@/shared/lib/http-client";
+import { useSubmitOnboarding } from "../../hooks/use-onboarding-mutations";
 import {
   User,
   Briefcase,
@@ -22,11 +22,13 @@ import {
   Edit2,
   Building,
   Calendar,
+  AtSign,
 } from "lucide-react";
 
 export function ReviewStep() {
   const {
     personalInfo,
+    username,
     professionalProfile,
     experiences,
     noExperience,
@@ -42,7 +44,7 @@ export function ReviewStep() {
     buildSubmissionPayload,
   } = useOnboardingStore();
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const submitOnboarding = useSubmitOnboarding();
   const [error, setError] = useState<string | null>(null);
 
   // Check what's complete
@@ -53,6 +55,13 @@ export function ReviewStep() {
       icon: User,
       complete: !!personalInfo?.fullName && !!personalInfo?.email,
       data: personalInfo,
+    },
+    {
+      id: "username",
+      label: "Username",
+      icon: AtSign,
+      complete: !!username && username.length >= 3 && username.length <= 30,
+      data: username ? `@${username}` : null,
     },
     {
       id: "professional-profile",
@@ -104,14 +113,30 @@ export function ReviewStep() {
   const allRequiredComplete = sections.filter((s) => !s.optional).every((s) => s.complete);
 
   const handleSubmit = async () => {
-    setIsSubmitting(true);
     setError(null);
+
+    if (!allRequiredComplete) {
+      setError("Please complete all required sections before submitting");
+      return;
+    }
+
+    // Validate username is not null
+    if (!username) {
+      setError("Username is required. Please go back to the username step.");
+      return;
+    }
+
+    // Validate skills requirement
+    if (!noSkills && skills.length === 0) {
+      setError("Please add at least one skill or mark that you're still developing skills.");
+      return;
+    }
 
     try {
       const payload = buildSubmissionPayload();
 
-      // Call the backend API via httpClient (includes auth token)
-      await httpClient.post("/onboarding", payload);
+      // Use the proper hook which handles query invalidation
+      await submitOnboarding.mutateAsync(payload);
 
       markStepComplete("review");
       goToNextStep();
@@ -121,8 +146,6 @@ export function ReviewStep() {
           ? err.message
           : (err as { message?: string })?.message || "Something went wrong";
       setError(errorMessage);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -137,10 +160,10 @@ export function ReviewStep() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-2">
-          <span className="text-pf-accent-fg font-mono text-sm">{`>`}</span>
-          <h2 className="text-pf-fg-default text-xl font-bold">Review & Submit</h2>
+          <span className="text-cyan-400 font-mono text-sm">{`>`}</span>
+          <h2 className="text-white text-xl font-bold">Review & Submit</h2>
         </div>
-        <p className="text-pf-fg-muted mt-1 font-mono text-xs">
+        <p className="text-zinc-400 mt-1 font-mono text-xs">
           Review your information before creating your profile
         </p>
       </div>
@@ -153,31 +176,31 @@ export function ReviewStep() {
             <div
               key={section.id}
               className={`border p-3 ${
-                section.complete ? "border-pf-border-default" : "border-pf-danger-fg/50"
+                section.complete ? "border-white/10" : "border-red-500/50"
               }`}
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-2">
                   {section.complete ? (
-                    <CheckCircle2 className="text-pf-success-fg h-4 w-4" strokeWidth={2} />
+                    <CheckCircle2 className="text-emerald-500 h-4 w-4" strokeWidth={2} />
                   ) : (
-                    <AlertCircle className="text-pf-danger-fg h-4 w-4" strokeWidth={2} />
+                    <AlertCircle className="text-red-500 h-4 w-4" strokeWidth={2} />
                   )}
-                  <Icon className="text-pf-fg-muted h-4 w-4" strokeWidth={1.5} />
-                  <span className="text-pf-fg-default font-mono text-sm">{section.label}</span>
+                  <Icon className="text-zinc-400 h-4 w-4" strokeWidth={1.5} />
+                  <span className="text-white font-mono text-sm">{section.label}</span>
                   {section.optional && (
-                    <span className="text-pf-fg-subtle font-mono text-[10px]">(opt)</span>
+                    <span className="text-zinc-500 font-mono text-[10px]">(opt)</span>
                   )}
                 </div>
                 <button
                   onClick={() => setCurrentStep(section.id as OnboardingStep)}
-                  className="text-pf-fg-subtle hover:text-pf-accent-fg transition-colors"
+                  className="text-zinc-500 hover:text-cyan-400 transition-colors"
                 >
                   <Edit2 className="h-3.5 w-3.5" strokeWidth={1.5} />
                 </button>
               </div>
               {section.data && (
-                <p className="text-pf-fg-muted mt-1 truncate pl-6 font-mono text-xs">
+                <p className="text-zinc-400 mt-1 truncate pl-6 font-mono text-xs">
                   {typeof section.data === "string" ? section.data : null}
                 </p>
               )}
@@ -187,22 +210,22 @@ export function ReviewStep() {
       </div>
 
       {/* Detailed Preview */}
-      <div className="border-pf-border-default bg-pf-canvas-subtle border p-4">
-        <div className="text-pf-fg-subtle mb-4 font-mono text-xs">
+      <div className="border-white/10 bg-white/5 border p-4">
+        <div className="text-zinc-500 mb-4 font-mono text-xs">
           <span className="opacity-60">{"//"}</span> Profile Preview
         </div>
 
         {personalInfo && professionalProfile && (
           <div className="space-y-4">
             {/* Header Section */}
-            <div className="border-pf-border-muted border-b pb-4">
-              <h3 className="text-pf-fg-default text-lg font-bold">{personalInfo.fullName}</h3>
-              <p className="text-pf-accent-fg font-mono text-sm">{professionalProfile.jobTitle}</p>
-              <div className="text-pf-fg-muted mt-1 flex flex-wrap gap-2 font-mono text-xs">
+            <div className="border-white/10 border-b pb-4">
+              <h3 className="text-white text-lg font-bold">{personalInfo.fullName}</h3>
+              <p className="text-cyan-400 font-mono text-sm">{professionalProfile.jobTitle}</p>
+              <div className="text-zinc-400 mt-1 flex flex-wrap gap-2 font-mono text-xs">
                 {personalInfo.email && <span>{personalInfo.email}</span>}
                 {personalInfo.location && (
                   <>
-                    <span className="text-pf-border-default">•</span>
+                    <span className="text-white/10">•</span>
                     <span>{personalInfo.location}</span>
                   </>
                 )}
@@ -211,8 +234,8 @@ export function ReviewStep() {
 
             {/* Summary */}
             <div>
-              <h4 className="text-pf-fg-default mb-1 font-mono text-xs font-semibold">Summary</h4>
-              <p className="text-pf-fg-muted font-mono text-xs leading-relaxed">
+              <h4 className="text-white mb-1 font-mono text-xs font-semibold">Summary</h4>
+              <p className="text-zinc-400 font-mono text-xs leading-relaxed">
                 {professionalProfile.summary.length > 200
                   ? `${professionalProfile.summary.substring(0, 200)}...`
                   : professionalProfile.summary}
@@ -222,27 +245,27 @@ export function ReviewStep() {
             {/* Experience */}
             {!noExperience && experiences.length > 0 && (
               <div>
-                <h4 className="text-pf-fg-default mb-2 font-mono text-xs font-semibold">
+                <h4 className="text-white mb-2 font-mono text-xs font-semibold">
                   Experience
                 </h4>
                 <div className="space-y-2">
                   {experiences.slice(0, 2).map((exp: Experience) => (
                     <div
                       key={exp.id}
-                      className="text-pf-fg-muted flex items-center gap-2 font-mono text-xs"
+                      className="text-zinc-400 flex items-center gap-2 font-mono text-xs"
                     >
                       <Calendar className="h-3 w-3" />
-                      <span className="text-pf-fg-default">{exp.position}</span>
+                      <span className="text-white">{exp.position}</span>
                       <span>@</span>
                       <span>{exp.company}</span>
-                      <span className="text-pf-fg-subtle">
+                      <span className="text-zinc-500">
                         ({formatDate(exp.startDate)} -{" "}
                         {exp.isCurrent ? "Present" : formatDate(exp.endDate || "")})
                       </span>
                     </div>
                   ))}
                   {experiences.length > 2 && (
-                    <p className="text-pf-fg-subtle font-mono text-xs">
+                    <p className="text-zinc-500 font-mono text-xs">
                       +{experiences.length - 2} more
                     </p>
                   )}
@@ -253,18 +276,18 @@ export function ReviewStep() {
             {/* Skills */}
             {!noSkills && skills.length > 0 && (
               <div>
-                <h4 className="text-pf-fg-default mb-2 font-mono text-xs font-semibold">Skills</h4>
+                <h4 className="text-white mb-2 font-mono text-xs font-semibold">Skills</h4>
                 <div className="flex flex-wrap gap-1">
                   {skills.slice(0, 8).map((skill: Skill) => (
                     <span
                       key={skill.id}
-                      className="bg-pf-canvas-overlay text-pf-fg-muted border-pf-border-default border px-1.5 py-0.5 font-mono text-[10px]"
+                      className="bg-[#0A0A0A]/80 text-zinc-400 border-white/10 border px-1.5 py-0.5 font-mono text-[10px]"
                     >
                       {skill.name}
                     </span>
                   ))}
                   {skills.length > 8 && (
-                    <span className="text-pf-fg-subtle font-mono text-[10px]">
+                    <span className="text-zinc-500 font-mono text-[10px]">
                       +{skills.length - 8} more
                     </span>
                   )}
@@ -277,17 +300,17 @@ export function ReviewStep() {
 
       {/* Error Message */}
       {error && (
-        <div className="border-pf-danger-fg bg-pf-danger-subtle flex items-center gap-2 border p-3">
-          <AlertCircle className="text-pf-danger-fg h-4 w-4" />
-          <span className="text-pf-danger-fg font-mono text-sm">{error}</span>
+        <div className="border-red-500 bg-red-500/10 flex items-center gap-2 border p-3">
+          <AlertCircle className="text-red-500 h-4 w-4" />
+          <span className="text-red-500 font-mono text-sm">{error}</span>
         </div>
       )}
 
       {/* Warning if incomplete */}
       {!allRequiredComplete && (
-        <div className="border-pf-attention-fg bg-pf-attention-subtle flex items-center gap-2 border p-3">
-          <AlertCircle className="text-pf-attention-fg h-4 w-4" />
-          <span className="text-pf-attention-fg font-mono text-sm">
+        <div className="border-amber-500 bg-amber-500/10 flex items-center gap-2 border p-3">
+          <AlertCircle className="text-amber-500 h-4 w-4" />
+          <span className="text-amber-500 font-mono text-sm">
             Please complete all required sections before submitting
           </span>
         </div>
@@ -297,7 +320,7 @@ export function ReviewStep() {
       <StepNavigation
         onNext={handleSubmit}
         nextLabel="create profile"
-        isLoading={isSubmitting}
+        isLoading={submitOnboarding.isPending}
         canProceed={allRequiredComplete}
       />
     </div>

@@ -393,10 +393,36 @@ export const useOnboardingStore = create<OnboardingState>()(
 
       buildSubmissionPayload: () => {
         const state = get();
+        
+        // Validate required fields before building payload
+        if (!state.username) {
+          throw new Error("Username is required to complete onboarding");
+        }
+        if (!state.personalInfo) {
+          throw new Error("Personal information is required");
+        }
+        if (!state.professionalProfile) {
+          throw new Error("Professional profile is required");
+        }
+        if (!state.templateSelection) {
+          throw new Error("Template selection is required");
+        }
+        
+        // Normalize empty URLs to undefined
+        const normalizeUrl = (url: string | undefined): string | undefined => {
+          if (!url || url.trim() === "") return undefined;
+          return url;
+        };
+        
         return {
           username: state.username,
           personalInfo: state.personalInfo,
-          professionalProfile: state.professionalProfile,
+          professionalProfile: {
+            ...state.professionalProfile,
+            linkedin: normalizeUrl(state.professionalProfile.linkedin),
+            github: normalizeUrl(state.professionalProfile.github),
+            website: normalizeUrl(state.professionalProfile.website),
+          },
           skillsStep: {
             skills: state.skills.map(({ id: _id, ...s }) => s),
             noSkills: state.noSkills,

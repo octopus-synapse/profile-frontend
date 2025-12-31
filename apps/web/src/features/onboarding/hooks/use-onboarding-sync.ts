@@ -9,7 +9,7 @@ import { useEffect, useRef, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useOnboardingProgress } from "./use-onboarding-queries";
 import { useSaveOnboardingProgress } from "./use-onboarding-mutations";
-import { useOnboardingStore } from "../stores";
+import { useOnboardingStore, ONBOARDING_STEPS } from "../stores";
 import type { OnboardingStep } from "../stores";
 
 export function useOnboardingSync() {
@@ -27,26 +27,61 @@ export function useOnboardingSync() {
   // Hydrate store from backend on initial load
   useEffect(() => {
     if (backendProgress && !hasHydrated.current && isAuthenticated) {
-      // Only hydrate if backend has progress beyond welcome
-      // This allows local storage to work for offline scenarios
       const backendStepIndex = getStepIndex(backendProgress.currentStep as OnboardingStep);
       const localStep = useOnboardingStore.getState().currentStep;
       const localStepIndex = getStepIndex(localStep);
 
-      // Use backend progress if it's further along
-      if (backendStepIndex > localStepIndex) {
+      // Check if backend has actual progress (not just initial empty state)
+      const backendHasProgress = 
+        backendProgress.currentStep !== "welcome" || 
+        (backendProgress.completedSteps && backendProgress.completedSteps.length > 0) ||
+        backendProgress.personalInfo ||
+        backendProgress.username ||
+        backendProgress.professionalProfile ||
+        (backendProgress.experiences && backendProgress.experiences.length > 0) ||
+        (backendProgress.education && backendProgress.education.length > 0) ||
+        (backendProgress.skills && backendProgress.skills.length > 0) ||
+        (backendProgress.languages && backendProgress.languages.length > 0) ||
+        backendProgress.templateSelection;
+
+      // If backend has no progress and local storage also has no progress, ensure clean state
+      if (!backendHasProgress && localStepIndex === 0 && localStep === "welcome") {
+        // Both are at initial state, ensure completedSteps is empty
+        const store = useOnboardingStore.getState();
+        if (store.completedSteps.length > 0) {
+          // Reset to clean initial state
+          useOnboardingStore.setState({
+            currentStep: "welcome",
+            completedSteps: [],
+            personalInfo: null,
+            username: backendProgress.username || null, // Preserve username if exists
+            professionalProfile: null,
+            experiences: [],
+            noExperience: false,
+            education: [],
+            noEducation: false,
+            skills: [],
+            noSkills: false,
+            languages: [],
+            templateSelection: null,
+          });
+        }
+      }
+
+      // Use backend progress if it has actual data or is further along
+      if (backendHasProgress || backendStepIndex > localStepIndex) {
         hydrateFromBackend({
           currentStep: backendProgress.currentStep as OnboardingStep,
-          completedSteps: backendProgress.completedSteps as OnboardingStep[],
+          completedSteps: (backendProgress.completedSteps || []) as OnboardingStep[],
           personalInfo: backendProgress.personalInfo,
-          username: null,
+          username: backendProgress.username || null,
           professionalProfile: backendProgress.professionalProfile,
           experiences: backendProgress.experiences || [],
-          noExperience: backendProgress.noExperience,
+          noExperience: backendProgress.noExperience || false,
           education: backendProgress.education || [],
-          noEducation: backendProgress.noEducation,
+          noEducation: backendProgress.noEducation || false,
           skills: backendProgress.skills || [],
-          noSkills: backendProgress.noSkills,
+          noSkills: backendProgress.noSkills || false,
           languages: backendProgress.languages || [],
           templateSelection: backendProgress.templateSelection,
         });
@@ -89,19 +124,7 @@ export function useOnboardingSync() {
   };
 }
 
-// Helper to get step index
+// Helper to get step index - use the same list as ONBOARDING_STEPS
 function getStepIndex(step: OnboardingStep): number {
-  const steps: OnboardingStep[] = [
-    "welcome",
-    "personal-info",
-    "professional-profile",
-    "experience",
-    "education",
-    "skills",
-    "languages",
-    "template",
-    "review",
-    "complete",
-  ];
-  return steps.indexOf(step);
+  return ONBOARDING_STEPS.findIndex((s) => s.id === step);
 }
