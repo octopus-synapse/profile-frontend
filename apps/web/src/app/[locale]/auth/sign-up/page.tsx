@@ -2,14 +2,15 @@
 
 /**
  * Sign Up Page
- * Developer-inspired design with code aesthetic + i18n
+ * Ultra Premium dark theme - matching sign-in
  */
 
 import { SignUpForm } from "@/features/auth";
 import { LocalizedLink } from "@/shared/components/localized-link";
 import { ROUTES } from "@/config/routes";
-import { Terminal, Github, ArrowLeft, Check } from "lucide-react";
+import { Terminal, Github, ArrowLeft, Check, Zap } from "lucide-react";
 import { useI18n } from "@/features/i18n";
+import { motion } from "framer-motion";
 
 export default function SignUpPage() {
   const { t } = useI18n();
@@ -22,46 +23,54 @@ export default function SignUpPage() {
   ];
 
   return (
-    <div className="bg-pf-canvas-default flex min-h-screen">
-      {/* Left side - Terminal/Code aesthetic (hidden on mobile) */}
-      <div className="bg-pf-canvas-subtle border-pf-border-muted hidden flex-col justify-between border-r p-12 lg:flex lg:w-1/2">
+    <div className="relative flex min-h-screen overflow-hidden bg-[#030303] text-zinc-300">
+      {/* BACKGROUND EFFECTS */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+        <div className="absolute left-1/2 top-0 -z-10 h-[400px] w-[800px] -translate-x-1/2 bg-cyan-500/10 opacity-50 blur-[120px]" />
+      </div>
+
+      {/* Left side - Feature showcase (hidden on mobile) */}
+      <div className="relative z-10 hidden flex-col justify-between border-r border-white/5 bg-black/40 p-12 backdrop-blur-xl lg:flex lg:w-1/2">
         <div>
           <LocalizedLink href={ROUTES.HOME} className="flex items-center gap-2">
-            <div className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis flex h-8 w-8 items-center justify-center">
-              <Terminal className="h-4 w-4" strokeWidth={1.5} />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-500">
+              <Zap className="h-4 w-4 text-white" strokeWidth={1.5} />
             </div>
-            <span className="text-pf-fg-default font-mono text-lg font-semibold">profile</span>
-            <span className="dev-badge">dev</span>
+            <span className="font-mono text-lg font-bold text-white">PATCH</span>
+            <span className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2 py-0.5 font-mono text-[9px] text-cyan-400">
+              dev
+            </span>
           </LocalizedLink>
         </div>
 
         <div className="space-y-8">
           {/* Code Block */}
-          <div className="code-block max-w-md">
-            <div className="code-block-header">
-              <div className="code-block-dots">
-                <span className="code-block-dot red" />
-                <span className="code-block-dot yellow" />
-                <span className="code-block-dot green" />
+          <div className="max-w-md overflow-hidden rounded-xl border border-white/10 bg-black/60 backdrop-blur-sm">
+            <div className="flex items-center gap-2 border-b border-white/5 bg-black/40 px-4 py-3">
+              <div className="flex gap-1.5">
+                <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
+                <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
+                <span className="h-3 w-3 rounded-full bg-[#28c840]" />
               </div>
-              <span className="code-block-title">welcome.ts</span>
+              <span className="ml-2 font-mono text-[10px] text-zinc-500">welcome.ts</span>
             </div>
-            <div className="code-block-content">
+            <div className="p-5 font-mono text-[11px] leading-relaxed text-zinc-400">
               <div>
-                <span className="code-keyword">const</span>{" "}
-                <span className="code-variable">createProfile</span> ={" "}
-                <span className="code-keyword">async</span> () =&gt; {"{"}
+                <span className="text-pink-400">const</span>{" "}
+                <span className="text-cyan-300">createProfile</span> ={" "}
+                <span className="text-pink-400">async</span> () =&gt; {"{"}
               </div>
               <div className="ml-4">
-                <span className="code-keyword">return</span> {"{"}
+                <span className="text-pink-400">return</span> {"{"}
               </div>
               <div className="ml-8">
-                <span className="code-function">status</span>:{" "}
-                <span className="code-string">&quot;success&quot;</span>,
+                <span className="text-blue-400">status</span>:{" "}
+                <span className="text-emerald-400">&quot;success&quot;</span>,
               </div>
               <div className="ml-8">
-                <span className="code-function">message</span>:{" "}
-                <span className="code-string">&quot;Profile created!&quot;</span>
+                <span className="text-blue-400">message</span>:{" "}
+                <span className="text-emerald-400">&quot;Profile created!&quot;</span>
               </div>
               <div className="ml-4">{"}"}</div>
               <div>{"}"}</div>
@@ -71,91 +80,130 @@ export default function SignUpPage() {
           {/* Feature list */}
           <div className="space-y-4">
             {features.map((feature, i) => (
-              <div key={i} className="text-pf-fg-muted flex items-center gap-3 font-mono text-sm">
-                <div className="text-pf-success-fg flex h-5 w-5 items-center justify-center">
-                  <Check className="h-4 w-4" strokeWidth={2} />
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className="flex items-center gap-3 font-mono text-sm text-zinc-400"
+              >
+                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-400">
+                  <Check className="h-3 w-3" strokeWidth={2.5} />
                 </div>
                 <span>{t(feature.textKey as Parameters<typeof t>[0])}</span>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
 
-        <div className="text-pf-fg-subtle font-mono text-xs">
-          © {new Date().getFullYear()} ProFile. All rights reserved.
+        <div className="font-mono text-xs text-zinc-600">
+          © {new Date().getFullYear()} PATCH. All rights reserved.
         </div>
       </div>
 
       {/* Right side - Form */}
-      <div className="flex flex-1 flex-col">
+      <div className="relative z-10 flex flex-1 flex-col">
         {/* Header */}
-        <header className="border-pf-border-muted border-b p-4 lg:border-b-0">
+        <header className="border-b border-white/5 bg-black/20 p-4 backdrop-blur-md lg:border-b-0">
           <div className="flex items-center justify-between">
-            <LocalizedLink href={ROUTES.HOME} className="flex items-center gap-2">
-              <ArrowLeft className="text-pf-fg-muted h-4 w-4" strokeWidth={1.5} />
-              <span className="text-pf-fg-muted font-mono text-xs">{t("auth.back")}</span>
+            <LocalizedLink
+              href={ROUTES.HOME}
+              className="group flex items-center gap-2 text-zinc-500 transition-colors hover:text-white"
+            >
+              <ArrowLeft
+                className="h-4 w-4 transition-transform group-hover:-translate-x-1"
+                strokeWidth={2}
+              />
+              <span className="font-mono text-xs uppercase tracking-widest">{t("auth.back")}</span>
             </LocalizedLink>
             <LocalizedLink href={ROUTES.HOME} className="flex items-center gap-2 lg:hidden">
-              <div className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis flex h-7 w-7 items-center justify-center">
-                <Terminal className="h-4 w-4" strokeWidth={1.5} />
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-cyan-500">
+                <Zap className="h-4 w-4 text-white" strokeWidth={1.5} />
               </div>
-              <span className="text-pf-fg-default font-mono text-sm font-semibold">profile</span>
+              <span className="font-mono text-sm font-bold text-white">PATCH</span>
             </LocalizedLink>
-            <div className="w-16 lg:hidden" />
+            <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 lg:flex">
+              <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
+              <span className="font-mono text-[10px] uppercase tracking-tighter">
+                System Online
+              </span>
+            </div>
           </div>
         </header>
 
         {/* Form Content */}
         <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:px-20 xl:px-24">
-          <div className="mx-auto w-full max-w-sm">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mx-auto w-full max-w-[400px]"
+          >
             {/* Header */}
-            <div className="mb-8">
-              <div className="inline-flex items-center gap-2">
-                <span className="text-pf-attention-fg font-mono text-xs">●</span>
-                <span className="text-pf-fg-muted font-mono text-xs">new_user: true</span>
+            <div className="mb-10 text-center">
+              <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-gradient-to-b from-white/10 to-transparent shadow-2xl lg:hidden">
+                <Terminal className="h-6 w-6 text-white" strokeWidth={1.5} />
               </div>
-              <h2 className="text-pf-fg-default mt-4 text-2xl font-bold">
+              <h1 className="mb-2 text-3xl font-bold tracking-tight text-white">
                 {t("auth.signUp.title")}
-              </h2>
-              <p className="text-pf-fg-muted mt-2 font-mono text-xs">
-                {t("auth.signUp.hasAccount")}{" "}
-                <LocalizedLink
-                  href={ROUTES.AUTH.SIGN_IN}
-                  className="text-pf-fg-default font-semibold hover:underline"
-                >
-                  {t("auth.signUp.signIn")}
-                </LocalizedLink>
-              </p>
+              </h1>
+              <div className="flex items-center justify-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-500">
+                <span className="text-amber-400">●</span>
+                <span>new_user: true</span>
+              </div>
             </div>
 
-            {/* GitHub OAuth */}
-            <button className="border-pf-border-default bg-pf-canvas-subtle text-pf-fg-default hover:bg-pf-canvas-inset mb-6 flex w-full items-center justify-center gap-3 border py-3 font-mono text-sm transition-colors">
-              <Github className="h-4 w-4" strokeWidth={1.5} />
-              {t("auth.continueWithGithub")}
-            </button>
+            {/* Form Card */}
+            <div className="group relative">
+              <div className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-cyan-500/50 to-purple-500/50 opacity-20 blur transition duration-1000 group-hover:opacity-40" />
 
-            {/* Divider */}
-            <div className="mb-6 flex items-center gap-4">
-              <div className="bg-pf-border-default h-px flex-1" />
-              <span className="text-pf-fg-subtle font-mono text-xs">{t("auth.or")}</span>
-              <div className="bg-pf-border-default h-px flex-1" />
+              <div className="relative rounded-xl border border-white/10 bg-[#0A0A0A]/80 p-8 shadow-2xl backdrop-blur-2xl">
+                {/* GitHub OAuth */}
+                <button className="mb-6 flex w-full items-center justify-center gap-3 rounded-lg border border-white/10 bg-white/5 py-3 font-mono text-sm font-medium text-white transition-all hover:border-white/20 hover:bg-white/10 active:scale-[0.98]">
+                  <Github className="h-4 w-4" strokeWidth={1.5} />
+                  {t("auth.continueWithGithub")}
+                </button>
+
+                {/* Divider */}
+                <div className="relative mb-6">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t border-white/5" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-[#0A0A0A] px-2 font-mono tracking-widest text-zinc-600">
+                      {t("auth.or")}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Sign Up Form */}
+                <SignUpForm />
+              </div>
             </div>
 
-            {/* Sign Up Form */}
-            <SignUpForm />
+            {/* Footer */}
+            <p className="mt-8 text-center font-mono text-xs text-zinc-500">
+              {t("auth.signUp.hasAccount")}{" "}
+              <LocalizedLink
+                href={ROUTES.AUTH.SIGN_IN}
+                className="font-bold text-white underline-offset-4 hover:underline"
+              >
+                {t("auth.signUp.signIn")}
+              </LocalizedLink>
+            </p>
 
             {/* Terms */}
-            <p className="text-pf-fg-subtle mt-6 text-center font-mono text-xs">
+            <p className="mt-4 text-center font-mono text-[10px] text-zinc-600">
               By signing up, you agree to our{" "}
-              <LocalizedLink href="/terms" className="hover:text-pf-fg-default underline">
+              <LocalizedLink href="/terms" className="underline hover:text-white">
                 {t("auth.terms")}
               </LocalizedLink>{" "}
               and{" "}
-              <LocalizedLink href="/privacy" className="hover:text-pf-fg-default underline">
+              <LocalizedLink href="/privacy" className="underline hover:text-white">
                 {t("auth.privacy")}
               </LocalizedLink>
             </p>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>

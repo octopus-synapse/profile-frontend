@@ -1,108 +1,104 @@
 "use client";
 
-/**
- * Sign In Page
- * Developer-inspired design with code aesthetic + i18n
- */
-
 import { SignInForm } from "@/features/auth";
 import { LocalizedLink } from "@/shared/components/localized-link";
 import { ROUTES } from "@/config/routes";
-import { Terminal, Github, ArrowLeft } from "lucide-react";
+import { Terminal, Github, ArrowLeft, Command } from "lucide-react";
 import { useI18n } from "@/features/i18n";
+import { motion } from "framer-motion"; // Opcional: npm install framer-motion
 
 export default function SignInPage() {
   const { t } = useI18n();
 
   return (
-    <div className="bg-pf-canvas-default flex min-h-screen flex-col">
+    <div className="relative flex min-h-screen flex-col overflow-hidden bg-[#030303] text-slate-300">
+      {/* BACKGROUND EFFECTS */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] bg-[size:40px_40px]" />
+        <div className="absolute top-0 left-1/2 -z-10 h-[400px] w-[800px] -translate-x-1/2 bg-cyan-500/10 opacity-50 blur-[120px]" />
+      </div>
+
       {/* Header */}
-      <header className="border-pf-border-muted border-b p-4">
-        <div className="mx-auto flex max-w-7xl items-center justify-between">
-          <LocalizedLink href={ROUTES.HOME} className="flex items-center gap-2">
-            <ArrowLeft className="text-pf-fg-muted h-4 w-4" strokeWidth={1.5} />
-            <span className="text-pf-fg-muted font-mono text-xs">{t("auth.back")}</span>
+      <header className="relative z-10 border-b border-white/5 bg-black/20 backdrop-blur-md">
+        <div className="mx-auto flex max-w-7xl items-center justify-between p-4">
+          <LocalizedLink
+            href={ROUTES.HOME}
+            className="group flex items-center gap-2 transition-colors hover:text-white"
+          >
+            <ArrowLeft
+              className="h-4 w-4 transition-transform group-hover:-translate-x-1"
+              strokeWidth={2}
+            />
+            <span className="font-mono text-xs tracking-widest uppercase">{t("auth.back")}</span>
           </LocalizedLink>
-          <LocalizedLink href={ROUTES.HOME} className="flex items-center gap-2">
-            <div className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis flex h-7 w-7 items-center justify-center">
-              <Terminal className="h-4 w-4" strokeWidth={1.5} />
-            </div>
-            <span className="text-pf-fg-default font-mono text-sm font-semibold">profile</span>
-          </LocalizedLink>
-          <div className="w-16" /> {/* Spacer for centering */}
+
+          <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1">
+            <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
+            <span className="font-mono text-[10px] tracking-tighter uppercase">System Online</span>
+          </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="flex flex-1 flex-col items-center justify-center px-4 py-12">
-        <div className="w-full max-w-sm">
-          {/* Terminal Header */}
-          <div className="mb-8 text-center">
-            <div className="inline-flex items-center gap-2">
-              <span className="text-pf-success-fg font-mono text-xs">●</span>
-              <span className="text-pf-fg-muted font-mono text-xs">
-                {t("auth.authenticated")}: false
-              </span>
+      <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 py-12">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-[400px]"
+        >
+          {/* Logo/Title Section */}
+          <div className="mb-10 text-center">
+            <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-gradient-to-b from-white/10 to-transparent shadow-2xl">
+              <Terminal className="h-6 w-6 text-white" strokeWidth={1.5} />
             </div>
-            <h1 className="text-pf-fg-default mt-4 text-2xl font-bold">{t("auth.signIn.title")}</h1>
-            <p className="text-pf-fg-muted mt-2 font-mono text-xs">{t("auth.signIn.subtitle")}</p>
+            <h1 className="mb-2 text-3xl font-bold tracking-tight text-white">
+              {t("auth.signIn.title")}
+            </h1>
+            <div className="flex items-center justify-center gap-2 font-mono text-[10px] tracking-[0.2em] text-zinc-500 uppercase">
+              <span className="text-cyan-400">Ready to patch</span>
+              <span className="text-white opacity-20">|</span>
+              <span>Version 2.0.4</span>
+            </div>
           </div>
 
-          {/* Sign In Card */}
-          <div className="border-pf-border-default bg-pf-canvas-overlay border p-6">
-            <SignInForm />
+          {/* Form Card com borda "Glass" */}
+          <div className="group relative">
+            {/* Efeito de borda gradiente no hover */}
+            <div className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-cyan-500/50 to-purple-500/50 opacity-20 blur transition duration-1000 group-hover:opacity-40" />
+
+            <div className="relative rounded-xl border border-white/10 bg-[#0A0A0A]/80 p-8 shadow-2xl backdrop-blur-2xl">
+              <SignInForm />
+
+              <div className="relative my-8">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-white/5" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-[#0A0A0A] px-2 font-mono tracking-widest text-zinc-600">
+                    {t("auth.or")}
+                  </span>
+                </div>
+              </div>
+
+              <button className="flex w-full items-center justify-center gap-3 rounded-lg border border-white/10 bg-white/5 py-3 font-mono text-sm font-medium transition-all hover:border-white/20 hover:bg-white/10 active:scale-[0.98]">
+                <Github className="h-4 w-4 text-white" />
+                <span className="text-white">{t("auth.continueWithGithub")}</span>
+              </button>
+            </div>
           </div>
 
-          {/* Divider */}
-          <div className="my-6 flex items-center gap-4">
-            <div className="bg-pf-border-default h-px flex-1" />
-            <span className="text-pf-fg-subtle font-mono text-xs">{t("auth.or")}</span>
-            <div className="bg-pf-border-default h-px flex-1" />
-          </div>
-
-          {/* GitHub OAuth */}
-          <button className="border-pf-border-default text-pf-fg-default hover:bg-pf-canvas-subtle flex w-full items-center justify-center gap-3 border py-3 font-mono text-sm transition-colors">
-            <Github className="h-4 w-4" strokeWidth={1.5} />
-            {t("auth.continueWithGithub")}
-          </button>
-
-          {/* Sign Up Link */}
-          <div className="border-pf-border-default bg-pf-canvas-subtle mt-6 border p-4 text-center">
-            <p className="text-pf-fg-muted font-mono text-xs">
-              {t("auth.signIn.noAccount")}{" "}
-              <LocalizedLink
-                href={ROUTES.AUTH.SIGN_UP}
-                className="text-pf-fg-default font-semibold hover:underline"
-              >
-                {t("auth.signIn.createAccount")}
-              </LocalizedLink>
-            </p>
-          </div>
-
-          {/* Footer Links */}
-          <div className="text-pf-fg-subtle mt-8 flex items-center justify-center gap-4 font-mono text-xs">
+          {/* Footer Sign Up */}
+          <p className="mt-8 text-center font-mono text-xs text-zinc-500">
+            {t("auth.signIn.noAccount")}{" "}
             <LocalizedLink
-              href={ROUTES.HOME}
-              className="hover:text-pf-fg-default transition-colors"
+              href={ROUTES.AUTH.SIGN_UP}
+              className="font-bold text-white underline-offset-4 hover:underline"
             >
-              {t("auth.terms")}
+              {t("auth.signIn.createAccount")}
             </LocalizedLink>
-            <span className="text-pf-border-default">·</span>
-            <LocalizedLink
-              href={ROUTES.HOME}
-              className="hover:text-pf-fg-default transition-colors"
-            >
-              {t("auth.privacy")}
-            </LocalizedLink>
-            <span className="text-pf-border-default">·</span>
-            <LocalizedLink
-              href={ROUTES.HOME}
-              className="hover:text-pf-fg-default transition-colors"
-            >
-              {t("auth.docs")}
-            </LocalizedLink>
-          </div>
-        </div>
+          </p>
+        </motion.div>
       </main>
     </div>
   );

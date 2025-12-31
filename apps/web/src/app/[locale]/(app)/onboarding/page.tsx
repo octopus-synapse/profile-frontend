@@ -7,8 +7,8 @@ import { Metadata } from "next";
 import { OnboardingWizard } from "@/features/onboarding";
 
 export const metadata: Metadata = {
-  title: "Setup Your Profile | ProFile",
-  description: "Complete your professional profile setup in minutes",
+  title: "Setup Your Profile | PATCH",
+  description: "Complete your professional profile setup on PATCH in minutes",
 };
 
 export default function OnboardingPage() {
