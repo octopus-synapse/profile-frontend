@@ -63,4 +63,35 @@ function SimpleTooltip({
   );
 }
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider, SimpleTooltip };
+/**
+ * HelpTooltip - Question mark icon with tooltip
+ * Use for inline help on form fields
+ * Nielsen #10: Help and documentation
+ */
+interface HelpTooltipProps {
+  content: React.ReactNode;
+  className?: string;
+  side?: "top" | "right" | "bottom" | "left";
+}
+
+function HelpTooltip({ content, className, side = "top" }: HelpTooltipProps) {
+  return (
+    <SimpleTooltip content={content} side={side}>
+      <button
+        type="button"
+        className={cn(
+          "inline-flex h-4 w-4 items-center justify-center rounded-full",
+          "bg-pf-canvas-inset text-pf-fg-subtle",
+          "text-xs font-medium hover:bg-pf-canvas-subtle hover:text-pf-fg-muted",
+          "transition-colors focus:outline-none focus:ring-2 focus:ring-pf-accent-fg",
+          className
+        )}
+        aria-label="Help"
+      >
+        ?
+      </button>
+    </SimpleTooltip>
+  );
+}
+
+export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider, SimpleTooltip, HelpTooltip };

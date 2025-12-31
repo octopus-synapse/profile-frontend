@@ -8,7 +8,7 @@
 import { useState, useEffect } from "react";
 import { User, MapPin, Phone, Globe, Linkedin, Github, Save, Loader2, Check, AlertCircle } from "lucide-react";
 import { useProfile, useUpdateProfile } from "../hooks";
-import { PhoneInput } from "@/shared/components/ui";
+import { PhoneInput, HelpTooltip } from "@/shared/components/ui";
 import { UsernameField } from "./username-field";
 import type { UpdateProfilePayload } from "../types";
 
@@ -114,7 +114,10 @@ export function ProfileSection() {
 
         {/* Bio */}
         <div>
-          <label className="text-pf-fg-default mb-2 block text-sm font-medium">Bio</label>
+          <label className="text-pf-fg-default mb-2 flex items-center gap-2 text-sm font-medium">
+            Bio
+            <HelpTooltip content="A brief description visible on your public profile. Keep it concise and professional." />
+          </label>
           <textarea
             value={formData.bio}
             onChange={(e) => handleChange("bio", e.target.value)}
@@ -174,6 +177,7 @@ export function ProfileSection() {
             <label className="text-pf-fg-default mb-2 flex items-center gap-2 text-sm font-medium">
               <Linkedin className="h-4 w-4 text-pf-fg-muted" strokeWidth={1.5} />
               LinkedIn
+              <HelpTooltip content="Link to your LinkedIn profile. Visible as a social link on your public profile." />
             </label>
             <input
               type="url"
@@ -188,6 +192,7 @@ export function ProfileSection() {
             <label className="text-pf-fg-default mb-2 flex items-center gap-2 text-sm font-medium">
               <Github className="h-4 w-4 text-pf-fg-muted" strokeWidth={1.5} />
               GitHub
+              <HelpTooltip content="Link to your GitHub profile. Great for showcasing your open source contributions." />
             </label>
             <input
               type="url"

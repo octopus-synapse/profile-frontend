@@ -12,6 +12,7 @@ import { StepNavigation } from "../step-navigation";
 import { AtSign, Check, X, Loader2, AlertCircle, ExternalLink } from "lucide-react";
 import { useDebounce } from "@/shared/hooks/use-debounce";
 import { apiClient } from "@/shared/lib/api-client";
+import { HelpTooltip } from "@/shared/components/ui";
 
 const USERNAME_REGEX = /^[a-zA-Z0-9_]+$/;
 const MIN_LENGTH = 3;
@@ -168,6 +169,7 @@ export function UsernameStep() {
         <label className="text-pf-fg-default mb-1.5 flex items-center gap-2 font-mono text-sm">
           <AtSign className="h-4 w-4" strokeWidth={1.5} />
           username<span className="text-pf-danger-fg">*</span>
+          <HelpTooltip content="Your unique identifier on PATCH. This cannot be changed later, so choose wisely!" />
         </label>
         <div className="relative">
           <input
