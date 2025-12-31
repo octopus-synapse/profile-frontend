@@ -1,20 +1,20 @@
 /**
  * i18n Configuration
  * Centralized configuration for internationalization
+ * Supported locales: English (en) and Portuguese Brazil (pt-BR)
  */
 
 // Define locales first to avoid circular reference
-const locales = ["en", "pt-BR", "es"] as const;
+const locales = ["en", "pt-BR"] as const;
 
 export type Locale = (typeof locales)[number];
 
 export const i18nConfig = {
-  defaultLocale: "en" as const,
+  defaultLocale: "pt-BR" as const,
   locales,
   localeNames: {
     en: "English",
-    "pt-BR": "Portugues",
-    es: "Espanol",
+    "pt-BR": "Português",
   } as const satisfies Record<Locale, string>,
   // Mapping of country codes to locales (for geo-detection)
   countryLocaleMap: {
@@ -22,25 +22,6 @@ export const i18nConfig = {
     PT: "pt-BR",
     AO: "pt-BR", // Angola
     MZ: "pt-BR", // Mozambique
-    ES: "es",
-    MX: "es",
-    AR: "es",
-    CO: "es",
-    PE: "es",
-    VE: "es",
-    CL: "es",
-    EC: "es",
-    GT: "es",
-    CU: "es",
-    BO: "es",
-    DO: "es",
-    HN: "es",
-    PY: "es",
-    SV: "es",
-    NI: "es",
-    CR: "es",
-    PA: "es",
-    UY: "es",
     // All other countries default to English
   } as Record<string, Locale>,
 } as const;
@@ -72,8 +53,8 @@ export function getLocaleFromHeaders(acceptLanguage: string | null): Locale {
     if (code === "pt") return "pt-BR";
     // en-US, en-GB -> en
     if (code.startsWith("en")) return "en";
-    // es-MX, es-AR -> es
-    if (code.startsWith("es")) return "es";
+    // es speakers fallback to English
+    if (code.startsWith("es")) return "en";
   }
 
   return i18nConfig.defaultLocale;

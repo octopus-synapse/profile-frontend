@@ -9,10 +9,11 @@
 import { useOnboardingStore } from "../stores";
 import { OnboardingShell } from "./onboarding-shell";
 import { useOnboardingSync } from "../hooks/use-onboarding-sync";
-import { Loader2 } from "lucide-react";
+import { LoadingState } from "@/shared/components/ui";
 import {
   WelcomeStep,
   PersonalInfoStep,
+  UsernameStep,
   ProfessionalProfileStep,
   ExperienceStep,
   EducationStep,
@@ -33,6 +34,8 @@ export function OnboardingWizard() {
         return <WelcomeStep />;
       case "personal-info":
         return <PersonalInfoStep />;
+      case "username":
+        return <UsernameStep />;
       case "professional-profile":
         return <ProfessionalProfileStep />;
       case "experience":
@@ -58,12 +61,7 @@ export function OnboardingWizard() {
   if (isLoading) {
     return (
       <OnboardingShell>
-        <div className="flex min-h-[400px] items-center justify-center">
-          <div className="flex flex-col items-center gap-4">
-            <Loader2 className="text-pf-accent-fg h-8 w-8 animate-spin" />
-            <p className="text-pf-fg-muted font-mono text-sm">Loading your progress...</p>
-          </div>
-        </div>
+        <LoadingState message="Loading your progress..." minHeight="400px" />
       </OnboardingShell>
     );
   }

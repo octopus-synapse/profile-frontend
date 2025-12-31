@@ -129,21 +129,18 @@ export function ExperiencesSection() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <div className="flex items-center gap-2">
-            <Briefcase className="text-pf-accent-fg h-4 w-4" strokeWidth={1.5} />
-            <span className="text-pf-fg-muted font-mono text-xs">// Work Experience</span>
-          </div>
-          <p className="text-pf-fg-subtle mt-1 font-mono text-xs">
+          <h2 className="text-pf-fg-default text-lg font-semibold">Work Experience</h2>
+          <p className="text-pf-fg-muted mt-1 text-sm">
             {experiences.length} experience{experiences.length !== 1 ? "s" : ""} added
           </p>
         </div>
         {!isFormOpen && (
           <button
             onClick={handleStartAdd}
-            className="text-pf-accent-fg hover:bg-pf-accent-subtle flex items-center gap-2 border border-transparent px-3 py-1.5 font-mono text-sm transition-colors"
+            className="text-pf-fg-default hover:bg-pf-canvas-subtle flex items-center gap-2 rounded-lg border border-pf-border-default px-4 py-2 text-sm font-medium transition-colors"
           >
             <Plus className="h-4 w-4" strokeWidth={1.5} />
-            add_experience
+            Add Experience
           </button>
         )}
       </div>
@@ -154,35 +151,34 @@ export function ExperiencesSection() {
           {experiences.map((exp: Experience) => (
             <div
               key={exp.id}
-              className="border-pf-border-default bg-pf-canvas-subtle group border p-4"
+              className="border-pf-border-default bg-pf-canvas-subtle group rounded-xl border p-5"
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <h4 className="text-pf-fg-default font-mono text-sm font-semibold">
+                  <h4 className="text-pf-fg-default text-base font-semibold">
                     {exp.position}
                   </h4>
-                  <p className="text-pf-fg-muted mt-0.5 flex flex-wrap items-center gap-2 font-mono text-xs">
-                    <span className="flex items-center gap-1">
-                      <Building className="h-3 w-3" />
+                  <p className="text-pf-fg-muted mt-1 flex flex-wrap items-center gap-2 text-sm">
+                    <span className="flex items-center gap-1.5">
+                      <Building className="h-4 w-4" />
                       {exp.company}
                     </span>
                     {exp.location && (
                       <>
                         <span className="text-pf-border-emphasis">•</span>
-                        <span className="flex items-center gap-1">
-                          <MapPin className="h-3 w-3" />
+                        <span className="flex items-center gap-1.5">
+                          <MapPin className="h-4 w-4" />
                           {exp.location}
                         </span>
                       </>
                     )}
                   </p>
-                  <p className="text-pf-fg-subtle mt-1 flex items-center gap-1 font-mono text-xs">
-                    <Calendar className="h-3 w-3" />
-                    {formatDate(exp.startDate)} –{" "}
-                    {exp.isCurrent ? "Present" : formatDate(exp.endDate || "")}
+                  <p className="text-pf-fg-subtle mt-2 flex items-center gap-1.5 text-sm">
+                    <Calendar className="h-4 w-4" />
+                    {formatDate(exp.startDate)} – {exp.isCurrent ? "Present" : formatDate(exp.endDate || "")}
                   </p>
                   {exp.description && (
-                    <p className="text-pf-fg-muted mt-2 border-t border-dashed border-pf-border-default pt-2 font-mono text-xs">
+                    <p className="text-pf-fg-muted mt-3 border-t border-pf-border-default pt-3 text-sm leading-relaxed">
                       {exp.description}
                     </p>
                   )}
@@ -190,7 +186,7 @@ export function ExperiencesSection() {
                 <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                   <button
                     onClick={() => handleStartEdit(exp)}
-                    className="text-pf-fg-muted hover:text-pf-accent-fg p-1.5 transition-colors"
+                    className="text-pf-fg-muted hover:text-pf-fg-default rounded-lg p-2 transition-colors hover:bg-pf-canvas-overlay"
                     title="Edit"
                   >
                     <Pencil className="h-4 w-4" strokeWidth={1.5} />
@@ -198,7 +194,7 @@ export function ExperiencesSection() {
                   <button
                     onClick={() => handleDelete(exp.id)}
                     disabled={deleteExperience.isPending}
-                    className="text-pf-fg-muted hover:text-pf-danger-fg p-1.5 transition-colors disabled:opacity-50"
+                    className="text-pf-fg-muted hover:text-pf-danger-fg rounded-lg p-2 transition-colors hover:bg-pf-canvas-overlay disabled:opacity-50"
                     title="Delete"
                   >
                     <Trash2 className="h-4 w-4" strokeWidth={1.5} />
@@ -212,12 +208,12 @@ export function ExperiencesSection() {
 
       {/* Empty State */}
       {experiences.length === 0 && !isFormOpen && (
-        <div className="border-pf-border-default border border-dashed p-8 text-center">
-          <Briefcase className="text-pf-fg-subtle mx-auto h-8 w-8" strokeWidth={1} />
-          <p className="text-pf-fg-muted mt-2 font-mono text-sm">No experiences added yet</p>
+        <div className="border-pf-border-default rounded-xl border border-dashed p-10 text-center">
+          <Briefcase className="text-pf-fg-subtle mx-auto h-10 w-10" strokeWidth={1} />
+          <p className="text-pf-fg-muted mt-3 text-sm">No experiences added yet</p>
           <button
             onClick={handleStartAdd}
-            className="text-pf-accent-fg mt-3 font-mono text-sm underline-offset-4 hover:underline"
+            className="text-pf-fg-default mt-4 text-sm font-medium underline-offset-4 hover:underline"
           >
             Add your first experience
           </button>
@@ -226,116 +222,115 @@ export function ExperiencesSection() {
 
       {/* Add/Edit Form */}
       {isFormOpen && (
-        <div className="border-pf-accent-fg/30 bg-pf-canvas-subtle space-y-4 border p-4">
+        <div className="border-pf-border-default bg-pf-canvas-subtle space-y-5 rounded-xl border p-6">
           <div className="flex items-center justify-between">
-            <span className="text-pf-accent-fg font-mono text-xs">
-              <span className="opacity-60">{"//"}</span>{" "}
-              {editingId ? "Edit experience" : "New experience"}
-            </span>
-            <button onClick={handleCancel} className="text-pf-fg-muted hover:text-pf-fg-default">
-              <X className="h-4 w-4" strokeWidth={1.5} />
+            <h3 className="text-pf-fg-default text-base font-semibold">
+              {editingId ? "Edit Experience" : "New Experience"}
+            </h3>
+            <button onClick={handleCancel} className="text-pf-fg-muted hover:text-pf-fg-default rounded-lg p-1 transition-colors">
+              <X className="h-5 w-5" strokeWidth={1.5} />
             </button>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-5 sm:grid-cols-2">
             <div>
-              <label className="text-pf-fg-default mb-1 block font-mono text-xs">
-                company<span className="text-pf-danger-fg">*</span>
+              <label className="text-pf-fg-default mb-2 block text-sm font-medium">
+                Company <span className="text-pf-danger-fg">*</span>
               </label>
               <input
                 type="text"
                 value={formData.company}
                 onChange={(e) => setFormData((p) => ({ ...p, company: e.target.value }))}
                 placeholder="Google"
-                className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-accent-fg w-full border px-3 py-2 font-mono text-sm focus:outline-none"
+                className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-fg-muted w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="text-pf-fg-default mb-1 block font-mono text-xs">
-                position<span className="text-pf-danger-fg">*</span>
+              <label className="text-pf-fg-default mb-2 block text-sm font-medium">
+                Position <span className="text-pf-danger-fg">*</span>
               </label>
               <input
                 type="text"
                 value={formData.position}
                 onChange={(e) => setFormData((p) => ({ ...p, position: e.target.value }))}
-                placeholder="Senior Engineer"
-                className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-accent-fg w-full border px-3 py-2 font-mono text-sm focus:outline-none"
+                placeholder="Product Manager"
+                className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-fg-muted w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
               />
             </div>
           </div>
 
           <div>
-            <label className="text-pf-fg-default mb-1 block font-mono text-xs">location</label>
+            <label className="text-pf-fg-default mb-2 block text-sm font-medium">Location</label>
             <input
               type="text"
               value={formData.location || ""}
               onChange={(e) => setFormData((p) => ({ ...p, location: e.target.value }))}
               placeholder="Mountain View, CA"
-              className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-accent-fg w-full border px-3 py-2 font-mono text-sm focus:outline-none"
+              className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-fg-muted w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
             />
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-5 sm:grid-cols-2">
             <div>
-              <label className="text-pf-fg-default mb-1 block font-mono text-xs">
-                startDate<span className="text-pf-danger-fg">*</span>
+              <label className="text-pf-fg-default mb-2 block text-sm font-medium">
+                Start Date <span className="text-pf-danger-fg">*</span>
               </label>
               <input
                 type="date"
                 value={formData.startDate}
                 onChange={(e) => setFormData((p) => ({ ...p, startDate: e.target.value }))}
-                className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default focus:border-pf-accent-fg w-full border px-3 py-2 font-mono text-sm focus:outline-none"
+                className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default focus:border-pf-fg-muted w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="text-pf-fg-default mb-1 block font-mono text-xs">endDate</label>
+              <label className="text-pf-fg-default mb-2 block text-sm font-medium">End Date</label>
               <input
                 type="date"
                 value={formData.endDate || ""}
                 onChange={(e) => setFormData((p) => ({ ...p, endDate: e.target.value }))}
                 disabled={formData.isCurrent}
-                className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default focus:border-pf-accent-fg w-full border px-3 py-2 font-mono text-sm focus:outline-none disabled:opacity-50"
+                className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default focus:border-pf-fg-muted w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none disabled:opacity-50"
               />
             </div>
           </div>
 
-          <label className="flex items-center gap-2">
+          <label className="flex items-center gap-3">
             <input
               type="checkbox"
               checked={formData.isCurrent}
               onChange={(e) => setFormData((p) => ({ ...p, isCurrent: e.target.checked }))}
-              className="text-pf-accent-fg h-4 w-4"
+              className="h-4 w-4 rounded border-pf-border-default"
             />
-            <span className="text-pf-fg-muted font-mono text-xs">I currently work here</span>
+            <span className="text-pf-fg-muted text-sm">I currently work here</span>
           </label>
 
           <div>
-            <label className="text-pf-fg-default mb-1 block font-mono text-xs">description</label>
+            <label className="text-pf-fg-default mb-2 block text-sm font-medium">Description</label>
             <textarea
               value={formData.description || ""}
               onChange={(e) => setFormData((p) => ({ ...p, description: e.target.value }))}
               placeholder="Describe your responsibilities and achievements..."
               rows={3}
-              className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-accent-fg w-full resize-none border px-3 py-2 font-mono text-sm focus:outline-none"
+              className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-fg-muted w-full resize-none rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
             />
           </div>
 
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-end gap-3 pt-2">
             <button
               onClick={handleCancel}
-              className="text-pf-fg-muted hover:text-pf-fg-default px-3 py-1.5 font-mono text-sm transition-colors"
+              className="text-pf-fg-muted hover:text-pf-fg-default px-4 py-2 text-sm font-medium transition-colors"
             >
-              cancel
+              Cancel
             </button>
             <button
               onClick={handleSave}
               disabled={!formData.company || !formData.position || !formData.startDate || isSaving}
-              className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis flex items-center gap-2 px-3 py-1.5 font-mono text-sm transition-opacity hover:opacity-90 disabled:opacity-50"
+              className="bg-pf-fg-default text-pf-canvas-default flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-50"
             >
               {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
-              {editingId ? "update" : "add"}
+              {editingId ? "Update" : "Add"}
             </button>
           </div>
         </div>

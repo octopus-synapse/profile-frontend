@@ -69,6 +69,7 @@ export interface TemplateSelection {
 export type OnboardingStep =
   | "welcome"
   | "personal-info"
+  | "username"
   | "professional-profile"
   | "experience"
   | "education"
@@ -86,6 +87,7 @@ export const ONBOARDING_STEPS: {
 }[] = [
   { id: "welcome", label: "init", required: true, description: "Welcome to ProFile" },
   { id: "personal-info", label: "user", required: true, description: "Personal Information" },
+  { id: "username", label: "@", required: true, description: "Choose Your Username" },
   {
     id: "professional-profile",
     label: "profile",
@@ -107,6 +109,7 @@ interface OnboardingState {
 
   // Data
   personalInfo: PersonalInfo | null;
+  username: string | null;
   professionalProfile: ProfessionalProfile | null;
   experiences: Experience[];
   noExperience: boolean;
@@ -130,6 +133,7 @@ interface OnboardingState {
 
   // Data setters
   setPersonalInfo: (data: PersonalInfo) => void;
+  setUsername: (username: string | null) => void;
   setProfessionalProfile: (data: ProfessionalProfile) => void;
   setExperiences: (data: Experience[]) => void;
   setNoExperience: (value: boolean) => void;
@@ -170,6 +174,7 @@ interface OnboardingState {
     currentStep: OnboardingStep;
     completedSteps: OnboardingStep[];
     personalInfo: PersonalInfo | null;
+    username: string | null;
     professionalProfile: ProfessionalProfile | null;
     experiences: Experience[];
     noExperience: boolean;
@@ -186,6 +191,7 @@ interface OnboardingState {
     currentStep: OnboardingStep;
     completedSteps: OnboardingStep[];
     personalInfo: PersonalInfo | null;
+    username: string | null;
     professionalProfile: ProfessionalProfile | null;
     experiences: Experience[];
     noExperience: boolean;
@@ -205,6 +211,7 @@ const getStepIndex = (step: OnboardingStep): number => {
 const initialState = {
   currentStep: "welcome" as OnboardingStep,
   personalInfo: null,
+  username: null,
   professionalProfile: null,
   experiences: [],
   noExperience: false,
@@ -255,6 +262,9 @@ export const useOnboardingStore = create<OnboardingState>()(
 
       // Personal Info
       setPersonalInfo: (data) => set({ personalInfo: data }),
+
+      // Username
+      setUsername: (username) => set({ username }),
 
       // Professional Profile
       setProfessionalProfile: (data) => set({ professionalProfile: data }),
@@ -339,6 +349,7 @@ export const useOnboardingStore = create<OnboardingState>()(
         const {
           currentStep,
           personalInfo,
+          username,
           professionalProfile,
           skills,
           noSkills,
@@ -350,6 +361,8 @@ export const useOnboardingStore = create<OnboardingState>()(
             return true;
           case "personal-info":
             return !!personalInfo?.fullName && !!personalInfo?.email;
+          case "username":
+            return !!username && username.length >= 3 && username.length <= 30;
           case "professional-profile":
             return !!professionalProfile?.jobTitle && !!professionalProfile?.summary;
           case "experience":
@@ -381,6 +394,7 @@ export const useOnboardingStore = create<OnboardingState>()(
       buildSubmissionPayload: () => {
         const state = get();
         return {
+          username: state.username,
           personalInfo: state.personalInfo,
           professionalProfile: state.professionalProfile,
           skillsStep: {
@@ -405,6 +419,7 @@ export const useOnboardingStore = create<OnboardingState>()(
           currentStep: data.currentStep,
           completedSteps: data.completedSteps,
           personalInfo: data.personalInfo,
+          username: data.username,
           professionalProfile: data.professionalProfile,
           experiences: data.experiences,
           noExperience: data.noExperience,
@@ -423,6 +438,7 @@ export const useOnboardingStore = create<OnboardingState>()(
           currentStep: state.currentStep,
           completedSteps: state.completedSteps,
           personalInfo: state.personalInfo,
+          username: state.username,
           professionalProfile: state.professionalProfile,
           experiences: state.experiences,
           noExperience: state.noExperience,
@@ -440,6 +456,7 @@ export const useOnboardingStore = create<OnboardingState>()(
       partialize: (state) => ({
         currentStep: state.currentStep,
         personalInfo: state.personalInfo,
+        username: state.username,
         professionalProfile: state.professionalProfile,
         experiences: state.experiences,
         noExperience: state.noExperience,

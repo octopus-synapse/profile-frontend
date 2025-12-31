@@ -43,14 +43,21 @@ export function createUserRepository(client: HttpClient) {
      * Get public profile by username
      */
     async getByUsername(username: string): Promise<UserProfile> {
-      return client.get<UserProfile>(`${BASE_URL}/profile/${username}`);
+      return client.get<UserProfile>(`${BASE_URL}/${username}/profile`);
     },
 
     /**
      * Check if username is available
      */
-    async checkUsername(username: string): Promise<{ available: boolean }> {
-      return client.get<{ available: boolean }>(`${BASE_URL}/check-username/${username}`);
+    async checkUsername(username: string): Promise<{ username: string; available: boolean }> {
+      return client.get<{ username: string; available: boolean }>(`${BASE_URL}/username/check?username=${encodeURIComponent(username)}`);
+    },
+
+    /**
+     * Update current user's username
+     */
+    async updateUsername(username: string): Promise<{ success: boolean; message: string; username: string }> {
+      return client.patch<{ success: boolean; message: string; username: string }>(`${BASE_URL}/username`, { username });
     },
 
     /**

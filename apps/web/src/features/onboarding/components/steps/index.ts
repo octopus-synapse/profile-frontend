@@ -1,5 +1,6 @@
 export { WelcomeStep } from "./welcome-step";
 export { PersonalInfoStep } from "./personal-info-step";
+export { UsernameStep } from "./username-step";
 export { ProfessionalProfileStep } from "./professional-profile-step";
 export { ExperienceStep } from "./experience-step";
 export { EducationStep } from "./education-step";

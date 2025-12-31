@@ -7,22 +7,17 @@
 
 import { useState } from "react";
 import { Languages, Plus, Trash2, Pencil, X, Loader2 } from "lucide-react";
-import {
-  useLanguages,
-  useCreateLanguage,
-  useUpdateLanguage,
-  useDeleteLanguage,
-} from "../hooks";
+import { useLanguages, useCreateLanguage, useUpdateLanguage, useDeleteLanguage } from "../hooks";
 import { useI18n } from "@/features/i18n/context";
 import { SpokenLanguageAutocomplete } from "./spoken-language-autocomplete";
 import type { Language, CreateLanguagePayload } from "../types";
 
 const LANGUAGE_LEVELS = [
-  { value: "basic", labelEn: "Basic", labelPtBr: "Basico", labelEs: "Basico" },
-  { value: "intermediate", labelEn: "Intermediate", labelPtBr: "Intermediario", labelEs: "Intermedio" },
-  { value: "advanced", labelEn: "Advanced", labelPtBr: "Avancado", labelEs: "Avanzado" },
-  { value: "fluent", labelEn: "Fluent", labelPtBr: "Fluente", labelEs: "Fluido" },
-  { value: "native", labelEn: "Native", labelPtBr: "Nativo", labelEs: "Nativo" },
+  { value: "basic", labelEn: "Basic", labelPtBr: "Básico" },
+  { value: "intermediate", labelEn: "Intermediate", labelPtBr: "Intermediário" },
+  { value: "advanced", labelEn: "Advanced", labelPtBr: "Avançado" },
+  { value: "fluent", labelEn: "Fluent", labelPtBr: "Fluente" },
+  { value: "native", labelEn: "Native", labelPtBr: "Nativo" },
 ] as const;
 
 const CEFR_LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"] as const;
@@ -43,14 +38,7 @@ function getLevelLabel(level: string, locale: string): string {
   const levelData = LANGUAGE_LEVELS.find((l) => l.value === level);
   if (!levelData) return level;
 
-  switch (locale) {
-    case "pt-BR":
-      return levelData.labelPtBr;
-    case "es":
-      return levelData.labelEs;
-    default:
-      return levelData.labelEn;
-  }
+  return locale === "pt-BR" ? levelData.labelPtBr : levelData.labelEn;
 }
 
 export function LanguagesSection() {
@@ -113,9 +101,7 @@ export function LanguagesSection() {
     const confirmMessage =
       locale === "pt-BR"
         ? "Tem certeza que deseja excluir este idioma?"
-        : locale === "es"
-          ? "Estas seguro de que quieres eliminar este idioma?"
-          : "Are you sure you want to delete this language?";
+        : "Are you sure you want to delete this language?";
     if (!confirm(confirmMessage)) return;
     try {
       await deleteLanguage.mutateAsync(id);
@@ -142,48 +128,23 @@ export function LanguagesSection() {
 
   // Labels based on locale
   const labels = {
-    title: locale === "pt-BR" ? "Idiomas" : locale === "es" ? "Idiomas" : "Languages",
+    title: locale === "pt-BR" ? "Idiomas" : "Languages",
     added:
       locale === "pt-BR"
         ? `${languages.length} idioma${languages.length !== 1 ? "s" : ""} adicionado${languages.length !== 1 ? "s" : ""}`
-        : locale === "es"
-          ? `${languages.length} idioma${languages.length !== 1 ? "s" : ""} agregado${languages.length !== 1 ? "s" : ""}`
-          : `${languages.length} language${languages.length !== 1 ? "s" : ""} added`,
-    addLanguage:
-      locale === "pt-BR" ? "adicionar_idioma" : locale === "es" ? "agregar_idioma" : "add_language",
-    noLanguages:
-      locale === "pt-BR"
-        ? "Nenhum idioma adicionado ainda"
-        : locale === "es"
-          ? "Ningun idioma agregado todavia"
-          : "No languages added yet",
-    addFirst:
-      locale === "pt-BR"
-        ? "Adicione seu primeiro idioma"
-        : locale === "es"
-          ? "Agrega tu primer idioma"
-          : "Add your first language",
-    editLanguage:
-      locale === "pt-BR" ? "Editar idioma" : locale === "es" ? "Editar idioma" : "Edit language",
-    newLanguage:
-      locale === "pt-BR" ? "Novo idioma" : locale === "es" ? "Nuevo idioma" : "New language",
-    language: locale === "pt-BR" ? "idioma" : locale === "es" ? "idioma" : "language",
-    level: locale === "pt-BR" ? "nivel" : locale === "es" ? "nivel" : "level",
-    cefrLevel:
-      locale === "pt-BR"
-        ? "nivel CEFR (opcional)"
-        : locale === "es"
-          ? "nivel CEFR (opcional)"
-          : "CEFR level (optional)",
-    selectCefr:
-      locale === "pt-BR"
-        ? "Selecione..."
-        : locale === "es"
-          ? "Selecciona..."
-          : "Select...",
-    cancel: locale === "pt-BR" ? "cancelar" : locale === "es" ? "cancelar" : "cancel",
-    add: locale === "pt-BR" ? "adicionar" : locale === "es" ? "agregar" : "add",
-    update: locale === "pt-BR" ? "atualizar" : locale === "es" ? "actualizar" : "update",
+        : `${languages.length} language${languages.length !== 1 ? "s" : ""} added`,
+    addLanguage: locale === "pt-BR" ? "Adicionar Idioma" : "Add Language",
+    noLanguages: locale === "pt-BR" ? "Nenhum idioma adicionado ainda" : "No languages added yet",
+    addFirst: locale === "pt-BR" ? "Adicione seu primeiro idioma" : "Add your first language",
+    editLanguage: locale === "pt-BR" ? "Editar idioma" : "Edit language",
+    newLanguage: locale === "pt-BR" ? "Novo idioma" : "New language",
+    language: locale === "pt-BR" ? "Idioma" : "Language",
+    level: locale === "pt-BR" ? "Nível" : "Level",
+    cefrLevel: locale === "pt-BR" ? "Nível CEFR (opcional)" : "CEFR Level (optional)",
+    selectCefr: locale === "pt-BR" ? "Selecione..." : "Select...",
+    cancel: locale === "pt-BR" ? "Cancelar" : "Cancel",
+    add: locale === "pt-BR" ? "Adicionar" : "Add",
+    update: locale === "pt-BR" ? "Atualizar" : "Update",
   };
 
   if (isLoading) {
@@ -199,16 +160,13 @@ export function LanguagesSection() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <div className="flex items-center gap-2">
-            <Languages className="text-pf-accent-fg h-4 w-4" strokeWidth={1.5} />
-            <span className="text-pf-fg-muted font-mono text-xs">// {labels.title}</span>
-          </div>
-          <p className="text-pf-fg-subtle mt-1 font-mono text-xs">{labels.added}</p>
+          <h2 className="text-pf-fg-default text-lg font-semibold">{labels.title}</h2>
+          <p className="text-pf-fg-muted mt-1 text-sm">{labels.added}</p>
         </div>
         {!isFormOpen && (
           <button
             onClick={handleStartAdd}
-            className="text-pf-accent-fg hover:bg-pf-accent-subtle flex items-center gap-2 border border-transparent px-3 py-1.5 font-mono text-sm transition-colors"
+            className="text-pf-fg-default hover:bg-pf-canvas-subtle border-pf-border-default flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors"
           >
             <Plus className="h-4 w-4" strokeWidth={1.5} />
             {labels.addLanguage}
@@ -222,16 +180,16 @@ export function LanguagesSection() {
           {languages.map((lang: Language) => (
             <div
               key={lang.id}
-              className="border-pf-border-default bg-pf-canvas-subtle group flex items-center justify-between border p-4"
+              className="border-pf-border-default bg-pf-canvas-subtle group flex items-center justify-between rounded-xl border p-4"
             >
               <div>
-                <h4 className="text-pf-fg-default font-mono text-sm font-semibold">{lang.name}</h4>
-                <div className="mt-0.5 flex items-center gap-2">
-                  <span className={`font-mono text-xs ${getLevelColor(lang.level)}`}>
+                <h4 className="text-pf-fg-default text-sm font-semibold">{lang.name}</h4>
+                <div className="mt-1 flex items-center gap-2">
+                  <span className={`text-xs ${getLevelColor(lang.level)}`}>
                     {getLevelLabel(lang.level, locale)}
                   </span>
                   {lang.cefrLevel && (
-                    <span className="bg-pf-accent-subtle text-pf-accent-fg rounded px-1.5 py-0.5 font-mono text-xs">
+                    <span className="bg-pf-canvas-overlay text-pf-fg-muted rounded px-1.5 py-0.5 text-xs">
                       {lang.cefrLevel}
                     </span>
                   )}
@@ -240,7 +198,7 @@ export function LanguagesSection() {
               <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                 <button
                   onClick={() => handleStartEdit(lang)}
-                  className="text-pf-fg-muted hover:text-pf-accent-fg p-1.5 transition-colors"
+                  className="text-pf-fg-muted hover:text-pf-fg-default hover:bg-pf-canvas-overlay rounded-lg p-2 transition-colors"
                   title="Edit"
                 >
                   <Pencil className="h-4 w-4" strokeWidth={1.5} />
@@ -248,7 +206,7 @@ export function LanguagesSection() {
                 <button
                   onClick={() => handleDelete(lang.id)}
                   disabled={deleteLanguage.isPending}
-                  className="text-pf-fg-muted hover:text-pf-danger-fg p-1.5 transition-colors disabled:opacity-50"
+                  className="text-pf-fg-muted hover:text-pf-danger-fg hover:bg-pf-canvas-overlay rounded-lg p-2 transition-colors disabled:opacity-50"
                   title="Delete"
                 >
                   <Trash2 className="h-4 w-4" strokeWidth={1.5} />
@@ -261,12 +219,12 @@ export function LanguagesSection() {
 
       {/* Empty State */}
       {languages.length === 0 && !isFormOpen && (
-        <div className="border-pf-border-default border border-dashed p-8 text-center">
-          <Languages className="text-pf-fg-subtle mx-auto h-8 w-8" strokeWidth={1} />
-          <p className="text-pf-fg-muted mt-2 font-mono text-sm">{labels.noLanguages}</p>
+        <div className="border-pf-border-default rounded-xl border border-dashed p-10 text-center">
+          <Languages className="text-pf-fg-subtle mx-auto h-10 w-10" strokeWidth={1} />
+          <p className="text-pf-fg-muted mt-3 text-sm">{labels.noLanguages}</p>
           <button
             onClick={handleStartAdd}
-            className="text-pf-accent-fg mt-3 font-mono text-sm underline-offset-4 hover:underline"
+            className="text-pf-fg-default mt-4 text-sm font-medium underline-offset-4 hover:underline"
           >
             {labels.addFirst}
           </button>
@@ -275,34 +233,34 @@ export function LanguagesSection() {
 
       {/* Add/Edit Form */}
       {isFormOpen && (
-        <div className="border-pf-accent-fg/30 bg-pf-canvas-subtle space-y-4 border p-4">
+        <div className="border-pf-border-default bg-pf-canvas-subtle space-y-5 rounded-xl border p-6">
           <div className="flex items-center justify-between">
-            <span className="text-pf-accent-fg font-mono text-xs">
-              <span className="opacity-60">{"//"}</span>{" "}
+            <h3 className="text-pf-fg-default text-base font-semibold">
               {editingId ? labels.editLanguage : labels.newLanguage}
-            </span>
-            <button onClick={handleCancel} className="text-pf-fg-muted hover:text-pf-fg-default">
-              <X className="h-4 w-4" strokeWidth={1.5} />
+            </h3>
+            <button
+              onClick={handleCancel}
+              className="text-pf-fg-muted hover:text-pf-fg-default rounded-lg p-1 transition-colors"
+            >
+              <X className="h-5 w-5" strokeWidth={1.5} />
             </button>
           </div>
 
           <div>
-            <label className="text-pf-fg-default mb-1 block font-mono text-xs">
-              {labels.language}
-              <span className="text-pf-danger-fg">*</span>
+            <label className="text-pf-fg-default mb-2 block text-sm font-medium">
+              {labels.language} <span className="text-pf-danger-fg">*</span>
             </label>
             <SpokenLanguageAutocomplete
               value={formData.name}
               onValueChange={(name) => setFormData((p) => ({ ...p, name }))}
-              className="font-mono text-sm"
+              className="text-sm"
             />
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-5 sm:grid-cols-2">
             <div>
-              <label className="text-pf-fg-default mb-1 block font-mono text-xs">
-                {labels.level}
-                <span className="text-pf-danger-fg">*</span>
+              <label className="text-pf-fg-default mb-2 block text-sm font-medium">
+                {labels.level} <span className="text-pf-danger-fg">*</span>
               </label>
               <select
                 value={formData.level}
@@ -312,7 +270,7 @@ export function LanguagesSection() {
                     level: e.target.value as CreateLanguagePayload["level"],
                   }))
                 }
-                className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default focus:border-pf-accent-fg w-full border px-3 py-2 font-mono text-sm focus:outline-none"
+                className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default focus:border-pf-fg-muted w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
               >
                 {LANGUAGE_LEVELS.map((level) => (
                   <option key={level.value} value={level.value}>
@@ -323,7 +281,7 @@ export function LanguagesSection() {
             </div>
 
             <div>
-              <label className="text-pf-fg-default mb-1 block font-mono text-xs">
+              <label className="text-pf-fg-default mb-2 block text-sm font-medium">
                 {labels.cefrLevel}
               </label>
               <select
@@ -334,7 +292,7 @@ export function LanguagesSection() {
                     cefrLevel: (e.target.value || null) as CreateLanguagePayload["cefrLevel"],
                   }))
                 }
-                className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default focus:border-pf-accent-fg w-full border px-3 py-2 font-mono text-sm focus:outline-none"
+                className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default focus:border-pf-fg-muted w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none"
               >
                 <option value="">{labels.selectCefr}</option>
                 {CEFR_LEVELS.map((level) => (
@@ -346,17 +304,17 @@ export function LanguagesSection() {
             </div>
           </div>
 
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-end gap-3 pt-2">
             <button
               onClick={handleCancel}
-              className="text-pf-fg-muted hover:text-pf-fg-default px-3 py-1.5 font-mono text-sm transition-colors"
+              className="text-pf-fg-muted hover:text-pf-fg-default px-4 py-2 text-sm font-medium transition-colors"
             >
               {labels.cancel}
             </button>
             <button
               onClick={handleSave}
               disabled={!formData.name || !formData.level || isSaving}
-              className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis flex items-center gap-2 px-3 py-1.5 font-mono text-sm transition-opacity hover:opacity-90 disabled:opacity-50"
+              className="bg-pf-fg-default text-pf-canvas-default flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-50"
             >
               {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
               {editingId ? labels.update : labels.add}

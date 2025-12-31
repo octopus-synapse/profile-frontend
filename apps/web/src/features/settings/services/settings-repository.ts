@@ -32,6 +32,14 @@ export const profileRepository = {
   async updateProfile(data: UpdateProfilePayload): Promise<{ success: boolean; user: Partial<UserProfile> }> {
     return httpClient.patch("/users/profile", data);
   },
+
+  async checkUsernameAvailability(username: string): Promise<{ username: string; available: boolean }> {
+    return httpClient.get(`/users/username/check?username=${encodeURIComponent(username)}`);
+  },
+
+  async updateUsername(username: string): Promise<{ success: boolean; message: string; username: string }> {
+    return httpClient.patch("/users/username", { username });
+  },
 };
 
 // ============================================================================

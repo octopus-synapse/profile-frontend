@@ -2,37 +2,27 @@
 
 /**
  * Logo Component
- * Developer-inspired design with Terminal icon
+ * Sophisticated, minimal wordmark
+ * Nielsen: Recognition over recall - simple, memorable identity
  */
 
-import { Terminal } from "lucide-react";
 import { LocalizedLink } from "@/shared/components/localized-link";
 import { ROUTES } from "@/config/routes";
 
 interface LogoProps {
   className?: string;
-  variant?: "light" | "dark";
-  showBadge?: boolean;
 }
 
-export function Logo({ className, variant = "dark", showBadge = true }: LogoProps) {
-  const isLight = variant === "light";
-
+export function Logo({ className }: LogoProps) {
   return (
-    <LocalizedLink href={ROUTES.HOME} className={`flex items-center gap-2 ${className ?? ""}`}>
-      <div
-        className={`flex h-7 w-7 items-center justify-center ${
-          isLight ? "bg-white text-[#0a0a0a]" : "bg-pf-canvas-emphasis text-pf-fg-on-emphasis"
-        }`}
-      >
-        <Terminal className="h-4 w-4" strokeWidth={1.5} />
-      </div>
-      <span
-        className={`font-mono text-sm font-semibold ${isLight ? "text-white" : "text-pf-fg-default"}`}
-      >
+    <LocalizedLink
+      href={ROUTES.HOME}
+      className={`group flex items-center ${className ?? ""}`}
+      aria-label="Profile - Go to homepage"
+    >
+      <span className="text-foreground text-xl font-medium tracking-[-0.02em] transition-opacity duration-200 group-hover:opacity-70">
         profile
       </span>
-      {showBadge && <span className="dev-badge">dev</span>}
     </LocalizedLink>
   );
 }

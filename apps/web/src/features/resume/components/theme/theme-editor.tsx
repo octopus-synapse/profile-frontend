@@ -1,7 +1,6 @@
 /**
- * Theme Editor Component
+ * Theme Editor
  * Edit theme with live preview
- * Auto-forks public themes on save
  */
 
 "use client";
@@ -11,6 +10,7 @@ import { useCreateTheme, useUpdateTheme, useForkTheme } from "../../hooks";
 import type { Theme } from "../../services/theme.types";
 import type { ResumeStyleConfig } from "../../types/config";
 import { ColorEditor, TypographyEditor, LayoutEditor, SpacingEditor } from "./editors";
+import { cn } from "@/shared/utils";
 
 interface Props {
   theme?: Theme | null;
@@ -59,22 +59,18 @@ export function ThemeEditor({ theme, onSave, onCancel }: Props) {
       let saved: Theme;
 
       if (isNew) {
-        // Create new theme
         saved = await createTheme.mutateAsync({
           name,
           category: "MODERN",
           styleConfig: config as Record<string, unknown>,
         });
       } else if (isPublicOrSystem) {
-        // Fork public/system theme (creates private copy)
         saved = await forkTheme.mutateAsync({ themeId: theme!.id, name: `${name} (Custom)` });
-        // Then update the fork with new config
         saved = await updateTheme.mutateAsync({
           id: saved.id,
           input: { styleConfig: config as Record<string, unknown> },
         });
       } else {
-        // Direct update for own private themes
         saved = await updateTheme.mutateAsync({
           id: theme!.id,
           input: { name, styleConfig: config as Record<string, unknown> },
@@ -90,27 +86,30 @@ export function ThemeEditor({ theme, onSave, onCancel }: Props) {
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between border-b p-4">
+      <div className="border-pf-border-default flex items-center justify-between border-b p-4">
         <div>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="hover:border-muted focus:border-primary border-b border-transparent bg-transparent text-lg font-medium outline-none"
+            className="text-pf-fg-default hover:border-pf-border-default focus:border-pf-border-emphasis border-b border-transparent bg-transparent text-base font-medium outline-none"
             placeholder="Theme name"
           />
           {isPublicOrSystem && (
-            <p className="text-muted-foreground mt-1 text-xs">Editing will create a private copy</p>
+            <p className="text-pf-fg-subtle mt-1 text-xs">Editing will create a private copy</p>
           )}
         </div>
         <div className="flex gap-2">
-          <button onClick={onCancel} className="hover:bg-muted rounded border px-4 py-2 text-sm">
+          <button
+            onClick={onCancel}
+            className="border-pf-border-default text-pf-fg-default hover:bg-pf-canvas-subtle rounded-lg border px-4 py-2 text-sm font-medium transition-colors"
+          >
             Cancel
           </button>
           <button
             onClick={handleSave}
             disabled={createTheme.isPending || updateTheme.isPending || forkTheme.isPending}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 rounded px-4 py-2 text-sm disabled:opacity-50"
+            className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis rounded-lg px-4 py-2 text-sm font-medium transition-colors hover:opacity-90 disabled:opacity-50"
           >
             {isPublicOrSystem ? "Save as Copy" : "Save"}
           </button>
@@ -118,14 +117,17 @@ export function ThemeEditor({ theme, onSave, onCancel }: Props) {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b">
+      <div className="border-pf-border-default flex border-b">
         {(["layout", "colors", "typography", "spacing", "json"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`px-4 py-2 text-sm capitalize ${
-              tab === t ? "border-primary border-b-2 font-medium" : "text-muted-foreground"
-            }`}
+            className={cn(
+              "border-b-2 px-4 py-2.5 text-sm font-medium capitalize transition-colors",
+              tab === t
+                ? "border-pf-border-emphasis text-pf-fg-default"
+                : "text-pf-fg-muted hover:text-pf-fg-default border-transparent"
+            )}
           >
             {t}
           </button>
@@ -170,10 +172,10 @@ function JsonEditor({
       <textarea
         value={json}
         onChange={(e) => handleChange(e.target.value)}
-        className="bg-muted/50 h-96 w-full rounded border p-4 font-mono text-sm"
+        className="border-pf-border-default bg-pf-canvas-subtle text-pf-fg-default focus:border-pf-border-emphasis focus:ring-pf-neutral-subtle h-96 w-full rounded-lg border p-4 font-mono text-sm focus:ring-2 focus:outline-none"
         spellCheck={false}
       />
-      {error && <p className="text-destructive text-sm">{error}</p>}
+      {error && <p className="text-pf-danger-fg text-sm">{error}</p>}
     </div>
   );
 }

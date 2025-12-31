@@ -1,316 +1,1074 @@
 "use client";
 
-import Link from "next/link";
+import React, { useRef, useState, useEffect } from "react";
+import { motion, useScroll, useTransform, useSpring, AnimatePresence } from "framer-motion";
+import { useRouter, useParams } from "next/navigation";
 import {
-  Github,
-  User,
   ArrowRight,
-  Sparkles,
-  Zap,
-  Shield,
+  Check,
+  Target,
+  Github,
   FileText,
-  Menu,
-  Terminal,
+  Eye,
+  Clock,
+  Layers,
+  Languages,
+  GraduationCap,
+  Zap,
+  Fingerprint,
+  Database,
+  Layout,
   Code2,
+  BarChart3,
+  ShieldCheck,
 } from "lucide-react";
-import { ROUTES } from "@/config/routes";
-import { ThemeToggleSimple } from "@/shared/components/ui/theme-toggle";
+import { useI18n } from "@/features/i18n";
+import type { Locale } from "@/config/i18n.config";
 
-/**
- * Home Page
- * Developer-inspired landing page with code aesthetic
- */
-export default function HomePage() {
+// ============================================
+// TYPES
+// ============================================
+
+interface CompilationState {
+  roleKey: string;
+  icon: React.ElementType;
+  skills: string[];
+  headlineKey: string;
+  focusKey: string;
+  company: string;
+  match: number;
+}
+
+// ============================================
+// COMPILATION STATES (IDENTITY INVARIANCE)
+// ============================================
+
+const COMPILATION_STATES: CompilationState[] = [
+  {
+    roleKey: "landing.compilation.frontend.role",
+    icon: Layout,
+    skills: ["React", "TypeScript", "CSS-in-JS", "Web Performance"],
+    headlineKey: "landing.compilation.frontend.headline",
+    focusKey: "landing.compilation.frontend.focus",
+    company: "Nubank",
+    match: 94,
+  },
+  {
+    roleKey: "landing.compilation.fullstack.role",
+    icon: Code2,
+    skills: ["Node.js", "React", "PostgreSQL", "AWS"],
+    headlineKey: "landing.compilation.fullstack.headline",
+    focusKey: "landing.compilation.fullstack.focus",
+    company: "iFood",
+    match: 91,
+  },
+  {
+    roleKey: "landing.compilation.backend.role",
+    icon: Database,
+    skills: ["Go", "Distributed Systems", "PostgreSQL", "gRPC"],
+    headlineKey: "landing.compilation.backend.headline",
+    focusKey: "landing.compilation.backend.focus",
+    company: "PicPay",
+    match: 88,
+  },
+];
+
+// ============================================
+// COMPONENTS
+// ============================================
+
+// MacWindow - Container com title bar estilo macOS
+const MacWindow = ({
+  children,
+  title = "Patch",
+  className = "",
+}: {
+  children: React.ReactNode;
+  title?: string;
+  className?: string;
+}) => (
+  <div
+    className={`overflow-hidden rounded-xl border border-white/10 bg-black shadow-2xl ${className}`}
+  >
+    {/* Title bar */}
+    <div className="flex items-center gap-2 border-b border-white/5 bg-zinc-900/80 px-4 py-3">
+      <div className="flex gap-1.5">
+        <div className="h-3 w-3 rounded-full bg-[#ff5f57]" />
+        <div className="h-3 w-3 rounded-full bg-[#febc2e]" />
+        <div className="h-3 w-3 rounded-full bg-[#28c840]" />
+      </div>
+      <span className="ml-2 font-mono text-[10px] text-zinc-500">{title}</span>
+    </div>
+    {/* Content */}
+    <div className="p-6">{children}</div>
+  </div>
+);
+
+// Progress Steps
+const ProgressSteps = ({ steps, currentStep }: { steps: string[]; currentStep: number }) => (
+  <div className="flex items-center gap-1">
+    {steps.map((step, i) => (
+      <div key={step} className="flex items-center">
+        <div
+          className={`flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold transition-all ${
+            i <= currentStep ? "bg-cyan-500 text-white" : "bg-zinc-800 text-zinc-500"
+          }`}
+        >
+          {i + 1}
+        </div>
+        {i < steps.length - 1 && (
+          <div className={`h-px w-6 ${i < currentStep ? "bg-cyan-500" : "bg-zinc-800"}`} />
+        )}
+      </div>
+    ))}
+  </div>
+);
+
+// ATS Score Gauge
+const ATSScoreGauge = ({ score, label }: { score: number; label: string }) => {
+  const radius = 45;
+  const circumference = 2 * Math.PI * radius;
+  const progress = (score / 100) * circumference;
+
   return (
-    <div className="bg-pf-canvas-default flex min-h-screen flex-col">
-      {/* Navigation */}
-      <nav className="border-pf-border-muted bg-pf-canvas-default/80 relative z-10 border-b backdrop-blur-sm">
-        <div className="flex h-14 items-center justify-between px-6 lg:px-10">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis flex h-7 w-7 items-center justify-center">
-              <Terminal className="h-4 w-4" strokeWidth={1.5} />
-            </div>
-            <span className="text-pf-fg-default font-mono text-sm font-semibold">profile</span>
-            <span className="dev-badge">dev</span>
-          </Link>
+    <div className="relative flex h-28 w-28 items-center justify-center">
+      <svg className="h-full w-full -rotate-90" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r={radius} stroke="#27272a" strokeWidth="8" fill="none" />
+        <circle
+          cx="50"
+          cy="50"
+          r={radius}
+          stroke="url(#scoreGradient)"
+          strokeWidth="8"
+          fill="none"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={circumference - progress}
+          style={{
+            transition: "stroke-dashoffset 1s ease-out",
+          }}
+        />
+        <defs>
+          <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#06b6d4" />
+            <stop offset="100%" stopColor="#22d3ee" />
+          </linearGradient>
+        </defs>
+      </svg>
+      <div className="absolute flex flex-col items-center">
+        <span className="text-2xl font-bold text-white">{score}</span>
+        <span className="font-mono text-[9px] text-zinc-500 uppercase">{label}</span>
+      </div>
+    </div>
+  );
+};
 
-          {/* Center Links - Desktop */}
-          <div className="hidden items-center gap-8 lg:flex">
-            <Link
-              href="#features"
-              className="text-pf-fg-muted hover:text-pf-fg-default font-mono text-xs transition-colors"
-            >
-              features
-            </Link>
-            <Link
-              href="#pricing"
-              className="text-pf-fg-muted hover:text-pf-fg-default font-mono text-xs transition-colors"
-            >
-              pricing
-            </Link>
-            <Link
-              href="/docs"
-              className="text-pf-fg-muted hover:text-pf-fg-default font-mono text-xs transition-colors"
-            >
-              docs
-            </Link>
-          </div>
+// Skill Tag
+const SkillTag = ({ children }: { children: React.ReactNode }) => (
+  <span className="rounded border border-white/5 bg-zinc-900 px-3 py-1 font-mono text-[10px] text-zinc-400">
+    {children}
+  </span>
+);
 
-          {/* Right Actions */}
-          <div className="flex items-center gap-2">
-            <ThemeToggleSimple />
-            <Link
-              href={ROUTES.AUTH.SIGN_IN}
-              className="text-pf-fg-muted hover:text-pf-fg-default hidden font-mono text-xs transition-colors sm:block"
-            >
-              sign in
-            </Link>
-            <Link
-              href={ROUTES.AUTH.SIGN_UP}
-              className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis hidden items-center gap-2 px-4 py-2 font-mono text-xs transition-opacity hover:opacity-90 sm:flex"
-            >
-              <Terminal className="h-3.5 w-3.5" strokeWidth={1.5} />
-              get started
-            </Link>
-            <button className="text-pf-fg-default hover:text-pf-fg-muted flex h-9 w-9 items-center justify-center transition-colors lg:hidden">
-              <Menu className="h-5 w-5" strokeWidth={1.5} />
-            </button>
+// Feature Card for Horizontal Scroll
+const FeatureCard = ({
+  icon: Icon,
+  title,
+  description,
+  children,
+}: {
+  icon: React.ElementType;
+  title: string;
+  description: string;
+  children?: React.ReactNode;
+}) => (
+  <div className="min-w-[400px] rounded-2xl border border-white/5 bg-zinc-950/50 p-8 backdrop-blur md:min-w-[500px]">
+    <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl border border-cyan-500/20 bg-cyan-500/10">
+      <Icon className="text-cyan-400" size={24} />
+    </div>
+    <h3 className="mb-3 text-xl font-medium text-white">{title}</h3>
+    <p className="mb-6 text-sm leading-relaxed text-zinc-500">{description}</p>
+    {children}
+  </div>
+);
+
+// Language Switcher
+const LanguageSwitcher = ({
+  currentLocale,
+  onSwitch,
+}: {
+  currentLocale: Locale;
+  onSwitch: (locale: Locale) => void;
+}) => (
+  <div className="flex items-center gap-2 rounded-lg border border-white/5 bg-zinc-900/50 p-1">
+    <button
+      onClick={() => onSwitch("pt-BR")}
+      className={`rounded px-2 py-1 font-mono text-[10px] transition-all ${
+        currentLocale === "pt-BR"
+          ? "bg-cyan-500/20 text-cyan-400"
+          : "text-zinc-500 hover:text-white"
+      }`}
+    >
+      PT
+    </button>
+    <button
+      onClick={() => onSwitch("en")}
+      className={`rounded px-2 py-1 font-mono text-[10px] transition-all ${
+        currentLocale === "en" ? "bg-cyan-500/20 text-cyan-400" : "text-zinc-500 hover:text-white"
+      }`}
+    >
+      EN
+    </button>
+  </div>
+);
+
+// ============================================
+// MAIN PAGE
+// ============================================
+
+export default function PatchLanding() {
+  const router = useRouter();
+  const params = useParams();
+  const { t, language, setLanguage } = useI18n();
+
+  const currentLocale = (params?.locale as Locale) || language;
+
+  // Refs for parallax sections
+  const horizontalRef = useRef<HTMLDivElement>(null);
+  const problemRef = useRef<HTMLDivElement>(null);
+  const cyclesRef = useRef<HTMLDivElement>(null);
+
+  // State
+  const [activeComp, setActiveComp] = useState(0);
+  const [currentBuilderStep, setCurrentBuilderStep] = useState(0);
+  const [atsScore, setAtsScore] = useState(0);
+
+  // Horizontal parallax scroll
+  const { scrollYProgress: horizontalScroll } = useScroll({
+    target: horizontalRef,
+    offset: ["start start", "end end"],
+  });
+  const xTranslate = useTransform(horizontalScroll, [0, 1], ["0%", "-50%"]);
+  const smoothX = useSpring(xTranslate, { stiffness: 50, damping: 20 });
+
+  // Vertical parallax #1 (Problem section)
+  const { scrollYProgress: problemScroll } = useScroll({
+    target: problemRef,
+    offset: ["start end", "end start"],
+  });
+  const problemY = useTransform(problemScroll, [0, 1], [100, -100]);
+  const problemOpacity = useTransform(problemScroll, [0, 0.3, 0.7, 1], [0, 1, 1, 0]);
+
+  // Vertical parallax #2 (Cycles section)
+  const { scrollYProgress: cyclesScroll } = useScroll({
+    target: cyclesRef,
+    offset: ["start end", "end start"],
+  });
+  const cyclesY = useTransform(cyclesScroll, [0, 1], [80, -80]);
+
+  // Auto-cycle compilation states
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveComp((prev) => (prev + 1) % COMPILATION_STATES.length);
+    }, 3500);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Animate builder steps
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentBuilderStep((prev) => (prev + 1) % 4);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Animate ATS score
+  useEffect(() => {
+    const timer = setTimeout(() => setAtsScore(95), 500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const currentComp = COMPILATION_STATES[activeComp] ?? COMPILATION_STATES[0]!;
+
+  // Early return if no compilation state (should never happen)
+  if (!currentComp) return null;
+
+  const handleLanguageSwitch = (locale: Locale) => {
+    setLanguage(locale);
+    router.push(`/${locale}`);
+  };
+
+  return (
+    <div className="bg-[#020202] font-sans text-zinc-300 antialiased selection:bg-cyan-500/30">
+      {/* ATMOSPHERE - Subtle grid background */}
+      <div className="fixed inset-0 z-0 bg-[linear-gradient(to_right,#80808005_1px,transparent_1px),linear-gradient(to_bottom,#80808005_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_0%,#000_70%,transparent_100%)] bg-[size:40px_40px]" />
+
+      {/* ============================================
+          NAVBAR
+          ============================================ */}
+      <nav className="fixed top-0 z-50 flex w-full items-center justify-between border-b border-white/5 bg-black/60 px-8 py-4 backdrop-blur-md">
+        <div className="flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-500">
+            <Zap size={16} className="text-white" />
           </div>
+          <span className="text-lg font-bold tracking-tighter text-white">PATCH</span>
+        </div>
+        <div className="flex items-center gap-4">
+          <LanguageSwitcher currentLocale={currentLocale} onSwitch={handleLanguageSwitch} />
+          <button
+            onClick={() => router.push(`/${currentLocale}/auth/sign-up`)}
+            className="rounded-md bg-white px-4 py-1.5 text-[11px] font-bold text-black transition-all hover:scale-[1.02] hover:bg-cyan-400"
+          >
+            {t("landing.nav.access")}
+          </button>
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <main className="relative z-10 flex flex-1 flex-col">
-        <section className="flex flex-1 flex-col items-center justify-center px-4 py-20">
-          <div className="max-w-4xl space-y-8 text-center">
-            {/* Terminal Badge */}
-            <div className="inline-flex items-center gap-2">
-              <span className="dev-badge">
-                <span className="text-code-string">●</span> v1.0.0
-              </span>
-            </div>
-
-            {/* Headline */}
-            <h1 className="text-pf-fg-default text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-              Your developer profile,
-              <br />
-              <span className="text-pf-fg-muted font-normal">beautifully crafted</span>
-            </h1>
-
-            {/* Code Block Subtitle */}
-            <div className="mx-auto max-w-xl">
-              <div className="code-block text-left">
-                <div className="code-block-header">
-                  <div className="code-block-dots">
-                    <span className="code-block-dot red" />
-                    <span className="code-block-dot yellow" />
-                    <span className="code-block-dot green" />
-                  </div>
-                  <span className="code-block-title">profile.config.ts</span>
-                </div>
-                <div className="code-block-content">
-                  <div>
-                    <span className="code-keyword">export const</span>{" "}
-                    <span className="code-variable">developer</span> = {"{"}
-                  </div>
-                  <div className="ml-4">
-                    <span className="code-function">name</span>:{" "}
-                    <span className="code-string">&quot;Your Name&quot;</span>,
-                  </div>
-                  <div className="ml-4">
-                    <span className="code-function">title</span>:{" "}
-                    <span className="code-string">&quot;Full-Stack Developer&quot;</span>,
-                  </div>
-                  <div className="ml-4">
-                    <span className="code-function">status</span>:{" "}
-                    <span className="code-string">&quot;open_to_work&quot;</span>,
-                  </div>
-                  <div className="ml-4">
-                    <span className="code-function">skills</span>: [
-                    <span className="code-string">&quot;React&quot;</span>,{" "}
-                    <span className="code-string">&quot;Node&quot;</span>,{" "}
-                    <span className="code-string">&quot;...&quot;</span>],
-                  </div>
-                  <div>{"}"}</div>
-                </div>
-              </div>
-            </div>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-col justify-center gap-4 pt-4 sm:flex-row">
-              <Link
-                href={ROUTES.AUTH.SIGN_UP}
-                className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis group inline-flex items-center justify-center gap-2 px-6 py-3 font-mono text-sm transition-opacity hover:opacity-90"
-              >
-                <Terminal className="h-4 w-4" strokeWidth={1.5} />
-                npm create profile
-                <ArrowRight
-                  className="h-4 w-4 transition-transform group-hover:translate-x-1"
-                  strokeWidth={1.5}
-                />
-              </Link>
-              <Link
-                href={ROUTES.AUTH.SIGN_IN}
-                className="border-pf-border-default text-pf-fg-default hover:bg-pf-canvas-subtle inline-flex items-center justify-center gap-2 border bg-transparent px-6 py-3 font-mono text-sm transition-colors"
-              >
-                <Github className="h-4 w-4" strokeWidth={1.5} />
-                Sign in with GitHub
-              </Link>
-            </div>
-
-            {/* Social proof */}
-            <p className="text-pf-fg-subtle pt-4 font-mono text-xs">
-              <span className="text-pf-success-fg">✓</span> Trusted by{" "}
-              <span className="text-pf-fg-muted font-semibold">1,000+</span> developers
-            </p>
-          </div>
-        </section>
-
-        {/* Features Section */}
-        <section
-          id="features"
-          className="border-pf-border-muted bg-pf-canvas-subtle/50 border-t py-24"
+      {/* ============================================
+          HERO SECTION
+          ============================================ */}
+      <section className="relative z-10 flex min-h-screen flex-col items-center justify-center px-4 pt-20">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="mb-6 inline-flex items-center gap-3 rounded-full border border-white/5 bg-white/5 px-4 py-1 font-mono text-[10px] tracking-widest text-zinc-500 uppercase"
         >
-          <div className="mx-auto max-w-7xl px-6 lg:px-10">
-            <div className="mb-16 text-center">
-              <div className="mb-4 inline-flex items-center gap-2">
-                <Code2 className="text-pf-fg-muted h-5 w-5" strokeWidth={1.5} />
-                <span className="text-pf-fg-muted font-mono text-xs">// Features</span>
-              </div>
-              <h2 className="text-pf-fg-default text-2xl font-bold tracking-tight sm:text-3xl">
-                Everything you need to stand out
-              </h2>
-              <p className="text-pf-fg-muted mt-4 font-mono text-sm">
-                Powerful features for building your professional presence
-              </p>
-            </div>
+          <span className="h-1 w-1 rounded-full bg-cyan-500" />
+          {t("landing.hero.badge")}
+        </motion.div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              <FeatureCard
-                icon={<User className="h-5 w-5" />}
-                title="professional_profile"
-                description="Showcase your skills, experience, and projects in a beautiful, customizable layout."
-              />
-              <FeatureCard
-                icon={<FileText className="h-5 w-5" />}
-                title="resume_export"
-                description="Export your profile as PDF or DOCX with multiple templates. ATS-friendly."
-              />
-              <FeatureCard
-                icon={<Github className="h-5 w-5" />}
-                title="github_sync"
-                description="Sync your repositories, contributions, and activity automatically."
-              />
-              <FeatureCard
-                icon={<Zap className="h-5 w-5" />}
-                title="analytics"
-                description="Track profile views, link clicks, and engagement in real-time."
-              />
-              <FeatureCard
-                icon={<Shield className="h-5 w-5" />}
-                title="privacy_control"
-                description="Control exactly what's visible. Make sections public, private, or share with specific people."
-              />
-              <FeatureCard
-                icon={<Sparkles className="h-5 w-5" />}
-                title="ai_powered"
-                description="Get AI suggestions to improve your profile content and make it more impactful."
-              />
-            </div>
+        <motion.h1
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.1 }}
+          className="mb-8 text-center text-6xl leading-[0.9] font-medium tracking-tighter text-white md:text-[110px]"
+        >
+          {t("landing.hero.title")} <br />
+          <span className="text-zinc-700 italic">{t("landing.hero.titleHighlight")}</span>
+        </motion.h1>
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="mx-auto mb-12 max-w-2xl text-center"
+        >
+          <p className="mb-4 text-lg leading-relaxed font-medium text-white">
+            {t("landing.hero.description")}
+          </p>
+          <p className="text-base text-zinc-500">{t("landing.hero.subdescription")}</p>
+        </motion.div>
+
+        <motion.button
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          onClick={() => router.push(`/${currentLocale}/auth/sign-up`)}
+          className="group flex items-center gap-3 rounded-xl bg-white px-8 py-4 text-sm font-bold text-black transition-all hover:scale-[1.02] hover:bg-cyan-400"
+        >
+          {t("landing.hero.cta")}
+          <ArrowRight size={16} />
+        </motion.button>
+
+        {/* Scroll indicator */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1, duration: 1 }}
+          className="absolute bottom-8 flex flex-col items-center gap-2"
+        >
+          <div className="h-8 w-px bg-gradient-to-b from-transparent via-zinc-700 to-transparent" />
+          <span className="font-mono text-[9px] tracking-widest text-zinc-600 uppercase">
+            {t("landing.hero.scroll")}
+          </span>
+        </motion.div>
+      </section>
+
+      {/* ============================================
+          IDENTITY INVARIANCE - Dynamic Compilation
+          ============================================ */}
+      <section className="relative z-10 bg-zinc-950/30 px-8 py-40">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-20 text-center">
+            <h2 className="mb-4 text-4xl font-medium tracking-tighter text-white md:text-6xl">
+              {t("landing.identity.title")} <br />
+              <span className="text-zinc-600">{t("landing.identity.titleHighlight")}</span>
+            </h2>
+            <p className="mx-auto max-w-2xl text-lg text-zinc-500">
+              {t("landing.identity.description")}
+            </p>
           </div>
-        </section>
 
-        {/* Terminal CTA Section */}
-        <section className="border-pf-border-muted border-t py-24">
-          <div className="mx-auto max-w-4xl px-6 text-center lg:px-10">
-            <div className="terminal mx-auto max-w-lg text-left">
-              <div className="terminal-header">
-                <div className="code-block-dots">
-                  <span className="code-block-dot red" />
-                  <span className="code-block-dot yellow" />
-                  <span className="code-block-dot green" />
-                </div>
-                <span className="code-block-title">~/workspace</span>
+          {/* Compilation Preview */}
+          <div className="relative mx-auto max-w-4xl overflow-hidden rounded-2xl border border-white/10 bg-black shadow-2xl">
+            {/* Header */}
+            <div className="flex w-full items-center justify-between border-b border-white/5 bg-zinc-900/50 px-8 py-3 font-mono text-[10px]">
+              <div className="flex items-center gap-2 text-cyan-500">
+                <Fingerprint size={12} />
+                <span>{t("landing.identity.sourceLabel")}</span>
               </div>
-              <div className="terminal-content">
-                <div>
-                  <span className="terminal-prompt">➜</span>{" "}
-                  <span className="terminal-command">npx create-profile@latest</span>
+              <div className="text-zinc-500">SHA-256: 8f2a...c4e1</div>
+            </div>
+
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeComp}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="flex min-h-[400px] flex-col justify-between p-12"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="rounded-lg border border-white/5 bg-zinc-900 p-3">
+                      <currentComp.icon className="text-zinc-400" size={24} />
+                    </div>
+                    <div>
+                      <div className="font-mono text-[9px] tracking-widest text-zinc-600 uppercase">
+                        {t("landing.identity.buildTarget")}
+                      </div>
+                      <div className="text-xl font-bold text-white uppercase">
+                        {t(currentComp.roleKey as Parameters<typeof t>[0])}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-4 py-2 font-mono text-sm text-cyan-400">
+                    {currentComp.match}% match
+                  </div>
                 </div>
-                <div className="terminal-output mt-2">
-                  <div className="text-pf-success-fg">✔ Profile created successfully!</div>
-                  <div className="text-pf-fg-muted mt-1">
-                    Your profile is live at: profile.dev/yourname
+
+                <div className="space-y-6">
+                  <div className="h-px w-full bg-white/5" />
+                  <div className="text-4xl leading-none font-medium tracking-tighter text-white md:text-5xl">
+                    {t(currentComp.headlineKey as Parameters<typeof t>[0])}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {currentComp.skills.map((s, i) => (
+                      <SkillTag key={i}>{s}</SkillTag>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between rounded-xl border border-cyan-500/10 bg-cyan-500/5 p-5">
+                  <div>
+                    <div className="mb-1 font-mono text-[9px] text-cyan-700 uppercase">
+                      {t("landing.identity.compilationFocus")}
+                    </div>
+                    <p className="text-sm text-zinc-400 italic">
+                      &quot;
+                      {t("landing.identity.focusMessage", {
+                        focus: t(currentComp.focusKey as Parameters<typeof t>[0]),
+                      })}
+                      &quot;
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <div className="mb-1 font-mono text-[9px] text-zinc-600 uppercase">
+                      {t("landing.identity.atsCompatibility")}
+                    </div>
+                    <div className="font-mono text-xl font-bold text-cyan-500">98.2%</div>
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Company indicators */}
+          <div className="mt-8 flex justify-center gap-3">
+            {COMPILATION_STATES.map((state, i) => (
+              <button
+                key={state.roleKey}
+                onClick={() => setActiveComp(i)}
+                className={`rounded-lg border px-4 py-2 font-mono text-xs transition-all ${
+                  i === activeComp
+                    ? "border-cyan-500/30 bg-cyan-500/10 text-cyan-400"
+                    : "border-white/5 bg-zinc-900/50 text-zinc-500 hover:border-white/10"
+                }`}
+              >
+                {state.company}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================
+          VERTICAL PARALLAX #1 - O PROBLEMA
+          ============================================ */}
+      <section ref={problemRef} className="relative z-10 overflow-hidden px-6 py-40">
+        <motion.div style={{ y: problemY, opacity: problemOpacity }} className="mx-auto max-w-6xl">
+          <div className="mb-16 text-center">
+            <h2 className="mb-4 text-4xl font-medium tracking-tighter text-white md:text-5xl">
+              {t("landing.problem.title")}
+            </h2>
+            <p className="text-lg text-zinc-500">{t("landing.problem.subtitle")}</p>
+          </div>
+
+          <div className="grid gap-8 md:grid-cols-3">
+            {[
+              {
+                icon: FileText,
+                valueKey: "landing.problem.stat1.value",
+                labelKey: "landing.problem.stat1.label",
+                bgColor: "rgba(239, 68, 68, 0.05)",
+                borderColor: "rgba(239, 68, 68, 0.2)",
+                iconBg: "rgba(239, 68, 68, 0.2)",
+                iconColor: "text-red-400",
+              },
+              {
+                icon: Clock,
+                valueKey: "landing.problem.stat2.value",
+                labelKey: "landing.problem.stat2.label",
+                bgColor: "rgba(249, 115, 22, 0.05)",
+                borderColor: "rgba(249, 115, 22, 0.2)",
+                iconBg: "rgba(249, 115, 22, 0.2)",
+                iconColor: "text-orange-400",
+              },
+              {
+                icon: Eye,
+                valueKey: "landing.problem.stat3.value",
+                labelKey: "landing.problem.stat3.label",
+                bgColor: "rgba(234, 179, 8, 0.05)",
+                borderColor: "rgba(234, 179, 8, 0.2)",
+                iconBg: "rgba(234, 179, 8, 0.2)",
+                iconColor: "text-yellow-400",
+              },
+            ].map((stat, i) => (
+              <motion.div
+                key={stat.valueKey}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                viewport={{ once: true }}
+                className="rounded-2xl p-6"
+                style={{
+                  backgroundColor: stat.bgColor,
+                  border: `1px solid ${stat.borderColor}`,
+                }}
+              >
+                <div
+                  className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl"
+                  style={{ backgroundColor: stat.iconBg }}
+                >
+                  <stat.icon className={stat.iconColor} size={24} />
+                </div>
+                <div className="mb-2 text-3xl font-bold text-white">
+                  {t(stat.valueKey as Parameters<typeof t>[0])}
+                </div>
+                <div className="text-sm text-zinc-400">
+                  {t(stat.labelKey as Parameters<typeof t>[0])}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Comparison */}
+          <div className="mt-16 grid gap-8 md:grid-cols-2">
+            <MacWindow title={t("landing.problem.generic")}>
+              <div className="space-y-3 opacity-50">
+                <div className="h-4 w-3/4 rounded bg-zinc-700" />
+                <div className="h-3 w-full rounded bg-zinc-800" />
+                <div className="h-3 w-full rounded bg-zinc-800" />
+                <div className="h-3 w-2/3 rounded bg-zinc-800" />
+                <div className="mt-4 h-4 w-1/2 rounded bg-zinc-700" />
+                <div className="h-3 w-full rounded bg-zinc-800" />
+                <div className="h-3 w-5/6 rounded bg-zinc-800" />
+              </div>
+              <div className="mt-4 flex items-center gap-2 text-red-400">
+                <span className="text-2xl font-bold">32%</span>
+                <span className="text-sm">{t("landing.problem.matchLabel")}</span>
+              </div>
+            </MacWindow>
+
+            <MacWindow title={t("landing.problem.adapted")}>
+              <div className="space-y-3">
+                <div className="h-4 w-3/4 rounded bg-cyan-500/30" />
+                <div className="h-3 w-full rounded bg-zinc-700" />
+                <div className="h-3 w-full rounded bg-zinc-700" />
+                <div className="h-3 w-2/3 rounded bg-zinc-700" />
+                <div className="mt-4 h-4 w-1/2 rounded bg-cyan-500/30" />
+                <div className="h-3 w-full rounded bg-zinc-700" />
+                <div className="h-3 w-5/6 rounded bg-zinc-700" />
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {["React", "TypeScript", "Node.js"].map((skill) => (
+                    <span
+                      key={skill}
+                      className="rounded bg-cyan-500/20 px-2 py-0.5 text-xs text-cyan-400"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="mt-4 flex items-center gap-2 text-cyan-400">
+                <span className="text-2xl font-bold">94%</span>
+                <span className="text-sm">{t("landing.problem.matchLabel")}</span>
+              </div>
+            </MacWindow>
+          </div>
+
+          <p className="mt-8 text-center text-sm text-zinc-600">
+            {t("landing.problem.comparison")}
+          </p>
+        </motion.div>
+      </section>
+
+      {/* ============================================
+          HORIZONTAL PARALLAX - FEATURES
+          ============================================ */}
+      <section ref={horizontalRef} className="relative h-[300vh]">
+        <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden bg-[#020202]">
+          <div className="mb-12 px-12">
+            <h2 className="text-4xl font-medium tracking-tighter text-white md:text-5xl">
+              {t("landing.howItWorks.title")}
+            </h2>
+            <p className="mt-4 text-zinc-500">{t("landing.howItWorks.subtitle")}</p>
+          </div>
+
+          <motion.div style={{ x: smoothX }} className="flex gap-8 px-12">
+            {/* Step 1: Create */}
+            <FeatureCard
+              icon={FileText}
+              title={t("landing.howItWorks.step1.title")}
+              description={t("landing.howItWorks.step1.description")}
+            >
+              <MacWindow title="Patch — Builder" className="mt-4">
+                <ProgressSteps
+                  steps={["Info", "Exp", "Skills", "Tema"]}
+                  currentStep={currentBuilderStep}
+                />
+                <div className="mt-4 space-y-2">
+                  <div className="rounded-lg border border-zinc-700 bg-zinc-800/30 p-3">
+                    <div className="text-xs text-zinc-500">
+                      {t("landing.howItWorks.step1.currentRole")}
+                    </div>
+                    <div className="text-sm text-zinc-300">Senior Software Engineer</div>
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {["React", "TypeScript", "Node.js"].map((s) => (
+                      <SkillTag key={s}>{s}</SkillTag>
+                    ))}
+                  </div>
+                </div>
+              </MacWindow>
+            </FeatureCard>
+
+            {/* Step 2: Analyze */}
+            <FeatureCard
+              icon={Target}
+              title={t("landing.howItWorks.step2.title")}
+              description={t("landing.howItWorks.step2.description")}
+            >
+              <div className="mt-4 flex items-center gap-6">
+                <ATSScoreGauge score={atsScore} label={t("landing.howItWorks.step2.atsScore")} />
+                <div className="space-y-2">
+                  <div className="text-sm text-zinc-500">Senior Frontend Developer</div>
+                  <div className="text-lg font-bold text-white">@ Nubank</div>
+                  <div className="h-1.5 w-32 rounded-full bg-zinc-800">
+                    <div className="h-full w-[92%] rounded-full bg-cyan-500" />
+                  </div>
+                  <div className="text-xs text-zinc-500">
+                    {t("landing.howItWorks.step2.skillsMatch")}: 92%
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="mt-10">
-              <Link
-                href={ROUTES.AUTH.SIGN_UP}
-                className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis group inline-flex items-center justify-center gap-2 px-6 py-3 font-mono text-sm transition-opacity hover:opacity-90"
+            </FeatureCard>
+
+            {/* Step 3: Configure */}
+            <FeatureCard
+              icon={ShieldCheck}
+              title={t("landing.howItWorks.step3.title")}
+              description={t("landing.howItWorks.step3.description")}
+            >
+              <MacWindow title="Patch — Auto-Apply" className="mt-4">
+                <div className="space-y-4">
+                  <div>
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className="text-xs text-zinc-500">
+                        {t("landing.howItWorks.step3.threshold")}
+                      </span>
+                      <span className="font-mono text-sm text-cyan-400">≥ 85%</span>
+                    </div>
+                    <div className="h-2 rounded-full bg-zinc-800">
+                      <div className="h-full w-[85%] rounded-full bg-gradient-to-r from-cyan-500 to-cyan-400" />
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between rounded-lg border border-cyan-500/30 bg-cyan-500/10 p-3">
+                    <div className="flex items-center gap-2">
+                      <div className="h-2 w-2 animate-pulse rounded-full bg-cyan-500" />
+                      <span className="text-xs text-cyan-400">
+                        {t("landing.howItWorks.step3.active")}
+                      </span>
+                    </div>
+                    <span className="text-xs text-zinc-500">
+                      23 {t("landing.howItWorks.step3.applications")}
+                    </span>
+                  </div>
+                </div>
+              </MacWindow>
+            </FeatureCard>
+
+            {/* Step 4: Track */}
+            <FeatureCard
+              icon={BarChart3}
+              title={t("landing.howItWorks.step4.title")}
+              description={t("landing.howItWorks.step4.description")}
+            >
+              <MacWindow title="Patch — Dashboard" className="mt-4">
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="rounded-lg bg-zinc-800/50 p-3 text-center">
+                    <div className="text-xl font-bold text-white">142</div>
+                    <div className="text-[10px] text-zinc-500">
+                      {t("landing.howItWorks.step4.applications")}
+                    </div>
+                  </div>
+                  <div className="rounded-lg bg-zinc-800/50 p-3 text-center">
+                    <div className="text-xl font-bold text-cyan-400">23</div>
+                    <div className="text-[10px] text-zinc-500">
+                      {t("landing.howItWorks.step4.responses")}
+                    </div>
+                  </div>
+                  <div className="rounded-lg bg-zinc-800/50 p-3 text-center">
+                    <div className="text-xl font-bold text-green-400">8</div>
+                    <div className="text-[10px] text-zinc-500">
+                      {t("landing.howItWorks.step4.interviews")}
+                    </div>
+                  </div>
+                </div>
+              </MacWindow>
+            </FeatureCard>
+
+            {/* Feature: Templates */}
+            <FeatureCard
+              icon={Layers}
+              title={t("landing.features.templates.title")}
+              description={t("landing.features.templates.description")}
+            >
+              <div className="mt-4 flex gap-2">
+                {["Classic", "Modern", "Minimal"].map((tpl, i) => (
+                  <div
+                    key={tpl}
+                    className={`flex-1 rounded-lg border p-3 text-center text-xs ${
+                      i === 1
+                        ? "border-cyan-500 bg-cyan-500/10 text-cyan-400"
+                        : "border-zinc-700 text-zinc-500"
+                    }`}
+                  >
+                    {tpl}
+                  </div>
+                ))}
+              </div>
+            </FeatureCard>
+
+            {/* Feature: GitHub */}
+            <FeatureCard
+              icon={Github}
+              title={t("landing.features.github.title")}
+              description={t("landing.features.github.description")}
+            >
+              <div className="mt-4 space-y-2">
+                <div className="flex items-center justify-between rounded-lg border border-zinc-700 bg-zinc-800/30 p-3">
+                  <span className="text-sm text-white">@seuusername</span>
+                  <div className="flex items-center gap-3 text-xs text-zinc-500">
+                    <span>⭐ 342</span>
+                    <span>🔀 89 PRs</span>
+                  </div>
+                </div>
+              </div>
+            </FeatureCard>
+
+            {/* Feature: Bilingual */}
+            <FeatureCard
+              icon={Languages}
+              title={t("landing.features.bilingual.title")}
+              description={t("landing.features.bilingual.description")}
+            >
+              <div className="mt-4 flex items-center justify-center gap-4 text-sm text-zinc-500">
+                <span className="font-medium text-white">PT-BR</span>
+                <ArrowRight size={16} className="text-cyan-500" />
+                <span className="font-medium text-white">EN</span>
+              </div>
+            </FeatureCard>
+
+            {/* Feature: MEC */}
+            <FeatureCard
+              icon={GraduationCap}
+              title={t("landing.features.mec.title")}
+              description={t("landing.features.mec.description")}
+            >
+              <div className="mt-4 rounded-lg border border-zinc-700 bg-zinc-800/30 p-3">
+                <div className="text-xs text-zinc-500">{t("landing.features.mec.institution")}</div>
+                <div className="text-sm text-zinc-300">Universidade de São Paulo (USP)</div>
+              </div>
+            </FeatureCard>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ============================================
+          VERTICAL PARALLAX #2 - CYCLES
+          ============================================ */}
+      <section ref={cyclesRef} className="relative z-10 overflow-hidden px-8 py-40">
+        <motion.div style={{ y: cyclesY }} className="mx-auto max-w-6xl">
+          <div className="mb-24 text-center">
+            <h2 className="mb-6 text-4xl font-medium tracking-tighter text-white md:text-6xl">
+              {t("landing.cycles.title")}
+            </h2>
+            <p className="text-lg text-zinc-500">{t("landing.cycles.description")}</p>
+          </div>
+
+          <div className="grid gap-8 md:grid-cols-3">
+            {[
+              {
+                versionKey: "landing.cycles.v1.version",
+                titleKey: "landing.cycles.v1.title",
+                descriptionKey: "landing.cycles.v1.description",
+                icon: Fingerprint,
+              },
+              {
+                versionKey: "landing.cycles.v2.version",
+                titleKey: "landing.cycles.v2.title",
+                descriptionKey: "landing.cycles.v2.description",
+                icon: BarChart3,
+              },
+              {
+                versionKey: "landing.cycles.v3.version",
+                titleKey: "landing.cycles.v3.title",
+                descriptionKey: "landing.cycles.v3.description",
+                icon: Zap,
+              },
+            ].map((item, i) => (
+              <motion.div
+                key={item.versionKey}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.15 }}
+                viewport={{ once: true }}
+                className="group relative overflow-hidden rounded-xl border border-white/5 bg-zinc-950/20 p-8"
               >
-                Get Started for Free
-                <ArrowRight
-                  className="h-4 w-4 transition-transform group-hover:translate-x-1"
-                  strokeWidth={1.5}
-                />
-              </Link>
+                <div className="mb-6 font-mono text-[9px] tracking-[0.2em] text-cyan-600 uppercase">
+                  {t(item.versionKey as Parameters<typeof t>[0])}
+                </div>
+                <item.icon className="mb-4 text-zinc-600" size={24} />
+                <h4 className="mb-3 text-xl font-medium text-white">
+                  {t(item.titleKey as Parameters<typeof t>[0])}
+                </h4>
+                <p className="text-sm leading-relaxed text-zinc-500">
+                  {t(item.descriptionKey as Parameters<typeof t>[0])}
+                </p>
+                <div className="absolute bottom-0 left-0 h-1 w-0 bg-cyan-500/40 transition-all duration-700 group-hover:w-full" />
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </section>
+
+      {/* ============================================
+          FOR TECH - Developer Focus
+          ============================================ */}
+      <section className="relative z-10 border-y border-white/5 bg-zinc-950/30 px-6 py-24">
+        <div className="mx-auto max-w-6xl">
+          <div className="grid items-center gap-12 md:grid-cols-2">
+            <div>
+              <div className="mb-4 inline-block rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-xs text-cyan-400">
+                {t("landing.forTech.badge")}
+              </div>
+              <h2 className="mb-6 text-3xl font-medium tracking-tighter text-white md:text-4xl">
+                {t("landing.forTech.title")}
+                <br />
+                <span className="text-zinc-600">{t("landing.forTech.titleHighlight")}</span>
+              </h2>
+              <p className="mb-8 text-zinc-400">{t("landing.forTech.description")}</p>
+              <ul className="space-y-3 text-sm">
+                {[
+                  "landing.forTech.features.opensource",
+                  "landing.forTech.features.bugbounties",
+                  "landing.forTech.features.techstack",
+                  "landing.forTech.features.github",
+                  "landing.forTech.features.certifications",
+                ].map((key) => (
+                  <li key={key} className="flex items-center gap-2 text-zinc-400">
+                    <Check size={16} className="text-cyan-500" />
+                    {t(key as Parameters<typeof t>[0])}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <MacWindow title="curriculo_dev.pdf — Tech Section">
+              <div className="space-y-4">
+                <div>
+                  <div className="mb-2 font-mono text-[9px] text-zinc-500 uppercase">
+                    {t("landing.forTech.techSection.mainStack")}
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {["TypeScript", "React", "Node.js", "PostgreSQL", "AWS", "Docker"].map(
+                      (tech) => (
+                        <SkillTag key={tech}>{tech}</SkillTag>
+                      )
+                    )}
+                  </div>
+                </div>
+
+                <div className="rounded-lg border border-zinc-700 bg-zinc-800/30 p-3">
+                  <div className="mb-2 font-mono text-[9px] text-zinc-500 uppercase">
+                    {t("landing.forTech.techSection.github")}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-white">@seuusername</span>
+                    <div className="flex items-center gap-3 text-xs text-zinc-500">
+                      <span>⭐ 342</span>
+                      <span>🔀 89 PRs</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-lg border border-zinc-700 bg-zinc-800/30 p-3">
+                  <div className="mb-2 font-mono text-[9px] text-zinc-500 uppercase">
+                    {t("landing.forTech.techSection.projects")}
+                  </div>
+                  <div className="space-y-2">
+                    {[
+                      { name: "react-query-utils", stars: 127 },
+                      { name: "node-api-boilerplate", stars: 89 },
+                    ].map((proj) => (
+                      <div key={proj.name} className="flex items-center justify-between text-sm">
+                        <span className="text-cyan-400">{proj.name}</span>
+                        <span className="text-zinc-500">⭐ {proj.stars}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  {["AWS Certified", "Google Cloud", "Kubernetes"].map((cert) => (
+                    <span
+                      key={cert}
+                      className="rounded border border-yellow-500/20 bg-yellow-500/10 px-2 py-1 text-xs text-yellow-400"
+                    >
+                      {cert}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </MacWindow>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================
+          COMPARISON + STATS
+          ============================================ */}
+      <section className="relative z-10 px-6 py-24">
+        <div className="mx-auto max-w-4xl">
+          {/* Anti-Zety */}
+          <div className="mb-16 rounded-2xl border border-white/5 bg-zinc-900/30 p-8 md:p-12">
+            <h3 className="mb-6 text-2xl font-medium tracking-tighter text-white">
+              {t("landing.comparison.title")}
+            </h3>
+            <div className="grid gap-6 md:grid-cols-2">
+              <div>
+                <h4 className="mb-3 font-medium text-red-400">
+                  {t("landing.comparison.generic.title")}
+                </h4>
+                <ul className="space-y-2 text-sm text-zinc-500">
+                  <li>• {t("landing.comparison.generic.item1")}</li>
+                  <li>• {t("landing.comparison.generic.item2")}</li>
+                  <li>• {t("landing.comparison.generic.item3")}</li>
+                  <li>• {t("landing.comparison.generic.item4")}</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="mb-3 font-medium text-cyan-400">
+                  {t("landing.comparison.patch.title")}
+                </h4>
+                <ul className="space-y-2 text-sm text-zinc-400">
+                  <li>• {t("landing.comparison.patch.item1")}</li>
+                  <li>• {t("landing.comparison.patch.item2")}</li>
+                  <li>• {t("landing.comparison.patch.item3")}</li>
+                  <li>• {t("landing.comparison.patch.item4")}</li>
+                </ul>
+              </div>
             </div>
           </div>
-        </section>
-      </main>
 
-      {/* Footer */}
-      <footer className="border-pf-border-muted bg-pf-canvas-default relative z-10 border-t">
-        <div className="px-6 py-8 lg:px-10">
-          <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
-            <div className="flex items-center gap-2">
-              <div className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis flex h-6 w-6 items-center justify-center">
-                <Terminal className="h-3.5 w-3.5" strokeWidth={1.5} />
-              </div>
-              <span className="text-pf-fg-default font-mono text-xs font-semibold">profile</span>
+          {/* Stats */}
+          <div className="mb-16 grid gap-6 md:grid-cols-3">
+            <div className="text-center">
+              <div className="text-4xl font-bold text-white">3x</div>
+              <div className="text-sm text-zinc-500">{t("landing.stats.interviews")}</div>
             </div>
-            <p className="text-pf-fg-muted font-mono text-xs">
-              © {new Date().getFullYear()} ProFile. All rights reserved.
-            </p>
-            <div className="text-pf-fg-muted flex gap-6 font-mono text-xs">
-              <Link href="/privacy" className="hover:text-pf-fg-default transition-colors">
-                privacy
-              </Link>
-              <Link href="/terms" className="hover:text-pf-fg-default transition-colors">
-                terms
-              </Link>
-              <a
-                href="https://github.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-pf-fg-default transition-colors"
-              >
-                github
-              </a>
+            <div className="text-center">
+              <div className="text-4xl font-bold text-cyan-400">142</div>
+              <div className="text-sm text-zinc-500">{t("landing.stats.applications")}</div>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl font-bold text-white">&lt;5min</div>
+              <div className="text-sm text-zinc-500">{t("landing.stats.createTime")}</div>
             </div>
           </div>
         </div>
+      </section>
+
+      {/* ============================================
+          FINAL CTA
+          ============================================ */}
+      <section className="relative z-10 border-t border-white/5 px-4 py-40">
+        <div className="mx-auto max-w-4xl text-center">
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-6 text-5xl font-medium tracking-tighter text-white md:text-7xl"
+          >
+            {t("landing.cta.title")}
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            viewport={{ once: true }}
+            className="mx-auto mb-12 max-w-xl text-zinc-500"
+          >
+            {t("landing.cta.description")}
+          </motion.p>
+          <motion.button
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            viewport={{ once: true }}
+            onClick={() => router.push(`/${currentLocale}/auth/sign-up`)}
+            className="rounded-xl bg-white px-12 py-5 text-lg font-bold text-black transition-all hover:scale-[1.02] hover:bg-cyan-400"
+          >
+            {t("landing.cta.button")}
+          </motion.button>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            viewport={{ once: true }}
+            className="mt-8 font-mono text-xs tracking-widest text-zinc-600 uppercase"
+          >
+            {t("landing.cta.remaining", { count: "14" })}
+          </motion.p>
+        </div>
+      </section>
+
+      {/* ============================================
+          FOOTER
+          ============================================ */}
+      <footer className="flex flex-col items-center justify-between gap-4 border-t border-white/5 px-12 py-12 font-mono text-[9px] tracking-[0.4em] text-zinc-700 uppercase md:flex-row">
+        <div>{t("landing.footer.copyright")}</div>
+        <div className="flex gap-8">
+          <a href="#" className="transition-colors hover:text-white">
+            {t("landing.footer.interoperability")}
+          </a>
+          <a href="#" className="transition-colors hover:text-white">
+            {t("landing.footer.privacy")}
+          </a>
+        </div>
       </footer>
-    </div>
-  );
-}
-
-interface FeatureCardProps {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-}
-
-function FeatureCard({ icon, title, description }: FeatureCardProps) {
-  return (
-    <div className="group border-pf-border-default bg-pf-canvas-overlay hover:border-pf-border-emphasis p-6 transition-all">
-      <div className="text-pf-fg-muted group-hover:text-pf-fg-default mb-4 transition-colors">
-        {icon}
-      </div>
-      <h3 className="text-pf-fg-default mb-2 font-mono text-sm font-semibold">{title}</h3>
-      <p className="text-pf-fg-muted text-sm leading-relaxed">{description}</p>
     </div>
   );
 }

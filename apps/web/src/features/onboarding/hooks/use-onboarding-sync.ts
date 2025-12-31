@@ -19,11 +19,7 @@ export function useOnboardingSync() {
   const { data: backendProgress, isLoading, isError } = useOnboardingProgress();
   const saveProgress = useSaveOnboardingProgress();
 
-  const {
-    currentStep,
-    hydrateFromBackend,
-    getStateForBackend,
-  } = useOnboardingStore();
+  const { currentStep, hydrateFromBackend, getStateForBackend } = useOnboardingStore();
 
   const hasHydrated = useRef(false);
   const previousStep = useRef<OnboardingStep | null>(null);
@@ -43,6 +39,7 @@ export function useOnboardingSync() {
           currentStep: backendProgress.currentStep as OnboardingStep,
           completedSteps: backendProgress.completedSteps as OnboardingStep[],
           personalInfo: backendProgress.personalInfo,
+          username: null,
           professionalProfile: backendProgress.professionalProfile,
           experiences: backendProgress.experiences || [],
           noExperience: backendProgress.noExperience,
@@ -62,7 +59,12 @@ export function useOnboardingSync() {
 
   // Save progress to backend when step changes (only if authenticated)
   useEffect(() => {
-    if (isAuthenticated && hasHydrated.current && previousStep.current !== null && previousStep.current !== currentStep) {
+    if (
+      isAuthenticated &&
+      hasHydrated.current &&
+      previousStep.current !== null &&
+      previousStep.current !== currentStep
+    ) {
       const state = getStateForBackend();
       saveProgress.mutate(state);
     }

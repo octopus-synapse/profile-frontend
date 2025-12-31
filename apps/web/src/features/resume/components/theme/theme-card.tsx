@@ -1,6 +1,6 @@
 /**
- * Theme Card Component
- * Beautiful compact theme preview with actions
+ * Theme Card
+ * Elegant compact theme preview
  */
 
 "use client";
@@ -52,7 +52,7 @@ export function ThemeCard({
   const canDirectEdit = !isPublic && !isSystem;
   const canSubmit = isPrivate && !isSystem;
 
-  // Extract colors from styleConfig for preview
+  // Extract colors from styleConfig
   const styleConfig = theme.styleConfig as Partial<ResumeStyleConfig> | undefined;
   const primaryColor = styleConfig?.tokens?.colors?.colors?.primary ?? "#3B82F6";
   const bgColor = styleConfig?.tokens?.colors?.colors?.background ?? "#FFFFFF";
@@ -61,81 +61,70 @@ export function ThemeCard({
   return (
     <div
       className={cn(
-        "group relative overflow-hidden rounded-xl border transition-all duration-200",
+        "group relative overflow-hidden rounded-lg border transition-all",
         isActive
-          ? "border-pf-accent-emphasis ring-pf-accent-emphasis/20 ring-2"
-          : "border-pf-border-default hover:border-pf-border-emphasis hover:shadow-md"
+          ? "border-pf-border-emphasis ring-pf-border-emphasis/10 ring-2"
+          : "border-pf-border-default hover:border-pf-border-emphasis/50"
       )}
     >
-      {/* Main clickable area */}
+      {/* Clickable area */}
       <button onClick={onSelect} className="flex w-full items-start gap-3 p-3 text-left">
-        {/* Color Preview Mini */}
+        {/* Color preview */}
         <div
-          className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg shadow-sm"
+          className="ring-pf-border-subtle relative h-12 w-12 shrink-0 overflow-hidden rounded-md shadow-sm ring-1"
           style={{ backgroundColor: bgColor }}
         >
-          {/* Mini resume preview */}
           <div className="absolute inset-1 flex flex-col gap-0.5">
-            <div className="h-1.5 w-full rounded-sm" style={{ backgroundColor: primaryColor }} />
+            <div className="h-1 w-full rounded-sm" style={{ backgroundColor: primaryColor }} />
             <div
-              className="h-0.5 w-3/4 rounded-sm opacity-60"
+              className="h-0.5 w-3/4 rounded-sm opacity-50"
               style={{ backgroundColor: textColor }}
             />
             <div
-              className="h-0.5 w-1/2 rounded-sm opacity-40"
+              className="h-0.5 w-1/2 rounded-sm opacity-30"
               style={{ backgroundColor: textColor }}
             />
-            <div className="mt-auto flex gap-0.5">
-              <div className="h-1 w-1 rounded-full" style={{ backgroundColor: primaryColor }} />
-              <div
-                className="h-1 w-1 rounded-full opacity-50"
-                style={{ backgroundColor: primaryColor }}
-              />
-            </div>
           </div>
         </div>
 
         {/* Info */}
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <h3 className="text-pf-fg-default truncate text-sm font-semibold">{theme.name}</h3>
+            <h3 className="text-pf-fg-default truncate text-sm font-medium">{theme.name}</h3>
             <StatusIcon theme={theme} />
           </div>
           <p className="text-pf-fg-muted mt-0.5 truncate text-xs">
             {theme.description || getCategoryLabel(theme.category)}
           </p>
 
-          {/* Color swatches */}
-          <div className="mt-2 flex gap-1">
+          {/* Swatches */}
+          <div className="mt-1.5 flex gap-1">
             <div
-              className="h-3 w-3 rounded-full border border-black/10"
+              className="h-2.5 w-2.5 rounded-full ring-1 ring-black/5"
               style={{ backgroundColor: primaryColor }}
-              title="Primary"
             />
             <div
-              className="h-3 w-3 rounded-full border border-black/10"
+              className="h-2.5 w-2.5 rounded-full ring-1 ring-black/5"
               style={{ backgroundColor: bgColor }}
-              title="Background"
             />
             <div
-              className="h-3 w-3 rounded-full border border-black/10"
+              className="h-2.5 w-2.5 rounded-full ring-1 ring-black/5"
               style={{ backgroundColor: textColor }}
-              title="Text"
             />
           </div>
         </div>
 
-        {/* Active checkmark */}
+        {/* Active check */}
         {isActive && (
-          <div className="bg-pf-accent-emphasis text-pf-fg-on-emphasis absolute top-2 right-2 rounded-full p-1">
-            <Check className="h-3 w-3" />
+          <div className="bg-pf-canvas-emphasis absolute top-2 right-2 rounded-full p-1">
+            <Check className="text-pf-fg-on-emphasis h-3 w-3" strokeWidth={2} />
           </div>
         )}
       </button>
 
       {/* Actions */}
       {showActions && (
-        <div className="border-pf-border-default flex border-t">
+        <div className="border-pf-border-muted flex border-t">
           {canDirectEdit ? (
             <ActionButton onClick={onEdit} icon={Pencil} label="Edit" />
           ) : (
@@ -147,7 +136,7 @@ export function ThemeCard({
               onClick={onSubmitForApproval}
               icon={Send}
               label="Submit"
-              className="text-amber-600"
+              className="text-pf-attention-fg"
             />
           )}
 
@@ -156,16 +145,16 @@ export function ThemeCard({
               onClick={onDelete}
               icon={Trash2}
               label="Delete"
-              className="text-red-500"
+              className="text-pf-danger-fg"
             />
           )}
         </div>
       )}
 
-      {/* Rejection tooltip */}
+      {/* Rejection note */}
       {isRejected && theme.rejectionReason && (
-        <div className="border-pf-border-default border-t bg-red-50 px-3 py-2">
-          <p className="text-xs text-red-700">
+        <div className="border-pf-danger-muted bg-pf-danger-subtle border-t px-3 py-2">
+          <p className="text-pf-danger-fg text-xs">
             <span className="font-medium">Rejected:</span> {theme.rejectionReason}
           </p>
         </div>
@@ -177,38 +166,37 @@ export function ThemeCard({
 function StatusIcon({ theme }: { theme: Theme }) {
   if (theme.isSystemTheme) {
     return (
-      <span
-        className="bg-pf-accent-subtle text-pf-accent-fg rounded-full p-0.5"
-        title="System Theme"
-      >
-        <Sparkles className="h-3 w-3" />
+      <span className="bg-pf-canvas-subtle text-pf-fg-muted rounded-full p-0.5" title="System">
+        <Sparkles className="h-3 w-3" strokeWidth={1.5} />
       </span>
     );
   }
   switch (theme.status) {
     case "PUBLISHED":
       return (
-        <span className="rounded-full bg-green-100 p-0.5 text-green-600" title="Public">
-          <Globe className="h-3 w-3" />
+        <span className="bg-pf-success-subtle text-pf-success-fg rounded-full p-0.5" title="Public">
+          <Globe className="h-3 w-3" strokeWidth={1.5} />
         </span>
       );
     case "PENDING_APPROVAL":
       return (
-        <span className="rounded-full bg-amber-100 p-0.5 text-amber-600" title="Pending Review">
-          <Clock className="h-3 w-3" />
+        <span
+          className="bg-pf-attention-subtle text-pf-attention-fg rounded-full p-0.5"
+          title="Pending"
+        >
+          <Clock className="h-3 w-3" strokeWidth={1.5} />
         </span>
       );
     case "REJECTED":
       return (
-        <span className="rounded-full bg-red-100 p-0.5 text-red-600" title="Rejected">
-          <XCircle className="h-3 w-3" />
+        <span className="bg-pf-danger-subtle text-pf-danger-fg rounded-full p-0.5" title="Rejected">
+          <XCircle className="h-3 w-3" strokeWidth={1.5} />
         </span>
       );
-    case "PRIVATE":
     default:
       return (
         <span className="bg-pf-canvas-subtle text-pf-fg-muted rounded-full p-0.5" title="Private">
-          <Lock className="h-3 w-3" />
+          <Lock className="h-3 w-3" strokeWidth={1.5} />
         </span>
       );
   }
@@ -232,11 +220,11 @@ function ActionButton({
         onClick?.();
       }}
       className={cn(
-        "text-pf-fg-muted hover:bg-pf-canvas-subtle flex flex-1 items-center justify-center gap-1 py-2 text-xs transition-colors",
+        "text-pf-fg-muted hover:bg-pf-canvas-subtle hover:text-pf-fg-default flex flex-1 items-center justify-center gap-1.5 py-2 text-xs font-medium transition-colors",
         className
       )}
     >
-      <Icon className="h-3 w-3" />
+      <Icon className="h-3 w-3" strokeWidth={1.5} />
       {label}
     </button>
   );

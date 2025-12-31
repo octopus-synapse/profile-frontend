@@ -11,6 +11,7 @@ export { useNavigation, useMobileMenu } from "./hooks";
 
 // Config
 export {
+  LANDING_NAV_ITEMS,
   PUBLIC_NAV_ITEMS,
   PROTECTED_NAV_ITEMS,
   ADMIN_NAV_ITEMS,

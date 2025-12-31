@@ -58,36 +58,11 @@ export function SpokenLanguageAutocomplete({
   const labels = React.useMemo(
     () => ({
       placeholder:
-        placeholder ||
-        (locale === "pt-BR"
-          ? "Selecione um idioma..."
-          : locale === "es"
-            ? "Selecciona un idioma..."
-            : "Select a language..."),
-      searchPlaceholder:
-        locale === "pt-BR"
-          ? "Buscar idioma..."
-          : locale === "es"
-            ? "Buscar idioma..."
-            : "Search language...",
-      noResults:
-        locale === "pt-BR"
-          ? "Nenhum idioma encontrado"
-          : locale === "es"
-            ? "No se encontró ningún idioma"
-            : "No language found",
-      addCustom:
-        locale === "pt-BR"
-          ? "Adicionar"
-          : locale === "es"
-            ? "Agregar"
-            : "Add",
-      searching:
-        locale === "pt-BR"
-          ? "Buscando..."
-          : locale === "es"
-            ? "Buscando..."
-            : "Searching...",
+        placeholder || (locale === "pt-BR" ? "Selecione um idioma..." : "Select a language..."),
+      searchPlaceholder: locale === "pt-BR" ? "Buscar idioma..." : "Search language...",
+      noResults: locale === "pt-BR" ? "Nenhum idioma encontrado" : "No language found",
+      addCustom: locale === "pt-BR" ? "Adicionar" : "Add",
+      searching: locale === "pt-BR" ? "Buscando..." : "Searching...",
     }),
     [locale, placeholder]
   );

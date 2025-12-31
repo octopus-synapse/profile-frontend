@@ -1,0 +1,326 @@
+/**
+ * Username Field Component
+ * Edit username with 30-day restriction check
+ */
+
+"use client";
+
+import { useState, useEffect, useMemo } from "react";
+import {
+  AtSign,
+  Check,
+  X,
+  Loader2,
+  AlertCircle,
+  ExternalLink,
+  Lock,
+  Calendar,
+} from "lucide-react";
+import { useDebounce } from "@/shared/hooks/use-debounce";
+import { useProfile, useUpdateUsername } from "../hooks";
+import { profileRepository } from "../services/settings-repository";
+import { formatDistanceToNow, addDays, isAfter } from "date-fns";
+
+const USERNAME_REGEX = /^[a-zA-Z0-9_]+$/;
+const MIN_LENGTH = 3;
+const MAX_LENGTH = 30;
+const RESTRICTION_DAYS = 30;
+
+interface ValidationResult {
+  valid: boolean;
+  message: string;
+}
+
+function validateUsername(value: string): ValidationResult {
+  if (!value) {
+    return { valid: false, message: "Username is required" };
+  }
+  if (value.length < MIN_LENGTH) {
+    return { valid: false, message: `At least ${MIN_LENGTH} characters` };
+  }
+  if (value.length > MAX_LENGTH) {
+    return { valid: false, message: `Maximum ${MAX_LENGTH} characters` };
+  }
+  if (!USERNAME_REGEX.test(value)) {
+    return { valid: false, message: "Only letters, numbers, and underscores" };
+  }
+  return { valid: true, message: "" };
+}
+
+function getNextChangeDate(usernameUpdatedAt: string | null): Date | null {
+  if (!usernameUpdatedAt) return null;
+  return addDays(new Date(usernameUpdatedAt), RESTRICTION_DAYS);
+}
+
+function canChangeUsername(usernameUpdatedAt: string | null): boolean {
+  const nextDate = getNextChangeDate(usernameUpdatedAt);
+  if (!nextDate) return true;
+  return isAfter(new Date(), nextDate);
+}
+
+export function UsernameField() {
+  const { data: profile, isLoading: profileLoading } = useProfile();
+  const updateUsername = useUpdateUsername();
+
+  const [inputValue, setInputValue] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [isChecking, setIsChecking] = useState(false);
+  const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
+  const [touched, setTouched] = useState(false);
+
+  const debouncedUsername = useDebounce(inputValue, 500);
+
+  // Initialize input value from profile
+  useEffect(() => {
+    if (profile?.username) {
+      setInputValue(profile.username);
+    }
+  }, [profile?.username]);
+
+  // Check if user can change username (30-day restriction)
+  const isRestricted = !canChangeUsername(profile?.usernameUpdatedAt ?? null);
+  const nextChangeDate = getNextChangeDate(profile?.usernameUpdatedAt ?? null);
+
+  // Local validation
+  const validation = useMemo(() => validateUsername(inputValue), [inputValue]);
+
+  // Check if username changed from current
+  const hasChanged = inputValue !== profile?.username;
+
+  // Check availability when debounced value changes
+  useEffect(() => {
+    if (!isEditing || !hasChanged || !validation.valid) {
+      setIsAvailable(null);
+      return;
+    }
+
+    const checkAvailability = async () => {
+      setIsChecking(true);
+      try {
+        const result = await profileRepository.checkUsernameAvailability(debouncedUsername);
+        setIsAvailable(result.available);
+      } catch {
+        setIsAvailable(null);
+      } finally {
+        setIsChecking(false);
+      }
+    };
+
+    checkAvailability();
+  }, [debouncedUsername, validation.valid, isEditing, hasChanged]);
+
+  const handleChange = (value: string) => {
+    const normalized = value.toLowerCase().replace(/[^a-z0-9_]/g, "");
+    setInputValue(normalized);
+    setIsAvailable(null);
+  };
+
+  const handleEdit = () => {
+    if (!isRestricted) {
+      setIsEditing(true);
+      setTouched(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setInputValue(profile?.username || "");
+    setIsEditing(false);
+    setTouched(false);
+    setIsAvailable(null);
+  };
+
+  const handleSave = async () => {
+    setTouched(true);
+
+    if (!validation.valid || !isAvailable || !hasChanged) {
+      return;
+    }
+
+    try {
+      await updateUsername.mutateAsync(inputValue);
+      setIsEditing(false);
+      setTouched(false);
+    } catch (error) {
+      console.error("Failed to update username:", error);
+    }
+  };
+
+  const canSave = validation.valid && isAvailable === true && hasChanged && !updateUsername.isPending;
+
+  const getStatusIcon = () => {
+    if (!isEditing || !hasChanged) return null;
+
+    if (isChecking) {
+      return <Loader2 className="h-4 w-4 animate-spin text-pf-fg-muted" />;
+    }
+    if (!validation.valid && touched) {
+      return <X className="h-4 w-4 text-pf-danger-fg" />;
+    }
+    if (isAvailable === true) {
+      return <Check className="h-4 w-4 text-pf-success-fg" />;
+    }
+    if (isAvailable === false) {
+      return <X className="h-4 w-4 text-pf-danger-fg" />;
+    }
+    return null;
+  };
+
+  const getStatusMessage = () => {
+    if (!isEditing || !hasChanged) return null;
+
+    if (isChecking) {
+      return { text: "Checking availability...", type: "muted" };
+    }
+    if (!validation.valid && touched) {
+      return { text: validation.message, type: "error" };
+    }
+    if (isAvailable === true) {
+      return { text: "Username is available!", type: "success" };
+    }
+    if (isAvailable === false) {
+      return { text: "This username is already taken", type: "error" };
+    }
+    return null;
+  };
+
+  if (profileLoading) {
+    return (
+      <div className="flex items-center gap-2 py-2">
+        <Loader2 className="h-4 w-4 animate-spin text-pf-fg-muted" />
+        <span className="text-sm text-pf-fg-muted">Loading...</span>
+      </div>
+    );
+  }
+
+  const statusMessage = getStatusMessage();
+
+  return (
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <label className="text-pf-fg-default flex items-center gap-2 text-sm font-medium">
+          <AtSign className="h-4 w-4 text-pf-fg-muted" strokeWidth={1.5} />
+          Username
+        </label>
+
+        {/* View Profile Link */}
+        {profile?.username && (
+          <a
+            href={`/${profile.username}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1 text-xs text-pf-accent-fg hover:underline"
+          >
+            <ExternalLink className="h-3 w-3" />
+            View public profile
+          </a>
+        )}
+      </div>
+
+      {/* Restriction Warning */}
+      {isRestricted && nextChangeDate && (
+        <div className="bg-pf-warning-subtle border-pf-warning-muted flex items-start gap-3 rounded-lg border p-3">
+          <Lock className="mt-0.5 h-4 w-4 flex-shrink-0 text-pf-warning-fg" />
+          <div className="space-y-1">
+            <p className="text-sm font-medium text-pf-warning-fg">
+              Username change restricted
+            </p>
+            <p className="text-xs text-pf-warning-fg/80">
+              You can change your username again{" "}
+              {formatDistanceToNow(nextChangeDate, { addSuffix: true })}
+            </p>
+            <p className="flex items-center gap-1.5 text-xs text-pf-warning-fg/60">
+              <Calendar className="h-3 w-3" />
+              {nextChangeDate.toLocaleDateString()}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Input Field */}
+      <div>
+        <div className="relative">
+          <input
+            type="text"
+            value={inputValue}
+            onChange={(e) => handleChange(e.target.value)}
+            onFocus={handleEdit}
+            disabled={isRestricted}
+            maxLength={MAX_LENGTH}
+            placeholder="username"
+            className={`border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-fg-muted w-full rounded-lg border px-4 py-2.5 pr-10 text-sm focus:outline-none disabled:cursor-not-allowed disabled:opacity-60 ${
+              touched && isEditing && (!validation.valid || isAvailable === false)
+                ? "border-pf-danger-fg"
+                : isAvailable === true && isEditing
+                  ? "border-pf-success-fg"
+                  : ""
+            }`}
+          />
+          <div className="absolute right-3 top-1/2 -translate-y-1/2">
+            {getStatusIcon()}
+          </div>
+        </div>
+
+        {/* Status Message */}
+        {statusMessage && (
+          <p
+            className={`mt-1.5 flex items-center gap-1 text-xs ${
+              statusMessage.type === "error"
+                ? "text-pf-danger-fg"
+                : statusMessage.type === "success"
+                  ? "text-pf-success-fg"
+                  : "text-pf-fg-muted"
+            }`}
+          >
+            {statusMessage.type === "error" && <AlertCircle className="h-3 w-3" />}
+            {statusMessage.type === "success" && <Check className="h-3 w-3" />}
+            {statusMessage.text}
+          </p>
+        )}
+
+        {/* URL Preview */}
+        {profile?.username && (
+          <p className="mt-2 text-xs text-pf-fg-muted">
+            Your profile URL:{" "}
+            <span className="text-pf-fg-default">
+              profile.app/{inputValue || profile.username}
+            </span>
+          </p>
+        )}
+      </div>
+
+      {/* Action Buttons */}
+      {isEditing && hasChanged && (
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleSave}
+            disabled={!canSave}
+            className="bg-pf-fg-default text-pf-canvas-default flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {updateUsername.isPending ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Check className="h-4 w-4" />
+            )}
+            Save
+          </button>
+          <button
+            onClick={handleCancel}
+            disabled={updateUsername.isPending}
+            className="text-pf-fg-muted hover:text-pf-fg-default rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+          >
+            Cancel
+          </button>
+        </div>
+      )}
+
+      {/* Update Error */}
+      {updateUsername.isError && (
+        <div className="flex items-center gap-2 text-sm text-pf-danger-fg">
+          <AlertCircle className="h-4 w-4" />
+          Failed to update username. Please try again.
+        </div>
+      )}
+    </div>
+  );
+}

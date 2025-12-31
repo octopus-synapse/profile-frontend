@@ -108,14 +108,14 @@ export function ThemeReviewModal({ theme, isOpen, onClose }: Props) {
 
             {/* Rejection form */}
             {showRejectForm && (
-              <div className="rounded border border-red-200 bg-red-50 p-4">
-                <label className="mb-2 block text-sm font-medium text-red-800">
+              <div className="border-pf-danger-muted bg-pf-danger-subtle rounded border p-4">
+                <label className="text-pf-danger-emphasis mb-2 block text-sm font-medium">
                   Rejection Reason
                 </label>
                 <textarea
                   value={rejectionReason}
                   onChange={(e) => setRejectionReason(e.target.value)}
-                  className="w-full rounded border p-2 text-sm"
+                  className="border-pf-border-default bg-pf-canvas-default w-full rounded border p-2 text-sm"
                   rows={3}
                   placeholder="Explain why this theme is being rejected..."
                 />
@@ -145,7 +145,7 @@ export function ThemeReviewModal({ theme, isOpen, onClose }: Props) {
               <button
                 onClick={handleReject}
                 disabled={!rejectionReason.trim() || isPending}
-                className="rounded bg-red-600 px-4 py-2 text-sm text-white hover:bg-red-700 disabled:opacity-50"
+                className="bg-pf-danger-emphasis text-pf-fg-on-emphasis rounded px-4 py-2 text-sm hover:opacity-90 disabled:opacity-50"
               >
                 {rejectTheme.isPending ? "Rejecting..." : "Confirm Rejection"}
               </button>
@@ -154,7 +154,7 @@ export function ThemeReviewModal({ theme, isOpen, onClose }: Props) {
             <>
               <button
                 onClick={() => setShowRejectForm(true)}
-                className="rounded border border-red-300 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                className="border-pf-danger-fg text-pf-danger-fg hover:bg-pf-danger-subtle rounded border px-4 py-2 text-sm"
                 disabled={isPending}
               >
                 Reject
@@ -162,7 +162,7 @@ export function ThemeReviewModal({ theme, isOpen, onClose }: Props) {
               <button
                 onClick={handleApprove}
                 disabled={isPending}
-                className="rounded bg-green-600 px-4 py-2 text-sm text-white hover:bg-green-700 disabled:opacity-50"
+                className="bg-pf-success-emphasis text-pf-fg-on-emphasis rounded px-4 py-2 text-sm hover:opacity-90 disabled:opacity-50"
               >
                 {approveTheme.isPending ? "Approving..." : "Approve & Publish"}
               </button>

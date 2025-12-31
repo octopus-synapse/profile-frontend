@@ -146,6 +146,52 @@
   /* Focus Ring */
   --ring-color: #1a1a1a;
   --ring-offset: #faf9f7;
+
+  /* ========================================
+   * profile-ui variable aliases
+   * Maps the app's --pf-* tokens to the CSS vars used by @octopus-synapse/profile-ui
+   * (so the whole project stays visually consistent).
+   * ======================================== */
+  --background: var(--pf-canvas-default);
+  --foreground: var(--pf-fg-default);
+
+  --surface-0: var(--pf-canvas-default);
+  --surface-1: var(--pf-canvas-subtle);
+  --surface-2: var(--pf-canvas-inset);
+  --surface-elevated: var(--pf-canvas-overlay);
+  --surface-inverse: var(--pf-canvas-emphasis);
+
+  --text-primary: var(--pf-fg-default);
+  --text-secondary: var(--pf-fg-muted);
+  --text-tertiary: var(--pf-fg-subtle);
+  --text-inverse: var(--pf-fg-on-emphasis);
+  --text-disabled: var(--input-placeholder);
+
+  --border: var(--pf-border-default);
+  --border-subtle: var(--pf-border-muted);
+  --border-emphasis: var(--pf-border-emphasis);
+  --border-focus: var(--pf-border-emphasis);
+
+  /* Legacy mappings used by various UI components */
+  --muted: var(--pf-canvas-subtle);
+  --muted-foreground: var(--pf-fg-muted);
+  --card: var(--pf-canvas-overlay);
+  --card-foreground: var(--pf-fg-default);
+  --popover: var(--pf-canvas-overlay);
+  --popover-foreground: var(--pf-fg-default);
+  --input: var(--input-bg);
+  --ring: var(--ring-color);
+
+  /* Primary action (B/W) */
+  --accent: var(--pf-canvas-emphasis);
+  --accent-foreground: var(--pf-fg-on-emphasis);
+  --accent-muted: var(--pf-neutral-subtle);
+
+  /* Semantic states */
+  --success: var(--pf-success-fg);
+  --warning: var(--pf-attention-fg);
+  --error: var(--pf-danger-fg);
+  --info: var(--pf-neutral-emphasis);
 }
 
 /* ========================================
@@ -260,6 +306,47 @@
   /* Focus Ring */
   --ring-color: #fafafa;
   --ring-offset: #0a0a0a;
+
+  /* ========================================
+   * profile-ui variable aliases (dark)
+   * ======================================== */
+  --background: var(--pf-canvas-default);
+  --foreground: var(--pf-fg-default);
+
+  --surface-0: var(--pf-canvas-default);
+  --surface-1: var(--pf-canvas-subtle);
+  --surface-2: var(--pf-canvas-inset);
+  --surface-elevated: var(--pf-canvas-overlay);
+  --surface-inverse: var(--pf-canvas-emphasis);
+
+  --text-primary: var(--pf-fg-default);
+  --text-secondary: var(--pf-fg-muted);
+  --text-tertiary: var(--pf-fg-subtle);
+  --text-inverse: var(--pf-fg-on-emphasis);
+  --text-disabled: var(--input-placeholder);
+
+  --border: var(--pf-border-default);
+  --border-subtle: var(--pf-border-muted);
+  --border-emphasis: var(--pf-border-emphasis);
+  --border-focus: var(--pf-border-emphasis);
+
+  --muted: var(--pf-canvas-subtle);
+  --muted-foreground: var(--pf-fg-muted);
+  --card: var(--pf-canvas-overlay);
+  --card-foreground: var(--pf-fg-default);
+  --popover: var(--pf-canvas-overlay);
+  --popover-foreground: var(--pf-fg-default);
+  --input: var(--input-bg);
+  --ring: var(--ring-color);
+
+  --accent: var(--pf-canvas-emphasis);
+  --accent-foreground: var(--pf-fg-on-emphasis);
+  --accent-muted: var(--pf-neutral-subtle);
+
+  --success: var(--pf-success-fg);
+  --warning: var(--pf-attention-fg);
+  --error: var(--pf-danger-fg);
+  --info: var(--pf-neutral-emphasis);
 }
 
 /* ========================================
@@ -378,7 +465,7 @@ body {
  * Selection
  * ======================================== */
 ::selection {
-  background: var(--pf-accent-muted);
+  background: var(--pf-neutral-subtle);
   color: var(--pf-fg-default);
 }
 
@@ -814,4 +901,473 @@ pre code {
  * ======================================== */
 .font-mono {
   font-family: var(--font-mono);
+}
+
+/* ========================================
+ * Landing Page Animations
+ * High-conversion visual effects
+ * ======================================== */
+
+/* Slide in from right - for notifications */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Float animation - for hero elements */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Bounce gentle */
+@keyframes bounceGentle {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-bounce-gentle {
+  animation: bounceGentle 2s ease-in-out infinite;
+}
+
+/* Shimmer effect for cards */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Pulse scale for CTA buttons */
+@keyframes pulseScale {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+.animate-pulse-scale {
+  animation: pulseScale 2s ease-in-out infinite;
+}
+
+/* Counter animation container */
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-count-up {
+  animation: countUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Progress fill animation */
+@keyframes progressFill {
+  from {
+    width: 0%;
+  }
+}
+
+.animate-progress-fill {
+  animation: progressFill 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Stagger fade in for list items */
+@keyframes staggerFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-stagger-1 {
+  animation: staggerFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+  opacity: 0;
+}
+.animate-stagger-2 {
+  animation: staggerFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+  opacity: 0;
+}
+.animate-stagger-3 {
+  animation: staggerFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+  opacity: 0;
+}
+.animate-stagger-4 {
+  animation: staggerFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+  opacity: 0;
+}
+.animate-stagger-5 {
+  animation: staggerFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+  opacity: 0;
+}
+.animate-stagger-6 {
+  animation: staggerFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
+  opacity: 0;
+}
+
+/* Glow pulse for highlight elements */
+@keyframes glowPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(37, 99, 235, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(37, 99, 235, 0.5);
+  }
+}
+
+.animate-glow-pulse {
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+/* Swipe card animations */
+@keyframes swipeLeft {
+  0% {
+    transform: translateX(0) rotate(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-150%) rotate(-15deg);
+    opacity: 0;
+  }
+}
+
+@keyframes swipeRight {
+  0% {
+    transform: translateX(0) rotate(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(150%) rotate(15deg);
+    opacity: 0;
+  }
+}
+
+.animate-swipe-left {
+  animation: swipeLeft 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-swipe-right {
+  animation: swipeRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Card enter from bottom */
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(100px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-card-enter {
+  animation: cardEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Success checkmark animation */
+@keyframes checkmark {
+  0% {
+    stroke-dashoffset: 50;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-checkmark {
+  stroke-dasharray: 50;
+  stroke-dashoffset: 50;
+  animation: checkmark 0.5s ease-out forwards;
+}
+
+/* Notification bell shake */
+@keyframes bellShake {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  15% {
+    transform: rotate(15deg);
+  }
+  30% {
+    transform: rotate(-10deg);
+  }
+  45% {
+    transform: rotate(5deg);
+  }
+  60% {
+    transform: rotate(-5deg);
+  }
+  75% {
+    transform: rotate(2deg);
+  }
+}
+
+.animate-bell-shake {
+  animation: bellShake 0.8s ease-in-out;
+}
+
+/* Gradient text animation */
+@keyframes gradientFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.text-gradient-animated {
+  background: linear-gradient(90deg, var(--pf-accent-fg), var(--pf-done-fg), var(--pf-accent-fg));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientFlow 3s ease infinite;
+}
+
+/* ATS Score circle animation */
+@keyframes scoreCircle {
+  from {
+    stroke-dashoffset: 283;
+  }
+}
+
+.animate-score-circle {
+  stroke-dasharray: 283;
+  animation: scoreCircle 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Typing cursor effect */
+@keyframes cursorBlink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.typing-cursor::after {
+  content: "|";
+  animation: cursorBlink 1s infinite;
+  color: var(--pf-accent-fg);
+}
+
+/* Auto-apply notification stack */
+@keyframes notificationSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(100%) scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes notificationSlideOut {
+  0% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%) scale(0.8);
+  }
+}
+
+.animate-notification-in {
+  animation: notificationSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-notification-out {
+  animation: notificationSlideOut 0.3s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+/* Hero feature cards hover effect */
+.hero-feature-card {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
+}
+
+/* Premium badge glow */
+.premium-badge {
+  position: relative;
+  overflow: hidden;
+}
+
+.premium-badge::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 70%
+  );
+  transform: rotate(45deg);
+  animation: shimmer 3s infinite;
+}
+
+/* Scroll indicator bounce */
+@keyframes scrollBounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(8px);
+  }
+}
+
+.animate-scroll-bounce {
+  animation: scrollBounce 1.5s ease-in-out infinite;
+}
+
+/* Match percentage circle fill */
+@keyframes circleFill {
+  from {
+    stroke-dashoffset: 100;
+  }
+}
+
+.animate-circle-fill {
+  stroke-dasharray: 100;
+  animation: circleFill 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Confetti explosion */
+@keyframes confettiDrop {
+  0% {
+    opacity: 1;
+    transform: translateY(-100%) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(100vh) rotate(720deg);
+  }
+}
+
+.confetti-piece {
+  animation: confettiDrop 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Urgency countdown pulse */
+@keyframes urgencyPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+.animate-urgency-pulse {
+  animation: urgencyPulse 1s ease-in-out infinite;
+}
+
+/* Stats counter reveal */
+@keyframes revealUp {
+  from {
+    clip-path: inset(100% 0 0 0);
+    transform: translateY(100%);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    transform: translateY(0);
+  }
+}
+
+.animate-reveal-up {
+  animation: revealUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Interactive card tilt on hover */
+.perspective-card {
+  perspective: 1000px;
+}
+
+.perspective-card-inner {
+  transition: transform 0.3s ease-out;
+  transform-style: preserve-3d;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

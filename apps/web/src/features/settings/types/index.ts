@@ -10,6 +10,7 @@ export interface UserProfile {
   name: string | null;
   displayName: string | null;
   username: string | null;
+  usernameUpdatedAt: string | null;
   photoURL: string | null;
   bio: string | null;
   location: string | null;

@@ -2,10 +2,10 @@
 
 /**
  * Admin Dashboard Page
- * Developer-inspired design with code aesthetic
+ * Clean, professional design
  */
 
-import { Users, FileText, UserCheck, Globe, Code2 } from "lucide-react";
+import { Users, FileText, UserCheck, Globe, CheckCircle2 } from "lucide-react";
 import {
   StatCard,
   SystemHealthWidget,
@@ -27,46 +27,29 @@ export default function AdminDashboardPage() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <div className="mb-4 inline-flex items-center gap-2">
-          <Code2 className="text-pf-fg-muted h-5 w-5" strokeWidth={1.5} />
-          <span className="text-pf-fg-muted font-mono text-xs">// Admin Dashboard</span>
-        </div>
-        <h1 className="text-pf-fg-default text-2xl font-bold">
-          admin<span className="text-pf-fg-muted font-normal">.dashboard()</span>
-        </h1>
-        <p className="text-pf-fg-muted mt-1 font-mono text-sm">
-          Overview of system statistics and recent activity
+        <h1 className="text-pf-fg-default text-2xl font-semibold tracking-tight">Dashboard</h1>
+        <p className="text-pf-fg-muted mt-1 text-sm">
+          Overview of your platform's key metrics and activity
         </p>
       </div>
 
-      {/* Quick Status Terminal */}
-      <div className="terminal">
-        <div className="terminal-header">
-          <div className="code-block-dots">
-            <span className="code-block-dot red" />
-            <span className="code-block-dot yellow" />
-            <span className="code-block-dot green" />
-          </div>
-          <span className="code-block-title">~/admin/status</span>
+      {/* Quick Status Banner */}
+      <div className="bg-pf-success-subtle/50 border-pf-success-muted flex items-center gap-3 rounded-xl border px-5 py-4">
+        <div className="bg-pf-success-subtle flex h-10 w-10 items-center justify-center rounded-full">
+          <CheckCircle2 className="text-pf-success-fg h-5 w-5" strokeWidth={2} />
         </div>
-        <div className="terminal-content">
-          <div>
-            <span className="terminal-prompt">➜</span>{" "}
-            <span className="terminal-command">admin status --all</span>
-          </div>
-          <div className="terminal-output mt-2">
-            <div className="text-pf-success-fg">✔ System operational</div>
-            <div className="text-pf-fg-muted mt-1">
-              All services running normally. Last check: just now
-            </div>
-          </div>
+        <div>
+          <p className="text-pf-fg-default text-sm font-medium">All systems operational</p>
+          <p className="text-pf-fg-muted text-xs">
+            Services are running smoothly. Last checked just now.
+          </p>
         </div>
       </div>
 
       {/* Stats Grid */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          label="total_users"
+          label="Total Users"
           value={stats?.totalUsers ?? 0}
           icon={Users}
           trend={`+${stats?.newUsersThisWeek ?? 0} this week`}
@@ -74,19 +57,19 @@ export default function AdminDashboardPage() {
           loading={statsLoading}
         />
         <StatCard
-          label="active_users"
+          label="Active Users"
           value={stats?.activeUsers ?? 0}
           icon={UserCheck}
           loading={statsLoading}
         />
         <StatCard
-          label="total_resumes"
+          label="Resumes Created"
           value={stats?.totalResumes ?? 0}
           icon={FileText}
           loading={statsLoading}
         />
         <StatCard
-          label="public_profiles"
+          label="Public Profiles"
           value={stats?.publicProfiles ?? 0}
           icon={Globe}
           loading={statsLoading}

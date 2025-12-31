@@ -25,7 +25,6 @@ import { i18nConfig, type Locale } from "@/config/i18n.config";
 const dictionaryLoaders: Record<Locale, () => Promise<Dictionary>> = {
   en: () => import("./dictionaries/en").then((mod) => mod.en),
   "pt-BR": () => import("./dictionaries/pt-BR").then((mod) => mod.ptBR as unknown as Dictionary),
-  es: () => import("./dictionaries/es").then((mod) => mod.es as unknown as Dictionary),
 };
 
 // Cache for loaded dictionaries

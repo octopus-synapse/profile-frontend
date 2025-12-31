@@ -26,6 +26,13 @@ function isExternalUrl(url: string): boolean {
 }
 
 /**
+ * Check if URL is a hash-only link (anchor)
+ */
+function isHashLink(url: string): boolean {
+  return url.startsWith("#");
+}
+
+/**
  * Check if URL already has a locale prefix
  */
 function hasLocalePrefix(pathname: string): boolean {
@@ -44,8 +51,8 @@ export function LocalizedLink({
   const currentLocale = (params?.locale as Locale) || i18nConfig.defaultLocale;
   const targetLocale = forceLocale || currentLocale;
 
-  // Don't modify external URLs or URLs that already have locale prefix
-  if (isExternalUrl(href) || hasLocalePrefix(href)) {
+  // Don't modify external URLs, hash links, or URLs that already have locale prefix
+  if (isExternalUrl(href) || isHashLink(href) || hasLocalePrefix(href)) {
     return (
       <Link href={href} {...props}>
         {children}
@@ -73,7 +80,7 @@ export function useLocalizedPath() {
   return (path: string, locale?: Locale): string => {
     const targetLocale = locale || currentLocale;
 
-    if (isExternalUrl(path) || hasLocalePrefix(path)) {
+    if (isExternalUrl(path) || isHashLink(path) || hasLocalePrefix(path)) {
       return path;
     }
 

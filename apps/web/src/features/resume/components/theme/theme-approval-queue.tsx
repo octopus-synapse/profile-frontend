@@ -87,7 +87,7 @@ function ErrorState({ error }: { error: Error }) {
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center">
       <div className="mb-4 text-4xl">⚠️</div>
-      <h3 className="mb-2 text-lg font-medium text-red-600">Failed to Load</h3>
+      <h3 className="text-pf-danger-fg mb-2 text-lg font-medium">Failed to Load</h3>
       <p className="text-muted-foreground max-w-sm">
         {error.message || "Could not load pending themes. Please try again."}
       </p>

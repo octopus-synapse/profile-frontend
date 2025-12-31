@@ -10,11 +10,17 @@ export interface User {
   email: string;
   name: string | null;
   username: string | null;
+  usernameUpdatedAt: string | null;
   role: UserRole;
   image: string | null;
   hasCompletedOnboarding: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface CheckUsernameResponse {
+  available: boolean;
+  nextChangeDate: string | null;
 }
 
 export interface UserProfile extends User {

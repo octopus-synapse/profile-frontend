@@ -1,0 +1,143 @@
+{
+  "feature": "Public Profile - Username Management",
+  "status": "implemented",
+  "createdAt": "2025-12-28",
+  "description": "Sistema de username para perfis públicos com restrição de 30 dias para alteração",
+
+  "publicProfileRoute": "/{username} (já existe em /app/[locale]/[username]/page.tsx)",
+
+  "backendChanges": {
+    "database": {
+      "model": "User",
+      "newField": "usernameUpdatedAt DateTime?"
+    },
+    "endpoints": {
+      "patchUsersMe": {
+        "validation": "alphanumeric + underscores, 3-30 chars",
+        "checkUniqueness": true,
+        "30DayRestriction": true,
+        "errorResponse": {
+          "error": "USERNAME_CHANGE_TOO_SOON",
+          "message": "You can only change your username once every 30 days",
+          "nextUsernameChangeDate": "ISO date string"
+        }
+      },
+      "checkUsername": {
+        "response": {
+          "available": "boolean",
+          "nextChangeDate": "ISO date string | null"
+        }
+      }
+    }
+  },
+
+  "frontendImplementation": {
+    "order": [
+      "1. Types - Add usernameUpdatedAt to User type",
+      "2. Shared - Create useDebounce hook",
+      "3. Onboarding - Add username step (store → component → wizard)",
+      "4. Settings - Create UsernameField + integrate in ProfileSection",
+      "5. Localization - Add translations"
+    ],
+
+    "files": {
+      "types": {
+        "path": "/packages/api-client/src/types/user.types.ts",
+        "changes": [
+          "Add usernameUpdatedAt: string | null to User interface",
+          "Add CheckUsernameResponse interface"
+        ]
+      },
+
+      "sharedHooks": {
+        "path": "/apps/web/src/shared/hooks/use-debounce.ts",
+        "status": "NEW",
+        "description": "Debounce hook for username availability check"
+      },
+
+      "onboarding": {
+        "store": {
+          "path": "/apps/web/src/features/onboarding/stores/onboarding-store.ts",
+          "changes": [
+            "Add 'username' to OnboardingStep type",
+            "Add username step to ONBOARDING_STEPS after 'personal-info'",
+            "Add username: string | null to state",
+            "Add setUsername action"
+          ]
+        },
+        "usernameStep": {
+          "path": "/apps/web/src/features/onboarding/components/steps/username-step.tsx",
+          "status": "NEW",
+          "features": [
+            "URL preview: profile.app/{username}",
+            "Real-time availability check (debounced 500ms)",
+            "Validation: 3-30 chars, alphanumeric + underscores",
+            "Success/error indicators",
+            "Rules display"
+          ]
+        },
+        "wizard": {
+          "path": "/apps/web/src/features/onboarding/components/onboarding-wizard.tsx",
+          "changes": ["Add case for username step"]
+        },
+        "stepsIndex": {
+          "path": "/apps/web/src/features/onboarding/components/steps/index.ts",
+          "changes": ["Export UsernameStep"]
+        }
+      },
+
+      "settings": {
+        "usernameField": {
+          "path": "/apps/web/src/features/settings/components/username-field.tsx",
+          "status": "NEW",
+          "features": [
+            "30-day restriction check with countdown",
+            "Disabled state when restricted",
+            "Warning banner showing when can change again",
+            "Real-time availability check",
+            "Link to view public profile"
+          ]
+        },
+        "profileSection": {
+          "path": "/apps/web/src/features/settings/components/profile-section.tsx",
+          "changes": ["Integrate UsernameField component"]
+        }
+      },
+
+      "localization": {
+        "files": [
+          "/apps/web/src/locales/en.json",
+          "/apps/web/src/locales/pt-BR.json",
+          "/apps/web/src/locales/es.json"
+        ],
+        "newKeys": {
+          "username.title": "Choose Your Username",
+          "username.subtitle": "This will be your public profile URL",
+          "username.available": "Username is available!",
+          "username.taken": "This username is already taken",
+          "username.restrictionTitle": "Username change restricted",
+          "username.restrictionMessage": "You can change your username again {timeUntil}.",
+          "username.viewProfile": "View your public profile"
+        }
+      }
+    }
+  },
+
+  "validationRules": {
+    "length": "3-30 characters",
+    "characters": "[a-zA-Z0-9_] only",
+    "uniqueness": "Real-time check via API",
+    "restriction": "30 days between changes"
+  },
+
+  "todoOnResume": [
+    "Add usernameUpdatedAt to User type",
+    "Create useDebounce hook",
+    "Add username step to onboarding store",
+    "Create UsernameStep component for onboarding",
+    "Update OnboardingWizard to include username step",
+    "Create UsernameField component for settings",
+    "Integrate UsernameField in ProfileSection",
+    "Add translations for username feature"
+  ]
+}

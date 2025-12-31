@@ -3,9 +3,37 @@
  * Single source of truth for navigation structure
  */
 
-import { Home, User, FileText, Settings, Shield, Users, LayoutDashboard } from "lucide-react";
+import { Home, User, FileText, Settings, Shield, Users, LayoutDashboard, Sparkles, Target, CreditCard } from "lucide-react";
 import type { NavItem, NavGroup } from "../types";
 import { ROUTES } from "@/config/routes";
+
+// ============================================================================
+// Landing Page Navigation Items (hash links)
+// ============================================================================
+
+export const LANDING_NAV_ITEMS: NavItem[] = [
+  {
+    key: "features",
+    href: "#features",
+    labelKey: "nav.features",
+    icon: Sparkles,
+    requiresAuth: false,
+  },
+  {
+    key: "how-it-works",
+    href: "#how-it-works",
+    labelKey: "nav.howItWorks",
+    icon: Target,
+    requiresAuth: false,
+  },
+  {
+    key: "pricing",
+    href: "#pricing",
+    labelKey: "nav.pricing",
+    icon: CreditCard,
+    requiresAuth: false,
+  },
+];
 
 // ============================================================================
 // Public Navigation Items

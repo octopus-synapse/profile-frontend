@@ -1,6 +1,6 @@
 /**
- * Theme Picker Component
- * Beautiful grid of themes with import functionality
+ * Theme Picker
+ * Elegant theme selection with tabs
  */
 
 "use client";
@@ -80,47 +80,46 @@ export function ThemePicker({ resumeId, activeThemeId, onThemeApplied, onEditThe
 
   return (
     <div className="space-y-4">
-      {/* Header with Tabs and Import Button */}
-      <div className="flex flex-col gap-3">
-        <div className="bg-pf-canvas-subtle inline-flex rounded-lg p-1">
-          {tabs.map(({ id, label, icon: Icon }) => (
-            <button
-              key={id}
-              onClick={() => setTab(id)}
-              className={cn(
-                "flex flex-1 items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-all",
-                tab === id
-                  ? "bg-pf-canvas-default text-pf-fg-default shadow-sm"
-                  : "text-pf-fg-muted hover:text-pf-fg-default"
-              )}
-            >
-              <Icon className="h-3 w-3" />
-              {label}
-            </button>
-          ))}
-        </div>
-
-        <button
-          onClick={() => setShowImport(true)}
-          className="bg-pf-accent-emphasis text-pf-fg-on-emphasis flex w-full items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors hover:opacity-90"
-        >
-          <Upload className="h-3.5 w-3.5" />
-          Import JSON Theme
-        </button>
+      {/* Tabs */}
+      <div className="bg-pf-canvas-subtle flex gap-1 rounded-lg p-1">
+        {tabs.map(({ id, label, icon: Icon }) => (
+          <button
+            key={id}
+            onClick={() => setTab(id)}
+            className={cn(
+              "flex flex-1 items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-all",
+              tab === id
+                ? "bg-pf-canvas-overlay text-pf-fg-default shadow-sm"
+                : "text-pf-fg-muted hover:text-pf-fg-default"
+            )}
+          >
+            <Icon className="h-3 w-3" strokeWidth={1.5} />
+            {label}
+          </button>
+        ))}
       </div>
 
-      {/* Loading State */}
+      {/* Import Button */}
+      <button
+        onClick={() => setShowImport(true)}
+        className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors hover:opacity-90"
+      >
+        <Upload className="h-4 w-4" strokeWidth={1.5} />
+        Import JSON Theme
+      </button>
+
+      {/* Loading */}
       {isLoading && (
-        <div className="grid grid-cols-1 gap-3">
+        <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-pf-canvas-subtle h-24 animate-pulse rounded-xl" />
+            <div key={i} className="bg-pf-canvas-subtle h-20 animate-pulse rounded-lg" />
           ))}
         </div>
       )}
 
-      {/* Themes Grid */}
+      {/* Themes */}
       {!isLoading && (
-        <div className="grid grid-cols-1 gap-3">
+        <div className="space-y-2">
           {themes.map((theme) => (
             <ThemeCard
               key={theme.id}
@@ -134,18 +133,19 @@ export function ThemePicker({ resumeId, activeThemeId, onThemeApplied, onEditThe
             />
           ))}
 
-          {/* Create New Theme Card (only in My Themes tab) */}
+          {/* Create New (My Themes only) */}
           {tab === "mine" && (
             <button
               onClick={() => setShowImport(true)}
-              className="border-pf-border-default hover:border-pf-accent-emphasis hover:bg-pf-canvas-subtle group flex h-20 flex-col items-center justify-center rounded-xl border-2 border-dashed transition-all"
+              className="group border-pf-border-default hover:border-pf-border-emphasis hover:bg-pf-canvas-subtle flex h-16 w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed transition-colors"
             >
-              <div className="flex items-center gap-2">
-                <Plus className="text-pf-fg-muted group-hover:text-pf-accent-fg h-4 w-4 transition-colors" />
-                <span className="text-pf-fg-muted group-hover:text-pf-fg-default text-xs font-medium transition-colors">
-                  Create New Theme
-                </span>
-              </div>
+              <Plus
+                className="text-pf-fg-subtle group-hover:text-pf-fg-default h-4 w-4"
+                strokeWidth={1.5}
+              />
+              <span className="text-pf-fg-muted group-hover:text-pf-fg-default text-sm font-medium">
+                Create New Theme
+              </span>
             </button>
           )}
         </div>
@@ -153,17 +153,17 @@ export function ThemePicker({ resumeId, activeThemeId, onThemeApplied, onEditThe
 
       {/* Empty State */}
       {!isLoading && themes.length === 0 && tab !== "mine" && (
-        <div className="flex flex-col items-center justify-center py-8 text-center">
-          <div className="bg-pf-canvas-subtle mb-3 rounded-full p-3">
-            <Palette className="text-pf-fg-muted h-6 w-6" />
+        <div className="flex flex-col items-center justify-center py-10 text-center">
+          <div className="bg-pf-canvas-subtle flex h-12 w-12 items-center justify-center rounded-xl">
+            <Palette className="text-pf-fg-subtle h-5 w-5" strokeWidth={1.5} />
           </div>
-          <p className="text-pf-fg-muted text-xs">
+          <p className="text-pf-fg-muted mt-3 text-sm">
             {tab === "popular" ? "No popular themes yet" : "No themes available"}
           </p>
         </div>
       )}
 
-      {/* JSON Import Modal */}
+      {/* Import Modal */}
       <JsonImportModal
         isOpen={showImport}
         onClose={() => setShowImport(false)}

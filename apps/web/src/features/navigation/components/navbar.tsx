@@ -2,10 +2,20 @@
 
 /**
  * Navbar Component
- * Developer-inspired navigation bar with terminal aesthetic
+ *
+ * Nielsen Heuristics Applied:
+ * 1. Visibility of system status - scroll indicator, loading states
+ * 2. Match between system and real world - familiar navigation patterns
+ * 3. User control and freedom - clear navigation, easy access
+ * 4. Consistency and standards - predictable placement and behavior
+ * 5. Error prevention - clear clickable areas
+ * 6. Recognition rather than recall - visible navigation items
+ * 7. Flexibility and efficiency - keyboard accessible
+ * 8. Aesthetic and minimalist design - clean, focused interface
  */
 
-import { Menu, Terminal } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useAuth } from "@/features/auth";
 import { ROUTES } from "@/config/routes";
 import { LocalizedLink } from "@/shared/components/localized-link";
@@ -16,77 +26,111 @@ import { UserMenu } from "./user-menu";
 import { MobileMenu } from "./mobile-menu";
 import { useNavigation } from "../hooks/use-navigation";
 import { useMobileMenu } from "../hooks/use-mobile-menu";
+import type { NavItem } from "../types";
 
 interface NavbarProps {
   className?: string;
+  /** Custom navigation items - overrides default items from useNavigation */
+  navItems?: NavItem[];
+  /** Custom right section content - overrides default auth buttons */
+  rightSection?: ReactNode;
+  /** Navbar variant for different styling */
+  variant?: "default" | "landing";
 }
 
-export function Navbar({ className }: NavbarProps) {
+export function Navbar({ className, navItems, rightSection, variant = "default" }: NavbarProps) {
   const { isAuthenticated, isLoading } = useAuth();
   const { mainNavItems } = useNavigation();
   const mobileMenu = useMobileMenu();
+  const [scrolled, setScrolled] = useState(false);
+
+  // Use custom nav items if provided, otherwise use default from hook
+  const displayNavItems = navItems ?? mainNavItems;
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 0);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const isLanding = variant === "landing";
 
   return (
     <>
       <header
         className={cn(
-          "border-pf-border-muted bg-pf-canvas-default/80 sticky top-0 z-40 w-full border-b backdrop-blur-sm",
+          "bg-pf-canvas-default/80 border-pf-border-muted/70 z-50 w-full border-b backdrop-blur-xl transition-shadow duration-300",
+          isLanding ? "fixed top-0 right-0 left-0" : "sticky top-0",
+          scrolled ? "shadow-[var(--shadow-md)]" : "shadow-[var(--shadow-sm)]",
           className
         )}
       >
-        <div className="mx-auto flex h-14 items-center justify-between px-6 lg:px-10">
-          {/* Left Section: Logo */}
+        <nav
+          className={cn(
+            "mx-auto flex items-center justify-between px-4 sm:px-6",
+            isLanding ? "h-16 max-w-7xl" : "h-14 max-w-screen-xl"
+          )}
+          role="navigation"
+          aria-label="Main navigation"
+        >
+          {/* Logo */}
           <Logo />
 
-          {/* Center Section: Desktop Navigation */}
-          <nav className="hidden lg:flex lg:items-center lg:gap-8">
-            {mainNavItems.map((item) => (
+          {/* Desktop Navigation - Center */}
+          <div className={cn("hidden items-center md:flex", isLanding ? "gap-8" : "gap-1")}>
+            {displayNavItems.map((item) => (
               <NavLink key={item.key} item={item} />
             ))}
-          </nav>
+          </div>
 
-          {/* Right Section: Actions */}
+          {/* Right Section */}
           <div className="flex items-center gap-2">
-            {/* Auth Actions */}
-            {!isLoading && (
-              <>
-                {isAuthenticated ? (
-                  <UserMenu />
-                ) : (
+            {rightSection
+              ? rightSection
+              : !isLoading && (
                   <>
-                    <LocalizedLink
-                      href={ROUTES.AUTH.SIGN_IN}
-                      className="text-pf-fg-muted hover:text-pf-fg-default hidden font-mono text-xs transition-colors sm:block"
-                    >
-                      sign_in
-                    </LocalizedLink>
-                    <LocalizedLink
-                      href={ROUTES.AUTH.SIGN_UP}
-                      className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis hidden items-center gap-2 px-4 py-2 font-mono text-xs transition-opacity hover:opacity-90 sm:flex"
-                    >
-                      <Terminal className="h-3.5 w-3.5" strokeWidth={1.5} />
-                      get_started
-                    </LocalizedLink>
+                    {isAuthenticated ? (
+                      <UserMenu />
+                    ) : (
+                      <div className="flex items-center gap-1">
+                        <LocalizedLink
+                          href={ROUTES.AUTH.SIGN_IN}
+                          className="text-pf-fg-muted hover:text-pf-fg-default hidden rounded-md px-3 py-2 text-sm font-medium transition-colors duration-150 sm:inline-flex"
+                        >
+                          Sign in
+                        </LocalizedLink>
+                        <LocalizedLink
+                          href={ROUTES.AUTH.SIGN_UP}
+                          className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis hidden rounded-xl px-5 py-2.5 text-sm font-semibold transition-opacity duration-150 hover:opacity-90 sm:inline-flex"
+                        >
+                          Get started
+                        </LocalizedLink>
+                      </div>
+                    )}
                   </>
                 )}
-              </>
-            )}
 
-            {/* Mobile Menu Button */}
+            {/* Mobile Menu Toggle */}
             <button
               onClick={mobileMenu.toggle}
-              className="text-pf-fg-default hover:text-pf-fg-muted flex h-9 w-9 items-center justify-center transition-colors lg:hidden"
-              aria-label="Toggle menu"
+              className="text-pf-fg-muted hover:text-pf-fg-default -mr-2 flex h-10 w-10 items-center justify-center rounded-md transition-colors duration-150 md:hidden"
+              aria-label={mobileMenu.isOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileMenu.isOpen}
+              aria-controls="mobile-menu"
             >
-              <Menu className="h-5 w-5" strokeWidth={1.5} />
+              {mobileMenu.isOpen ? (
+                <X className="h-5 w-5" strokeWidth={1.5} />
+              ) : (
+                <Menu className="h-5 w-5" strokeWidth={1.5} />
+              )}
             </button>
           </div>
-        </div>
+        </nav>
       </header>
 
-      {/* Mobile Menu */}
-      <MobileMenu menu={mobileMenu} />
+      <MobileMenu menu={mobileMenu} navItems={navItems} />
     </>
   );
 }

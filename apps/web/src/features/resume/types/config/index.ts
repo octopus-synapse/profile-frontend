@@ -16,6 +16,9 @@ export * from "./section-ids.types";
 export * from "./section-styles.types";
 export * from "./section-config.types";
 
+// Persona-based Sections
+export * from "./persona-sections.types";
+
 // Complete Config
 export * from "./style-config.types";
 
