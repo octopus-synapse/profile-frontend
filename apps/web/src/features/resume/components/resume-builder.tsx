@@ -89,7 +89,7 @@ export function ResumeBuilder() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="bg-pf-canvas-subtle min-h-[80vh]">
+      <div className="min-h-[80vh] bg-white/5">
         <LoadingState message="Loading resume..." minHeight="80vh" />
       </div>
     );
@@ -98,24 +98,24 @@ export function ResumeBuilder() {
   // No resume found
   if (!resume) {
     return (
-      <div className="bg-pf-canvas-subtle flex min-h-[80vh] flex-col items-center justify-center px-4">
-        <div className="bg-pf-canvas-inset flex h-16 w-16 items-center justify-center rounded-2xl">
-          <FileText className="text-pf-fg-subtle h-8 w-8" strokeWidth={1.5} />
+      <div className="flex min-h-[80vh] flex-col items-center justify-center bg-white/5 px-4">
+        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/5">
+          <FileText className="h-8 w-8 text-zinc-500" strokeWidth={1.5} />
         </div>
-        <h2 className="text-pf-fg-default mt-6 text-lg font-semibold">No Resume Yet</h2>
-        <p className="text-pf-fg-muted mt-2 max-w-sm text-center text-sm">
+        <h2 className="mt-6 text-lg font-semibold text-white">No Resume Yet</h2>
+        <p className="mt-2 max-w-sm text-center text-sm text-zinc-400">
           Complete the onboarding to create your resume, or add information manually.
         </p>
         <div className="mt-8 flex items-center gap-3">
           <Link
             href="/onboarding"
-            className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis inline-flex h-10 items-center rounded-lg px-5 text-sm font-medium transition-opacity hover:opacity-90"
+            className="inline-flex h-10 items-center rounded-lg bg-white px-5 text-sm font-medium text-black transition-opacity hover:opacity-90"
           >
             Get Started
           </Link>
           <Link
             href="/protected/settings"
-            className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-muted hover:bg-pf-canvas-subtle hover:text-pf-fg-default inline-flex h-10 items-center gap-2 rounded-lg border px-4 text-sm font-medium transition-colors"
+            className="inline-flex h-10 items-center gap-2 rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/5 hover:text-white"
           >
             <Settings className="h-4 w-4" strokeWidth={1.5} />
             Settings
@@ -126,7 +126,7 @@ export function ResumeBuilder() {
   }
 
   return (
-    <div className="bg-pf-canvas-subtle flex h-[calc(100vh-4rem)]">
+    <div className="flex h-[calc(100vh-4rem)] bg-white/5">
       {/* Sidebar */}
       <BuilderSidebar
         resume={resume}
@@ -138,16 +138,16 @@ export function ResumeBuilder() {
       {/* Main Content */}
       <main className="flex flex-1 flex-col">
         {/* Toolbar */}
-        <header className="border-pf-border-muted bg-pf-canvas-overlay flex h-14 shrink-0 items-center justify-between border-b px-6">
+        <header className="flex h-14 shrink-0 items-center justify-between border-b border-white/10 bg-[#0A0A0A]/80 px-6">
           <div className="flex items-center gap-3">
-            <div className="bg-pf-canvas-subtle flex h-8 w-8 items-center justify-center rounded-lg">
-              <FileText className="text-pf-fg-muted h-4 w-4" strokeWidth={1.5} />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5">
+              <FileText className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
             </div>
             <div>
-              <h1 className="text-pf-fg-default text-sm font-semibold">
+              <h1 className="text-sm font-semibold text-white">
                 {resume.fullName ?? "Untitled Resume"}
               </h1>
-              <p className="text-pf-fg-subtle text-xs">Preview</p>
+              <p className="text-xs text-zinc-500">Preview</p>
             </div>
           </div>
 
@@ -156,7 +156,7 @@ export function ResumeBuilder() {
             <button
               onClick={handleExportPDF}
               disabled={exportPDF.isPending}
-              className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-muted hover:bg-pf-canvas-subtle hover:text-pf-fg-default inline-flex h-9 items-center gap-2 rounded-lg border px-3.5 text-sm font-medium transition-colors disabled:opacity-50"
+              className="inline-flex h-9 items-center gap-2 rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-3.5 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50"
             >
               {exportPDF.isPending ? (
                 <Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.5} />
@@ -170,7 +170,7 @@ export function ResumeBuilder() {
             <button
               onClick={handleExportDOCX}
               disabled={exportDOCX.isPending}
-              className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-muted hover:bg-pf-canvas-subtle hover:text-pf-fg-default inline-flex h-9 items-center gap-2 rounded-lg border px-3.5 text-sm font-medium transition-colors disabled:opacity-50"
+              className="inline-flex h-9 items-center gap-2 rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-3.5 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50"
             >
               {exportDOCX.isPending ? (
                 <Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.5} />
@@ -181,13 +181,13 @@ export function ResumeBuilder() {
             </button>
 
             {/* Divider */}
-            <div className="bg-pf-border-muted mx-1 h-5 w-px" />
+            <div className="mx-1 h-5 w-px bg-white/10" />
 
             {/* Share */}
             {resume.isPublic && resume.slug ? (
               <button
                 onClick={handleCopyLink}
-                className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis inline-flex h-9 items-center gap-2 rounded-lg px-4 text-sm font-medium transition-opacity hover:opacity-90"
+                className="inline-flex h-9 items-center gap-2 rounded-lg bg-white px-4 text-sm font-medium text-black transition-opacity hover:opacity-90"
               >
                 {copied ? (
                   <>
@@ -202,7 +202,7 @@ export function ResumeBuilder() {
                 )}
               </button>
             ) : (
-              <span className="bg-pf-attention-subtle text-pf-attention-fg inline-flex h-9 items-center gap-2 rounded-lg px-3 text-sm font-medium">
+              <span className="inline-flex h-9 items-center gap-2 rounded-lg bg-amber-500/10 px-3 text-sm font-medium text-amber-500">
                 <Share2 className="h-4 w-4" strokeWidth={1.5} />
                 Private
               </span>
@@ -213,7 +213,7 @@ export function ResumeBuilder() {
         {/* Preview Area */}
         <div className="flex-1 overflow-auto p-8">
           <div className="mx-auto max-w-4xl">
-            <div className="bg-pf-canvas-overlay ring-pf-border-muted overflow-hidden rounded-lg shadow-xl ring-1">
+            <div className="overflow-hidden rounded-lg bg-[#0A0A0A]/80 shadow-xl ring-1 ring-white/10">
               <ResumeRenderer resume={resume} styleConfig={styleConfig} />
             </div>
           </div>

@@ -20,11 +20,11 @@ const jetbrains = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "ProFile - Professional Developer Profiles",
-    template: "%s | ProFile",
+    default: "PATCH - Professional Developer Profiles",
+    template: "%s | PATCH",
   },
-  description: "Create and share your professional developer profile and resume.",
-  keywords: ["developer", "profile", "resume", "portfolio", "career"],
+  description: "Create and share your professional developer profile and resume with PATCH.",
+  keywords: ["developer", "profile", "resume", "portfolio", "career", "PATCH"],
 };
 
 export const viewport: Viewport = {
@@ -64,7 +64,7 @@ export default async function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body
-        className={`${inter.variable} ${jetbrains.variable} bg-pf-canvas-default text-pf-fg-default min-h-screen font-sans antialiased`}
+        className={`${inter.variable} ${jetbrains.variable} min-h-screen bg-[#030303] font-sans text-white antialiased`}
       >
         <RootProvider>{children}</RootProvider>
       </body>

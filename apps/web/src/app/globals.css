@@ -1,25 +1,202 @@
 @import "tailwindcss";
 
 /**
- * ProFile Design System v3.0
- * Light theme (sandy white + black) as default with dark mode
- * Developer-inspired aesthetic
+ * ProFile Design System v4.0
+ * Dark theme as default - Ultra Premium aesthetic
+ * Inspired by Linear, Vercel, Cursor
  * 
  * Color naming convention:
  * - canvas: backgrounds
  * - fg: foreground/text
  * - border: borders
- * - accent: interactive elements (blue)
- * - success: positive states (green)
- * - attention: warning states (yellow)
+ * - accent: interactive elements (cyan)
+ * - success: positive states (emerald)
+ * - attention: warning states (amber)
  * - danger: error states (red)
  * - done: completed states (purple)
  */
 
 /* ========================================
- * LIGHT THEME (Default) - Sandy White
+ * DARK THEME (Default) - Ultra Premium
  * ======================================== */
 :root {
+  color-scheme: dark;
+
+  /* Canvas (Background) Colors - Deep Black */
+  --pf-canvas-default: #020202;
+  --pf-canvas-subtle: #0a0a0a;
+  --pf-canvas-inset: #000000;
+  --pf-canvas-overlay: #0a0a0a;
+  --pf-canvas-emphasis: #ffffff;
+
+  /* Foreground (Text) Colors */
+  --pf-fg-default: #fafafa;
+  --pf-fg-muted: #a1a1aa;
+  --pf-fg-subtle: #71717a;
+  --pf-fg-on-emphasis: #020202;
+
+  /* Border Colors */
+  --pf-border-default: rgba(255, 255, 255, 0.1);
+  --pf-border-muted: rgba(255, 255, 255, 0.05);
+  --pf-border-subtle: rgba(255, 255, 255, 0.03);
+  --pf-border-emphasis: #fafafa;
+
+  /* Accent (Cyan) - Primary Interactive */
+  --pf-accent-fg: #22d3ee;
+  --pf-accent-emphasis: #06b6d4;
+  --pf-accent-muted: rgba(34, 211, 238, 0.3);
+  --pf-accent-subtle: rgba(34, 211, 238, 0.1);
+
+  /* Success (Emerald) */
+  --pf-success-fg: #34d399;
+  --pf-success-emphasis: #10b981;
+  --pf-success-muted: rgba(52, 211, 153, 0.3);
+  --pf-success-subtle: rgba(52, 211, 153, 0.1);
+
+  /* Attention (Amber) */
+  --pf-attention-fg: #fbbf24;
+  --pf-attention-emphasis: #f59e0b;
+  --pf-attention-muted: rgba(251, 191, 36, 0.3);
+  --pf-attention-subtle: rgba(251, 191, 36, 0.1);
+
+  /* Danger (Red) */
+  --pf-danger-fg: #f87171;
+  --pf-danger-emphasis: #ef4444;
+  --pf-danger-muted: rgba(248, 113, 113, 0.3);
+  --pf-danger-subtle: rgba(248, 113, 113, 0.1);
+
+  /* Done (Purple) */
+  --pf-done-fg: #c084fc;
+  --pf-done-emphasis: #a855f7;
+  --pf-done-muted: rgba(192, 132, 252, 0.3);
+  --pf-done-subtle: rgba(192, 132, 252, 0.1);
+
+  /* Neutral */
+  --pf-neutral-emphasis: #71717a;
+  --pf-neutral-muted: rgba(113, 113, 122, 0.3);
+  --pf-neutral-subtle: rgba(113, 113, 122, 0.1);
+
+  /* Component Tokens - Glass Morphism */
+  --btn-primary-bg: #ffffff;
+  --btn-primary-bg-hover: #22d3ee;
+  --btn-primary-border: #ffffff;
+  --btn-primary-text: #020202;
+
+  --btn-secondary-bg: rgba(255, 255, 255, 0.05);
+  --btn-secondary-bg-hover: rgba(255, 255, 255, 0.1);
+  --btn-secondary-border: rgba(255, 255, 255, 0.1);
+  --btn-secondary-text: #fafafa;
+
+  --btn-outline-bg: transparent;
+  --btn-outline-bg-hover: rgba(255, 255, 255, 0.05);
+  --btn-outline-border: rgba(255, 255, 255, 0.1);
+  --btn-outline-text: #fafafa;
+
+  --btn-danger-bg: rgba(248, 113, 113, 0.1);
+  --btn-danger-bg-hover: #ef4444;
+  --btn-danger-border: rgba(248, 113, 113, 0.3);
+  --btn-danger-text: #f87171;
+  --btn-danger-text-hover: #020202;
+
+  /* Inputs - Glass Style */
+  --input-bg: rgba(255, 255, 255, 0.02);
+  --input-bg-disabled: rgba(255, 255, 255, 0.05);
+  --input-border: rgba(255, 255, 255, 0.1);
+  --input-border-focus: rgba(34, 211, 238, 0.5);
+  --input-border-error: #f87171;
+  --input-text: #fafafa;
+  --input-placeholder: #52525b;
+
+  /* Cards - Glass Style */
+  --card-bg: rgba(10, 10, 10, 0.8);
+  --card-bg-muted: rgba(255, 255, 255, 0.02);
+  --card-border: rgba(255, 255, 255, 0.1);
+
+  /* Code Block */
+  --code-bg: #000000;
+  --code-fg: #e5e5e5;
+  --code-comment: #6b7280;
+  --code-keyword: #f472b6;
+  --code-string: #34d399;
+  --code-function: #60a5fa;
+  --code-variable: #22d3ee;
+  --code-number: #f87171;
+
+  /* Shadows - Subtle glow */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -4px rgba(0, 0, 0, 0.6);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.7), 0 8px 10px -6px rgba(0, 0, 0, 0.7);
+  --shadow-glow: 0 0 60px -12px rgba(34, 211, 238, 0.15);
+
+  /* Overlay */
+  --overlay-backdrop: rgba(0, 0, 0, 0.8);
+
+  /* Animation */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* Focus Ring */
+  --ring-color: rgba(34, 211, 238, 0.5);
+  --ring-offset: #020202;
+
+  /* ========================================
+   * profile-ui variable aliases
+   * ======================================== */
+  --background: var(--pf-canvas-default);
+  --foreground: var(--pf-fg-default);
+
+  --surface-0: var(--pf-canvas-default);
+  --surface-1: var(--pf-canvas-subtle);
+  --surface-2: var(--pf-canvas-inset);
+  --surface-elevated: var(--pf-canvas-overlay);
+  --surface-inverse: var(--pf-canvas-emphasis);
+
+  --text-primary: var(--pf-fg-default);
+  --text-secondary: var(--pf-fg-muted);
+  --text-tertiary: var(--pf-fg-subtle);
+  --text-inverse: var(--pf-fg-on-emphasis);
+  --text-disabled: var(--input-placeholder);
+
+  --border: var(--pf-border-default);
+  --border-subtle: var(--pf-border-muted);
+  --border-emphasis: var(--pf-border-emphasis);
+  --border-focus: var(--pf-accent-fg);
+
+  --muted: var(--pf-canvas-subtle);
+  --muted-foreground: var(--pf-fg-muted);
+  --card: var(--card-bg);
+  --card-foreground: var(--pf-fg-default);
+  --popover: var(--pf-canvas-overlay);
+  --popover-foreground: var(--pf-fg-default);
+  --input: var(--input-bg);
+  --ring: var(--ring-color);
+
+  /* Accent (Cyan) */
+  --accent: var(--pf-accent-fg);
+  --accent-foreground: var(--pf-fg-on-emphasis);
+  --accent-muted: var(--pf-accent-subtle);
+
+  /* Semantic states */
+  --success: var(--pf-success-fg);
+  --warning: var(--pf-attention-fg);
+  --error: var(--pf-danger-fg);
+  --info: var(--pf-neutral-emphasis);
+}
+
+/* ========================================
+ * LIGHT THEME (Optional)
+ * Sandy warm white for those who prefer it
+ * ======================================== */
+.light {
   color-scheme: light;
 
   /* Canvas (Background) Colors - Sandy/Warm White */
@@ -41,17 +218,17 @@
   --pf-border-subtle: rgba(0, 0, 0, 0.06);
   --pf-border-emphasis: #1a1a1a;
 
-  /* Accent (Blue) - Primary Interactive */
-  --pf-accent-fg: #2563eb;
-  --pf-accent-emphasis: #1d4ed8;
-  --pf-accent-muted: rgba(37, 99, 235, 0.2);
-  --pf-accent-subtle: rgba(37, 99, 235, 0.08);
+  /* Accent (Cyan) */
+  --pf-accent-fg: #0891b2;
+  --pf-accent-emphasis: #0e7490;
+  --pf-accent-muted: rgba(8, 145, 178, 0.2);
+  --pf-accent-subtle: rgba(8, 145, 178, 0.08);
 
-  /* Success (Green) */
-  --pf-success-fg: #16a34a;
-  --pf-success-emphasis: #15803d;
-  --pf-success-muted: rgba(22, 163, 74, 0.2);
-  --pf-success-subtle: rgba(22, 163, 74, 0.08);
+  /* Success (Emerald) */
+  --pf-success-fg: #059669;
+  --pf-success-emphasis: #047857;
+  --pf-success-muted: rgba(5, 150, 105, 0.2);
+  --pf-success-subtle: rgba(5, 150, 105, 0.08);
 
   /* Attention (Amber) */
   --pf-attention-fg: #d97706;
@@ -78,7 +255,7 @@
 
   /* Component Tokens */
   --btn-primary-bg: #1a1a1a;
-  --btn-primary-bg-hover: #2d2d2d;
+  --btn-primary-bg-hover: #0891b2;
   --btn-primary-border: #1a1a1a;
   --btn-primary-text: #ffffff;
 
@@ -102,7 +279,7 @@
   --input-bg: #ffffff;
   --input-bg-disabled: #f5f3f0;
   --input-border: #d6d3d1;
-  --input-border-focus: #1a1a1a;
+  --input-border-focus: #0891b2;
   --input-border-error: #dc2626;
   --input-text: #1a1a1a;
   --input-placeholder: #a8a29e;
@@ -115,12 +292,6 @@
   /* Code Block */
   --code-bg: #1a1a1a;
   --code-fg: #e5e5e5;
-  --code-comment: #6b7280;
-  --code-keyword: #c084fc;
-  --code-string: #86efac;
-  --code-function: #60a5fa;
-  --code-variable: #fbbf24;
-  --code-number: #f87171;
 
   /* Shadows */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
@@ -131,222 +302,9 @@
   /* Overlay */
   --overlay-backdrop: rgba(0, 0, 0, 0.4);
 
-  /* Animation */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
-
-  /* Border radius */
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-xl: 12px;
-  --radius-full: 9999px;
-
   /* Focus Ring */
-  --ring-color: #1a1a1a;
+  --ring-color: #0891b2;
   --ring-offset: #faf9f7;
-
-  /* ========================================
-   * profile-ui variable aliases
-   * Maps the app's --pf-* tokens to the CSS vars used by @octopus-synapse/profile-ui
-   * (so the whole project stays visually consistent).
-   * ======================================== */
-  --background: var(--pf-canvas-default);
-  --foreground: var(--pf-fg-default);
-
-  --surface-0: var(--pf-canvas-default);
-  --surface-1: var(--pf-canvas-subtle);
-  --surface-2: var(--pf-canvas-inset);
-  --surface-elevated: var(--pf-canvas-overlay);
-  --surface-inverse: var(--pf-canvas-emphasis);
-
-  --text-primary: var(--pf-fg-default);
-  --text-secondary: var(--pf-fg-muted);
-  --text-tertiary: var(--pf-fg-subtle);
-  --text-inverse: var(--pf-fg-on-emphasis);
-  --text-disabled: var(--input-placeholder);
-
-  --border: var(--pf-border-default);
-  --border-subtle: var(--pf-border-muted);
-  --border-emphasis: var(--pf-border-emphasis);
-  --border-focus: var(--pf-border-emphasis);
-
-  /* Legacy mappings used by various UI components */
-  --muted: var(--pf-canvas-subtle);
-  --muted-foreground: var(--pf-fg-muted);
-  --card: var(--pf-canvas-overlay);
-  --card-foreground: var(--pf-fg-default);
-  --popover: var(--pf-canvas-overlay);
-  --popover-foreground: var(--pf-fg-default);
-  --input: var(--input-bg);
-  --ring: var(--ring-color);
-
-  /* Primary action (B/W) */
-  --accent: var(--pf-canvas-emphasis);
-  --accent-foreground: var(--pf-fg-on-emphasis);
-  --accent-muted: var(--pf-neutral-subtle);
-
-  /* Semantic states */
-  --success: var(--pf-success-fg);
-  --warning: var(--pf-attention-fg);
-  --error: var(--pf-danger-fg);
-  --info: var(--pf-neutral-emphasis);
-}
-
-/* ========================================
- * DARK THEME
- * ======================================== */
-.dark {
-  color-scheme: dark;
-
-  /* Canvas (Background) Colors */
-  --pf-canvas-default: #0a0a0a;
-  --pf-canvas-subtle: #141414;
-  --pf-canvas-inset: #050505;
-  --pf-canvas-overlay: #1c1c1c;
-  --pf-canvas-emphasis: #fafafa;
-
-  /* Foreground (Text) Colors */
-  --pf-fg-default: #fafafa;
-  --pf-fg-muted: #a1a1aa;
-  --pf-fg-subtle: #71717a;
-  --pf-fg-on-emphasis: #0a0a0a;
-
-  /* Border Colors */
-  --pf-border-default: #27272a;
-  --pf-border-muted: #1c1c1e;
-  --pf-border-subtle: rgba(255, 255, 255, 0.06);
-  --pf-border-emphasis: #fafafa;
-
-  /* Accent (Blue) */
-  --pf-accent-fg: #60a5fa;
-  --pf-accent-emphasis: #3b82f6;
-  --pf-accent-muted: rgba(96, 165, 250, 0.3);
-  --pf-accent-subtle: rgba(96, 165, 250, 0.1);
-
-  /* Success (Green) */
-  --pf-success-fg: #4ade80;
-  --pf-success-emphasis: #22c55e;
-  --pf-success-muted: rgba(74, 222, 128, 0.3);
-  --pf-success-subtle: rgba(74, 222, 128, 0.1);
-
-  /* Attention (Amber) */
-  --pf-attention-fg: #fbbf24;
-  --pf-attention-emphasis: #f59e0b;
-  --pf-attention-muted: rgba(251, 191, 36, 0.3);
-  --pf-attention-subtle: rgba(251, 191, 36, 0.1);
-
-  /* Danger (Red) */
-  --pf-danger-fg: #f87171;
-  --pf-danger-emphasis: #ef4444;
-  --pf-danger-muted: rgba(248, 113, 113, 0.3);
-  --pf-danger-subtle: rgba(248, 113, 113, 0.1);
-
-  /* Done (Purple) */
-  --pf-done-fg: #c084fc;
-  --pf-done-emphasis: #a855f7;
-  --pf-done-muted: rgba(192, 132, 252, 0.3);
-  --pf-done-subtle: rgba(192, 132, 252, 0.1);
-
-  /* Neutral */
-  --pf-neutral-emphasis: #71717a;
-  --pf-neutral-muted: rgba(113, 113, 122, 0.3);
-  --pf-neutral-subtle: rgba(113, 113, 122, 0.1);
-
-  /* Component Tokens */
-  --btn-primary-bg: #fafafa;
-  --btn-primary-bg-hover: #e5e5e5;
-  --btn-primary-border: #fafafa;
-  --btn-primary-text: #0a0a0a;
-
-  --btn-secondary-bg: #1c1c1c;
-  --btn-secondary-bg-hover: #262626;
-  --btn-secondary-border: #27272a;
-  --btn-secondary-text: #fafafa;
-
-  --btn-outline-bg: transparent;
-  --btn-outline-bg-hover: #1c1c1c;
-  --btn-outline-border: #27272a;
-  --btn-outline-text: #fafafa;
-
-  --btn-danger-bg: rgba(248, 113, 113, 0.1);
-  --btn-danger-bg-hover: #ef4444;
-  --btn-danger-border: #f87171;
-  --btn-danger-text: #f87171;
-  --btn-danger-text-hover: #0a0a0a;
-
-  /* Inputs */
-  --input-bg: #141414;
-  --input-bg-disabled: #1c1c1c;
-  --input-border: #27272a;
-  --input-border-focus: #fafafa;
-  --input-border-error: #f87171;
-  --input-text: #fafafa;
-  --input-placeholder: #52525b;
-
-  /* Cards */
-  --card-bg: #141414;
-  --card-bg-muted: #1c1c1c;
-  --card-border: #27272a;
-
-  /* Code Block - Same in both themes for consistency */
-  --code-bg: #0a0a0a;
-  --code-fg: #e5e5e5;
-
-  /* Shadows - darker for dark mode */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.5);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.6);
-
-  /* Overlay */
-  --overlay-backdrop: rgba(0, 0, 0, 0.7);
-
-  /* Focus Ring */
-  --ring-color: #fafafa;
-  --ring-offset: #0a0a0a;
-
-  /* ========================================
-   * profile-ui variable aliases (dark)
-   * ======================================== */
-  --background: var(--pf-canvas-default);
-  --foreground: var(--pf-fg-default);
-
-  --surface-0: var(--pf-canvas-default);
-  --surface-1: var(--pf-canvas-subtle);
-  --surface-2: var(--pf-canvas-inset);
-  --surface-elevated: var(--pf-canvas-overlay);
-  --surface-inverse: var(--pf-canvas-emphasis);
-
-  --text-primary: var(--pf-fg-default);
-  --text-secondary: var(--pf-fg-muted);
-  --text-tertiary: var(--pf-fg-subtle);
-  --text-inverse: var(--pf-fg-on-emphasis);
-  --text-disabled: var(--input-placeholder);
-
-  --border: var(--pf-border-default);
-  --border-subtle: var(--pf-border-muted);
-  --border-emphasis: var(--pf-border-emphasis);
-  --border-focus: var(--pf-border-emphasis);
-
-  --muted: var(--pf-canvas-subtle);
-  --muted-foreground: var(--pf-fg-muted);
-  --card: var(--pf-canvas-overlay);
-  --card-foreground: var(--pf-fg-default);
-  --popover: var(--pf-canvas-overlay);
-  --popover-foreground: var(--pf-fg-default);
-  --input: var(--input-bg);
-  --ring: var(--ring-color);
-
-  --accent: var(--pf-canvas-emphasis);
-  --accent-foreground: var(--pf-fg-on-emphasis);
-  --accent-muted: var(--pf-neutral-subtle);
-
-  --success: var(--pf-success-fg);
-  --warning: var(--pf-attention-fg);
-  --error: var(--pf-danger-fg);
-  --info: var(--pf-neutral-emphasis);
 }
 
 /* ========================================
