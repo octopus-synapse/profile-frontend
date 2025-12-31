@@ -9,7 +9,7 @@ import { ROUTES } from "@/config/routes";
 import { ShieldX, Home, ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Unauthorized | ProFile",
+  title: "Unauthorized | PATCH",
   description: "You don't have permission to access this resource",
 };
 
