@@ -8,7 +8,10 @@
 import * as React from "react";
 import { cn } from "@/shared/utils/cn";
 
-export interface PhoneInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange"> {
+export interface PhoneInputProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "onChange"
+> {
   value?: string;
   onChange?: (value: string) => void;
   /** Country code format: "BR" | "US" | "auto" */
@@ -110,10 +113,12 @@ export const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
         ref={ref}
         value={displayValue}
         onChange={handleChange}
-        placeholder={placeholder || (countryFormat === "BR" ? "+55 (11) 99999-9999" : "+1 (555) 123-4567")}
+        placeholder={
+          placeholder || (countryFormat === "BR" ? "+55 (11) 99999-9999" : "+1 (555) 123-4567")
+        }
         className={cn(
-          "border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default",
-          "placeholder:text-pf-fg-subtle focus:border-pf-accent-fg",
+          "border-white/10 bg-[#0A0A0A]/95 text-white",
+          "placeholder:text-zinc-600 focus:border-cyan-500",
           "w-full border px-3 py-2 font-mono text-sm focus:outline-none",
           className
         )}

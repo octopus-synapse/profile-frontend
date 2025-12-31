@@ -10,7 +10,15 @@
  * This provider syncs React state with the already-applied theme.
  */
 
-import { createContext, useContext, useEffect, useState, useCallback, useMemo, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  type ReactNode,
+} from "react";
 
 type Theme = "light" | "dark" | "system";
 type ResolvedTheme = "light" | "dark";
@@ -27,8 +35,8 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 const THEME_KEY = "profile-theme";
 
 function getSystemTheme(): ResolvedTheme {
-  if (typeof window === "undefined") return "light";
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  if (typeof window === "undefined") return "dark";
+  return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
 }
 
 function getInitialTheme(): Theme {
@@ -41,10 +49,10 @@ function getInitialTheme(): Theme {
 }
 
 function getInitialResolvedTheme(): ResolvedTheme {
-  if (typeof window === "undefined") return "light";
+  if (typeof window === "undefined") return "dark";
   // Read from DOM - themeScript already applied the correct class
-  if (document.documentElement.classList.contains("dark")) return "dark";
-  return "light";
+  if (document.documentElement.classList.contains("light")) return "light";
+  return "dark";
 }
 
 interface ThemeProviderProps {
@@ -52,10 +60,10 @@ interface ThemeProviderProps {
   defaultTheme?: Theme;
 }
 
-export function ThemeProvider({ children, defaultTheme = "system" }: ThemeProviderProps) {
+export function ThemeProvider({ children, defaultTheme = "dark" }: ThemeProviderProps) {
   // Initialize with values that match what themeScript already applied
   const [theme, setThemeState] = useState<Theme>(defaultTheme);
-  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>("light");
+  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>("dark");
   const [mounted, setMounted] = useState(false);
 
   // Sync React state with already-applied theme on mount
@@ -113,11 +121,7 @@ export function ThemeProvider({ children, defaultTheme = "system" }: ThemeProvid
   );
 
   // Always render Provider - themeScript prevents flash, no need for visibility hidden
-  return (
-    <ThemeContext.Provider value={contextValue}>
-      {children}
-    </ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={contextValue}>{children}</ThemeContext.Provider>;
 }
 
 export function useTheme() {
@@ -134,16 +138,17 @@ export function useThemeOptional() {
 }
 
 // Script to inject into head to prevent flash
+// Dark theme is the default
 export const themeScript = `
   (function() {
     const THEME_KEY = 'profile-theme';
     const stored = localStorage.getItem(THEME_KEY);
-    let theme = 'light';
+    let theme = 'dark';
     
-    if (stored === 'dark') {
-      theme = 'dark';
-    } else if (stored === 'system' || !stored) {
-      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    if (stored === 'light') {
+      theme = 'light';
+    } else if (stored === 'system') {
+      theme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
     }
     
     document.documentElement.classList.add(theme);

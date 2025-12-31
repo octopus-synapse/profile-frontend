@@ -28,8 +28,8 @@ export function LanguageToggle({ className, variant = "buttons" }: LanguageToggl
             className={cn(
               "px-2 py-1 font-mono text-xs transition-colors",
               language === locale.code
-                ? "bg-pf-canvas-emphasis text-pf-fg-on-emphasis"
-                : "text-pf-fg-muted hover:text-pf-fg-default hover:bg-pf-canvas-subtle"
+                ? "bg-white text-black"
+                : "text-zinc-400 hover:bg-white/5 hover:text-white"
             )}
             title={locale.label}
           >
@@ -42,14 +42,14 @@ export function LanguageToggle({ className, variant = "buttons" }: LanguageToggl
 
   return (
     <div className={cn("flex items-center gap-2", className)}>
-      <Globe className="text-pf-fg-muted h-3.5 w-3.5" strokeWidth={1.5} />
+      <Globe className="h-3.5 w-3.5 text-zinc-400" strokeWidth={1.5} />
       <select
         value={language}
         onChange={(e) => setLanguage(e.target.value as Locale)}
         className={cn(
           "bg-transparent font-mono text-xs",
-          "text-pf-fg-muted hover:text-pf-fg-default",
-          "focus:outline-none cursor-pointer"
+          "text-zinc-400 hover:text-white",
+          "cursor-pointer focus:outline-none"
         )}
       >
         {locales.map((locale) => (
@@ -83,7 +83,7 @@ export function LanguageToggleSimple({ className }: { className?: string }) {
       onClick={cycleLanguage}
       className={cn(
         "flex h-9 items-center gap-1.5 px-2 transition-colors",
-        "text-pf-fg-muted hover:text-pf-fg-default hover:bg-pf-canvas-subtle",
+        "text-zinc-400 hover:bg-white/5 hover:text-white",
         className
       )}
       title={`Language: ${currentLocale?.label || language}`}

@@ -24,8 +24,8 @@ const TooltipContent = React.forwardRef<
     sideOffset={sideOffset}
     className={cn(
       "z-50 overflow-hidden rounded-md px-3 py-1.5 text-sm",
-      "bg-pf-canvas-overlay border-pf-border-default border shadow-md",
-      "text-pf-fg-default",
+      "border border-white/10 bg-[#0A0A0A]/95 shadow-md",
+      "text-white",
       "animate-in fade-in-0 zoom-in-95",
       "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
       "data-[side=bottom]:slide-in-from-top-2",
@@ -82,8 +82,8 @@ function HelpTooltip({ content, className, side = "top" }: HelpTooltipProps) {
         className={cn(
           "inline-flex h-4 w-4 items-center justify-center rounded-full",
           "bg-pf-canvas-inset text-pf-fg-subtle",
-          "text-xs font-medium hover:bg-pf-canvas-subtle hover:text-pf-fg-muted",
-          "transition-colors focus:outline-none focus:ring-2 focus:ring-pf-accent-fg",
+          "hover:bg-pf-canvas-subtle hover:text-pf-fg-muted text-xs font-medium",
+          "focus:ring-pf-accent-fg transition-colors focus:ring-2 focus:outline-none",
           className
         )}
         aria-label="Help"

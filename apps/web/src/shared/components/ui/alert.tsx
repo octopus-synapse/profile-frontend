@@ -13,11 +13,11 @@ const alertVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-pf-canvas-subtle border-pf-border-default text-pf-fg-default",
-        info: "bg-pf-accent-subtle border-pf-accent-muted text-pf-accent-fg",
-        success: "bg-pf-success-subtle border-pf-success-muted text-pf-success-fg",
-        warning: "bg-pf-attention-subtle border-pf-attention-muted text-pf-attention-fg",
-        danger: "bg-pf-danger-subtle border-pf-danger-muted text-pf-danger-fg",
+        default: "bg-white/5 border-white/10 text-white",
+        info: "bg-cyan-500/10 border-cyan-500/30 text-cyan-400",
+        success: "bg-emerald-500/10 border-emerald-500/30 text-emerald-500",
+        warning: "bg-amber-500/10 border-amber-500/30 text-amber-500",
+        danger: "bg-red-500/10 border-red-500/30 text-red-500",
       },
     },
     defaultVariants: {

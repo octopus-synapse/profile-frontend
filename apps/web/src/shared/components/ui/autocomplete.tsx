@@ -115,16 +115,16 @@ export function Autocomplete({
           aria-controls={listboxId}
           className={cn(
             "flex h-10 w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm",
-            "bg-pf-canvas-default border-pf-border-default border",
-            "text-pf-fg-default",
-            "ring-offset-pf-canvas-default",
-            "focus:ring-pf-accent-emphasis focus:ring-2 focus:ring-offset-2 focus:outline-none",
+            "border border-white/10 bg-[#030303]",
+            "text-white",
+            "ring-offset-[#030303]",
+            "focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:outline-none",
             "disabled:cursor-not-allowed disabled:opacity-50",
             error && "border-pf-danger-emphasis",
             className
           )}
         >
-          <span className={cn("flex-1 truncate", !displayText && "text-pf-fg-subtle")}>
+          <span className={cn("flex-1 truncate", !displayText && "text-zinc-500")}>
             {displayText || placeholder}
           </span>
           <div className="ml-2 flex items-center gap-1">
@@ -141,39 +141,39 @@ export function Autocomplete({
       <PopoverContent
         className={cn(
           "z-50 w-[--radix-popover-trigger-width] overflow-hidden rounded-lg p-0",
-          "bg-pf-canvas-overlay border-pf-border-default border shadow-lg",
+          "border border-white/10 bg-[#0A0A0A]/95 shadow-lg",
           "animate-in fade-in-0 zoom-in-95"
         )}
         align="start"
         sideOffset={4}
       >
         {/* Search Input */}
-        <div className="border-pf-border-default flex items-center border-b px-3">
-          <Search className="text-pf-fg-muted mr-2 h-4 w-4" />
+        <div className="flex items-center border-b border-white/10 px-3">
+          <Search className="mr-2 h-4 w-4 text-zinc-400" />
           <input
             ref={inputRef}
             type="text"
             className={cn(
               "flex h-10 w-full bg-transparent py-3 text-sm outline-none",
-              "placeholder:text-pf-fg-subtle text-pf-fg-default"
+              "text-white placeholder:text-zinc-600"
             )}
             placeholder={searchPlaceholder}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          {isLoading && <Loader2 className="text-pf-fg-muted h-4 w-4 animate-spin" />}
+          {isLoading && <Loader2 className="h-4 w-4 animate-spin text-zinc-400" />}
         </div>
 
         {/* Options List */}
         <div id={listboxId} role="listbox" className="max-h-[300px] overflow-y-auto p-1">
           {search.length < minSearchLength ? (
-            <div className="text-pf-fg-muted py-6 text-center text-sm">
+            <div className="py-6 text-center text-sm text-zinc-400">
               Digite pelo menos {minSearchLength} caracteres para buscar
             </div>
           ) : isLoading ? (
-            <div className="text-pf-fg-muted py-6 text-center text-sm">Buscando...</div>
+            <div className="py-6 text-center text-sm text-zinc-400">Buscando...</div>
           ) : options.length === 0 ? (
-            <div className="text-pf-fg-muted py-6 text-center text-sm">{emptyMessage}</div>
+            <div className="py-6 text-center text-sm text-zinc-400">{emptyMessage}</div>
           ) : (
             options.map((option) => (
               <button
@@ -181,8 +181,8 @@ export function Autocomplete({
                 type="button"
                 className={cn(
                   "relative flex w-full cursor-pointer items-center rounded-md px-2 py-2 text-sm outline-none select-none",
-                  "hover:bg-pf-canvas-subtle",
-                  value === option.value && "bg-pf-accent-subtle"
+                  "hover:bg-white/5",
+                  value === option.value && "bg-cyan-500/10"
                 )}
                 onClick={() => handleSelect(option)}
               >
@@ -195,7 +195,7 @@ export function Autocomplete({
                 <div className="flex flex-col items-start overflow-hidden">
                   <span className="truncate font-medium">{option.label}</span>
                   {option.description && (
-                    <span className="text-pf-fg-muted truncate text-xs">{option.description}</span>
+                    <span className="truncate text-xs text-zinc-400">{option.description}</span>
                   )}
                 </div>
               </button>
