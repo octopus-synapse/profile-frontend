@@ -83,16 +83,16 @@ export function PersonalInfoStep() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-2">
-          <span className="text-pf-accent-fg font-mono text-sm">{`>`}</span>
-          <h2 className="text-pf-fg-default text-xl font-bold">Personal Information</h2>
+          <span className="text-cyan-400 font-mono text-sm">{`>`}</span>
+          <h2 className="text-white text-xl font-bold">Personal Information</h2>
         </div>
-        <p className="text-pf-fg-muted mt-1 font-mono text-xs">
+        <p className="text-zinc-400 mt-1 font-mono text-xs">
           Basic info for your profile header
         </p>
       </div>
 
       {/* Code Comment */}
-      <div className="text-pf-fg-subtle font-mono text-xs">
+      <div className="text-zinc-500 font-mono text-xs">
         <span className="text-gray-500">
           <span className="opacity-60">{"//"}</span> Required fields marked with *
         </span>
@@ -102,9 +102,9 @@ export function PersonalInfoStep() {
       <div className="space-y-4">
         {/* Full Name */}
         <div>
-          <label className="text-pf-fg-default mb-1.5 flex items-center gap-2 font-mono text-sm">
+          <label className="text-white mb-1.5 flex items-center gap-2 font-mono text-sm">
             <User className="h-4 w-4" strokeWidth={1.5} />
-            fullName<span className="text-pf-danger-fg">*</span>
+            fullName<span className="text-red-500">*</span>
           </label>
           <input
             type="text"
@@ -112,10 +112,10 @@ export function PersonalInfoStep() {
             onChange={(e) => handleChange("fullName", e.target.value)}
             onBlur={() => handleBlur("fullName")}
             placeholder="John Doe"
-            className={`border-pf-border-default bg-pf-canvas-subtle text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-accent-fg w-full border px-3 py-2 font-mono text-sm focus:outline-none ${errors.fullName ? "border-pf-danger-fg" : ""} `}
+            className={`border-white/10 bg-white/5 text-white placeholder:text-zinc-500 focus:border-cyan-500 w-full border px-3 py-2 font-mono text-sm focus:outline-none ${errors.fullName ? "border-red-500" : ""} `}
           />
           {errors.fullName && (
-            <p className="text-pf-danger-fg mt-1 flex items-center gap-1 font-mono text-xs">
+            <p className="text-red-500 mt-1 flex items-center gap-1 font-mono text-xs">
               <AlertCircle className="h-3 w-3" />
               {errors.fullName}
             </p>
@@ -124,9 +124,9 @@ export function PersonalInfoStep() {
 
         {/* Email */}
         <div>
-          <label className="text-pf-fg-default mb-1.5 flex items-center gap-2 font-mono text-sm">
+          <label className="text-white mb-1.5 flex items-center gap-2 font-mono text-sm">
             <Mail className="h-4 w-4" strokeWidth={1.5} />
-            email<span className="text-pf-danger-fg">*</span>
+            email<span className="text-red-500">*</span>
           </label>
           <input
             type="email"
@@ -134,10 +134,10 @@ export function PersonalInfoStep() {
             onChange={(e) => handleChange("email", e.target.value)}
             onBlur={() => handleBlur("email")}
             placeholder="dev@example.com"
-            className={`border-pf-border-default bg-pf-canvas-subtle text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-accent-fg w-full border px-3 py-2 font-mono text-sm focus:outline-none ${errors.email ? "border-pf-danger-fg" : ""} `}
+            className={`border-white/10 bg-white/5 text-white placeholder:text-zinc-500 focus:border-cyan-500 w-full border px-3 py-2 font-mono text-sm focus:outline-none ${errors.email ? "border-red-500" : ""} `}
           />
           {errors.email && (
-            <p className="text-pf-danger-fg mt-1 flex items-center gap-1 font-mono text-xs">
+            <p className="text-red-500 mt-1 flex items-center gap-1 font-mono text-xs">
               <AlertCircle className="h-3 w-3" />
               {errors.email}
             </p>
@@ -146,30 +146,30 @@ export function PersonalInfoStep() {
 
         {/* Phone */}
         <div>
-          <label className="text-pf-fg-default mb-1.5 flex items-center gap-2 font-mono text-sm">
+          <label className="text-white mb-1.5 flex items-center gap-2 font-mono text-sm">
             <Phone className="h-4 w-4" strokeWidth={1.5} />
-            phone<span className="text-pf-fg-subtle ml-1 text-xs">(optional)</span>
+            phone<span className="text-zinc-500 ml-1 text-xs">(optional)</span>
           </label>
           <PhoneInput
             value={formData.phone}
             onChange={(value) => handleChange("phone", value)}
             countryFormat="BR"
-            className="bg-pf-canvas-subtle"
+            className="bg-white/5"
           />
         </div>
 
         {/* Location */}
         <div>
-          <label className="text-pf-fg-default mb-1.5 flex items-center gap-2 font-mono text-sm">
+          <label className="text-white mb-1.5 flex items-center gap-2 font-mono text-sm">
             <MapPin className="h-4 w-4" strokeWidth={1.5} />
-            location<span className="text-pf-fg-subtle ml-1 text-xs">(optional)</span>
+            location<span className="text-zinc-500 ml-1 text-xs">(optional)</span>
           </label>
           <input
             type="text"
             value={formData.location}
             onChange={(e) => handleChange("location", e.target.value)}
             placeholder="São Paulo, BR"
-            className="border-pf-border-default bg-pf-canvas-subtle text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-accent-fg w-full border px-3 py-2 font-mono text-sm focus:outline-none"
+            className="border-white/10 bg-white/5 text-white placeholder:text-zinc-500 focus:border-cyan-500 w-full border px-3 py-2 font-mono text-sm focus:outline-none"
           />
         </div>
       </div>

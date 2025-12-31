@@ -18,19 +18,19 @@ export function WelcomeStep() {
     <div className="space-y-8">
       {/* Hero */}
       <div className="text-center">
-        <div className="bg-pf-accent-subtle text-pf-accent-fg mx-auto mb-6 flex h-16 w-16 items-center justify-center">
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center bg-cyan-500/10 text-cyan-400">
           <Sparkles className="h-8 w-8" strokeWidth={1.5} />
         </div>
 
-        <h1 className="text-pf-fg-default text-2xl font-bold">Welcome to PATCH</h1>
-        <p className="text-pf-fg-muted mt-2 font-mono text-sm">
-          Your career, recompiled. Let&apos;s get started.
+        <h1 className="text-2xl font-bold text-white">Welcome to PATCH</h1>
+        <p className="mt-2 font-mono text-sm text-zinc-400">
+          Your career, patched. Let&apos;s get started.
         </p>
       </div>
 
       {/* Code Block */}
-      <div className="bg-pf-canvas-emphasis rounded-lg p-4 font-mono text-sm">
-        <div className="text-pf-fg-subtle mb-2 text-xs">
+      <div className="rounded-lg bg-white p-4 font-mono text-sm">
+        <div className="mb-2 text-xs text-zinc-500">
           <span className="opacity-60">{"//"}</span> initialization
         </div>
         <div className="space-y-1">
@@ -79,17 +79,17 @@ export function WelcomeStep() {
       </div>
 
       {/* Info Box */}
-      <div className="border-pf-border-default bg-pf-canvas-subtle border p-4">
+      <div className="border border-white/10 bg-white/5 p-4">
         <div className="flex items-start gap-3">
-          <span className="text-pf-accent-fg font-mono text-sm">i</span>
-          <div className="text-pf-fg-muted font-mono text-xs">
+          <span className="font-mono text-sm text-cyan-400">i</span>
+          <div className="font-mono text-xs text-zinc-400">
             <p>PATCH will compile your career into the optimal format for each opportunity.</p>
             <p className="mt-1">
-              <span className="text-pf-fg-default">Required:</span> Personal info, Professional
-              profile, Skills, Theme
+              <span className="text-white">Required:</span> Personal info, Professional profile,
+              Skills, Theme
             </p>
             <p>
-              <span className="text-pf-fg-default">Optional:</span> Experience, Education, Languages
+              <span className="text-white">Optional:</span> Experience, Education, Languages
             </p>
           </div>
         </div>
@@ -111,10 +111,10 @@ function FeatureCard({
   description: string;
 }) {
   return (
-    <div className="border-pf-border-default bg-pf-canvas-subtle border p-4">
-      <div className="text-pf-accent-fg mb-2">{icon}</div>
-      <h3 className="text-pf-fg-default font-mono text-sm font-semibold">{title}</h3>
-      <p className="text-pf-fg-muted mt-1 font-mono text-xs">{description}</p>
+    <div className="border border-white/10 bg-white/5 p-4">
+      <div className="mb-2 text-cyan-400">{icon}</div>
+      <h3 className="font-mono text-sm font-semibold text-white">{title}</h3>
+      <p className="mt-1 font-mono text-xs text-zinc-400">{description}</p>
     </div>
   );
 }

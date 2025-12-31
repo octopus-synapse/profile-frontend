@@ -70,17 +70,17 @@ export function LanguagesStep() {
   const getLevelColor = (level: Language["level"]) => {
     switch (level) {
       case "básico":
-        return "text-pf-fg-subtle";
+        return "text-zinc-500";
       case "intermediário":
-        return "text-pf-attention-fg";
+        return "text-amber-500";
       case "avançado":
-        return "text-pf-accent-fg";
+        return "text-cyan-400";
       case "fluente":
-        return "text-pf-success-fg";
+        return "text-emerald-500";
       case "nativo":
-        return "text-pf-done-fg";
+        return "text-purple-400";
       default:
-        return "text-pf-fg-muted";
+        return "text-zinc-400";
     }
   };
 
@@ -89,19 +89,19 @@ export function LanguagesStep() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-2">
-          <span className="text-pf-accent-fg font-mono text-sm">{`>`}</span>
-          <h2 className="text-pf-fg-default text-xl font-bold">Languages</h2>
-          <span className="bg-pf-canvas-inset text-pf-fg-subtle ml-2 px-2 py-0.5 font-mono text-xs">
+          <span className="text-cyan-400 font-mono text-sm">{`>`}</span>
+          <h2 className="text-white text-xl font-bold">Languages</h2>
+          <span className="bg-white/5 text-zinc-500 ml-2 px-2 py-0.5 font-mono text-xs">
             optional
           </span>
         </div>
-        <p className="text-pf-fg-muted mt-1 font-mono text-xs">What languages do you speak?</p>
+        <p className="text-zinc-400 mt-1 font-mono text-xs">What languages do you speak?</p>
       </div>
 
       {/* Added Languages */}
       {languages.length > 0 && (
         <div className="space-y-2">
-          <div className="text-pf-fg-subtle font-mono text-xs">
+          <div className="text-zinc-500 font-mono text-xs">
             <span className="opacity-60">{"//"}</span> {languages.length} language
             {languages.length > 1 ? "s" : ""} added
           </div>
@@ -109,11 +109,11 @@ export function LanguagesStep() {
             {languages.map((lang: Language) => (
               <div
                 key={lang.id}
-                className="border-pf-border-default flex items-center justify-between border p-3"
+                className="border-white/10 flex items-center justify-between border p-3"
               >
                 <div className="flex items-center gap-3">
-                  <Globe className="text-pf-fg-muted h-4 w-4" strokeWidth={1.5} />
-                  <span className="text-pf-fg-default font-mono text-sm">{lang.name}</span>
+                  <Globe className="text-zinc-400 h-4 w-4" strokeWidth={1.5} />
+                  <span className="text-white font-mono text-sm">{lang.name}</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <select
@@ -121,7 +121,7 @@ export function LanguagesStep() {
                     onChange={(e) =>
                       updateLanguage(lang.id, { level: e.target.value as Language["level"] })
                     }
-                    className={`border-pf-border-default bg-pf-canvas-subtle focus:border-pf-accent-fg border px-2 py-1 font-mono text-xs focus:outline-none ${getLevelColor(lang.level)}`}
+                    className={`border-white/10 bg-white/5 focus:border-cyan-500 border px-2 py-1 font-mono text-xs focus:outline-none ${getLevelColor(lang.level)}`}
                   >
                     {LANGUAGE_LEVELS.map((level) => (
                       <option key={level.value} value={level.value}>
@@ -131,7 +131,7 @@ export function LanguagesStep() {
                   </select>
                   <button
                     onClick={() => removeLanguage(lang.id)}
-                    className="text-pf-fg-subtle hover:text-pf-danger-fg transition-colors"
+                    className="text-zinc-500 hover:text-red-500 transition-colors"
                   >
                     <X className="h-4 w-4" strokeWidth={1.5} />
                   </button>
@@ -144,8 +144,8 @@ export function LanguagesStep() {
 
       {/* Quick Add Common Languages */}
       {!isAdding && (
-        <div className="border-pf-border-default border p-4">
-          <div className="text-pf-fg-subtle mb-3 font-mono text-xs">
+        <div className="border-white/10 border p-4">
+          <div className="text-zinc-500 mb-3 font-mono text-xs">
             <span className="opacity-60">{"//"}</span> Quick add
           </div>
           <div className="flex flex-wrap gap-2">
@@ -155,7 +155,7 @@ export function LanguagesStep() {
                 <button
                   key={lang}
                   onClick={() => handleAddLanguage(lang)}
-                  className="border-pf-border-default text-pf-fg-muted hover:border-pf-accent-fg hover:text-pf-accent-fg flex items-center gap-1 border px-2 py-1 font-mono text-xs transition-colors"
+                  className="border-white/10 text-zinc-400 hover:border-cyan-500 hover:text-cyan-400 flex items-center gap-1 border px-2 py-1 font-mono text-xs transition-colors"
                 >
                   <Plus className="h-3 w-3" />
                   {lang}
@@ -167,14 +167,14 @@ export function LanguagesStep() {
 
       {/* Add Language Form */}
       {isAdding ? (
-        <div className="border-pf-accent-fg/30 bg-pf-canvas-subtle space-y-4 border p-4">
-          <div className="text-pf-accent-fg font-mono text-xs">
+        <div className="border-cyan-500/30 bg-white/5 space-y-4 border p-4">
+          <div className="text-cyan-400 font-mono text-xs">
             <span className="opacity-60">{"//"}</span> Add language
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="text-pf-fg-default mb-1 block font-mono text-xs">
+              <label className="text-white mb-1 block font-mono text-xs">
                 Select language
               </label>
               <select
@@ -183,7 +183,7 @@ export function LanguagesStep() {
                   setSelectedLang(e.target.value);
                   if (e.target.value !== "custom") setCustomLang("");
                 }}
-                className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default focus:border-pf-accent-fg w-full border px-3 py-2 font-mono text-sm focus:outline-none"
+                className="border-white/10 bg-[#0A0A0A]/80 text-white focus:border-cyan-500 w-full border px-3 py-2 font-mono text-sm focus:outline-none"
               >
                 <option value="">Choose...</option>
                 {COMMON_LANGUAGES.filter((l) => !isLanguageAdded(l)).map((lang) => (
@@ -196,13 +196,13 @@ export function LanguagesStep() {
             </div>
 
             <div>
-              <label className="text-pf-fg-default mb-1 block font-mono text-xs">
+              <label className="text-white mb-1 block font-mono text-xs">
                 Proficiency level
               </label>
               <select
                 value={selectedLevel}
                 onChange={(e) => setSelectedLevel(e.target.value as Language["level"])}
-                className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default focus:border-pf-accent-fg w-full border px-3 py-2 font-mono text-sm focus:outline-none"
+                className="border-white/10 bg-[#0A0A0A]/80 text-white focus:border-cyan-500 w-full border px-3 py-2 font-mono text-sm focus:outline-none"
               >
                 {LANGUAGE_LEVELS.map((level) => (
                   <option key={level.value} value={level.value}>
@@ -215,7 +215,7 @@ export function LanguagesStep() {
 
           {selectedLang === "custom" && (
             <div>
-              <label className="text-pf-fg-default mb-1 block font-mono text-xs">
+              <label className="text-white mb-1 block font-mono text-xs">
                 Language name
               </label>
               <input
@@ -223,7 +223,7 @@ export function LanguagesStep() {
                 value={customLang}
                 onChange={(e) => setCustomLang(e.target.value)}
                 placeholder="e.g., Dutch, Swedish..."
-                className="border-pf-border-default bg-pf-canvas-overlay text-pf-fg-default placeholder:text-pf-fg-subtle focus:border-pf-accent-fg w-full border px-3 py-2 font-mono text-sm focus:outline-none"
+                className="border-white/10 bg-[#0A0A0A]/80 text-white placeholder:text-zinc-500 focus:border-cyan-500 w-full border px-3 py-2 font-mono text-sm focus:outline-none"
               />
             </div>
           )}
@@ -235,7 +235,7 @@ export function LanguagesStep() {
                 setSelectedLang("");
                 setCustomLang("");
               }}
-              className="text-pf-fg-muted hover:text-pf-fg-default px-3 py-1.5 font-mono text-sm transition-colors"
+              className="text-zinc-400 hover:text-white px-3 py-1.5 font-mono text-sm transition-colors"
             >
               cancel
             </button>
@@ -244,7 +244,7 @@ export function LanguagesStep() {
                 handleAddLanguage(selectedLang === "custom" ? customLang : selectedLang)
               }
               disabled={!selectedLang || (selectedLang === "custom" && !customLang.trim())}
-              className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis px-3 py-1.5 font-mono text-sm transition-opacity hover:opacity-90 disabled:opacity-50"
+              className="bg-white text-black px-3 py-1.5 font-mono text-sm transition-opacity hover:opacity-90 disabled:opacity-50"
             >
               add
             </button>
@@ -253,7 +253,7 @@ export function LanguagesStep() {
       ) : (
         <button
           onClick={() => setIsAdding(true)}
-          className="border-pf-border-default text-pf-fg-muted hover:border-pf-accent-fg hover:text-pf-accent-fg flex w-full items-center justify-center gap-2 border border-dashed py-3 font-mono text-sm transition-colors"
+          className="border-white/10 text-zinc-400 hover:border-cyan-500 hover:text-cyan-400 flex w-full items-center justify-center gap-2 border border-dashed py-3 font-mono text-sm transition-colors"
         >
           <Plus className="h-4 w-4" strokeWidth={1.5} />
           Add language

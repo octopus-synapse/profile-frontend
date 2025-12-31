@@ -70,14 +70,14 @@ export function StepNavigation({
   }
 
   return (
-    <div className="border-pf-border-muted mt-8 flex items-center justify-between border-t pt-6">
+    <div className="border-white/10 mt-8 flex items-center justify-between border-t pt-6">
       {/* Back Button */}
       <div>
         {!isFirstStep && (
           <button
             onClick={handleBack}
             disabled={isLoading}
-            className="text-pf-fg-muted hover:text-pf-fg-default flex items-center gap-2 font-mono text-sm transition-colors disabled:opacity-50"
+            className="text-zinc-400 hover:text-white flex items-center gap-2 font-mono text-sm transition-colors disabled:opacity-50"
           >
             <ArrowLeft className="h-4 w-4" strokeWidth={1.5} />
             <span>back</span>
@@ -92,7 +92,7 @@ export function StepNavigation({
           <button
             onClick={handleSkip}
             disabled={isLoading}
-            className="text-pf-fg-subtle hover:text-pf-fg-muted flex items-center gap-2 font-mono text-sm transition-colors disabled:opacity-50"
+            className="text-zinc-500 hover:text-zinc-400 flex items-center gap-2 font-mono text-sm transition-colors disabled:opacity-50"
           >
             <span>skip</span>
             <SkipForward className="h-4 w-4" strokeWidth={1.5} />
@@ -105,8 +105,8 @@ export function StepNavigation({
           disabled={!canProceed || isLoading}
           className={`flex items-center gap-2 px-4 py-2 font-mono text-sm transition-all ${
             canProceed && !isLoading
-              ? "bg-pf-canvas-emphasis text-pf-fg-on-emphasis hover:opacity-90"
-              : "bg-pf-canvas-inset text-pf-fg-subtle cursor-not-allowed"
+              ? "bg-white text-black hover:opacity-90"
+              : "bg-white/5 text-zinc-500 cursor-not-allowed"
           } `}
         >
           {isLoading ? (
