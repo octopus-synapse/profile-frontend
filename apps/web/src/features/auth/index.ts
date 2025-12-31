@@ -10,6 +10,8 @@ export {
   AuthenticatedOnly,
   SignInForm,
   SignUpForm,
+  ForgotPasswordForm,
+  ResetPasswordForm,
 } from "./components";
 
 // Hooks

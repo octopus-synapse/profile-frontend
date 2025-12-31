@@ -13,7 +13,8 @@ import { useT } from "@/features/i18n";
 import { Button, Input } from "@/shared/components/ui";
 import { Label } from "@/shared/components/ui/label";
 import { ROUTES } from "@/config/routes";
-import { AlertCircle, User, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { AlertCircle, User, Mail, Lock, Eye, EyeOff, ChevronRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 export function SignUpForm() {
   const t = useT();
@@ -72,23 +73,32 @@ export function SignUpForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
       {/* Error Alert */}
       {error && (
-        <div className="border-pf-danger-muted bg-pf-danger-subtle text-pf-danger-fg animate-fade-in flex items-center gap-3 rounded-md border p-3 text-sm">
-          <AlertCircle className="h-4 w-4 shrink-0" />
-          <span>{error}</span>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          className="overflow-hidden"
+        >
+          <div className="flex items-center gap-3 rounded-lg border border-red-500/20 bg-red-500/10 p-3 font-mono text-xs text-red-400">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            <span>{error}</span>
+          </div>
+        </motion.div>
       )}
 
       {/* Name Field */}
       <div className="space-y-2">
-        <Label htmlFor="name" className="text-pf-fg-default">
+        <Label
+          htmlFor="name"
+          className="ml-1 font-mono text-[10px] tracking-[0.15em] text-zinc-500 uppercase"
+        >
           {t("auth.signUp.name")}
         </Label>
-        <div className="relative">
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <User className="text-pf-fg-muted h-4 w-4" />
+        <div className="group relative">
+          <div className="absolute inset-y-0 left-3 flex items-center">
+            <User className="h-4 w-4 text-zinc-500 transition-colors group-focus-within:text-cyan-400" />
           </div>
           <Input
             id="name"
@@ -98,19 +108,22 @@ export function SignUpForm() {
             placeholder="John Doe"
             required
             autoComplete="name"
-            className="pl-10"
+            className="h-11 border-white/10 bg-white/[0.02] pl-10 transition-all focus:border-cyan-500/50 focus:bg-white/[0.05] focus:ring-cyan-500/20"
           />
         </div>
       </div>
 
       {/* Email Field */}
       <div className="space-y-2">
-        <Label htmlFor="email" className="text-pf-fg-default">
+        <Label
+          htmlFor="email"
+          className="ml-1 font-mono text-[10px] tracking-[0.15em] text-zinc-500 uppercase"
+        >
           {t("auth.signUp.email")}
         </Label>
-        <div className="relative">
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <Mail className="text-pf-fg-muted h-4 w-4" />
+        <div className="group relative">
+          <div className="absolute inset-y-0 left-3 flex items-center">
+            <Mail className="h-4 w-4 text-zinc-500 transition-colors group-focus-within:text-cyan-400" />
           </div>
           <Input
             id="email"
@@ -121,19 +134,22 @@ export function SignUpForm() {
             required
             autoComplete="email"
             error={!!error}
-            className="pl-10"
+            className="h-11 border-white/10 bg-white/[0.02] pl-10 transition-all focus:border-cyan-500/50 focus:bg-white/[0.05] focus:ring-cyan-500/20"
           />
         </div>
       </div>
 
       {/* Password Field */}
       <div className="space-y-2">
-        <Label htmlFor="password" className="text-pf-fg-default">
+        <Label
+          htmlFor="password"
+          className="ml-1 font-mono text-[10px] tracking-[0.15em] text-zinc-500 uppercase"
+        >
           {t("auth.signUp.password")}
         </Label>
-        <div className="relative">
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <Lock className="text-pf-fg-muted h-4 w-4" />
+        <div className="group relative">
+          <div className="absolute inset-y-0 left-3 flex items-center">
+            <Lock className="h-4 w-4 text-zinc-500 transition-colors group-focus-within:text-cyan-400" />
           </div>
           <Input
             id="password"
@@ -144,28 +160,30 @@ export function SignUpForm() {
             required
             autoComplete="new-password"
             error={!!error}
-            className="pr-10 pl-10"
+            className="h-11 border-white/10 bg-white/[0.02] pr-10 pl-10 transition-all focus:border-cyan-500/50 focus:bg-white/[0.05] focus:ring-cyan-500/20"
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="text-pf-fg-muted hover:text-pf-fg-default absolute inset-y-0 right-0 flex items-center pr-3 transition-colors"
-            aria-label={showPassword ? "Hide password" : "Show password"}
+            className="absolute inset-y-0 right-3 flex items-center text-zinc-500 transition-colors hover:text-white"
           >
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
         </div>
-        <p className="text-pf-fg-subtle text-xs">Minimum 8 characters</p>
+        <p className="ml-1 font-mono text-[10px] text-zinc-600">Minimum 8 characters</p>
       </div>
 
       {/* Confirm Password Field */}
       <div className="space-y-2">
-        <Label htmlFor="confirmPassword" className="text-pf-fg-default">
+        <Label
+          htmlFor="confirmPassword"
+          className="ml-1 font-mono text-[10px] tracking-[0.15em] text-zinc-500 uppercase"
+        >
           {t("auth.signUp.confirmPassword")}
         </Label>
-        <div className="relative">
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <Lock className="text-pf-fg-muted h-4 w-4" />
+        <div className="group relative">
+          <div className="absolute inset-y-0 left-3 flex items-center">
+            <Lock className="h-4 w-4 text-zinc-500 transition-colors group-focus-within:text-cyan-400" />
           </div>
           <Input
             id="confirmPassword"
@@ -176,13 +194,12 @@ export function SignUpForm() {
             required
             autoComplete="new-password"
             error={!!error}
-            className="pr-10 pl-10"
+            className="h-11 border-white/10 bg-white/[0.02] pr-10 pl-10 transition-all focus:border-cyan-500/50 focus:bg-white/[0.05] focus:ring-cyan-500/20"
           />
           <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="text-pf-fg-muted hover:text-pf-fg-default absolute inset-y-0 right-0 flex items-center pr-3 transition-colors"
-            aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+            className="absolute inset-y-0 right-3 flex items-center text-zinc-500 transition-colors hover:text-white"
           >
             {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
@@ -190,21 +207,21 @@ export function SignUpForm() {
       </div>
 
       {/* Submit Button */}
-      <Button type="submit" className="mt-6 w-full" size="lg" loading={isLoading}>
-        {isLoading ? "Creating account..." : t("auth.signUp.submit")}
+      <Button
+        type="submit"
+        disabled={isLoading}
+        className="group relative mt-6 h-12 w-full overflow-hidden rounded-lg bg-white text-sm font-bold text-black transition-all hover:bg-cyan-400 active:scale-[0.98]"
+      >
+        {isLoading ? (
+          <span className="font-mono text-xs">Creating account...</span>
+        ) : (
+          <span className="relative z-10 flex items-center justify-center gap-2">
+            {t("auth.signUp.submit")}
+            <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </span>
+        )}
+        <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-black/10 to-transparent transition-transform duration-1000 group-hover:translate-x-full" />
       </Button>
-
-      {/* Terms */}
-      <p className="text-pf-fg-muted pt-2 text-center text-xs">
-        By creating an account, you agree to our{" "}
-        <a href="#" className="text-pf-accent-fg hover:underline">
-          Terms of Service
-        </a>{" "}
-        and{" "}
-        <a href="#" className="text-pf-accent-fg hover:underline">
-          Privacy Policy
-        </a>
-      </p>
     </form>
   );
 }
