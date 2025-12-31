@@ -6,9 +6,12 @@
 
 "use client";
 
+import { useEffect } from "react";
+import { useSession } from "next-auth/react";
 import { useOnboardingStore } from "../stores";
 import { OnboardingShell } from "./onboarding-shell";
 import { useOnboardingSync } from "../hooks/use-onboarding-sync";
+import { useOnboardingStatus } from "../hooks/use-onboarding-queries";
 import { LoadingState } from "@/shared/components/ui";
 import {
   WelcomeStep,
@@ -25,8 +28,20 @@ import {
 } from "./steps";
 
 export function OnboardingWizard() {
-  const { currentStep } = useOnboardingStore();
+  const { data: session } = useSession();
+  const { currentStep, reset } = useOnboardingStore();
   const { isLoading } = useOnboardingSync();
+  const { data: onboardingStatus } = useOnboardingStatus();
+
+  // Reset onboarding state if user has already completed onboarding
+  // This prevents showing onboarding to users who already completed it
+  useEffect(() => {
+    if (onboardingStatus?.hasCompletedOnboarding && session?.accessToken) {
+      // User already completed onboarding, redirect will be handled by middleware
+      // But we should reset the store to prevent stale state
+      reset();
+    }
+  }, [onboardingStatus?.hasCompletedOnboarding, session?.accessToken, reset]);
 
   const renderStep = () => {
     switch (currentStep) {
