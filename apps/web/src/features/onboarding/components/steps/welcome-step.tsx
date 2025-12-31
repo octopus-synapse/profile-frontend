@@ -22,9 +22,9 @@ export function WelcomeStep() {
           <Sparkles className="h-8 w-8" strokeWidth={1.5} />
         </div>
 
-        <h1 className="text-pf-fg-default text-2xl font-bold">Welcome to ProFile</h1>
+        <h1 className="text-pf-fg-default text-2xl font-bold">Welcome to PATCH</h1>
         <p className="text-pf-fg-muted mt-2 font-mono text-sm">
-          Let&apos;s build your professional profile in minutes
+          Your career, recompiled. Let&apos;s get started.
         </p>
       </div>
 
@@ -63,8 +63,8 @@ export function WelcomeStep() {
       <div className="grid gap-4 sm:grid-cols-3">
         <FeatureCard
           icon={<Terminal className="h-5 w-5" strokeWidth={1.5} />}
-          title="Developer-First"
-          description="Built for devs, by devs. Clean, code-inspired design."
+          title="Built for Tech"
+          description="Built by tech, for tech. Clean, intentional design."
         />
         <FeatureCard
           icon={<Clock className="h-5 w-5" strokeWidth={1.5} />}
@@ -83,14 +83,13 @@ export function WelcomeStep() {
         <div className="flex items-start gap-3">
           <span className="text-pf-accent-fg font-mono text-sm">i</span>
           <div className="text-pf-fg-muted font-mono text-xs">
-            <p>This wizard will help you create a complete professional profile.</p>
+            <p>PATCH will compile your career into the optimal format for each opportunity.</p>
             <p className="mt-1">
-              <span className="text-pf-fg-default">Required steps:</span> Personal info,
-              Professional profile, Skills, Theme
+              <span className="text-pf-fg-default">Required:</span> Personal info, Professional
+              profile, Skills, Theme
             </p>
             <p>
-              <span className="text-pf-fg-default">Optional steps:</span> Experience, Education,
-              Languages
+              <span className="text-pf-fg-default">Optional:</span> Experience, Education, Languages
             </p>
           </div>
         </div>

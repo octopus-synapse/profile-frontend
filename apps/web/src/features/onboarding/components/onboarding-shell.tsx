@@ -35,7 +35,7 @@ export function OnboardingShell({ children }: OnboardingShellProps) {
             <div className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis flex h-7 w-7 items-center justify-center">
               <Terminal className="h-4 w-4" strokeWidth={1.5} />
             </div>
-            <span className="text-pf-fg-default font-mono text-sm font-semibold">profile</span>
+            <span className="text-pf-fg-default font-mono text-sm font-semibold">PATCH</span>
           </Link>
 
           {/* Progress Indicator */}
