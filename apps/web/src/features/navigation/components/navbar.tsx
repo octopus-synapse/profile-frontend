@@ -1,17 +1,10 @@
 "use client";
 
 /**
- * Navbar Component
+ * Navbar Component - PATCH Dark Theme
  *
- * Nielsen Heuristics Applied:
- * 1. Visibility of system status - scroll indicator, loading states
- * 2. Match between system and real world - familiar navigation patterns
- * 3. User control and freedom - clear navigation, easy access
- * 4. Consistency and standards - predictable placement and behavior
- * 5. Error prevention - clear clickable areas
- * 6. Recognition rather than recall - visible navigation items
- * 7. Flexibility and efficiency - keyboard accessible
- * 8. Aesthetic and minimalist design - clean, focused interface
+ * Unified navbar for landing and app pages
+ * Dark background with cyan accents - consistent with landing page design
  */
 
 import { Menu, X } from "lucide-react";
@@ -61,15 +54,15 @@ export function Navbar({ className, navItems, rightSection, variant = "default" 
     <>
       <header
         className={cn(
-          "bg-pf-canvas-default/80 border-pf-border-muted/70 z-50 w-full border-b backdrop-blur-xl transition-shadow duration-300",
+          "z-50 w-full border-b border-white/5 bg-black/60 backdrop-blur-md transition-all duration-300",
           isLanding ? "fixed top-0 right-0 left-0" : "sticky top-0",
-          scrolled ? "shadow-[var(--shadow-md)]" : "shadow-[var(--shadow-sm)]",
+          scrolled && "bg-black/80 shadow-lg shadow-black/20",
           className
         )}
       >
         <nav
           className={cn(
-            "mx-auto flex items-center justify-between px-4 sm:px-6",
+            "mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8",
             isLanding ? "h-16 max-w-7xl" : "h-14 max-w-screen-xl"
           )}
           role="navigation"
@@ -86,7 +79,7 @@ export function Navbar({ className, navItems, rightSection, variant = "default" 
           </div>
 
           {/* Right Section */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             {rightSection
               ? rightSection
               : !isLoading && (
@@ -94,16 +87,16 @@ export function Navbar({ className, navItems, rightSection, variant = "default" 
                     {isAuthenticated ? (
                       <UserMenu />
                     ) : (
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-3">
                         <LocalizedLink
                           href={ROUTES.AUTH.SIGN_IN}
-                          className="text-pf-fg-muted hover:text-pf-fg-default hidden rounded-md px-3 py-2 text-sm font-medium transition-colors duration-150 sm:inline-flex"
+                          className="hidden text-sm font-medium text-zinc-400 transition-colors duration-150 hover:text-white sm:inline-flex"
                         >
                           Sign in
                         </LocalizedLink>
                         <LocalizedLink
                           href={ROUTES.AUTH.SIGN_UP}
-                          className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis hidden rounded-xl px-5 py-2.5 text-sm font-semibold transition-opacity duration-150 hover:opacity-90 sm:inline-flex"
+                          className="hidden rounded-md bg-white px-4 py-1.5 text-xs font-bold text-black transition-all hover:scale-[1.02] hover:bg-cyan-400 sm:inline-flex"
                         >
                           Get started
                         </LocalizedLink>
@@ -115,7 +108,7 @@ export function Navbar({ className, navItems, rightSection, variant = "default" 
             {/* Mobile Menu Toggle */}
             <button
               onClick={mobileMenu.toggle}
-              className="text-pf-fg-muted hover:text-pf-fg-default -mr-2 flex h-10 w-10 items-center justify-center rounded-md transition-colors duration-150 md:hidden"
+              className="-mr-2 flex h-10 w-10 items-center justify-center rounded-md text-zinc-400 transition-colors duration-150 hover:text-white md:hidden"
               aria-label={mobileMenu.isOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileMenu.isOpen}
               aria-controls="mobile-menu"

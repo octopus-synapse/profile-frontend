@@ -3,7 +3,7 @@
  * Single source of truth for navigation structure
  */
 
-import { Home, User, FileText, Settings, Shield, Users, LayoutDashboard, Sparkles, Target, CreditCard } from "lucide-react";
+import { Home, User, FileText, Settings, Shield, Users, LayoutDashboard, Sparkles, Target, CreditCard, Rocket } from "lucide-react";
 import type { NavItem, NavGroup } from "../types";
 import { ROUTES } from "@/config/routes";
 
@@ -54,6 +54,13 @@ export const PUBLIC_NAV_ITEMS: NavItem[] = [
 // ============================================================================
 
 export const PROTECTED_NAV_ITEMS: NavItem[] = [
+  {
+    key: "onboarding",
+    href: ROUTES.ONBOARDING,
+    labelKey: "nav.onboarding",
+    icon: Rocket,
+    requiresAuth: true,
+  },
   {
     key: "profile",
     href: ROUTES.PROTECTED.PROFILE,

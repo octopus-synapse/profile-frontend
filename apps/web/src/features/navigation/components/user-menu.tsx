@@ -80,8 +80,8 @@ export function UserMenu() {
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
           "flex items-center gap-2 rounded-full py-1 pr-2 pl-1 transition-colors duration-150",
-          "hover:bg-pf-canvas-subtle",
-          isOpen && "bg-pf-canvas-subtle"
+          "hover:bg-white/5",
+          isOpen && "bg-white/5"
         )}
         aria-expanded={isOpen}
         aria-haspopup="menu"
@@ -90,7 +90,7 @@ export function UserMenu() {
         <Avatar src={user.image} alt="" fallback={initials} size="sm" className="h-7 w-7" />
         <ChevronDown
           className={cn(
-            "text-pf-fg-muted h-3.5 w-3.5 transition-transform duration-150",
+            "h-3.5 w-3.5 text-zinc-400 transition-transform duration-150",
             isOpen && "rotate-180"
           )}
           strokeWidth={1.5}
@@ -100,14 +100,14 @@ export function UserMenu() {
       {/* Dropdown */}
       {isOpen && (
         <div
-          className="bg-pf-canvas-overlay border-pf-border-muted absolute right-0 z-50 mt-2 w-60 origin-top-right overflow-hidden rounded-xl border py-1 shadow-xl"
+          className="absolute right-0 z-50 mt-2 w-60 origin-top-right overflow-hidden rounded-xl border border-white/10 bg-[#0A0A0A]/95 py-1 shadow-xl"
           role="menu"
           aria-orientation="vertical"
         >
           {/* User Info */}
-          <div className="bg-pf-canvas-subtle border-pf-border-muted border-b px-3 py-3">
-            <p className="text-pf-fg-default truncate text-sm font-medium">{displayName}</p>
-            <p className="text-pf-fg-muted mt-0.5 truncate text-xs">{user.email}</p>
+          <div className="border-b border-white/10 bg-white/5 px-3 py-3">
+            <p className="truncate text-sm font-medium text-white">{displayName}</p>
+            <p className="mt-0.5 truncate text-xs text-zinc-400">{user.email}</p>
           </div>
 
           {/* Navigation Items */}
@@ -117,7 +117,7 @@ export function UserMenu() {
                 key={item.key}
                 href={item.href}
                 onClick={close}
-                className="text-pf-fg-default hover:bg-pf-canvas-subtle block rounded-lg px-3 py-2 text-sm transition-colors duration-150"
+                className="block rounded-lg px-3 py-2 text-sm text-white transition-colors duration-150 hover:bg-white/5"
                 role="menuitem"
               >
                 {t(item.labelKey as DictionaryKey)}
@@ -128,9 +128,9 @@ export function UserMenu() {
           {/* Admin Section */}
           {isAdmin && (
             <>
-              <div className="border-pf-border-muted mx-1 border-t" />
+              <div className="mx-1 border-t border-white/10" />
               <div className="p-1">
-                <p className="text-pf-fg-subtle px-3 py-1.5 text-[11px] font-medium tracking-wider uppercase">
+                <p className="px-3 py-1.5 text-[11px] font-medium tracking-wider text-zinc-500 uppercase">
                   Admin
                 </p>
                 {ADMIN_MENU_ITEMS.map((item) => (
@@ -138,7 +138,7 @@ export function UserMenu() {
                     key={item.key}
                     href={item.href}
                     onClick={close}
-                    className="text-pf-fg-default hover:bg-pf-canvas-subtle block rounded-lg px-3 py-2 text-sm transition-colors duration-150"
+                    className="block rounded-lg px-3 py-2 text-sm text-white transition-colors duration-150 hover:bg-white/5"
                     role="menuitem"
                   >
                     {t(item.labelKey as DictionaryKey)}
@@ -149,19 +149,19 @@ export function UserMenu() {
           )}
 
           {/* Preferences */}
-          <div className="border-pf-border-muted mx-1 border-t" />
+          <div className="mx-1 border-t border-white/10" />
           <div className="p-1">
             {/* Theme */}
             <div className="flex items-center justify-between rounded-lg px-3 py-2">
-              <span className="text-pf-fg-muted text-sm">Theme</span>
-              <div className="bg-pf-canvas-subtle flex items-center gap-0.5 rounded-lg p-0.5">
+              <span className="text-sm text-zinc-400">Theme</span>
+              <div className="flex items-center gap-0.5 rounded-lg bg-white/5 p-0.5">
                 <button
                   onClick={() => themeContext?.setTheme("light")}
                   className={cn(
                     "flex h-6 w-6 items-center justify-center rounded-md transition-all duration-150",
                     themeContext?.theme === "light"
-                      ? "bg-pf-canvas-overlay text-pf-fg-default shadow-sm"
-                      : "text-pf-fg-muted hover:text-pf-fg-default"
+                      ? "bg-[#0A0A0A]/95 text-white shadow-sm"
+                      : "text-zinc-400 hover:text-white"
                   )}
                   aria-label="Light theme"
                   aria-pressed={themeContext?.theme === "light"}
@@ -173,8 +173,8 @@ export function UserMenu() {
                   className={cn(
                     "flex h-6 w-6 items-center justify-center rounded-md transition-all duration-150",
                     themeContext?.theme === "dark"
-                      ? "bg-pf-canvas-overlay text-pf-fg-default shadow-sm"
-                      : "text-pf-fg-muted hover:text-pf-fg-default"
+                      ? "bg-[#0A0A0A]/95 text-white shadow-sm"
+                      : "text-zinc-400 hover:text-white"
                   )}
                   aria-label="Dark theme"
                   aria-pressed={themeContext?.theme === "dark"}
@@ -186,8 +186,8 @@ export function UserMenu() {
 
             {/* Language */}
             <div className="flex items-center justify-between rounded-lg px-3 py-2">
-              <span className="text-pf-fg-muted text-sm">Language</span>
-              <div className="bg-pf-canvas-subtle flex items-center gap-0.5 rounded-lg p-0.5">
+              <span className="text-sm text-zinc-400">Language</span>
+              <div className="flex items-center gap-0.5 rounded-lg bg-white/5 p-0.5">
                 {locales.map((locale) => (
                   <button
                     key={locale.code}
@@ -195,8 +195,8 @@ export function UserMenu() {
                     className={cn(
                       "flex h-6 items-center rounded-md px-2 text-xs font-medium transition-all duration-150",
                       language === locale.code
-                        ? "bg-pf-canvas-overlay text-pf-fg-default shadow-sm"
-                        : "text-pf-fg-muted hover:text-pf-fg-default"
+                        ? "bg-[#0A0A0A]/95 text-white shadow-sm"
+                        : "text-zinc-400 hover:text-white"
                     )}
                     aria-pressed={language === locale.code}
                   >
@@ -208,14 +208,14 @@ export function UserMenu() {
           </div>
 
           {/* Sign Out */}
-          <div className="border-pf-border-muted mx-1 border-t" />
+          <div className="mx-1 border-t border-white/10" />
           <div className="p-1">
             <button
               onClick={() => {
                 close();
                 signOut();
               }}
-              className="text-pf-danger-fg hover:bg-pf-danger-subtle flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors duration-150"
+              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-500 transition-colors duration-150 hover:bg-red-500/10"
               role="menuitem"
             >
               <LogOut className="h-4 w-4" strokeWidth={1.5} />

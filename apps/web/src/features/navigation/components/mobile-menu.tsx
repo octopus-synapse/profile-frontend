@@ -70,17 +70,17 @@ export function MobileMenu({ menu, navItems }: MobileMenuProps) {
   return (
     <div
       id="mobile-menu"
-      className="bg-pf-canvas-default fixed inset-0 z-50 flex flex-col"
+      className="fixed inset-0 z-50 flex flex-col bg-black"
       role="dialog"
       aria-modal="true"
       aria-label="Navigation menu"
     >
       {/* Header */}
-      <header className="border-pf-border-muted/70 flex h-14 items-center justify-between border-b px-4 sm:px-6">
+      <header className="flex h-14 items-center justify-between border-b border-white/5 px-4 sm:px-6">
         <Logo />
         <button
           onClick={menu.close}
-          className="text-pf-fg-muted hover:text-pf-fg-default -mr-2 flex h-10 w-10 items-center justify-center rounded-md transition-colors duration-150"
+          className="-mr-2 flex h-10 w-10 items-center justify-center rounded-md text-zinc-400 transition-colors duration-150 hover:text-white"
           aria-label="Close menu"
         >
           <X className="h-5 w-5" strokeWidth={1.5} />
@@ -90,7 +90,7 @@ export function MobileMenu({ menu, navItems }: MobileMenuProps) {
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-4 sm:px-6">
         {/* Main Navigation */}
-        <nav className="border-pf-border-muted border-b py-4" aria-label="Main navigation">
+        <nav className="border-b border-white/5 py-4" aria-label="Main navigation">
           {displayNavItems.map((item) => (
             <NavLink key={item.key} item={item} onClick={menu.close} variant="mobile" />
           ))}
@@ -98,10 +98,8 @@ export function MobileMenu({ menu, navItems }: MobileMenuProps) {
 
         {/* Admin Section */}
         {canAccessAdmin && adminNavItems.length > 0 && (
-          <div className="border-pf-border-muted border-b py-4">
-            <p className="text-pf-fg-muted mb-2 text-xs font-medium tracking-wide uppercase">
-              Admin
-            </p>
+          <div className="border-b border-white/5 py-4">
+            <p className="mb-2 text-xs font-medium tracking-wide text-zinc-500 uppercase">Admin</p>
             {adminNavItems.map((item) => (
               <NavLink key={item.key} item={item} onClick={menu.close} variant="mobile" />
             ))}
@@ -110,21 +108,19 @@ export function MobileMenu({ menu, navItems }: MobileMenuProps) {
 
         {/* Preferences */}
         <div className="py-4">
-          <p className="text-pf-fg-muted mb-3 text-xs font-medium tracking-wide uppercase">
+          <p className="mb-3 text-xs font-medium tracking-wide text-zinc-500 uppercase">
             Preferences
           </p>
 
           {/* Theme */}
           <div className="flex items-center justify-between py-2">
-            <span className="text-pf-fg-default text-[15px]">Theme</span>
+            <span className="text-[15px] text-white">Theme</span>
             <div className="flex items-center gap-1">
               <button
                 onClick={() => themeContext?.setTheme("light")}
                 className={cn(
                   "flex h-9 w-9 items-center justify-center rounded-md transition-colors duration-150",
-                  themeContext?.theme === "light"
-                    ? "bg-pf-canvas-subtle text-pf-fg-default"
-                    : "text-pf-fg-muted"
+                  themeContext?.theme === "light" ? "bg-zinc-800 text-white" : "text-zinc-500"
                 )}
                 aria-label="Light theme"
                 aria-pressed={themeContext?.theme === "light"}
@@ -135,9 +131,7 @@ export function MobileMenu({ menu, navItems }: MobileMenuProps) {
                 onClick={() => themeContext?.setTheme("dark")}
                 className={cn(
                   "flex h-9 w-9 items-center justify-center rounded-md transition-colors duration-150",
-                  themeContext?.theme === "dark"
-                    ? "bg-pf-canvas-subtle text-pf-fg-default"
-                    : "text-pf-fg-muted"
+                  themeContext?.theme === "dark" ? "bg-zinc-800 text-white" : "text-zinc-500"
                 )}
                 aria-label="Dark theme"
                 aria-pressed={themeContext?.theme === "dark"}
@@ -149,7 +143,7 @@ export function MobileMenu({ menu, navItems }: MobileMenuProps) {
 
           {/* Language */}
           <div className="flex items-center justify-between py-2">
-            <span className="text-pf-fg-default text-[15px]">Language</span>
+            <span className="text-[15px] text-white">Language</span>
             <div className="flex items-center gap-1">
               {locales.map((locale) => (
                 <button
@@ -157,9 +151,7 @@ export function MobileMenu({ menu, navItems }: MobileMenuProps) {
                   onClick={() => setLanguage(locale.code)}
                   className={cn(
                     "flex h-9 items-center gap-1.5 rounded-md px-3 text-sm font-medium transition-colors duration-150",
-                    language === locale.code
-                      ? "bg-pf-canvas-subtle text-pf-fg-default"
-                      : "text-pf-fg-muted"
+                    language === locale.code ? "bg-zinc-800 text-white" : "text-zinc-500"
                   )}
                   aria-pressed={language === locale.code}
                 >
@@ -173,14 +165,14 @@ export function MobileMenu({ menu, navItems }: MobileMenuProps) {
       </div>
 
       {/* Footer */}
-      <footer className="border-pf-border-muted border-t p-4 sm:p-6">
+      <footer className="border-t border-white/5 p-4 sm:p-6">
         {isAuthenticated ? (
           <button
             onClick={() => {
               menu.close();
               signOut();
             }}
-            className="text-pf-fg-default hover:bg-pf-canvas-subtle flex w-full items-center justify-center gap-2 rounded-md py-3 text-[15px] font-medium transition-colors duration-150"
+            className="flex w-full items-center justify-center gap-2 rounded-md py-3 text-[15px] font-medium text-white transition-colors duration-150 hover:bg-zinc-900"
           >
             <LogOut className="h-[18px] w-[18px]" strokeWidth={1.5} />
             Sign out
@@ -190,14 +182,14 @@ export function MobileMenu({ menu, navItems }: MobileMenuProps) {
             <LocalizedLink
               href={ROUTES.AUTH.SIGN_UP}
               onClick={menu.close}
-              className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis flex w-full items-center justify-center rounded-xl py-3 text-[15px] font-semibold transition-opacity duration-150 hover:opacity-90"
+              className="flex w-full items-center justify-center rounded-md bg-white py-3 text-[15px] font-bold text-black transition-all duration-150 hover:bg-cyan-400"
             >
               Get started
             </LocalizedLink>
             <LocalizedLink
               href={ROUTES.AUTH.SIGN_IN}
               onClick={menu.close}
-              className="text-pf-fg-muted hover:text-pf-fg-default flex w-full items-center justify-center py-3 text-[15px] transition-colors duration-150"
+              className="flex w-full items-center justify-center py-3 text-[15px] text-zinc-400 transition-colors duration-150 hover:text-white"
             >
               Sign in
             </LocalizedLink>

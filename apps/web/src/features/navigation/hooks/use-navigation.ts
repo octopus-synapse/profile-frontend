@@ -6,7 +6,10 @@
  */
 
 import { useMemo } from "react";
+import { usePathname } from "next/navigation";
 import { useAuth } from "@/features/auth";
+import { ROUTES } from "@/config/routes";
+import { removeLocalePrefix } from "@/config/i18n.config";
 import {
   PUBLIC_NAV_ITEMS,
   PROTECTED_NAV_ITEMS,
@@ -18,6 +21,7 @@ import type { NavItem } from "../types";
 
 export function useNavigation() {
   const { user, isAuthenticated, hasRole } = useAuth();
+  const pathname = usePathname();
 
   // Filter items based on auth state and role
   const filterItems = useMemo(() => {
@@ -40,14 +44,59 @@ export function useNavigation() {
 
   // Main navigation items (shown in navbar)
   const mainNavItems = useMemo(() => {
-    const items = [...PUBLIC_NAV_ITEMS];
+    const items: NavItem[] = [];
 
     if (isAuthenticated) {
-      items.push(...filterItems(PROTECTED_NAV_ITEMS));
+      const normalizedPathname = pathname ? removeLocalePrefix(pathname) : "";
+      const isHomePage = normalizedPathname === ROUTES.HOME || normalizedPathname === "";
+      const isOnboardingPage = normalizedPathname?.includes(ROUTES.ONBOARDING);
+      const hasCompletedOnboarding = user?.hasCompletedOnboarding ?? false;
+
+      // Always add Home
+      items.push(...PUBLIC_NAV_ITEMS);
+
+      if (isOnboardingPage) {
+        // If on onboarding page, show only onboarding item (Home is already added above)
+        // Remove Home for onboarding page to show only onboarding
+        items.length = 0;
+        const onboardingItem = PROTECTED_NAV_ITEMS.find((item) => item.key === "onboarding");
+        if (onboardingItem) {
+          items.push(onboardingItem);
+        }
+      } else if (isHomePage) {
+        // If on home page: show Home + Onboarding (if not completed), or Home + other items (if completed)
+        if (!hasCompletedOnboarding) {
+          // Show Home + Onboarding only
+          const onboardingItem = PROTECTED_NAV_ITEMS.find((item) => item.key === "onboarding");
+          if (onboardingItem) {
+            items.push(onboardingItem);
+          }
+        } else {
+          // Show Home + other protected items (except onboarding)
+          const filteredItems = filterItems(PROTECTED_NAV_ITEMS).filter((item) => {
+            // Exclude onboarding item since it's completed
+            return item.key !== "onboarding";
+          });
+          items.push(...filteredItems);
+        }
+      } else {
+        // Other authenticated pages: show Home + protected items (except onboarding if completed)
+        const filteredItems = filterItems(PROTECTED_NAV_ITEMS).filter((item) => {
+          // Hide onboarding item if onboarding is already completed
+          if (item.key === "onboarding" && hasCompletedOnboarding) {
+            return false;
+          }
+          return true;
+        });
+        items.push(...filteredItems);
+      }
+    } else {
+      // Not authenticated: show public items (Home)
+      items.push(...PUBLIC_NAV_ITEMS);
     }
 
     return items;
-  }, [isAuthenticated, filterItems]);
+  }, [isAuthenticated, filterItems, pathname, user?.hasCompletedOnboarding]);
 
   // Admin navigation items
   const adminNavItems = useMemo(() => {
