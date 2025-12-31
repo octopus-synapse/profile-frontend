@@ -23,18 +23,18 @@ export function LandingNavbar() {
         <div className="flex items-center gap-4">
           <LanguageSelector
             locale={language}
-            className="text-pf-fg-muted bg-pf-canvas-default border-pf-border-default hidden cursor-pointer rounded-lg border px-2 py-1 text-sm md:block"
+            className="hidden cursor-pointer rounded-lg border border-white/10 bg-[#030303] px-2 py-1 text-sm text-zinc-500 md:block"
           />
           <ThemeToggleSimple />
           <LocalizedLink
             href={ROUTES.AUTH.SIGN_IN}
-            className="text-pf-fg-muted hover:text-pf-fg-default hidden text-sm font-medium transition-colors md:block"
+            className="hidden text-sm font-medium text-zinc-400 transition-colors hover:text-white md:block"
           >
             {t("nav.signIn")}
           </LocalizedLink>
           <LocalizedLink
             href={ROUTES.AUTH.SIGN_UP}
-            className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis hidden rounded-xl px-5 py-2.5 text-sm font-semibold transition-opacity hover:opacity-90 md:block"
+            className="hidden rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-black transition-opacity hover:bg-white/90 md:block"
           >
             {t("nav.signUp")}
           </LocalizedLink>

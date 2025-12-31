@@ -202,7 +202,7 @@ export function ClientHeroDemo({ t }: ClientHeroDemoProps) {
         {notifications.map((notification, index) => (
           <div
             key={notification.id}
-            className={`bg-pf-canvas-overlay flex items-center gap-2 rounded-lg p-3 text-sm shadow-lg ${prefersReducedMotion ? "" : "animate-slide-in-right"} `}
+            className={`flex items-center gap-2 rounded-lg border border-white/10 bg-[#0A0A0A]/90 p-3 text-sm shadow-lg ${prefersReducedMotion ? "" : "animate-slide-in-right"} `}
             style={{
               animationDelay: prefersReducedMotion ? "0ms" : `${index * 100}ms`,
               opacity: prefersReducedMotion ? 1 : undefined,
@@ -211,7 +211,7 @@ export function ClientHeroDemo({ t }: ClientHeroDemoProps) {
           >
             {notification.type === "applied" && (
               <>
-                <CheckCircle2 className="text-pf-success-fg h-4 w-4" aria-hidden="true" />
+                <CheckCircle2 className="h-4 w-4 text-emerald-500" aria-hidden="true" />
                 <span>
                   Applied to <strong>{notification.company}</strong>
                 </span>
@@ -219,7 +219,7 @@ export function ClientHeroDemo({ t }: ClientHeroDemoProps) {
             )}
             {notification.type === "match" && (
               <>
-                <Heart className="text-pf-danger-fg h-4 w-4" aria-hidden="true" />
+                <Heart className="h-4 w-4 text-red-500" aria-hidden="true" />
                 <span>
                   <strong>{notification.company}</strong> matched!
                 </span>
@@ -227,7 +227,7 @@ export function ClientHeroDemo({ t }: ClientHeroDemoProps) {
             )}
             {notification.type === "interview" && (
               <>
-                <Flame className="text-pf-attention-fg h-4 w-4" aria-hidden="true" />
+                <Flame className="h-4 w-4 text-amber-500" aria-hidden="true" />
                 <span>
                   Interview at <strong>{notification.company}</strong>
                 </span>
@@ -239,25 +239,25 @@ export function ClientHeroDemo({ t }: ClientHeroDemoProps) {
 
       {/* Main Demo Card */}
       <div
-        className="border-pf-border-default bg-pf-canvas-overlay overflow-hidden rounded-2xl border shadow-2xl"
+        className="overflow-hidden rounded-2xl border border-white/10 bg-[#0A0A0A]/80 shadow-2xl"
         role="region"
         aria-label="Job matching demo"
       >
         {/* ATS Score Section */}
         <div
           ref={atsContainerRef}
-          className="border-pf-border-muted border-b p-6"
+          className="border-b border-white/10 p-6"
           aria-label={`ATS Score: ${atsScore}%`}
         >
           <div className="mb-3 flex items-center justify-between">
-            <span className="text-pf-fg-muted text-sm font-medium">ATS Score</span>
+            <span className="text-sm font-medium text-zinc-400">ATS Score</span>
             <span
               className={`text-2xl font-bold transition-colors duration-300 ${
                 atsScore >= 90
-                  ? "text-pf-success-fg"
+                  ? "text-emerald-500"
                   : atsScore >= 70
-                    ? "text-pf-attention-fg"
-                    : "text-pf-danger-fg"
+                    ? "text-amber-500"
+                    : "text-red-500"
               }`}
               aria-live="polite"
             >
@@ -265,7 +265,7 @@ export function ClientHeroDemo({ t }: ClientHeroDemoProps) {
             </span>
           </div>
           <div
-            className="bg-pf-canvas-subtle h-3 overflow-hidden rounded-full"
+            className="h-3 overflow-hidden rounded-full bg-white/5"
             role="progressbar"
             aria-valuenow={atsScore}
             aria-valuemin={0}
@@ -273,16 +273,12 @@ export function ClientHeroDemo({ t }: ClientHeroDemoProps) {
           >
             <div
               className={`h-full rounded-full transition-all duration-300 ${
-                atsScore >= 90
-                  ? "bg-pf-success-fg"
-                  : atsScore >= 70
-                    ? "bg-pf-attention-fg"
-                    : "bg-pf-danger-fg"
+                atsScore >= 90 ? "bg-emerald-500" : atsScore >= 70 ? "bg-amber-500" : "bg-red-500"
               }`}
               style={{ width: `${atsScore}%` }}
             />
           </div>
-          <p className="text-pf-fg-subtle mt-2 text-xs">
+          <p className="mt-2 text-xs text-zinc-500">
             {atsScore >= 90 ? "✓ Your resume passes ATS screening!" : "Optimizing..."}
           </p>
         </div>
@@ -297,30 +293,30 @@ export function ClientHeroDemo({ t }: ClientHeroDemoProps) {
         >
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-lg font-semibold">{t.swipe.tinderTitle}</h3>
-            <span className="text-pf-fg-subtle text-sm">
+            <span className="text-sm text-zinc-500">
               {currentJobIndex + 1}/{DEMO_JOBS.length}
             </span>
           </div>
 
           {/* Job Card */}
           <div
-            className={`from-pf-canvas-subtle to-pf-canvas-inset relative mb-4 rounded-xl bg-gradient-to-br p-4 ${!prefersReducedMotion ? "transition-transform duration-300" : ""} ${swipeDirection === "left" ? "-translate-x-full opacity-0" : ""} ${swipeDirection === "right" ? "translate-x-full opacity-0" : ""} `}
+            className={`relative mb-4 rounded-xl bg-gradient-to-br from-white/5 to-white/10 p-4 ${!prefersReducedMotion ? "transition-transform duration-300" : ""} ${swipeDirection === "left" ? "-translate-x-full opacity-0" : ""} ${swipeDirection === "right" ? "translate-x-full opacity-0" : ""} `}
           >
             {/* Match Badge */}
-            <div className="bg-pf-success-fg text-pf-fg-on-emphasis absolute -top-2 -right-2 rounded-full px-2 py-1 text-xs font-bold">
+            <div className="absolute -top-2 -right-2 rounded-full bg-emerald-500 px-2 py-1 text-xs font-bold text-white">
               {currentJob.match}% {t.swipe.matchScore}
             </div>
 
             <h4 className="text-lg font-bold">{currentJob.title}</h4>
-            <p className="text-pf-fg-muted">{currentJob.company}</p>
-            <p className="text-pf-fg-subtle text-sm">{currentJob.location}</p>
+            <p className="text-zinc-400">{currentJob.company}</p>
+            <p className="text-sm text-zinc-500">{currentJob.location}</p>
           </div>
 
           {/* Swipe Buttons */}
           <div className="flex justify-center gap-4">
             <button
               onClick={() => handleSwipe("left")}
-              className="bg-pf-danger-subtle text-pf-danger-fg hover:bg-pf-danger-muted rounded-full p-4 transition-colors"
+              className="rounded-full bg-red-500/10 p-4 text-red-500 transition-colors hover:bg-red-500/20"
               aria-label={t.swipe.swipeLeft}
             >
               <X className="h-6 w-6" aria-hidden="true" />
@@ -328,7 +324,7 @@ export function ClientHeroDemo({ t }: ClientHeroDemoProps) {
 
             <button
               onClick={() => handleSwipe("right")}
-              className="bg-pf-success-subtle text-pf-success-fg hover:bg-pf-success-muted rounded-full p-4 transition-colors"
+              className="rounded-full bg-emerald-500/10 p-4 text-emerald-500 transition-colors hover:bg-emerald-500/20"
               aria-label={t.swipe.swipeRight}
             >
               <Heart className="h-6 w-6" aria-hidden="true" />
@@ -336,11 +332,9 @@ export function ClientHeroDemo({ t }: ClientHeroDemoProps) {
           </div>
 
           {/* Keyboard hint */}
-          <p className="text-pf-fg-subtle mt-3 text-center text-xs">
-            <kbd className="bg-pf-canvas-subtle rounded px-1 py-0.5 text-xs">←</kbd>{" "}
-            {t.swipe.swipeLeft} ·{" "}
-            <kbd className="bg-pf-canvas-subtle rounded px-1 py-0.5 text-xs">→</kbd>{" "}
-            {t.swipe.swipeRight}
+          <p className="mt-3 text-center text-xs text-zinc-500">
+            <kbd className="rounded bg-white/5 px-1 py-0.5 text-xs">←</kbd> {t.swipe.swipeLeft} ·{" "}
+            <kbd className="rounded bg-white/5 px-1 py-0.5 text-xs">→</kbd> {t.swipe.swipeRight}
           </p>
         </div>
       </div>

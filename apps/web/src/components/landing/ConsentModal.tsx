@@ -82,13 +82,13 @@ export function ConsentModal({ t, isOpen, onClose, onAccept }: ConsentModalProps
 
       {/* Modal */}
       <div
-        className="animate-fade-in-up bg-pf-canvas-overlay relative w-full max-w-md rounded-2xl p-6 shadow-2xl"
+        className="animate-fade-in-up relative w-full max-w-md rounded-2xl border border-white/10 bg-[#0A0A0A]/95 p-6 shadow-2xl backdrop-blur-xl"
         role="document"
       >
         {/* Close button */}
         <button
           onClick={onClose}
-          className="text-pf-fg-muted hover:bg-pf-canvas-subtle hover:text-pf-fg-default absolute top-4 right-4 rounded-full p-2 transition-colors"
+          className="absolute top-4 right-4 rounded-full p-2 text-zinc-500 transition-colors hover:bg-white/5 hover:text-white"
           aria-label="Close modal"
         >
           <X className="h-5 w-5" aria-hidden="true" />
@@ -96,8 +96,8 @@ export function ConsentModal({ t, isOpen, onClose, onAccept }: ConsentModalProps
 
         {/* Icon */}
         <div className="mb-4 flex justify-center">
-          <div className="bg-pf-accent-subtle rounded-full p-3">
-            <Shield className="text-pf-accent-fg h-8 w-8" aria-hidden="true" />
+          <div className="rounded-full bg-cyan-500/10 p-3">
+            <Shield className="h-8 w-8 text-cyan-400" aria-hidden="true" />
           </div>
         </div>
 
@@ -107,30 +107,27 @@ export function ConsentModal({ t, isOpen, onClose, onAccept }: ConsentModalProps
         </h2>
 
         {/* Description */}
-        <p className="text-pf-fg-muted mb-6 text-center">{t.consent.description}</p>
+        <p className="mb-6 text-center text-zinc-400">{t.consent.description}</p>
 
         {/* Permissions list */}
         <ul className="mb-6 space-y-3" role="list">
           {t.consent.permissions.map((permission, index) => (
             <li key={index} className="flex items-start gap-3 text-sm">
-              <Check
-                className="text-pf-success-fg mt-0.5 h-5 w-5 flex-shrink-0"
-                aria-hidden="true"
-              />
+              <Check className="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-500" aria-hidden="true" />
               <span>{permission}</span>
             </li>
           ))}
         </ul>
 
         {/* Revoke notice */}
-        <p className="text-pf-fg-subtle mb-6 text-center text-xs">{t.consent.revoke}</p>
+        <p className="mb-6 text-center text-xs text-zinc-500">{t.consent.revoke}</p>
 
         {/* Actions */}
         <div className="space-y-3">
           <button
             onClick={handleAccept}
             disabled={isLoading}
-            className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis w-full rounded-xl px-4 py-3 font-semibold transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-full rounded-xl bg-white px-4 py-3 font-semibold text-black transition-colors hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isLoading ? (
               <span className="flex items-center justify-center gap-2">
@@ -159,7 +156,7 @@ export function ConsentModal({ t, isOpen, onClose, onAccept }: ConsentModalProps
 
           <button
             onClick={handleDecline}
-            className="bg-pf-canvas-subtle text-pf-fg-default hover:bg-pf-canvas-inset w-full rounded-xl px-4 py-3 font-medium transition-colors"
+            className="w-full rounded-xl bg-white/5 px-4 py-3 font-medium text-white transition-colors hover:bg-white/10"
           >
             {t.consent.decline}
           </button>
@@ -170,7 +167,7 @@ export function ConsentModal({ t, isOpen, onClose, onAccept }: ConsentModalProps
           href="/privacy"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-pf-accent-fg hover:text-pf-accent-emphasis mt-4 flex items-center justify-center gap-1 text-sm transition-colors"
+          className="mt-4 flex items-center justify-center gap-1 text-sm text-cyan-400 transition-colors hover:text-cyan-300"
         >
           {t.consent.privacyLink}
           <ExternalLink className="h-3 w-3" aria-hidden="true" />

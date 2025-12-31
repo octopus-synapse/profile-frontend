@@ -50,7 +50,7 @@ export function HeroActions({ t }: HeroActionsProps) {
       <div className="flex flex-col justify-center gap-4 sm:flex-row">
         <button
           onClick={handlePrimaryCTA}
-          className="group bg-pf-canvas-emphasis text-pf-fg-on-emphasis relative inline-flex items-center justify-center gap-2 rounded-xl px-8 py-4 font-semibold shadow-lg transition-all duration-200 hover:opacity-90 hover:shadow-xl"
+          className="group relative inline-flex items-center justify-center gap-2 rounded-xl bg-white px-8 py-4 font-semibold text-black shadow-lg transition-all duration-200 hover:bg-white/90 hover:shadow-xl"
           aria-label={t.hero.cta}
         >
           {t.hero.cta}
@@ -72,7 +72,7 @@ export function HeroActions({ t }: HeroActionsProps) {
 
         <button
           onClick={handleSecondaryCTA}
-          className="border-pf-border-default bg-pf-canvas-subtle text-pf-fg-default hover:bg-pf-canvas-inset inline-flex items-center justify-center gap-2 rounded-xl border px-8 py-4 font-semibold transition-all duration-200"
+          className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-8 py-4 font-semibold text-white transition-all duration-200 hover:bg-white/10"
           aria-label={t.hero.ctaSecondary}
         >
           {t.hero.ctaSecondary}
@@ -80,7 +80,7 @@ export function HeroActions({ t }: HeroActionsProps) {
       </div>
 
       {/* Premium Badge */}
-      <div className="from-pf-attention-subtle to-pf-attention-muted text-pf-attention-emphasis mt-6 inline-flex items-center gap-2 rounded-full bg-gradient-to-r px-4 py-2 text-sm font-medium">
+      <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-500/10 to-amber-500/20 px-4 py-2 text-sm font-medium text-amber-400">
         {t.hero.premiumBadge}
       </div>
 

@@ -150,8 +150,8 @@ export function SwipeModeDemo({ t }: SwipeModeDemoProps) {
         <div
           className={`animate-notification-in absolute -top-16 left-1/2 z-20 -translate-x-1/2 rounded-full px-6 py-2 text-sm font-medium shadow-lg ${
             actionFeedback.type === "applied"
-              ? "bg-pf-success-fg text-white"
-              : "bg-pf-fg-muted text-white"
+              ? "bg-emerald-500 text-white"
+              : "bg-zinc-500 text-white"
           }`}
         >
           {actionFeedback.type === "applied" ? (
@@ -171,19 +171,19 @@ export function SwipeModeDemo({ t }: SwipeModeDemoProps) {
       {/* Stats Bar */}
       <div className="mb-4 flex items-center justify-between px-2">
         <div className="flex items-center gap-2 text-sm">
-          <TrendingUp className="text-pf-success-fg h-4 w-4" />
-          <span className="text-pf-fg-muted">
-            <span className="text-pf-fg-default font-semibold">{appliedCount}</span> applied today
+          <TrendingUp className="h-4 w-4 text-emerald-500" />
+          <span className="text-zinc-400">
+            <span className="font-semibold text-white">{appliedCount}</span> applied today
           </span>
         </div>
-        <div className="text-pf-fg-subtle text-xs">
+        <div className="text-xs text-zinc-500">
           {currentJobIndex + 1} of {DEMO_JOBS.length}
         </div>
       </div>
 
       {/* Job Card */}
       <div
-        className={`bg-pf-canvas-overlay border-pf-border-default relative overflow-hidden rounded-2xl border shadow-xl transition-all duration-300 ${
+        className={`relative overflow-hidden rounded-2xl border border-white/10 bg-[#0A0A0A]/80 shadow-xl transition-all duration-300 ${
           swipeDirection === "left" ? "animate-swipe-left" : ""
         } ${swipeDirection === "right" ? "animate-swipe-right" : ""}`}
         role="article"
@@ -214,19 +214,19 @@ export function SwipeModeDemo({ t }: SwipeModeDemoProps) {
 
         {/* Job Details */}
         <div className="px-6 pt-12 pb-6">
-          <h3 className="text-pf-fg-default text-xl font-bold">{currentJob.title}</h3>
-          <p className="text-pf-fg-muted mt-1 font-medium">{currentJob.company}</p>
+          <h3 className="text-xl font-bold text-white">{currentJob.title}</h3>
+          <p className="mt-1 font-medium text-zinc-400">{currentJob.company}</p>
 
           <div className="mt-4 flex flex-wrap gap-3 text-sm">
-            <div className="text-pf-fg-muted flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 text-zinc-400">
               <MapPin className="h-4 w-4" />
               {currentJob.location}
             </div>
-            <div className="text-pf-fg-muted flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 text-zinc-400">
               <DollarSign className="h-4 w-4" />
               {currentJob.salary}
             </div>
-            <div className="text-pf-fg-muted flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 text-zinc-400">
               <Briefcase className="h-4 w-4" />
               {currentJob.type}
             </div>
@@ -237,7 +237,7 @@ export function SwipeModeDemo({ t }: SwipeModeDemoProps) {
             {currentJob.skills.map((skill) => (
               <span
                 key={skill}
-                className="bg-pf-canvas-subtle text-pf-fg-default rounded-full px-3 py-1 text-xs font-medium"
+                className="rounded-full bg-white/5 px-3 py-1 text-xs font-medium text-white"
               >
                 {skill}
               </span>
@@ -245,9 +245,9 @@ export function SwipeModeDemo({ t }: SwipeModeDemoProps) {
           </div>
 
           {/* Match Breakdown */}
-          <div className="bg-pf-canvas-subtle mt-4 rounded-lg p-3">
+          <div className="mt-4 rounded-lg bg-white/5 p-3">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-pf-fg-muted">Your match</span>
+              <span className="text-zinc-400">Your match</span>
               <div className="flex items-center gap-1">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star
@@ -255,7 +255,7 @@ export function SwipeModeDemo({ t }: SwipeModeDemoProps) {
                     className={`h-4 w-4 ${
                       star <= Math.round(currentJob.match / 20)
                         ? "fill-yellow-400 text-yellow-400"
-                        : "text-pf-border-default"
+                        : "text-zinc-700"
                     }`}
                   />
                 ))}
@@ -269,7 +269,7 @@ export function SwipeModeDemo({ t }: SwipeModeDemoProps) {
       <div className="mt-6 flex items-center justify-center gap-6">
         <button
           onClick={() => handleSwipe("left")}
-          className="group border-pf-danger-fg bg-pf-danger-subtle text-pf-danger-fg hover:bg-pf-danger-emphasis hover:border-pf-danger-emphasis hover:text-pf-fg-on-emphasis flex h-16 w-16 items-center justify-center rounded-full border-2 shadow-lg transition-all hover:scale-110"
+          className="group flex h-16 w-16 items-center justify-center rounded-full border-2 border-red-500 bg-red-500/10 text-red-500 shadow-lg transition-all hover:scale-110 hover:border-red-500 hover:bg-red-500 hover:text-white"
           aria-label={t.swipe?.swipeLeft || "Skip"}
         >
           <X className="h-7 w-7" />
@@ -277,7 +277,7 @@ export function SwipeModeDemo({ t }: SwipeModeDemoProps) {
 
         <button
           onClick={() => handleSwipe("right")}
-          className="group border-pf-success-fg bg-pf-success-subtle text-pf-success-fg hover:bg-pf-success-emphasis hover:border-pf-success-emphasis hover:text-pf-fg-on-emphasis animate-pulse-scale flex h-20 w-20 items-center justify-center rounded-full border-2 shadow-lg transition-all hover:scale-110"
+          className="group animate-pulse-scale flex h-20 w-20 items-center justify-center rounded-full border-2 border-emerald-500 bg-emerald-500/10 text-emerald-500 shadow-lg transition-all hover:scale-110 hover:border-emerald-500 hover:bg-emerald-500 hover:text-white"
           aria-label={t.swipe?.swipeRight || "Apply"}
         >
           <Heart className="h-8 w-8" />
@@ -285,11 +285,9 @@ export function SwipeModeDemo({ t }: SwipeModeDemoProps) {
       </div>
 
       {/* Keyboard Hint */}
-      <p className="text-pf-fg-subtle mt-4 text-center text-xs">
-        <kbd className="bg-pf-canvas-subtle rounded px-2 py-0.5">←</kbd>{" "}
-        {t.swipe?.swipeLeft || "Skip"} ·{" "}
-        <kbd className="bg-pf-canvas-subtle rounded px-2 py-0.5">→</kbd>{" "}
-        {t.swipe?.swipeRight || "Apply"}
+      <p className="mt-4 text-center text-xs text-zinc-500">
+        <kbd className="rounded bg-white/5 px-2 py-0.5">←</kbd> {t.swipe?.swipeLeft || "Skip"} ·{" "}
+        <kbd className="rounded bg-white/5 px-2 py-0.5">→</kbd> {t.swipe?.swipeRight || "Apply"}
       </p>
     </div>
   );

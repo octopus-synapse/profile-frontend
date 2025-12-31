@@ -14,7 +14,7 @@ export const landing = {
   // Hero
   "landing.hero.badge": "Career Execution Infrastructure",
   "landing.hero.title": "Your career,",
-  "landing.hero.titleHighlight": "recompiled.",
+  "landing.hero.titleHighlight": "patched.",
   "landing.hero.description":
     "A continuous system that adapts how your experience is presented and executed against real-time job markets.",
   "landing.hero.subdescription":
@@ -125,9 +125,9 @@ export const landing = {
     "Fully calibrated system executing at maximum efficiency with compound market presence.",
 
   // For Tech Section
-  "landing.forTech.badge": "For developers",
-  "landing.forTech.title": "Made by devs.",
-  "landing.forTech.titleHighlight": "For devs.",
+  "landing.forTech.badge": "For tech professionals",
+  "landing.forTech.title": "Built by tech.",
+  "landing.forTech.titleHighlight": "For tech.",
   "landing.forTech.description":
     "We're not another generic platform. Patch was built specifically for tech professionals, with features that truly matter for your career.",
   "landing.forTech.features.opensource": "Open source projects section",

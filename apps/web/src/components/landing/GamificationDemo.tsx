@@ -163,20 +163,20 @@ function StatCard({
   }, [isVisible, value, prefersReducedMotion, delay]);
 
   const colorClasses = {
-    accent: { bg: "bg-pf-accent-subtle", text: "text-pf-accent-fg", icon: "text-pf-accent-fg" },
-    success: { bg: "bg-pf-success-subtle", text: "text-pf-success-fg", icon: "text-pf-success-fg" },
+    accent: { bg: "bg-cyan-500/10", text: "text-cyan-400", icon: "text-cyan-400" },
+    success: { bg: "bg-emerald-500/10", text: "text-emerald-500", icon: "text-emerald-500" },
     attention: {
-      bg: "bg-pf-attention-subtle",
-      text: "text-pf-attention-fg",
-      icon: "text-pf-attention-fg",
+      bg: "bg-amber-500/10",
+      text: "text-amber-500",
+      icon: "text-amber-500",
     },
-    done: { bg: "bg-pf-done-subtle", text: "text-pf-done-fg", icon: "text-pf-done-fg" },
+    done: { bg: "bg-purple-500/10", text: "text-purple-500", icon: "text-purple-500" },
   };
 
   const colors = colorClasses[color];
 
   return (
-    <div className="bg-pf-canvas-overlay border-pf-border-default hero-feature-card rounded-xl border p-5 transition-all hover:shadow-lg">
+    <div className="hero-feature-card rounded-xl border border-white/10 bg-[#0A0A0A]/80 p-5 transition-all hover:shadow-lg">
       <div className={`mb-3 inline-flex rounded-lg p-2.5 ${colors.bg}`}>
         <Icon className={`h-5 w-5 ${colors.icon}`} />
       </div>
@@ -184,7 +184,7 @@ function StatCard({
         {displayValue}
         {suffix}
       </div>
-      <div className="text-pf-fg-muted mt-1 text-sm">{label}</div>
+      <div className="mt-1 text-sm text-zinc-400">{label}</div>
     </div>
   );
 }
@@ -210,17 +210,17 @@ function StreakDisplay({
   ];
 
   return (
-    <div className="bg-pf-canvas-overlay border-pf-border-default rounded-xl border p-6">
+    <div className="rounded-xl border border-white/10 bg-[#0A0A0A]/80 p-6">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
-          <div className="bg-pf-attention-subtle flex h-14 w-14 items-center justify-center rounded-xl">
-            <Flame className="text-pf-attention-fg animate-bounce-gentle h-7 w-7" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-amber-500/10">
+            <Flame className="animate-bounce-gentle h-7 w-7 text-amber-500" />
           </div>
           <div>
-            <h3 className="text-pf-fg-default text-lg font-bold">
+            <h3 className="text-lg font-bold text-white">
               {t.gamification?.streakTitle || "You're on fire!"}
             </h3>
-            <p className="text-pf-fg-muted text-sm">
+            <p className="text-sm text-zinc-400">
               {t.gamification?.streakDescription || "7-day application streak"}
             </p>
           </div>
@@ -234,11 +234,7 @@ function StreakDisplay({
                 isVisible && !prefersReducedMotion
                   ? `animate-stagger-${Math.min(index + 1, 6)}`
                   : ""
-              } ${
-                d.active
-                  ? "bg-pf-attention-fg text-pf-fg-on-emphasis"
-                  : "bg-pf-canvas-subtle text-pf-fg-muted"
-              }`}
+              } ${d.active ? "bg-amber-500 text-white" : "bg-white/5 text-zinc-500"}`}
             >
               {d.day}
             </div>
@@ -277,8 +273,8 @@ function AchievementBadges({
               isVisible && !prefersReducedMotion ? `animate-stagger-${Math.min(index + 1, 6)}` : ""
             } ${
               achievement.earned
-                ? "bg-pf-canvas-overlay border-pf-border-default border hover:shadow-lg"
-                : "bg-pf-canvas-subtle opacity-50"
+                ? "border border-white/10 bg-[#0A0A0A]/80 hover:shadow-lg"
+                : "bg-white/5 opacity-50"
             }`}
             title={achievement.label}
           >
@@ -292,13 +288,13 @@ function AchievementBadges({
             >
               <Icon
                 className="h-6 w-6"
-                style={{ color: achievement.earned ? achievement.color : "var(--pf-fg-muted)" }}
+                style={{ color: achievement.earned ? achievement.color : "#71717a" }}
               />
             </div>
             {achievement.earned && (
-              <CheckCircle2 className="bg-pf-canvas-overlay text-pf-success-fg absolute -top-1 -right-1 h-5 w-5 rounded-full" />
+              <CheckCircle2 className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-[#0A0A0A] text-emerald-500" />
             )}
-            <span className="text-pf-fg-muted hidden text-center text-[10px] leading-tight sm:block">
+            <span className="hidden text-center text-[10px] leading-tight text-zinc-400 sm:block">
               {achievement.label}
             </span>
           </div>
@@ -325,10 +321,10 @@ export function ProgressRing({
   const offset = circumference - (progress / 100) * circumference;
 
   const colorValues = {
-    accent: "var(--pf-accent-fg)",
-    success: "var(--pf-success-fg)",
-    attention: "var(--pf-attention-fg)",
-    done: "var(--pf-done-fg)",
+    accent: "#22d3ee",
+    success: "#10b981",
+    attention: "#f59e0b",
+    done: "#a855f7",
   };
 
   return (
@@ -339,7 +335,7 @@ export function ProgressRing({
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke="var(--pf-border-muted)"
+          stroke="rgba(255,255,255,0.1)"
           strokeWidth={strokeWidth}
         />
         <circle
