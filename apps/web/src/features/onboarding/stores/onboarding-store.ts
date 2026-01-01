@@ -236,6 +236,12 @@ export const useOnboardingStore = create<OnboardingState>()(
       goToNextStep: () => {
         const { currentStep, completedSteps } = get();
         const currentIndex = getStepIndex(currentStep);
+
+        if (currentIndex === -1) {
+          console.warn("Current step not found in ONBOARDING_STEPS:", currentStep);
+          return;
+        }
+
         const nextStep = ONBOARDING_STEPS[currentIndex + 1];
 
         if (nextStep) {
@@ -437,7 +443,10 @@ export const useOnboardingStore = create<OnboardingState>()(
             noEducation: state.noEducation,
           },
           languages: state.languages.map(({ id: _id, ...l }) => l),
-          templateSelection: state.templateSelection,
+          templateSelection: {
+            template: state.templateSelection.template.toUpperCase(),
+            palette: state.templateSelection.palette,
+          },
         };
       },
 

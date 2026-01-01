@@ -48,7 +48,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       // Initial sign in - add user data to token
       if (user) {
         token.id = user.id;
@@ -60,6 +60,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.hasCompletedOnboarding = user.hasCompletedOnboarding;
         token.accessToken = user.accessToken;
       }
+
+      // Handle session updates (like onboarding completion)
+      if (trigger === "update" && session?.user) {
+        token.hasCompletedOnboarding = session.user.hasCompletedOnboarding;
+        // Update other fields that might change
+        if (session.user.username !== undefined) {
+          token.username = session.user.username;
+        }
+        if (session.user.name !== undefined) {
+          token.name = session.user.name;
+        }
+      }
+
       return token;
     },
     async session({ session, token }) {

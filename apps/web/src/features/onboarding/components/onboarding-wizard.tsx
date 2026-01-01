@@ -6,12 +6,9 @@
 
 "use client";
 
-import { useEffect } from "react";
-import { useSession } from "next-auth/react";
 import { useOnboardingStore } from "../stores";
 import { OnboardingShell } from "./onboarding-shell";
 import { useOnboardingSync } from "../hooks/use-onboarding-sync";
-import { useOnboardingStatus } from "../hooks/use-onboarding-queries";
 import { LoadingState } from "@/shared/components/ui";
 import {
   WelcomeStep,
@@ -28,26 +25,12 @@ import {
 } from "./steps";
 
 export function OnboardingWizard() {
-  const { data: session } = useSession();
-  const { currentStep, reset } = useOnboardingStore();
-  const { isLoading } = useOnboardingSync();
-  const { data: onboardingStatus } = useOnboardingStatus();
+  const { currentStep } = useOnboardingStore();
+  const { isLoading, isError } = useOnboardingSync();
 
-  // Reset onboarding state if user has already completed onboarding
-  // This prevents showing onboarding to users who already completed it
-  useEffect(() => {
-    // Only reset if we're sure the onboarding is complete AND we're not on the complete step
-    // This prevents resetting while the user is still on the complete step
-    if (
-      onboardingStatus?.hasCompletedOnboarding &&
-      session?.accessToken &&
-      currentStep !== "complete"
-    ) {
-      // User already completed onboarding, redirect will be handled by middleware
-      // But we should reset the store to prevent stale state
-      reset();
-    }
-  }, [onboardingStatus?.hasCompletedOnboarding, session?.accessToken, reset, currentStep]);
+  // Note: We no longer reset the store if user has completed onboarding
+  // The middleware should redirect completed users away from /onboarding
+  // If they land here, let them continue from where they left off
 
   const renderStep = () => {
     switch (currentStep) {
@@ -79,7 +62,9 @@ export function OnboardingWizard() {
   };
 
   // Show loading state while fetching progress from backend
-  if (isLoading) {
+  // But don't block forever - if there's an error, let user proceed
+  // Also don't show loading if we are on the complete step (to allow confetti and redirect)
+  if (isLoading && !isError && currentStep !== "complete") {
     return (
       <OnboardingShell>
         <LoadingState message="Loading your progress..." minHeight="400px" />

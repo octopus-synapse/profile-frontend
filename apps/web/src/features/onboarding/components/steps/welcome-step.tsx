@@ -14,7 +14,7 @@ import { Sparkles, Clock, Shield, Code } from "lucide-react";
 export function WelcomeStep() {
   const { goToNextStep } = useOnboardingStore();
 
-  const handleStartSetup = () => {
+  const handleStartSetup = async () => {
     goToNextStep();
   };
 

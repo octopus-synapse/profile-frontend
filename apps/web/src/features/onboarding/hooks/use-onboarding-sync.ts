@@ -5,12 +5,15 @@
  * Synchronizes onboarding progress between frontend store and backend
  */
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useOnboardingProgress } from "./use-onboarding-queries";
 import { useSaveOnboardingProgress } from "./use-onboarding-mutations";
 import { useOnboardingStore, ONBOARDING_STEPS } from "../stores";
 import type { OnboardingStep } from "../stores";
+
+// Maximum time to wait for backend sync before proceeding with local state
+const SYNC_TIMEOUT_MS = 3000;
 
 export function useOnboardingSync() {
   const { data: session, status } = useSession();
@@ -23,6 +26,24 @@ export function useOnboardingSync() {
 
   const hasHydrated = useRef(false);
   const previousStep = useRef<OnboardingStep | null>(null);
+
+  // Timeout state to prevent infinite loading
+  const [timedOut, setTimedOut] = useState(false);
+
+  // Set timeout to prevent infinite loading
+  useEffect(() => {
+    if (!isAuthenticated || hasHydrated.current) return;
+
+    const timeout = setTimeout(() => {
+      if (isLoading && !hasHydrated.current) {
+        console.warn("Onboarding sync timed out, proceeding with local state");
+        setTimedOut(true);
+        hasHydrated.current = true;
+      }
+    }, SYNC_TIMEOUT_MS);
+
+    return () => clearTimeout(timeout);
+  }, [isAuthenticated, isLoading]);
 
   // Hydrate store from backend on initial load
   useEffect(() => {
@@ -136,7 +157,9 @@ export function useOnboardingSync() {
   }, [getStateForBackend, saveProgress, isAuthenticated]);
 
   return {
-    isLoading: status === "loading" || (isAuthenticated && isLoading),
+    isLoading:
+      status === "loading" ||
+      (isAuthenticated && isLoading && !timedOut && !isError && !hasHydrated.current),
     isError,
     isSaving: saveProgress.isPending,
     saveToBackend,

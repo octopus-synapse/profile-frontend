@@ -62,20 +62,23 @@ export function CompleteStep() {
 
     // Update session to reflect completed onboarding
     const updateSessionData = async () => {
-      try {
-        await updateSession({
-          ...session,
-          user: {
-            ...session?.user,
-            hasCompletedOnboarding: true,
-          },
-        });
-      } catch (error) {
-        console.error("Failed to update session:", error);
+      // Only update if not already marked as completed
+      if (session?.user && !session.user.hasCompletedOnboarding) {
+        try {
+          await updateSession({
+            ...session,
+            user: {
+              ...session.user,
+              hasCompletedOnboarding: true,
+            },
+          });
+        } catch (error) {
+          console.error("Failed to update session:", error);
+        }
       }
     };
 
-    if (session) {
+    if (session?.user && !session.user.hasCompletedOnboarding) {
       updateSessionData();
     }
 
@@ -115,10 +118,10 @@ export function CompleteStep() {
     <div className="space-y-8 py-8 text-center">
       {/* Success Icon */}
       <div className="flex justify-center">
-        <div className="bg-emerald-500/10 relative flex h-20 w-20 items-center justify-center rounded-full">
-          <CheckCircle2 className="text-emerald-500 h-10 w-10" strokeWidth={1.5} />
+        <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/10">
+          <CheckCircle2 className="h-10 w-10 text-emerald-500" strokeWidth={1.5} />
           <Sparkles
-            className="text-emerald-500 absolute -top-1 -right-1 h-6 w-6 animate-pulse"
+            className="absolute -top-1 -right-1 h-6 w-6 animate-pulse text-emerald-500"
             strokeWidth={1.5}
           />
         </div>
@@ -128,14 +131,14 @@ export function CompleteStep() {
       <div
         className={`transition-all duration-500 ${showContent ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
       >
-        <h2 className="text-white text-2xl font-bold">
+        <h2 className="text-2xl font-bold text-white">
           Welcome, {personalInfo?.fullName?.split(" ")[0]}! 🎉
         </h2>
-        <p className="text-zinc-400 mt-2 font-mono text-sm">
+        <p className="mt-2 font-mono text-sm text-zinc-400">
           Your professional profile has been created successfully
         </p>
         {countdown > 0 && (
-          <p className="text-cyan-400 mt-2 font-mono text-xs">
+          <p className="mt-2 font-mono text-xs text-cyan-400">
             Redirecting to your resume in {countdown} second{countdown !== 1 ? "s" : ""}...
           </p>
         )}
@@ -143,7 +146,7 @@ export function CompleteStep() {
 
       {/* Code Block Celebration */}
       <div
-        className={`border-white/10 bg-[#0A0A0A] rounded-lg border p-4 text-left font-mono text-sm transition-all delay-300 duration-700 ${showContent ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
+        className={`rounded-lg border border-white/10 bg-[#0A0A0A] p-4 text-left font-mono text-sm transition-all delay-300 duration-700 ${showContent ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
       >
         <div className="mb-2 text-xs text-zinc-500">
           <span className="opacity-60">{"//"}</span> profile.created.ts
@@ -188,10 +191,10 @@ export function CompleteStep() {
 
       {/* What's Next */}
       <div
-        className={`border-white/10 border p-4 text-left transition-all delay-500 duration-700 ${showContent ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
+        className={`border border-white/10 p-4 text-left transition-all delay-500 duration-700 ${showContent ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
       >
-        <h3 className="text-white font-mono text-sm font-semibold">What&apos;s next?</h3>
-        <ul className="text-zinc-400 mt-3 space-y-2 font-mono text-xs">
+        <h3 className="font-mono text-sm font-semibold text-white">What&apos;s next?</h3>
+        <ul className="mt-3 space-y-2 font-mono text-xs text-zinc-400">
           <li className="flex items-center gap-2">
             <span className="text-emerald-500">→</span>
             View and customize your resume
@@ -218,7 +221,7 @@ export function CompleteStep() {
         <Link
           href={ROUTES.PROTECTED.RESUME}
           onClick={handleGoToDashboard}
-          className="bg-white text-black inline-flex items-center justify-center gap-2 px-6 py-3 font-mono text-sm transition-opacity hover:opacity-90"
+          className="inline-flex items-center justify-center gap-2 bg-white px-6 py-3 font-mono text-sm text-black transition-opacity hover:opacity-90"
         >
           View My Resume
           <ArrowRight className="h-4 w-4" strokeWidth={1.5} />
@@ -227,7 +230,7 @@ export function CompleteStep() {
         <Link
           href={ROUTES.PROTECTED.PROFILE}
           onClick={handleGoToDashboard}
-          className="border-white/10 text-white hover:bg-white/5 inline-flex items-center justify-center gap-2 border px-6 py-3 font-mono text-sm transition-colors"
+          className="inline-flex items-center justify-center gap-2 border border-white/10 px-6 py-3 font-mono text-sm text-white transition-colors hover:bg-white/5"
         >
           Go to Dashboard
           <ExternalLink className="h-4 w-4" strokeWidth={1.5} />
@@ -235,7 +238,7 @@ export function CompleteStep() {
       </div>
 
       {/* Footer */}
-      <p className="text-zinc-500 font-mono text-xs">
+      <p className="font-mono text-xs text-zinc-500">
         Need help? Check our{" "}
         <Link href="#" className="text-cyan-400 hover:underline">
           documentation

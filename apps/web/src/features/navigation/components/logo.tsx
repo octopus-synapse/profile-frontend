@@ -43,20 +43,7 @@ export function Logo({ className }: { className?: string }) {
 
         {/* CONTORNO DA GARRAFA */}
         <path
-          d="
-            M 38 22
-            L 38 18
-            Q 38 10 48 10
-            L 198 10
-            Q 212 10 218 18
-            Q 224 26 224 34
-            L 224 56
-            Q 224 64 218 72
-            Q 212 80 198 80
-            L 48 80
-            Q 38 80 38 72
-            L 38 68
-          "
+          d="M 38 22 L 38 18 Q 38 10 48 10 L 198 10 Q 212 10 218 18 Q 224 26 224 34 L 224 56 Q 224 64 218 72 Q 212 80 198 80 L 48 80 Q 38 80 38 72 L 38 68"
           fill="white"
           stroke="white"
           strokeWidth="8"
@@ -66,17 +53,7 @@ export function Logo({ className }: { className?: string }) {
 
         {/* ÁGUA / ONDAS */}
         <path
-          d="
-            M 40 56
-            Q 70 46 100 56
-            T 160 56
-            T 222 56
-            L 222 72
-            Q 222 78 214 80
-            L 48 80
-            Q 40 80 40 72
-            Z
-          "
+          d="M 40 56 Q 70 46 100 56 T 160 56 T 222 56 L 222 72 Q 222 78 214 80 L 48 80 Q 40 80 40 72 Z"
           fill="black"
         />
 
