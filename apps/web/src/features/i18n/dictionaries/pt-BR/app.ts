@@ -48,4 +48,39 @@ export const app = {
   // Onboarding
   "app.onboarding.title": "Configure seu Perfil",
   "app.onboarding.description": "Complete a configuração do seu perfil profissional em minutos",
+
+  // Onboarding Steps
+  "app.onboarding.step.technicalSkills": "Habilidades Técnicas",
+  "app.onboarding.step.technicalSkillsDesc": "Selecione suas habilidades ou busque em nosso catálogo",
+  "app.onboarding.step.back": "voltar",
+  "app.onboarding.step.skip": "pular",
+  "app.onboarding.step.continue": "continuar",
+  "app.onboarding.step.submit": "enviar",
+  "app.onboarding.step.processing": "processando...",
+  "app.onboarding.step.noSkills": "Ainda estou desenvolvendo minhas habilidades (pular por agora)",
+  "app.onboarding.step.skillsSelected": "{count} habilidade(s) selecionada(s)",
+  "app.onboarding.step.searchSkills": "Buscar habilidades (React, Python, Docker...)",
+  "app.onboarding.step.addCustomSkill": "Adicionar habilidade personalizada",
+  "app.onboarding.step.customSkillPlaceholder": "Nome da habilidade...",
+  "app.onboarding.step.category": "Categoria",
+  "app.onboarding.step.levels": "Níveis",
+  "app.onboarding.step.noSkillsFound": "Nenhuma habilidade encontrada para \"{query}\"",
+
+  // Skill Levels
+  "app.skills.level.beginner": "Iniciante",
+  "app.skills.level.basic": "Básico",
+  "app.skills.level.intermediate": "Intermediário",
+  "app.skills.level.advanced": "Avançado",
+  "app.skills.level.expert": "Especialista",
+
+  // Settings Page
+  "app.settings.title": "Configurações",
+  "app.settings.description": "Gerencie seu perfil e preferências",
+  "app.settings.backToDashboard": "Voltar ao Dashboard",
+  "app.settings.tabs.profile": "Perfil",
+  "app.settings.tabs.experience": "Experiência",
+  "app.settings.tabs.education": "Educação",
+  "app.settings.tabs.skills": "Habilidades",
+  "app.settings.tabs.languages": "Idiomas",
+  "app.settings.tabs.preferences": "Preferências",
 } as const;

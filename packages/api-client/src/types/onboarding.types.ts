@@ -113,6 +113,7 @@ export interface OnboardingStatus {
 export interface OnboardingProgress {
  currentStep: OnboardingStep;
  completedSteps: OnboardingStep[];
+ username?: string | null;
  personalInfo: PersonalInfoData | null;
  professionalProfile: ProfessionalProfileData | null;
  experiences: ExperienceData[];
@@ -142,6 +143,7 @@ export interface SaveProgressResult {
 // ============================================================================
 
 export interface SubmitOnboardingDto {
+ username: string;
  personalInfo: PersonalInfoData;
  professionalProfile: ProfessionalProfileData;
  skillsStep: SkillsStepData;

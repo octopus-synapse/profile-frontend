@@ -8,7 +8,6 @@
 
 import { useOnboardingStore } from "../../stores";
 import { StepNavigation } from "../step-navigation";
-import { ThemePreview } from "@/features/resume/components/theme/theme-preview";
 import { Palette, Check } from "lucide-react";
 
 // Color palettes for the professional template
@@ -110,23 +109,21 @@ export function TemplateStep() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-2">
-          <span className="text-cyan-400 font-mono text-sm">{`>`}</span>
-          <h2 className="text-white text-xl font-bold">Choose Your Theme</h2>
+          <span className="font-mono text-sm text-cyan-400">{`>`}</span>
+          <h2 className="text-xl font-bold text-white">Choose Your Theme</h2>
         </div>
-        <p className="text-zinc-400 mt-1 font-mono text-xs">
+        <p className="mt-1 font-mono text-xs text-zinc-400">
           Select a color palette for your professional resume
         </p>
       </div>
 
       {/* Template Info */}
-      <div className="border-white/10 bg-white/5 border p-4">
+      <div className="border border-white/10 bg-white/5 p-4">
         <div className="flex items-start gap-3">
-          <Palette className="text-cyan-400 mt-0.5 h-5 w-5" strokeWidth={1.5} />
+          <Palette className="mt-0.5 h-5 w-5 text-cyan-400" strokeWidth={1.5} />
           <div>
-            <h3 className="text-white font-mono text-sm font-semibold">
-              Professional Template
-            </h3>
-            <p className="text-zinc-400 mt-1 font-mono text-xs">
+            <h3 className="font-mono text-sm font-semibold text-white">Professional Template</h3>
+            <p className="mt-1 font-mono text-xs text-zinc-400">
               Clean, modern layout optimized for ATS systems and recruiters. You can change this
               later in settings.
             </p>
@@ -162,20 +159,44 @@ export function TemplateStep() {
               <div className="mb-3 aspect-[8.5/11] w-full overflow-hidden rounded border border-white/10 bg-white">
                 <div className="flex h-full flex-col p-1 text-[3px]">
                   {/* Header */}
-                  <div className="mb-0.5 border-b pb-0.5" style={{ borderColor: palette.primary + "40" }}>
-                    <div className="mb-0.5 h-1 w-8 rounded-sm" style={{ backgroundColor: palette.primary }} />
-                    <div className="h-0.5 w-6 rounded-sm" style={{ backgroundColor: palette.secondary }} />
+                  <div
+                    className="mb-0.5 border-b pb-0.5"
+                    style={{ borderColor: palette.primary + "40" }}
+                  >
+                    <div
+                      className="mb-0.5 h-1 w-8 rounded-sm"
+                      style={{ backgroundColor: palette.primary }}
+                    />
+                    <div
+                      className="h-0.5 w-6 rounded-sm"
+                      style={{ backgroundColor: palette.secondary }}
+                    />
                   </div>
                   {/* Content */}
                   <div className="flex-1 space-y-0.5">
                     <div>
-                      <div className="mb-0.5 h-0.5 w-4 rounded-sm" style={{ backgroundColor: palette.primary }} />
-                      <div className="h-0.5 w-full rounded-sm" style={{ backgroundColor: "#1f2937" + "40" }} />
-                      <div className="h-0.5 w-3/4 rounded-sm" style={{ backgroundColor: "#1f2937" + "40" }} />
+                      <div
+                        className="mb-0.5 h-0.5 w-4 rounded-sm"
+                        style={{ backgroundColor: palette.primary }}
+                      />
+                      <div
+                        className="h-0.5 w-full rounded-sm"
+                        style={{ backgroundColor: "#1f2937" + "40" }}
+                      />
+                      <div
+                        className="h-0.5 w-3/4 rounded-sm"
+                        style={{ backgroundColor: "#1f2937" + "40" }}
+                      />
                     </div>
                     <div>
-                      <div className="mb-0.5 h-0.5 w-4 rounded-sm" style={{ backgroundColor: palette.primary }} />
-                      <div className="h-0.5 w-full rounded-sm" style={{ backgroundColor: "#1f2937" + "40" }} />
+                      <div
+                        className="mb-0.5 h-0.5 w-4 rounded-sm"
+                        style={{ backgroundColor: palette.primary }}
+                      />
+                      <div
+                        className="h-0.5 w-full rounded-sm"
+                        style={{ backgroundColor: "#1f2937" + "40" }}
+                      />
                     </div>
                     <div className="flex gap-0.5">
                       {[1, 2, 3, 4].map((i) => (
@@ -191,8 +212,8 @@ export function TemplateStep() {
               </div>
 
               {/* Palette Info */}
-              <h4 className="text-white font-mono text-sm font-semibold">{palette.name}</h4>
-              <p className="text-zinc-400 mt-0.5 font-mono text-xs">{palette.description}</p>
+              <h4 className="font-mono text-sm font-semibold text-white">{palette.name}</h4>
+              <p className="mt-0.5 font-mono text-xs text-zinc-400">{palette.description}</p>
 
               {/* Color Swatches */}
               <div className="mt-2 flex gap-1">
@@ -210,7 +231,7 @@ export function TemplateStep() {
 
       {/* Selection Indicator */}
       {templateSelection?.palette && (
-        <div className="text-emerald-500 flex items-center gap-2 font-mono text-xs">
+        <div className="flex items-center gap-2 font-mono text-xs text-emerald-500">
           <Check className="h-4 w-4" strokeWidth={2} />
           Selected: {PALETTES.find((p) => p.id === templateSelection.palette)?.name}
         </div>

@@ -7,7 +7,9 @@
 "use client";
 
 import { useOnboardingStore, ONBOARDING_STEPS } from "../stores";
-import { ArrowLeft, ArrowRight, Loader2, SkipForward } from "lucide-react";
+import { ArrowLeft, ArrowRight, SkipForward } from "lucide-react";
+import { useI18n } from "@/features/i18n";
+import { Button } from "@/shared/components/ui";
 
 interface StepNavigationProps {
   onNext?: () => void | Promise<void>;
@@ -28,6 +30,7 @@ export function StepNavigation({
   showSkip = false,
   canProceed: canProceedProp,
 }: StepNavigationProps) {
+  const { t } = useI18n();
   const {
     currentStep,
     goToNextStep,
@@ -70,18 +73,20 @@ export function StepNavigation({
   }
 
   return (
-    <div className="border-white/10 mt-8 flex items-center justify-between border-t pt-6">
+    <div className="mt-8 flex items-center justify-between border-t border-white/10 pt-6">
       {/* Back Button */}
       <div>
         {!isFirstStep && (
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={handleBack}
             disabled={isLoading}
-            className="text-zinc-400 hover:text-white flex items-center gap-2 font-mono text-sm transition-colors disabled:opacity-50"
+            leftIcon={<ArrowLeft className="h-4 w-4" strokeWidth={1.5} />}
+            className="font-mono"
           >
-            <ArrowLeft className="h-4 w-4" strokeWidth={1.5} />
-            <span>back</span>
-          </button>
+            {t("app.onboarding.step.back")}
+          </Button>
         )}
       </div>
 
@@ -89,38 +94,33 @@ export function StepNavigation({
       <div className="flex items-center gap-3">
         {/* Skip Button */}
         {showSkip && (
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={handleSkip}
             disabled={isLoading}
-            className="text-zinc-500 hover:text-zinc-400 flex items-center gap-2 font-mono text-sm transition-colors disabled:opacity-50"
+            rightIcon={<SkipForward className="h-4 w-4" strokeWidth={1.5} />}
+            className="font-mono text-zinc-500 hover:text-zinc-400"
           >
-            <span>skip</span>
-            <SkipForward className="h-4 w-4" strokeWidth={1.5} />
-          </button>
+            {t("app.onboarding.step.skip")}
+          </Button>
         )}
 
         {/* Next/Submit Button */}
-        <button
+        <Button
+          variant="primary"
+          size="md"
           onClick={handleNext}
           disabled={!canProceed || isLoading}
-          className={`flex items-center gap-2 px-4 py-2 font-mono text-sm transition-all ${
-            canProceed && !isLoading
-              ? "bg-white text-black hover:opacity-90"
-              : "bg-white/5 text-zinc-500 cursor-not-allowed"
-          } `}
+          isLoading={isLoading}
+          rightIcon={!isLoading ? <ArrowRight className="h-4 w-4" strokeWidth={1.5} /> : undefined}
+          className="font-mono"
         >
-          {isLoading ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.5} />
-              <span>processing...</span>
-            </>
-          ) : (
-            <>
-              <span>{nextLabel || (isLastStep ? "submit" : "continue")}</span>
-              <ArrowRight className="h-4 w-4" strokeWidth={1.5} />
-            </>
-          )}
-        </button>
+          {isLoading
+            ? t("app.onboarding.step.processing")
+            : nextLabel ||
+              (isLastStep ? t("app.onboarding.step.submit") : t("app.onboarding.step.continue"))}
+        </Button>
       </div>
     </div>
   );

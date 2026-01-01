@@ -16,6 +16,20 @@ import { ROUTES } from "@/config/routes";
 import { AlertCircle, User, Mail, Lock, Eye, EyeOff, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 
+function getPasswordStrength(password: string): { score: number; label: string; color: string } {
+  let score = 0;
+  if (password.length >= 8) score++;
+  if (password.length >= 12) score++;
+  if (/[A-Z]/.test(password)) score++;
+  if (/[0-9]/.test(password)) score++;
+  if (/[^A-Za-z0-9]/.test(password)) score++;
+
+  if (score <= 1) return { score, label: "Weak", color: "bg-red-500" };
+  if (score <= 2) return { score, label: "Fair", color: "bg-amber-500" };
+  if (score <= 3) return { score, label: "Good", color: "bg-cyan-500" };
+  return { score, label: "Strong", color: "bg-emerald-500" };
+}
+
 export function SignUpForm() {
   const t = useT();
   const router = useRouter();
@@ -170,7 +184,38 @@ export function SignUpForm() {
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
         </div>
-        <p className="ml-1 font-mono text-[10px] text-zinc-600">Minimum 8 characters</p>
+        {/* Password Strength Indicator */}
+        {password && (
+          <div className="space-y-1.5">
+            <div className="flex gap-1">
+              {[1, 2, 3, 4, 5].map((level) => {
+                const strength = getPasswordStrength(password);
+                return (
+                  <div
+                    key={level}
+                    className={`h-1 flex-1 rounded-full transition-colors ${
+                      level <= strength.score ? strength.color : "bg-white/10"
+                    }`}
+                  />
+                );
+              })}
+            </div>
+            <p
+              className={`ml-1 font-mono text-[10px] ${
+                getPasswordStrength(password).score <= 1
+                  ? "text-red-400"
+                  : getPasswordStrength(password).score <= 2
+                    ? "text-amber-400"
+                    : getPasswordStrength(password).score <= 3
+                      ? "text-cyan-400"
+                      : "text-emerald-400"
+              }`}
+            >
+              {getPasswordStrength(password).label}
+            </p>
+          </div>
+        )}
+        <p className="ml-1 font-mono text-[10px] text-zinc-600">{t("auth.signUp.passwordHint")}</p>
       </div>
 
       {/* Confirm Password Field */}
@@ -213,7 +258,7 @@ export function SignUpForm() {
         className="group relative mt-6 h-12 w-full overflow-hidden rounded-lg bg-white text-sm font-bold text-black transition-all hover:bg-cyan-400 active:scale-[0.98]"
       >
         {isLoading ? (
-          <span className="font-mono text-xs">Creating account...</span>
+          <span className="font-mono text-xs">{t("auth.loading.creatingAccount")}</span>
         ) : (
           <span className="relative z-10 flex items-center justify-center gap-2">
             {t("auth.signUp.submit")}

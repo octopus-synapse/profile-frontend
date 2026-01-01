@@ -153,7 +153,7 @@ export function UserMenu() {
           <div className="p-1">
             {/* Theme */}
             <div className="flex items-center justify-between rounded-lg px-3 py-2">
-              <span className="text-sm text-zinc-400">Theme</span>
+              <span className="text-sm text-zinc-400">{t("nav.preferences.theme")}</span>
               <div className="flex items-center gap-0.5 rounded-lg bg-white/5 p-0.5">
                 <button
                   onClick={() => themeContext?.setTheme("light")}
@@ -186,7 +186,7 @@ export function UserMenu() {
 
             {/* Language */}
             <div className="flex items-center justify-between rounded-lg px-3 py-2">
-              <span className="text-sm text-zinc-400">Language</span>
+              <span className="text-sm text-zinc-400">{t("nav.preferences.language")}</span>
               <div className="flex items-center gap-0.5 rounded-lg bg-white/5 p-0.5">
                 {locales.map((locale) => (
                   <button

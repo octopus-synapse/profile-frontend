@@ -13,16 +13,44 @@ import { StepNavigation } from "../step-navigation";
 import { Plus, X, Zap, Search, Loader2 } from "lucide-react";
 import { nanoid } from "nanoid";
 import { useTechNiches, useSearchAllTechSkills, useSkillsByNiche } from "@/features/tech-skills";
+import { useI18n } from "@/features/i18n";
+import type { DictionaryKey } from "@/features/i18n/dictionaries/en";
 
 const SKILL_LEVELS = [
-  { value: 1, label: "Beginner", color: "text-zinc-500" },
-  { value: 2, label: "Basic", color: "text-amber-500" },
-  { value: 3, label: "Intermediate", color: "text-cyan-400" },
-  { value: 4, label: "Advanced", color: "text-emerald-500" },
-  { value: 5, label: "Expert", color: "text-purple-400" },
+  {
+    value: 1,
+    labelKey: "app.skills.level.beginner" as DictionaryKey,
+    color: "text-zinc-500",
+    description: "Learning the basics",
+  },
+  {
+    value: 2,
+    labelKey: "app.skills.level.basic" as DictionaryKey,
+    color: "text-amber-500",
+    description: "Can work with guidance",
+  },
+  {
+    value: 3,
+    labelKey: "app.skills.level.intermediate" as DictionaryKey,
+    color: "text-cyan-400",
+    description: "Comfortable working independently",
+  },
+  {
+    value: 4,
+    labelKey: "app.skills.level.advanced" as DictionaryKey,
+    color: "text-emerald-500",
+    description: "Deep knowledge, can mentor others",
+  },
+  {
+    value: 5,
+    labelKey: "app.skills.level.expert" as DictionaryKey,
+    color: "text-purple-400",
+    description: "Industry-recognized expertise",
+  },
 ];
 
 export function SkillsStep() {
+  const { t } = useI18n();
   const { skills, noSkills, setNoSkills, addSkill, removeSkill, goToNextStep, markStepComplete } =
     useOnboardingStore();
 
@@ -140,25 +168,25 @@ export function SkillsStep() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-2">
-          <span className="text-cyan-400 font-mono text-sm">{`>`}</span>
-          <h2 className="text-white text-xl font-bold">Technical Skills</h2>
+          <span className="font-mono text-sm text-cyan-400">{`>`}</span>
+          <h2 className="text-xl font-bold text-white">
+            {t("app.onboarding.step.technicalSkills")}
+          </h2>
         </div>
-        <p className="text-zinc-400 mt-1 font-mono text-xs">
-          Select your skills or search from our catalog
+        <p className="mt-1 font-mono text-xs text-zinc-400">
+          {t("app.onboarding.step.technicalSkillsDesc")}
         </p>
       </div>
 
       {/* No Skills Toggle */}
-      <label className="border-white/10 bg-white/5 flex cursor-pointer items-center gap-3 border p-3">
+      <label className="flex cursor-pointer items-center gap-3 border border-white/10 bg-white/5 p-3">
         <input
           type="checkbox"
           checked={noSkills}
           onChange={handleToggleNoSkills}
-          className="text-cyan-400 h-4 w-4"
+          className="h-4 w-4 text-cyan-400"
         />
-        <span className="text-zinc-400 font-mono text-sm">
-          I&apos;m still developing my skills (skip for now)
-        </span>
+        <span className="font-mono text-sm text-zinc-400">{t("app.onboarding.step.noSkills")}</span>
       </label>
 
       {!noSkills && (
@@ -166,25 +194,30 @@ export function SkillsStep() {
           {/* Selected Skills */}
           {skills.length > 0 && (
             <div className="space-y-2">
-              <div className="text-zinc-500 font-mono text-xs">
-                <span className="opacity-60">{"//"}</span> {skills.length} skill
-                {skills.length > 1 ? "s" : ""} selected
+              <div className="font-mono text-xs text-zinc-500">
+                <span className="opacity-60">{"//"}</span>{" "}
+                {t("app.onboarding.step.skillsSelected", { count: skills.length })}
               </div>
               <div className="flex flex-wrap gap-2">
                 {skills.map((skill: Skill) => (
                   <div
                     key={skill.id}
-                    className="border-white/10 bg-white/5 flex items-center gap-2 border px-2 py-1"
+                    className="flex items-center gap-2 border border-white/10 bg-white/5 px-2 py-1"
                   >
-                    <span className="text-white font-mono text-xs">{skill.name}</span>
+                    <span className="font-mono text-xs text-white">{skill.name}</span>
                     <span
                       className={`font-mono text-[10px] ${SKILL_LEVELS.find((l) => l.value === skill.level)?.color || ""}`}
+                      title={t(
+                        SKILL_LEVELS.find((l) => l.value === skill.level)?.labelKey ||
+                          "app.skills.level.intermediate"
+                      )}
                     >
                       L{skill.level}
                     </span>
                     <button
                       onClick={() => removeSkill(skill.id)}
-                      className="text-zinc-500 hover:text-red-500 transition-colors"
+                      className="rounded text-zinc-500 transition-colors hover:text-red-500 focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:outline-none"
+                      aria-label={`Remove ${skill.name}`}
                     >
                       <X className="h-3 w-3" strokeWidth={2} />
                     </button>
@@ -196,23 +229,23 @@ export function SkillsStep() {
 
           {/* Search Bar */}
           <div className="relative">
-            <Search className="text-zinc-500 absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-500" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search skills (React, Python, Docker...)"
-              className="border-white/10 bg-[#0A0A0A]/80 text-white placeholder:text-zinc-500 focus:border-cyan-500 w-full border py-2 pr-4 pl-10 font-mono text-sm focus:outline-none"
+              placeholder={t("app.onboarding.step.searchSkills")}
+              className="w-full border border-white/10 bg-[#0A0A0A]/80 py-2 pr-4 pl-10 font-mono text-sm text-white placeholder:text-zinc-500 focus:border-cyan-500 focus:outline-none"
             />
             {isLoading && searchQuery && (
-              <Loader2 className="text-zinc-500 absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 animate-spin" />
+              <Loader2 className="absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 animate-spin text-zinc-500" />
             )}
           </div>
 
           {/* Category Tabs (only when not searching) */}
           {!searchQuery && (
-            <div className="border-white/10 border">
-              <div className="border-white/10 flex flex-wrap gap-1 border-b p-2">
+            <div className="border border-white/10">
+              <div className="flex flex-wrap gap-1 border-b border-white/10 p-2">
                 {displayNiches.map((niche) => (
                   <button
                     key={niche.slug}
@@ -232,7 +265,7 @@ export function SkillsStep() {
               <div className="p-4">
                 {nicheSkillsLoading ? (
                   <div className="flex items-center justify-center py-8">
-                    <Loader2 className="text-zinc-500 h-6 w-6 animate-spin" />
+                    <Loader2 className="h-6 w-6 animate-spin text-zinc-500" />
                   </div>
                 ) : (
                   <div className="flex flex-wrap gap-2">
@@ -245,8 +278,8 @@ export function SkillsStep() {
                           disabled={added}
                           className={`flex items-center gap-1 px-2 py-1 font-mono text-xs transition-all ${
                             added
-                              ? "bg-emerald-500/10 text-emerald-500 cursor-default"
-                              : "border-white/10 text-zinc-400 hover:border-cyan-500 hover:text-cyan-400 border"
+                              ? "cursor-default bg-emerald-500/10 text-emerald-500"
+                              : "border border-white/10 text-zinc-400 hover:border-cyan-500 hover:text-cyan-400"
                           }`}
                           style={
                             skill.color && !added
@@ -267,10 +300,10 @@ export function SkillsStep() {
 
           {/* Search Results */}
           {searchQuery && (
-            <div className="border-white/10 border p-4">
+            <div className="border border-white/10 p-4">
               {searchLoading ? (
                 <div className="flex items-center justify-center py-8">
-                  <Loader2 className="text-zinc-500 h-6 w-6 animate-spin" />
+                  <Loader2 className="h-6 w-6 animate-spin text-zinc-500" />
                 </div>
               ) : displaySkills.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
@@ -283,8 +316,8 @@ export function SkillsStep() {
                         disabled={added}
                         className={`flex items-center gap-1 px-2 py-1 font-mono text-xs transition-all ${
                           added
-                            ? "bg-emerald-500/10 text-emerald-500 cursor-default"
-                            : "border-white/10 text-zinc-400 hover:border-cyan-500 hover:text-cyan-400 border"
+                            ? "cursor-default bg-emerald-500/10 text-emerald-500"
+                            : "border border-white/10 text-zinc-400 hover:border-cyan-500 hover:text-cyan-400"
                         }`}
                         style={
                           skill.color && !added
@@ -294,23 +327,23 @@ export function SkillsStep() {
                       >
                         {added && <Zap className="h-3 w-3" />}
                         {skill.name}
-                        <span className="text-zinc-500 text-[10px]">({skill.category})</span>
+                        <span className="text-[10px] text-zinc-500">({skill.category})</span>
                       </button>
                     );
                   })}
                 </div>
               ) : (
-                <p className="text-zinc-400 py-4 text-center font-mono text-sm">
-                  No skills found for &quot;{searchQuery}&quot;
+                <p className="py-4 text-center font-mono text-sm text-zinc-400">
+                  {t("app.onboarding.step.noSkillsFound", { query: searchQuery })}
                 </p>
               )}
             </div>
           )}
 
           {/* Custom Skill Input */}
-          <div className="border-white/10 bg-white/5 border p-4">
-            <div className="text-zinc-500 mb-3 font-mono text-xs">
-              <span className="opacity-60">{"//"}</span> Add custom skill
+          <div className="border border-white/10 bg-white/5 p-4">
+            <div className="mb-3 font-mono text-xs text-zinc-500">
+              <span className="opacity-60">{"//"}</span> {t("app.onboarding.step.addCustomSkill")}
             </div>
             <div className="flex gap-2">
               <input
@@ -318,15 +351,15 @@ export function SkillsStep() {
                 value={customSkill}
                 onChange={(e) => setCustomSkill(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleAddCustomSkill()}
-                placeholder="Custom skill name..."
-                className="border-white/10 bg-[#0A0A0A]/80 text-white placeholder:text-zinc-500 focus:border-cyan-500 flex-1 border px-3 py-2 font-mono text-sm focus:outline-none"
+                placeholder={t("app.onboarding.step.customSkillPlaceholder")}
+                className="flex-1 border border-white/10 bg-[#0A0A0A]/80 px-3 py-2 font-mono text-sm text-white placeholder:text-zinc-500 focus:border-cyan-500 focus:outline-none"
               />
               <select
                 value={customCategory}
                 onChange={(e) => setCustomCategory(e.target.value)}
-                className="border-white/10 bg-[#0A0A0A]/80 text-white focus:border-cyan-500 border px-2 py-2 font-mono text-xs focus:outline-none"
+                className="border border-white/10 bg-[#0A0A0A]/80 px-2 py-2 font-mono text-xs text-white focus:border-cyan-500 focus:outline-none"
               >
-                <option value="">Category</option>
+                <option value="">{t("app.onboarding.step.category")}</option>
                 {customCategories.map((cat) => (
                   <option key={cat} value={cat}>
                     {cat}
@@ -336,7 +369,8 @@ export function SkillsStep() {
               <button
                 onClick={handleAddCustomSkill}
                 disabled={!customSkill.trim()}
-                className="bg-white text-black flex items-center gap-1 px-3 py-2 font-mono text-sm transition-opacity hover:opacity-90 disabled:opacity-50"
+                className="flex items-center gap-1 rounded bg-white px-3 py-2 font-mono text-sm text-black transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:outline-none disabled:opacity-50"
+                aria-label={t("app.onboarding.step.addCustomSkill")}
               >
                 <Plus className="h-4 w-4" strokeWidth={1.5} />
               </button>
@@ -344,11 +378,13 @@ export function SkillsStep() {
           </div>
 
           {/* Skill Level Legend */}
-          <div className="border-white/10 flex flex-wrap items-center gap-4 border-t pt-4">
-            <span className="text-zinc-500 font-mono text-xs">Levels:</span>
+          <div className="flex flex-wrap items-center gap-4 border-t border-white/10 pt-4">
+            <span className="font-mono text-xs text-zinc-500">
+              {t("app.onboarding.step.levels")}:
+            </span>
             {SKILL_LEVELS.map((level) => (
               <span key={level.value} className={`font-mono text-xs ${level.color}`}>
-                L{level.value}={level.label}
+                L{level.value}={t(level.labelKey)}
               </span>
             ))}
           </div>

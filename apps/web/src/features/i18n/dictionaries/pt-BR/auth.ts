@@ -64,4 +64,16 @@ export const auth = {
   "auth.error.resetFailed": "Falha ao redefinir senha. Por favor, tente novamente.",
   "auth.error.emailNotSent": "Não foi possível enviar o email de redefinição. Por favor, verifique seu endereço de email e tente novamente.",
   "auth.error.emailServiceError": "O serviço de email está temporariamente indisponível. Por favor, tente novamente mais tarde.",
+
+  // Security indicators
+  "auth.security.secureSession": "Sessão Segura",
+  "auth.security.encrypted": "Criptografado",
+  "auth.security.secure": "Seguro",
+
+  // Loading states
+  "auth.loading.initializing": "Iniciando...",
+  "auth.loading.creatingAccount": "Criando conta...",
+
+  // Password requirements
+  "auth.signUp.passwordHint": "Mínimo de 8 caracteres",
 } as const;

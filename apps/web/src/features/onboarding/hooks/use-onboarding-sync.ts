@@ -32,11 +32,10 @@ export function useOnboardingSync() {
       const localStepIndex = getStepIndex(localStep);
 
       // Check if backend has actual progress (not just initial empty state)
-      const backendHasProgress = 
-        backendProgress.currentStep !== "welcome" || 
+      const backendHasProgress =
+        backendProgress.currentStep !== "welcome" ||
         (backendProgress.completedSteps && backendProgress.completedSteps.length > 0) ||
         backendProgress.personalInfo ||
-        backendProgress.username ||
         backendProgress.professionalProfile ||
         (backendProgress.experiences && backendProgress.experiences.length > 0) ||
         (backendProgress.education && backendProgress.education.length > 0) ||
@@ -76,7 +75,6 @@ export function useOnboardingSync() {
             currentStep: "welcome",
             completedSteps: [],
             personalInfo: null,
-            username: backendProgress.username || null, // Preserve username if exists
             professionalProfile: null,
             experiences: [],
             noExperience: false,

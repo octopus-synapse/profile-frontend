@@ -10,6 +10,7 @@
 import { Menu, X } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { useAuth } from "@/features/auth";
+import { useI18n } from "@/features/i18n";
 import { ROUTES } from "@/config/routes";
 import { LocalizedLink } from "@/shared/components/localized-link";
 import { cn } from "@/shared/utils";
@@ -33,6 +34,7 @@ interface NavbarProps {
 
 export function Navbar({ className, navItems, rightSection, variant = "default" }: NavbarProps) {
   const { isAuthenticated, isLoading } = useAuth();
+  const { t } = useI18n();
   const { mainNavItems } = useNavigation();
   const mobileMenu = useMobileMenu();
   const [scrolled, setScrolled] = useState(false);
@@ -92,13 +94,13 @@ export function Navbar({ className, navItems, rightSection, variant = "default" 
                           href={ROUTES.AUTH.SIGN_IN}
                           className="hidden text-sm font-medium text-zinc-400 transition-colors duration-150 hover:text-white sm:inline-flex"
                         >
-                          Sign in
+                          {t("nav.signIn")}
                         </LocalizedLink>
                         <LocalizedLink
                           href={ROUTES.AUTH.SIGN_UP}
                           className="hidden rounded-md bg-white px-4 py-1.5 text-xs font-bold text-black transition-all hover:scale-[1.02] hover:bg-cyan-400 sm:inline-flex"
                         >
-                          Get started
+                          {t("nav.getStarted")}
                         </LocalizedLink>
                       </div>
                     )}

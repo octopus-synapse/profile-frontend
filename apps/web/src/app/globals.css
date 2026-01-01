@@ -32,7 +32,7 @@
   /* Foreground (Text) Colors */
   --pf-fg-default: #fafafa;
   --pf-fg-muted: #a1a1aa;
-  --pf-fg-subtle: #71717a;
+  --pf-fg-subtle: #8b8b96; /* Improved contrast for WCAG AA */
   --pf-fg-on-emphasis: #020202;
 
   /* Border Colors */

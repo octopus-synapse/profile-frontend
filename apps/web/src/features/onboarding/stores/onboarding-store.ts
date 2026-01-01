@@ -10,6 +10,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { SubmitOnboardingDto } from "../types";
 
 // Types aligned with backend schema
 export interface PersonalInfo {
@@ -167,7 +168,7 @@ interface OnboardingState {
   reset: () => void;
 
   // Build submission payload
-  buildSubmissionPayload: () => Record<string, unknown>;
+  buildSubmissionPayload: () => SubmitOnboardingDto;
 
   // Sync with backend
   hydrateFromBackend: (data: {
@@ -391,9 +392,9 @@ export const useOnboardingStore = create<OnboardingState>()(
 
       reset: () => set(initialState),
 
-      buildSubmissionPayload: () => {
+      buildSubmissionPayload: (): SubmitOnboardingDto => {
         const state = get();
-        
+
         // Validate required fields before building payload
         if (!state.username) {
           throw new Error("Username is required to complete onboarding");
@@ -407,13 +408,13 @@ export const useOnboardingStore = create<OnboardingState>()(
         if (!state.templateSelection) {
           throw new Error("Template selection is required");
         }
-        
+
         // Normalize empty URLs to undefined
         const normalizeUrl = (url: string | undefined): string | undefined => {
           if (!url || url.trim() === "") return undefined;
           return url;
         };
-        
+
         return {
           username: state.username,
           personalInfo: state.personalInfo,

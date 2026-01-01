@@ -40,5 +40,21 @@ export const navigation = {
 
   // Mobile
   "nav.mobile.menu": "Menu",
+  "nav.mobile.open": "Abrir menu",
   "nav.mobile.close": "Fechar menu",
+
+  // Preferences
+  "nav.preferences.title": "Preferências",
+  "nav.preferences.theme": "Tema",
+  "nav.preferences.language": "Idioma",
+  "nav.preferences.light": "Claro",
+  "nav.preferences.dark": "Escuro",
+
+  // CTA
+  "nav.getStarted": "Começar agora",
+
+  // Landing
+  "nav.features": "Recursos",
+  "nav.howItWorks": "Como Funciona",
+  "nav.pricing": "Preços",
 } as const;

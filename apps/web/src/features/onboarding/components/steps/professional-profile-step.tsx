@@ -10,7 +10,17 @@ import { useState, useMemo } from "react";
 import { useOnboardingStore } from "../../stores";
 import { StepNavigation } from "../step-navigation";
 import { useGitHubUser } from "../../hooks/use-github-user";
-import { Briefcase, FileText, Linkedin, Github, Globe, AlertCircle, Loader2, Check, ExternalLink } from "lucide-react";
+import {
+  Briefcase,
+  FileText,
+  Linkedin,
+  Github,
+  Globe,
+  AlertCircle,
+  Loader2,
+  Check,
+  ExternalLink,
+} from "lucide-react";
 
 export function ProfessionalProfileStep() {
   const { professionalProfile, setProfessionalProfile, goToNextStep, markStepComplete } =
@@ -23,10 +33,10 @@ export function ProfessionalProfileStep() {
     if (!url.includes("github.com")) return url.trim();
     // Extract username from URL
     const match = url.match(/github\.com\/([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)/);
-    return match ? match[1] : url.replace(/^https?:\/\/(www\.)?github\.com\//, "").trim();
+    return match?.[1] ?? url.replace(/^https?:\/\/(www\.)?github\.com\//, "").trim();
   };
 
-  const initialGithub = extractGitHubUsername(professionalProfile?.github);
+  const initialGithub: string = extractGitHubUsername(professionalProfile?.github ?? "");
 
   const [formData, setFormData] = useState({
     jobTitle: professionalProfile?.jobTitle || "",
@@ -37,9 +47,11 @@ export function ProfessionalProfileStep() {
   });
 
   // Fetch GitHub user data
-  const { user: githubUser, isLoading: isGithubLoading, error: githubError } = useGitHubUser(
-    formData.github || null
-  );
+  const {
+    user: githubUser,
+    isLoading: isGithubLoading,
+    error: githubError,
+  } = useGitHubUser(formData.github || null);
 
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
@@ -124,9 +136,7 @@ export function ProfessionalProfileStep() {
     };
 
     // Build GitHub URL from username if provided
-    const githubUrl = formData.github
-      ? `https://github.com/${formData.github.trim()}`
-      : undefined;
+    const githubUrl = formData.github ? `https://github.com/${formData.github.trim()}` : undefined;
 
     setProfessionalProfile({
       jobTitle: formData.jobTitle,
@@ -147,10 +157,10 @@ export function ProfessionalProfileStep() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-2">
-          <span className="text-cyan-400 font-mono text-sm">{`>`}</span>
-          <h2 className="text-white text-xl font-bold">Professional Profile</h2>
+          <span className="font-mono text-sm text-cyan-400">{`>`}</span>
+          <h2 className="text-xl font-bold text-white">Professional Profile</h2>
         </div>
-        <p className="text-zinc-400 mt-1 font-mono text-xs">
+        <p className="mt-1 font-mono text-xs text-zinc-400">
           Tell us about your career and online presence
         </p>
       </div>
@@ -159,7 +169,7 @@ export function ProfessionalProfileStep() {
       <div className="space-y-4">
         {/* Job Title */}
         <div>
-          <label className="text-white mb-1.5 flex items-center gap-2 font-mono text-sm">
+          <label className="mb-1.5 flex items-center gap-2 font-mono text-sm text-white">
             <Briefcase className="h-4 w-4" strokeWidth={1.5} />
             jobTitle<span className="text-red-500">*</span>
           </label>
@@ -169,10 +179,10 @@ export function ProfessionalProfileStep() {
             onChange={(e) => handleChange("jobTitle", e.target.value)}
             onBlur={() => handleBlur("jobTitle")}
             placeholder="Senior Software Engineer"
-            className={`border-white/10 bg-white/5 text-white placeholder:text-zinc-500 focus:border-cyan-500 w-full border px-3 py-2 font-mono text-sm focus:outline-none ${errors.jobTitle ? "border-red-500" : ""} `}
+            className={`w-full border border-white/10 bg-white/5 px-3 py-2 font-mono text-sm text-white placeholder:text-zinc-500 focus:border-cyan-500 focus:outline-none ${errors.jobTitle ? "border-red-500" : ""} `}
           />
           {errors.jobTitle && (
-            <p className="text-red-500 mt-1 flex items-center gap-1 font-mono text-xs">
+            <p className="mt-1 flex items-center gap-1 font-mono text-xs text-red-500">
               <AlertCircle className="h-3 w-3" />
               {errors.jobTitle}
             </p>
@@ -181,7 +191,7 @@ export function ProfessionalProfileStep() {
 
         {/* Summary */}
         <div>
-          <label className="text-white mb-1.5 flex items-center gap-2 font-mono text-sm">
+          <label className="mb-1.5 flex items-center gap-2 font-mono text-sm text-white">
             <FileText className="h-4 w-4" strokeWidth={1.5} />
             summary<span className="text-red-500">*</span>
           </label>
@@ -191,16 +201,16 @@ export function ProfessionalProfileStep() {
             onBlur={() => handleBlur("summary")}
             placeholder="Passionate full-stack developer with 5+ years of experience building scalable web applications. Specialized in React, Node.js, and cloud infrastructure..."
             rows={4}
-            className={`border-white/10 bg-white/5 text-white placeholder:text-zinc-500 focus:border-cyan-500 w-full resize-none border px-3 py-2 font-mono text-sm focus:outline-none ${errors.summary ? "border-red-500" : ""} `}
+            className={`w-full resize-none border border-white/10 bg-white/5 px-3 py-2 font-mono text-sm text-white placeholder:text-zinc-500 focus:border-cyan-500 focus:outline-none ${errors.summary ? "border-red-500" : ""} `}
           />
           <div className="mt-1 flex items-center justify-between">
             {errors.summary ? (
-              <p className="text-red-500 flex items-center gap-1 font-mono text-xs">
+              <p className="flex items-center gap-1 font-mono text-xs text-red-500">
                 <AlertCircle className="h-3 w-3" />
                 {errors.summary}
               </p>
             ) : (
-              <span className="text-zinc-500 font-mono text-xs">min {minSummary} chars</span>
+              <span className="font-mono text-xs text-zinc-500">min {minSummary} chars</span>
             )}
             <span
               className={`font-mono text-xs ${
@@ -217,15 +227,15 @@ export function ProfessionalProfileStep() {
         </div>
 
         {/* Divider */}
-        <div className="border-white/10 flex items-center gap-3 border-t pt-4">
-          <span className="text-zinc-500 font-mono text-xs">
+        <div className="flex items-center gap-3 border-t border-white/10 pt-4">
+          <span className="font-mono text-xs text-zinc-500">
             <span className="opacity-60">{"//"}</span> Social links (optional)
           </span>
         </div>
 
         {/* LinkedIn */}
         <div>
-          <label className="text-white mb-1.5 flex items-center gap-2 font-mono text-sm">
+          <label className="mb-1.5 flex items-center gap-2 font-mono text-sm text-white">
             <Linkedin className="h-4 w-4" strokeWidth={1.5} />
             linkedin
           </label>
@@ -235,10 +245,10 @@ export function ProfessionalProfileStep() {
             onChange={(e) => handleChange("linkedin", e.target.value)}
             onBlur={() => handleBlur("linkedin")}
             placeholder="https://linkedin.com/in/username"
-            className={`border-white/10 bg-white/5 text-white placeholder:text-zinc-500 focus:border-cyan-500 w-full border px-3 py-2 font-mono text-sm focus:outline-none ${errors.linkedin ? "border-red-500" : ""} `}
+            className={`w-full border border-white/10 bg-white/5 px-3 py-2 font-mono text-sm text-white placeholder:text-zinc-500 focus:border-cyan-500 focus:outline-none ${errors.linkedin ? "border-red-500" : ""} `}
           />
           {errors.linkedin && (
-            <p className="text-red-500 mt-1 flex items-center gap-1 font-mono text-xs">
+            <p className="mt-1 flex items-center gap-1 font-mono text-xs text-red-500">
               <AlertCircle className="h-3 w-3" />
               {errors.linkedin}
             </p>
@@ -247,7 +257,7 @@ export function ProfessionalProfileStep() {
 
         {/* GitHub */}
         <div>
-          <label className="text-white mb-1.5 flex items-center gap-2 font-mono text-sm">
+          <label className="mb-1.5 flex items-center gap-2 font-mono text-sm text-white">
             <Github className="h-4 w-4" strokeWidth={1.5} />
             github
           </label>
@@ -262,12 +272,8 @@ export function ProfessionalProfileStep() {
               }}
               onBlur={() => handleBlur("github")}
               placeholder="username"
-              className={`border-white/10 bg-white/5 text-white placeholder:text-zinc-500 focus:border-cyan-500 w-full border px-3 py-2 pr-10 font-mono text-sm focus:outline-none ${
-                errors.github
-                  ? "border-red-500"
-                  : githubUser
-                    ? "border-emerald-500"
-                    : ""
+              className={`w-full border border-white/10 bg-white/5 px-3 py-2 pr-10 font-mono text-sm text-white placeholder:text-zinc-500 focus:border-cyan-500 focus:outline-none ${
+                errors.github ? "border-red-500" : githubUser ? "border-emerald-500" : ""
               }`}
             />
             <div className="absolute top-1/2 right-3 -translate-y-1/2">
@@ -281,7 +287,7 @@ export function ProfessionalProfileStep() {
             </div>
           </div>
           {errors.github && (
-            <p className="text-red-500 mt-1 flex items-center gap-1 font-mono text-xs">
+            <p className="mt-1 flex items-center gap-1 font-mono text-xs text-red-500">
               <AlertCircle className="h-3 w-3" />
               {errors.github}
             </p>
@@ -289,7 +295,7 @@ export function ProfessionalProfileStep() {
 
           {/* GitHub User Preview */}
           {githubUser && !isGithubLoading && (
-            <div className="border-emerald-500/20 bg-emerald-500/5 mt-3 flex items-center gap-3 border p-3">
+            <div className="mt-3 flex items-center gap-3 border border-emerald-500/20 bg-emerald-500/5 p-3">
               <img
                 src={githubUser.avatar_url}
                 alt={githubUser.login}
@@ -297,20 +303,18 @@ export function ProfessionalProfileStep() {
               />
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-white font-mono text-sm font-semibold">
+                  <span className="font-mono text-sm font-semibold text-white">
                     {githubUser.login}
                   </span>
                   {githubUser.name && (
-                    <span className="text-zinc-400 font-mono text-xs">
-                      ({githubUser.name})
-                    </span>
+                    <span className="font-mono text-xs text-zinc-400">({githubUser.name})</span>
                   )}
                 </div>
                 <a
                   href={githubUser.html_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-cyan-400 hover:text-cyan-300 mt-0.5 flex items-center gap-1 font-mono text-xs transition-colors"
+                  className="mt-0.5 flex items-center gap-1 font-mono text-xs text-cyan-400 transition-colors hover:text-cyan-300"
                 >
                   <ExternalLink className="h-3 w-3" />
                   {githubUser.html_url}
@@ -321,14 +325,12 @@ export function ProfessionalProfileStep() {
 
           {/* Non-intrusive error message when user not found */}
           {githubError && formData.github && !isGithubLoading && !githubUser && (
-            <p className="text-amber-500 mt-1 font-mono text-xs">
-              {githubError}
-            </p>
+            <p className="mt-1 font-mono text-xs text-amber-500">{githubError}</p>
           )}
 
           {/* Helper text */}
           {!formData.github && !githubError && (
-            <p className="text-zinc-500 mt-1 font-mono text-xs">
+            <p className="mt-1 font-mono text-xs text-zinc-500">
               Digite apenas o username (ex: octocat)
             </p>
           )}
@@ -336,7 +338,7 @@ export function ProfessionalProfileStep() {
 
         {/* Website */}
         <div>
-          <label className="text-white mb-1.5 flex items-center gap-2 font-mono text-sm">
+          <label className="mb-1.5 flex items-center gap-2 font-mono text-sm text-white">
             <Globe className="h-4 w-4" strokeWidth={1.5} />
             website
           </label>
@@ -346,10 +348,10 @@ export function ProfessionalProfileStep() {
             onChange={(e) => handleChange("website", e.target.value)}
             onBlur={() => handleBlur("website")}
             placeholder="https://yoursite.dev"
-            className={`border-white/10 bg-white/5 text-white placeholder:text-zinc-500 focus:border-cyan-500 w-full border px-3 py-2 font-mono text-sm focus:outline-none ${errors.website ? "border-red-500" : ""} `}
+            className={`w-full border border-white/10 bg-white/5 px-3 py-2 font-mono text-sm text-white placeholder:text-zinc-500 focus:border-cyan-500 focus:outline-none ${errors.website ? "border-red-500" : ""} `}
           />
           {errors.website && (
-            <p className="text-red-500 mt-1 flex items-center gap-1 font-mono text-xs">
+            <p className="mt-1 flex items-center gap-1 font-mono text-xs text-red-500">
               <AlertCircle className="h-3 w-3" />
               {errors.website}
             </p>

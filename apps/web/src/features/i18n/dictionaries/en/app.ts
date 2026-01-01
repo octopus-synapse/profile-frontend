@@ -48,4 +48,39 @@ export const app = {
   // Onboarding
   "app.onboarding.title": "Setup Your Profile",
   "app.onboarding.description": "Complete your professional profile setup in minutes",
+
+  // Onboarding Steps
+  "app.onboarding.step.technicalSkills": "Technical Skills",
+  "app.onboarding.step.technicalSkillsDesc": "Select your skills or search from our catalog",
+  "app.onboarding.step.back": "back",
+  "app.onboarding.step.skip": "skip",
+  "app.onboarding.step.continue": "continue",
+  "app.onboarding.step.submit": "submit",
+  "app.onboarding.step.processing": "processing...",
+  "app.onboarding.step.noSkills": "I'm still developing my skills (skip for now)",
+  "app.onboarding.step.skillsSelected": "{count} skill(s) selected",
+  "app.onboarding.step.searchSkills": "Search skills (React, Python, Docker...)",
+  "app.onboarding.step.addCustomSkill": "Add custom skill",
+  "app.onboarding.step.customSkillPlaceholder": "Custom skill name...",
+  "app.onboarding.step.category": "Category",
+  "app.onboarding.step.levels": "Levels",
+  "app.onboarding.step.noSkillsFound": "No skills found for \"{query}\"",
+
+  // Skill Levels
+  "app.skills.level.beginner": "Beginner",
+  "app.skills.level.basic": "Basic",
+  "app.skills.level.intermediate": "Intermediate",
+  "app.skills.level.advanced": "Advanced",
+  "app.skills.level.expert": "Expert",
+
+  // Settings Page
+  "app.settings.title": "Settings",
+  "app.settings.description": "Manage your profile and preferences",
+  "app.settings.backToDashboard": "Back to Dashboard",
+  "app.settings.tabs.profile": "Profile",
+  "app.settings.tabs.experience": "Experience",
+  "app.settings.tabs.education": "Education",
+  "app.settings.tabs.skills": "Skills",
+  "app.settings.tabs.languages": "Languages",
+  "app.settings.tabs.preferences": "Preferences",
 } as const;

@@ -159,11 +159,11 @@ function SignInFormContent() {
         <div className="mt-4 flex items-center justify-center gap-4 font-mono text-[10px] tracking-tighter text-zinc-600 uppercase">
           <div className="flex items-center gap-1">
             <div className="h-1 w-1 rounded-full bg-cyan-500" />
-            <span>Secure Session</span>
+            <span>{t("auth.security.secureSession")}</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="h-1 w-1 rounded-full bg-cyan-500" />
-            <span>AES-256</span>
+            <span>{t("auth.security.encrypted")}</span>
           </div>
         </div>
       </form>
@@ -171,18 +171,21 @@ function SignInFormContent() {
   );
 }
 
+function SignInFallback() {
+  const t = useT();
+  return (
+    <div className="flex flex-col items-center justify-center gap-4 py-12">
+      <Spinner size="lg" />
+      <span className="font-mono text-xs tracking-widest text-zinc-500 uppercase">
+        {t("auth.loading.initializing")}
+      </span>
+    </div>
+  );
+}
+
 export function SignInForm() {
   return (
-    <Suspense
-      fallback={
-        <div className="flex flex-col items-center justify-center gap-4 py-12">
-          <Spinner size="lg" />
-          <span className="font-mono text-xs tracking-widest text-zinc-500 uppercase">
-            Initializing...
-          </span>
-        </div>
-      }
-    >
+    <Suspense fallback={<SignInFallback />}>
       <SignInFormContent />
     </Suspense>
   );

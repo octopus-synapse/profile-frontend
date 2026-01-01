@@ -64,4 +64,16 @@ export const auth = {
   "auth.error.resetFailed": "Failed to reset password. Please try again.",
   "auth.error.emailNotSent": "Unable to send reset email. Please verify your email address and try again.",
   "auth.error.emailServiceError": "Email service is temporarily unavailable. Please try again later.",
+
+  // Security indicators
+  "auth.security.secureSession": "Secure Session",
+  "auth.security.encrypted": "Encrypted",
+  "auth.security.secure": "Secure",
+
+  // Loading states
+  "auth.loading.initializing": "Initializing...",
+  "auth.loading.creatingAccount": "Creating account...",
+
+  // Password requirements
+  "auth.signUp.passwordHint": "Minimum 8 characters",
 } as const;

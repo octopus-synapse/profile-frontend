@@ -32,7 +32,7 @@ interface MobileMenuProps {
 
 export function MobileMenu({ menu, navItems }: MobileMenuProps) {
   const { isAuthenticated, signOut } = useAuth();
-  const { language, setLanguage, locales } = useI18n();
+  const { t, language, setLanguage, locales } = useI18n();
   const themeContext = useThemeOptional();
   const { mainNavItems, adminNavItems, canAccessAdmin } = useNavigation();
 
@@ -109,12 +109,12 @@ export function MobileMenu({ menu, navItems }: MobileMenuProps) {
         {/* Preferences */}
         <div className="py-4">
           <p className="mb-3 text-xs font-medium tracking-wide text-zinc-500 uppercase">
-            Preferences
+            {t("nav.preferences.title")}
           </p>
 
           {/* Theme */}
           <div className="flex items-center justify-between py-2">
-            <span className="text-[15px] text-white">Theme</span>
+            <span className="text-[15px] text-white">{t("nav.preferences.theme")}</span>
             <div className="flex items-center gap-1">
               <button
                 onClick={() => themeContext?.setTheme("light")}
@@ -143,7 +143,7 @@ export function MobileMenu({ menu, navItems }: MobileMenuProps) {
 
           {/* Language */}
           <div className="flex items-center justify-between py-2">
-            <span className="text-[15px] text-white">Language</span>
+            <span className="text-[15px] text-white">{t("nav.preferences.language")}</span>
             <div className="flex items-center gap-1">
               {locales.map((locale) => (
                 <button
@@ -175,7 +175,7 @@ export function MobileMenu({ menu, navItems }: MobileMenuProps) {
             className="flex w-full items-center justify-center gap-2 rounded-md py-3 text-[15px] font-medium text-white transition-colors duration-150 hover:bg-zinc-900"
           >
             <LogOut className="h-[18px] w-[18px]" strokeWidth={1.5} />
-            Sign out
+            {t("nav.signOut")}
           </button>
         ) : (
           <div className="flex flex-col gap-2">
@@ -184,14 +184,14 @@ export function MobileMenu({ menu, navItems }: MobileMenuProps) {
               onClick={menu.close}
               className="flex w-full items-center justify-center rounded-md bg-white py-3 text-[15px] font-bold text-black transition-all duration-150 hover:bg-cyan-400"
             >
-              Get started
+              {t("nav.getStarted")}
             </LocalizedLink>
             <LocalizedLink
               href={ROUTES.AUTH.SIGN_IN}
               onClick={menu.close}
               className="flex w-full items-center justify-center py-3 text-[15px] text-zinc-400 transition-colors duration-150 hover:text-white"
             >
-              Sign in
+              {t("nav.signIn")}
             </LocalizedLink>
           </div>
         )}

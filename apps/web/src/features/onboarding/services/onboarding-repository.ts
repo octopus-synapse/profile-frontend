@@ -36,6 +36,7 @@ interface OnboardingResult {
 export interface OnboardingProgress {
   currentStep: OnboardingStep;
   completedSteps: OnboardingStep[];
+  username?: string | null;
   personalInfo: PersonalInfo | null;
   professionalProfile: ProfessionalProfile | null;
   experiences: Experience[];
