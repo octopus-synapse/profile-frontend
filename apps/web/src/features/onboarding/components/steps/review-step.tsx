@@ -10,6 +10,8 @@ import { useState } from "react";
 import { useOnboardingStore, type OnboardingStep, type Experience, type Skill } from "../../stores";
 import { StepNavigation } from "../step-navigation";
 import { useSubmitOnboarding } from "../../hooks/use-onboarding-mutations";
+import { useOnboardingSync } from "../../hooks/use-onboarding-sync";
+import { isApiError, type ApiError } from "@/shared/types/errors";
 import {
   User,
   Briefcase,
@@ -45,6 +47,7 @@ export function ReviewStep() {
   } = useOnboardingStore();
 
   const submitOnboarding = useSubmitOnboarding();
+  const { saveToBackend } = useOnboardingSync();
   const [error, setError] = useState<string | null>(null);
 
   // Check what's complete
@@ -133,18 +136,63 @@ export function ReviewStep() {
     }
 
     try {
+      // Save current progress to backend before submitting
+      // This ensures we don't lose progress if submission fails
+      try {
+        await saveToBackend();
+        console.log("Progress saved to backend before submission");
+      } catch (saveError) {
+        console.warn("Failed to save progress before submission:", saveError);
+        // Continue with submission even if save fails
+      }
+
       const payload = buildSubmissionPayload();
+      
+      console.log("Submitting onboarding payload:", payload);
 
       // Use the proper hook which handles query invalidation
-      await submitOnboarding.mutateAsync(payload);
+      const result = await submitOnboarding.mutateAsync(payload);
+      
+      console.log("Onboarding submission result:", result);
 
       markStepComplete("review");
       goToNextStep();
     } catch (err) {
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : (err as { message?: string })?.message || "Something went wrong";
+      console.error("Onboarding submission error:", err);
+      
+      // Extract better error message from ApiError structure
+      let errorMessage = "Something went wrong. Please try again.";
+      
+      if (isApiError(err)) {
+        // Use message from ApiError structure
+        errorMessage = err.message;
+        
+        // Handle specific error codes with user-friendly messages
+        if (err.code === "CONFLICT" || err.statusCode === 409) {
+          errorMessage = "Username is already taken. Please go back and choose a different username.";
+        } else if (err.code === "VALIDATION_ERROR" || err.statusCode === 400) {
+          // Try to extract field-specific errors
+          if (err.details && typeof err.details === "object") {
+            const fieldErrors = Object.values(err.details).flat();
+            if (fieldErrors.length > 0 && typeof fieldErrors[0] === "string") {
+              errorMessage = fieldErrors[0];
+            } else {
+              errorMessage = "Invalid data. Please check all required fields and try again.";
+            }
+          } else {
+            errorMessage = "Invalid data. Please check all required fields and try again.";
+          }
+        } else if (err.code === "UNAUTHORIZED" || err.statusCode === 401) {
+          errorMessage = "Session expired. Please refresh the page and try again.";
+        } else if (err.code === "INTERNAL_ERROR" || err.statusCode === 500) {
+          errorMessage = "Server error. Please try again in a moment.";
+        }
+      } else if (err instanceof Error) {
+        errorMessage = err.message;
+      } else if (err && typeof err === "object" && "message" in err) {
+        errorMessage = String(err.message);
+      }
+      
       setError(errorMessage);
     }
   };

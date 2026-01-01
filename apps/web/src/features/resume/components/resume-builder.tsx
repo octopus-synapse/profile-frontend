@@ -11,7 +11,7 @@ import { ResumeRenderer } from "./resume-renderer";
 import { BuilderSidebar } from "./builder/builder-sidebar";
 import { MODERN_CONFIG } from "../types/presets";
 import type { ResumeStyleConfig } from "../types/config";
-import { Download, FileText, Share2, Link2, Check, Settings } from "lucide-react";
+import { Download, FileText, Share2, Link2, Check, Settings, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { LoadingState } from "@/shared/components/ui";
 

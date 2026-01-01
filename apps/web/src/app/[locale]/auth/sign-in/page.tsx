@@ -3,7 +3,7 @@
 import { SignInForm } from "@/features/auth";
 import { LocalizedLink } from "@/shared/components/localized-link";
 import { ROUTES } from "@/config/routes";
-import { Terminal, Github, ArrowLeft, Command } from "lucide-react";
+import { Terminal, Github, ArrowLeft } from "lucide-react";
 import { useI18n } from "@/features/i18n";
 import { motion } from "framer-motion"; // Opcional: npm install framer-motion
 

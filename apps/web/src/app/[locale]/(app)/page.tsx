@@ -108,7 +108,7 @@ export default function HomePage() {
             <div className="mb-16 text-center">
               <div className="mb-4 inline-flex items-center gap-2">
                 <Code2 className="h-5 w-5 text-zinc-500" strokeWidth={1.5} />
-                <span className="font-mono text-xs text-zinc-500">// Features</span>
+                <span className="font-mono text-xs text-zinc-500">{'//'} Features</span>
               </div>
               <h2 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
                 Everything you need to stand out

@@ -10,7 +10,7 @@ import { usePathname } from "next/navigation";
 import type { MobileMenuState } from "../types";
 
 // Track pathname changes externally to avoid setState in effect
-let pathnameListeners: Set<() => void> = new Set();
+const pathnameListeners: Set<() => void> = new Set();
 let lastPathname: string | null = null;
 
 function subscribeToPathname(callback: () => void) {
@@ -30,15 +30,19 @@ export function useMobileMenu(): MobileMenuState {
   // Use useSyncExternalStore pattern to track changes
   useSyncExternalStore(subscribeToPathname, getPathnameSnapshot, getPathnameSnapshot);
 
-  // Track pathname changes and close menu - using ref to avoid effect setState
-  if (previousPathnameRef.current !== pathname) {
-    previousPathnameRef.current = pathname;
-    lastPathname = pathname;
-    // Schedule close outside of render
-    if (isOpen) {
-      queueMicrotask(() => setIsOpen(false));
+  // Track pathname changes and close menu
+  useEffect(() => {
+    if (previousPathnameRef.current !== pathname) {
+      previousPathnameRef.current = pathname;
+      lastPathname = pathname;
+      // Notify all listeners
+      pathnameListeners.forEach((listener) => listener());
+      // Schedule close outside of render
+      if (isOpen) {
+        queueMicrotask(() => setIsOpen(false));
+      }
     }
-  }
+  }, [pathname, isOpen]);
 
   // Lock body scroll when menu is open
   useEffect(() => {

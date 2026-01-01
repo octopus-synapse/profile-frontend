@@ -57,6 +57,9 @@ export function CompleteStep() {
 
   // Update session and redirect automatically
   useEffect(() => {
+    let countdownInterval: NodeJS.Timeout | null = null;
+    let isRedirecting = false;
+
     // Update session to reflect completed onboarding
     const updateSessionData = async () => {
       try {
@@ -77,23 +80,35 @@ export function CompleteStep() {
     }
 
     // Countdown and auto-redirect
-    const countdownInterval = setInterval(() => {
+    countdownInterval = setInterval(() => {
       setCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(countdownInterval);
-          reset();
+        if (prev <= 1 && !isRedirecting) {
+          isRedirecting = true;
+          if (countdownInterval) {
+            clearInterval(countdownInterval);
+          }
+          // Redirect first, then reset store after navigation
           router.push(ROUTES.PROTECTED.RESUME);
+          // Reset store after a short delay to ensure navigation happens
+          setTimeout(() => {
+            reset();
+          }, 100);
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
 
-    return () => clearInterval(countdownInterval);
+    return () => {
+      if (countdownInterval) {
+        clearInterval(countdownInterval);
+      }
+    };
   }, [session, updateSession, router, reset]);
 
   const handleGoToDashboard = () => {
-    reset(); // Clear onboarding state
+    // Don't reset here - let the redirect handle it
+    // The reset will happen in the useEffect after navigation
   };
 
   return (
@@ -128,45 +143,45 @@ export function CompleteStep() {
 
       {/* Code Block Celebration */}
       <div
-        className={`bg-white rounded-lg p-4 text-left font-mono text-sm transition-all delay-300 duration-700 ${showContent ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
+        className={`border-white/10 bg-[#0A0A0A] rounded-lg border p-4 text-left font-mono text-sm transition-all delay-300 duration-700 ${showContent ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
       >
-        <div className="mb-2 text-xs text-gray-500">
+        <div className="mb-2 text-xs text-zinc-500">
           <span className="opacity-60">{"//"}</span> profile.created.ts
         </div>
         <div className="space-y-1">
           <div>
             <span className="text-purple-400">const</span>
             <span className="text-blue-300"> profile</span>
-            <span className="text-white"> = {`{`}</span>
+            <span className="text-zinc-300"> = {`{`}</span>
           </div>
           <div className="pl-4">
             <span className="text-blue-300">status</span>
-            <span className="text-white">: </span>
+            <span className="text-zinc-300">: </span>
             <span className="text-green-400">&quot;active&quot;</span>
-            <span className="text-white">,</span>
+            <span className="text-zinc-300">,</span>
           </div>
           <div className="pl-4">
             <span className="text-blue-300">completeness</span>
-            <span className="text-white">: </span>
+            <span className="text-zinc-300">: </span>
             <span className="text-orange-400">100</span>
-            <span className="text-white">,</span>
+            <span className="text-zinc-300">,</span>
           </div>
           <div className="pl-4">
             <span className="text-blue-300">ready</span>
-            <span className="text-white">: </span>
+            <span className="text-zinc-300">: </span>
             <span className="text-purple-400">true</span>
-            <span className="text-white">,</span>
+            <span className="text-zinc-300">,</span>
           </div>
           <div>
-            <span className="text-white">{`}`};</span>
+            <span className="text-zinc-300">{`}`};</span>
           </div>
           <div className="mt-2">
             <span className="text-yellow-300">console</span>
-            <span className="text-white">.</span>
+            <span className="text-zinc-300">.</span>
             <span className="text-yellow-300">log</span>
-            <span className="text-white">(</span>
+            <span className="text-zinc-300">(</span>
             <span className="text-green-400">&quot;✨ Profile ready!&quot;</span>
-            <span className="text-white">);</span>
+            <span className="text-zinc-300">);</span>
           </div>
         </div>
       </div>

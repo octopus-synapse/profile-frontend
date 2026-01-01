@@ -9,10 +9,14 @@
 
 import { useOnboardingStore } from "../../stores";
 import { StepNavigation } from "../step-navigation";
-import { Terminal, Sparkles, Clock, Shield } from "lucide-react";
+import { Sparkles, Clock, Shield, Code } from "lucide-react";
 
 export function WelcomeStep() {
   const { goToNextStep } = useOnboardingStore();
+
+  const handleStartSetup = () => {
+    goToNextStep();
+  };
 
   return (
     <div className="space-y-8">
@@ -29,7 +33,7 @@ export function WelcomeStep() {
       </div>
 
       {/* Code Block */}
-      <div className="rounded-lg bg-white p-4 font-mono text-sm">
+      <div className="border-white/10 bg-[#0A0A0A] rounded-lg border p-4 font-mono text-sm">
         <div className="mb-2 text-xs text-zinc-500">
           <span className="opacity-60">{"//"}</span> initialization
         </div>
@@ -37,22 +41,22 @@ export function WelcomeStep() {
           <div>
             <span className="text-purple-400">const</span>
             <span className="text-blue-300"> developer</span>
-            <span className="text-white"> = </span>
+            <span className="text-zinc-300"> = </span>
             <span className="text-green-400">&quot;you&quot;</span>
-            <span className="text-white">;</span>
+            <span className="text-zinc-300">;</span>
           </div>
           <div>
             <span className="text-purple-400">const</span>
             <span className="text-blue-300"> profile</span>
-            <span className="text-white"> = </span>
+            <span className="text-zinc-300"> = </span>
             <span className="text-purple-400">await</span>
             <span className="text-yellow-300"> createProfile</span>
-            <span className="text-white">(</span>
+            <span className="text-zinc-300">(</span>
             <span className="text-blue-300">developer</span>
-            <span className="text-white">);</span>
+            <span className="text-zinc-300">);</span>
           </div>
           <div className="mt-2">
-            <span className="text-gray-500">
+            <span className="text-zinc-500">
               <span className="opacity-60">{"//"}</span> Output: ✨ Professional resume ready!
             </span>
           </div>
@@ -62,7 +66,7 @@ export function WelcomeStep() {
       {/* Features */}
       <div className="grid gap-4 sm:grid-cols-3">
         <FeatureCard
-          icon={<Terminal className="h-5 w-5" strokeWidth={1.5} />}
+          icon={<Code className="h-5 w-5" strokeWidth={1.5} />}
           title="Built for Tech"
           description="Built by tech, for tech. Clean, intentional design."
         />
@@ -96,7 +100,7 @@ export function WelcomeStep() {
       </div>
 
       {/* Navigation */}
-      <StepNavigation onNext={goToNextStep} nextLabel="start setup" canProceed={true} />
+      <StepNavigation onNext={handleStartSetup} nextLabel="start setup" canProceed={true} />
     </div>
   );
 }

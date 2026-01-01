@@ -41,14 +41,16 @@ export function ProfileSection() {
 
   useEffect(() => {
     if (profile) {
-      setFormData({
-        displayName: profile.displayName || profile.name || "",
-        bio: profile.bio || "",
-        location: profile.location || "",
-        phone: profile.phone || "",
-        website: profile.website || "",
+      queueMicrotask(() => {
+        setFormData({
+          displayName: profile.displayName || profile.name || "",
+          bio: profile.bio || "",
+          location: profile.location || "",
+          phone: profile.phone || "",
+          website: profile.website || "",
         linkedin: profile.linkedin || "",
         github: profile.github || "",
+        });
       });
     }
   }, [profile]);

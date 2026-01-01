@@ -36,12 +36,18 @@ export function OnboardingWizard() {
   // Reset onboarding state if user has already completed onboarding
   // This prevents showing onboarding to users who already completed it
   useEffect(() => {
-    if (onboardingStatus?.hasCompletedOnboarding && session?.accessToken) {
+    // Only reset if we're sure the onboarding is complete AND we're not on the complete step
+    // This prevents resetting while the user is still on the complete step
+    if (
+      onboardingStatus?.hasCompletedOnboarding &&
+      session?.accessToken &&
+      currentStep !== "complete"
+    ) {
       // User already completed onboarding, redirect will be handled by middleware
       // But we should reset the store to prevent stale state
       reset();
     }
-  }, [onboardingStatus?.hasCompletedOnboarding, session?.accessToken, reset]);
+  }, [onboardingStatus?.hasCompletedOnboarding, session?.accessToken, reset, currentStep]);
 
   const renderStep = () => {
     switch (currentStep) {

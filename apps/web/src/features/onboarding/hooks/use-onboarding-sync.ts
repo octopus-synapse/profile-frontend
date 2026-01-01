@@ -44,11 +44,33 @@ export function useOnboardingSync() {
         (backendProgress.languages && backendProgress.languages.length > 0) ||
         backendProgress.templateSelection;
 
+      // Check if local storage has actual progress
+      const localStore = useOnboardingStore.getState();
+      const localHasProgress =
+        localStore.currentStep !== "welcome" ||
+        (localStore.completedSteps && localStore.completedSteps.length > 0) ||
+        localStore.personalInfo ||
+        localStore.username ||
+        localStore.professionalProfile ||
+        (localStore.experiences && localStore.experiences.length > 0) ||
+        (localStore.education && localStore.education.length > 0) ||
+        (localStore.skills && localStore.skills.length > 0) ||
+        (localStore.languages && localStore.languages.length > 0) ||
+        localStore.templateSelection;
+
+      // If backend has no progress but local has progress, keep local and sync to backend
+      if (!backendHasProgress && localHasProgress) {
+        // Don't reset - keep local progress and let it sync to backend
+        console.log("Keeping local progress, will sync to backend");
+        hasHydrated.current = true;
+        previousStep.current = currentStep;
+        return;
+      }
+
       // If backend has no progress and local storage also has no progress, ensure clean state
-      if (!backendHasProgress && localStepIndex === 0 && localStep === "welcome") {
+      if (!backendHasProgress && !localHasProgress) {
         // Both are at initial state, ensure completedSteps is empty
-        const store = useOnboardingStore.getState();
-        if (store.completedSteps.length > 0) {
+        if (localStore.completedSteps.length > 0) {
           // Reset to clean initial state
           useOnboardingStore.setState({
             currentStep: "welcome",
@@ -69,7 +91,7 @@ export function useOnboardingSync() {
       }
 
       // Use backend progress if it has actual data or is further along
-      if (backendHasProgress || backendStepIndex > localStepIndex) {
+      if (backendHasProgress && (backendStepIndex > localStepIndex || !localHasProgress)) {
         hydrateFromBackend({
           currentStep: backendProgress.currentStep as OnboardingStep,
           completedSteps: (backendProgress.completedSteps || []) as OnboardingStep[],

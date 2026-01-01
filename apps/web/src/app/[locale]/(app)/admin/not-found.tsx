@@ -55,7 +55,7 @@ export default function AdminNotFound() {
         <div className="mt-10 border border-white/10 bg-[#0A0A0A]/95 p-4">
           <div className="mb-3 flex items-center gap-2">
             <Code2 className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
-            <span className="font-mono text-xs text-zinc-400">// quick_navigation</span>
+            <span className="font-mono text-xs text-zinc-400">{'//'} quick_navigation</span>
           </div>
           <div className="grid grid-cols-2 gap-2 font-mono text-xs">
             <Link

@@ -29,7 +29,7 @@ export default function AdminDashboardPage() {
       <div>
         <h1 className="text-pf-fg-default text-2xl font-semibold tracking-tight">Dashboard</h1>
         <p className="text-pf-fg-muted mt-1 text-sm">
-          Overview of your platform's key metrics and activity
+          Overview of your platform&apos;s key metrics and activity
         </p>
       </div>
 

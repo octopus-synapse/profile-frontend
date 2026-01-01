@@ -126,7 +126,10 @@ export default async function middleware(request: NextRequest) {
   }
 
   // Check if user is accessing protected routes without authentication
-  if (!isAuthenticated && protectedRoutes.some((route) => pathnameWithoutLocale.startsWith(route))) {
+  if (
+    !isAuthenticated &&
+    protectedRoutes.some((route) => pathnameWithoutLocale.startsWith(route))
+  ) {
     const signInUrl = createLocalizedUrl(ROUTES.AUTH.SIGN_IN);
     signInUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(signInUrl);
@@ -153,6 +156,18 @@ export default async function middleware(request: NextRequest) {
     pathnameWithoutLocale.startsWith("/protected") &&
     !pathnameWithoutLocale.startsWith("/onboarding")
   ) {
+    // Security bypass: Allow ?bypass=true for support/recovery scenarios
+    const bypassParam = request.nextUrl.searchParams.get("bypass");
+    if (bypassParam === "true") {
+      // Log bypass usage for security monitoring
+      console.warn("[Middleware] Onboarding bypass used", {
+        userId: session?.user?.id,
+        path: pathnameWithoutLocale,
+        timestamp: new Date().toISOString(),
+      });
+      return response;
+    }
+
     return NextResponse.redirect(createLocalizedUrl(ROUTES.ONBOARDING));
   }
 

@@ -139,7 +139,7 @@ function StatCard({
     if (!isVisible) return;
 
     if (prefersReducedMotion) {
-      setDisplayValue(value);
+      queueMicrotask(() => setDisplayValue(value));
       return;
     }
 

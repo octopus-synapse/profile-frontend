@@ -3,7 +3,7 @@
 import { ResetPasswordForm } from "@/features/auth";
 import { LocalizedLink } from "@/shared/components/localized-link";
 import { ROUTES } from "@/config/routes";
-import { Terminal, ArrowLeft, Lock } from "lucide-react";
+import { ArrowLeft, Lock } from "lucide-react";
 import { useI18n } from "@/features/i18n";
 import { motion } from "framer-motion";
 

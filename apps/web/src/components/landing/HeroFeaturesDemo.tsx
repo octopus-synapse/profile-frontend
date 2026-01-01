@@ -389,12 +389,12 @@ function TailoredCVDemo({ prefersReducedMotion, isActive, t }: { prefersReducedM
 
   useEffect(() => {
     if (!isActive) {
-      setShowTailored(false);
+      queueMicrotask(() => setShowTailored(false));
       return;
     }
 
     if (prefersReducedMotion) {
-      setShowTailored(true);
+      queueMicrotask(() => setShowTailored(true));
       return;
     }
 
@@ -477,14 +477,18 @@ function ATSScoreDemo({ prefersReducedMotion, isActive }: { prefersReducedMotion
 
   useEffect(() => {
     if (!isActive) {
-      setScore(0);
-      setChecks([false, false, false, false]);
+      queueMicrotask(() => {
+        setScore(0);
+        setChecks([false, false, false, false]);
+      });
       return;
     }
 
     if (prefersReducedMotion) {
-      setScore(94);
-      setChecks([true, true, true, true]);
+      queueMicrotask(() => {
+        setScore(94);
+        setChecks([true, true, true, true]);
+      });
       return;
     }
 
@@ -515,7 +519,7 @@ function ATSScoreDemo({ prefersReducedMotion, isActive }: { prefersReducedMotion
       clearInterval(scoreInterval);
       checkTimeouts.forEach(clearTimeout);
     };
-  }, [isActive, prefersReducedMotion]);
+  }, [isActive, prefersReducedMotion, checkLabels]);
 
   const getScoreColor = (s: number) => {
     if (s >= 90) return "text-pf-success-fg";

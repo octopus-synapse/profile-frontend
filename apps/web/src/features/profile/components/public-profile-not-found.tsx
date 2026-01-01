@@ -22,7 +22,7 @@ export function PublicProfileNotFound({ username }: PublicProfileNotFoundProps) 
       <h1 className="text-pf-fg-default mt-8 text-2xl font-bold">Profile Not Found</h1>
 
       <p className="text-pf-fg-muted mt-3 max-w-md text-center">
-        The profile <span className="text-pf-fg-default font-medium">@{username}</span> doesn't
+        The profile <span className="text-pf-fg-default font-medium">@{username}</span> doesn&apos;t
         exist or is set to private.
       </p>
 

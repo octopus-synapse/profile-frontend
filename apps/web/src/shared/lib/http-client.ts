@@ -214,6 +214,16 @@ axiosClient.interceptors.request.use(
   (error: unknown) => Promise.reject(error)
 );
 
+// Add response interceptor to transform errors to ApiError
+axiosClient.interceptors.response.use(
+  (response) => response,
+  async (error: AxiosError) => {
+    // Transform to ApiError
+    const apiError = transformError(error);
+    return Promise.reject(apiError);
+  }
+);
+
 // Wrapper that extracts data from response
 export const httpClient = {
   async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {

@@ -13,7 +13,7 @@ import { useT } from "@/features/i18n";
 import { Button, Input, Spinner } from "@/shared/components/ui";
 import { Label } from "@/shared/components/ui/label";
 import { ROUTES } from "@/config/routes";
-import { AlertCircle, Mail, Lock, Eye, EyeOff, Command, ChevronRight } from "lucide-react";
+import { AlertCircle, Mail, Lock, Eye, EyeOff, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 function SignInFormContent() {

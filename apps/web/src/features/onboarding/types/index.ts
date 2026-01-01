@@ -80,6 +80,7 @@ export interface TemplateSelectionData {
 
 // API DTO for submission
 export interface SubmitOnboardingDto {
+  username: string;
   personalInfo: PersonalInfoData;
   professionalProfile: ProfessionalProfileData;
   skillsStep: SkillsStepData;

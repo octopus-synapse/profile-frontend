@@ -19,7 +19,7 @@ export default function ProtectedPage() {
       <div>
         <div className="mb-4 inline-flex items-center gap-2">
           <Code2 className="h-5 w-5 text-zinc-400" strokeWidth={1.5} />
-          <span className="font-mono text-xs text-zinc-400">// Dashboard</span>
+          <span className="font-mono text-xs text-zinc-400">{'//'} Dashboard</span>
         </div>
         <h1 className="text-3xl font-bold text-white">
           Welcome back, <span className="font-normal text-zinc-400">developer</span>

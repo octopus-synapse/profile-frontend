@@ -321,7 +321,7 @@ export function UsernameStep() {
 
       {/* Rules */}
       <div className="space-y-1 border border-white/10 bg-white/5 p-3">
-        <p className="font-mono text-xs font-medium text-zinc-400">// Username rules:</p>
+        <p className="font-mono text-xs font-medium text-zinc-400">{'//'} Username rules:</p>
         <ul className="space-y-1 font-mono text-xs text-zinc-500">
           <li className="flex items-center gap-2">
             <span className={inputValue.length >= MIN_LENGTH ? "text-emerald-500" : ""}>

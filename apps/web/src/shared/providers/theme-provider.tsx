@@ -68,9 +68,11 @@ export function ThemeProvider({ children, defaultTheme = "dark" }: ThemeProvider
 
   // Sync React state with already-applied theme on mount
   useEffect(() => {
-    setThemeState(getInitialTheme());
-    setResolvedTheme(getInitialResolvedTheme());
-    setMounted(true);
+    queueMicrotask(() => {
+      setThemeState(getInitialTheme());
+      setResolvedTheme(getInitialResolvedTheme());
+      setMounted(true);
+    });
   }, []);
 
   // Update resolved theme and apply to document when theme changes
@@ -78,7 +80,7 @@ export function ThemeProvider({ children, defaultTheme = "dark" }: ThemeProvider
     if (!mounted) return;
 
     const resolved = theme === "system" ? getSystemTheme() : theme;
-    setResolvedTheme(resolved);
+    queueMicrotask(() => setResolvedTheme(resolved));
 
     // Apply theme to document
     const root = document.documentElement;

@@ -82,7 +82,7 @@ export function ProfessionalProfileStep() {
     }
 
     return newErrors;
-  }, [formData, touched, summaryLength]);
+  }, [formData, touched, summaryLength, githubError, isGithubLoading]);
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
