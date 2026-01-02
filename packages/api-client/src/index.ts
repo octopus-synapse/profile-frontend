@@ -5,34 +5,36 @@
 
 // Client exports
 export {
-  createHttpClient,
-  withRetry,
-  type HttpClient,
-  type HttpClientConfig,
-  type RetryConfig,
-  type TokenGetter,
-  type TokenRefresher,
-  type OnUnauthorized,
+ createHttpClient,
+ withRetry,
+ type HttpClient,
+ type HttpClientConfig,
+ type RetryConfig,
+ type TokenGetter,
+ type TokenRefresher,
+ type OnUnauthorized,
 } from "./client";
 
 // Repository exports
 export {
-  createUserRepository,
-  createResumeRepository,
-  createOnboardingRepository,
-  createThemeRepository,
-  createTechSkillsRepository,
-  createAdminRepository,
-  createAuthRepository,
-  createSectionConfigRepository,
-  type UserRepository,
-  type ResumeRepository,
-  type OnboardingRepository,
-  type ThemeRepository,
-  type TechSkillsRepository,
-  type AdminRepository,
-  type AuthRepository,
-  type SectionConfigRepository,
+ createUserRepository,
+ createResumeRepository,
+ createOnboardingRepository,
+ createThemeRepository,
+ createTechSkillsRepository,
+ createAdminRepository,
+ createAuthRepository,
+ createSectionConfigRepository,
+ createDslRepository,
+ type UserRepository,
+ type ResumeRepository,
+ type OnboardingRepository,
+ type ThemeRepository,
+ type TechSkillsRepository,
+ type AdminRepository,
+ type AuthRepository,
+ type SectionConfigRepository,
+ type DslRepository,
 } from "./repositories";
 
 // Type exports
@@ -54,16 +56,18 @@ import { createTechSkillsRepository } from "./repositories/tech-skills.repositor
 import { createAdminRepository } from "./repositories/admin.repository";
 import { createAuthRepository } from "./repositories/auth.repository";
 import { createSectionConfigRepository } from "./repositories/section-config.repository";
+import { createDslRepository } from "./repositories/dsl.repository";
 
 export interface ProfileApiClient {
-  users: ReturnType<typeof createUserRepository>;
-  resumes: ReturnType<typeof createResumeRepository>;
-  onboarding: ReturnType<typeof createOnboardingRepository>;
-  themes: ReturnType<typeof createThemeRepository>;
-  techSkills: ReturnType<typeof createTechSkillsRepository>;
-  admin: ReturnType<typeof createAdminRepository>;
-  auth: ReturnType<typeof createAuthRepository>;
-  sectionConfig: ReturnType<typeof createSectionConfigRepository>;
+ users: ReturnType<typeof createUserRepository>;
+ resumes: ReturnType<typeof createResumeRepository>;
+ onboarding: ReturnType<typeof createOnboardingRepository>;
+ themes: ReturnType<typeof createThemeRepository>;
+ techSkills: ReturnType<typeof createTechSkillsRepository>;
+ admin: ReturnType<typeof createAdminRepository>;
+ auth: ReturnType<typeof createAuthRepository>;
+ sectionConfig: ReturnType<typeof createSectionConfigRepository>;
+ dsl: ReturnType<typeof createDslRepository>;
 }
 
 /**
@@ -92,17 +96,20 @@ export interface ProfileApiClient {
  * const themes = await apiClient.themes.getSystem();
  * ```
  */
-export function createProfileApiClient(config: HttpClientConfig): ProfileApiClient {
-  const httpClient = createHttpClient(config);
+export function createProfileApiClient(
+ config: HttpClientConfig
+): ProfileApiClient {
+ const httpClient = createHttpClient(config);
 
-  return {
-    users: createUserRepository(httpClient),
-    resumes: createResumeRepository(httpClient),
-    onboarding: createOnboardingRepository(httpClient),
-    themes: createThemeRepository(httpClient),
-    techSkills: createTechSkillsRepository(httpClient),
-    admin: createAdminRepository(httpClient),
-    auth: createAuthRepository(httpClient),
-    sectionConfig: createSectionConfigRepository(httpClient),
-  };
+ return {
+  users: createUserRepository(httpClient),
+  resumes: createResumeRepository(httpClient),
+  onboarding: createOnboardingRepository(httpClient),
+  themes: createThemeRepository(httpClient),
+  techSkills: createTechSkillsRepository(httpClient),
+  admin: createAdminRepository(httpClient),
+  auth: createAuthRepository(httpClient),
+  sectionConfig: createSectionConfigRepository(httpClient),
+  dsl: createDslRepository(httpClient),
+ };
 }
