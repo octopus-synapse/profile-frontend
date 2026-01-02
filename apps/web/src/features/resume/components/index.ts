@@ -3,9 +3,12 @@
  */
 
 export { ResumeBuilder } from "./resume-builder";
-export { ResumeRenderer } from "./resume-renderer";
-export { ResumeRendererV2 } from "./resume-renderer-v2";
-export { StyleProvider, useStyleConfig } from "./context";
+
+// AST-powered components
+export { ASTRenderer } from "./ast-renderer";
+export { ASTSection } from "./ast-section";
+
+// Context
 export {
   RenderProvider,
   useRenderContext,
@@ -13,6 +16,6 @@ export {
   usePageLayout,
   useGlobalStyles,
 } from "./context";
-export { ResumeLayout } from "./layouts";
-export * from "./sections";
+
+// Theme components
 export * from "./theme";

@@ -2,10 +2,9 @@
  * Context - Barrel Export
  */
 
-// Legacy: StyleProvider (to be deprecated, replaced by RenderProvider)
-export { StyleProvider, useStyleConfig } from "./style-context";
+// StyleProvider deleted - use AST rendering instead
 
-// New: RenderProvider (receives pre-compiled AST from backend)
+// RenderProvider (receives pre-compiled AST from backend)
 export {
   RenderProvider,
   useRenderContext,

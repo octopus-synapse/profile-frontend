@@ -1,13 +1,7 @@
 /**
  * Section Components - Barrel Export
+ * Legacy sections removed - use AST components instead
  */
 
-export { Section } from "./section-wrapper";
-export { HeaderSection } from "./header-section";
-export { SummarySection } from "./summary-section";
-export { ExperienceSection } from "./experience-section";
-export { EducationSection } from "./education-section";
-export { SkillsSection } from "./skills-section";
-export { LanguagesSection } from "./languages-section";
-export { CertificationsSection } from "./certifications-section";
-export { ProjectsSection } from "./projects-section";
+// All old sections deleted - use ast-section-*.tsx components
+export {};

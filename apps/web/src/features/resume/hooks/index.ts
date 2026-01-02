@@ -24,6 +24,10 @@ export {
   useExportResumeDOCX,
 } from "./use-resume-mutations";
 
+// AST hooks
+export { astKeys } from "./ast-query-keys";
+export { useResumeAst, usePublicResumeAst, usePreviewDsl } from "./use-ast-queries";
+
 // Theme hooks
 export { themeKeys } from "./theme-query-keys";
 export {

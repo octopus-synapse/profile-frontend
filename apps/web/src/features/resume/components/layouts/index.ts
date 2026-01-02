@@ -2,4 +2,5 @@
  * Layouts - Barrel Export
  */
 
-export { ResumeLayout } from "./resume-layout";
+// ResumeLayout deleted - use ASTRenderer instead
+export {};

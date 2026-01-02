@@ -1,16 +1,14 @@
 /**
  * Resume Builder
- * Elegant editor for viewing and customizing resumes
+ * AST-powered resume editor - backend decides, frontend renders
  */
 
 "use client";
 
 import { useState, useCallback } from "react";
-import { useResumes, useResume, useTheme, useExportResumePDF, useExportResumeDOCX } from "../hooks";
-import { ResumeRenderer } from "./resume-renderer";
+import { useResumes, useResumeAst, useExportResumePDF, useExportResumeDOCX } from "../hooks";
+import { ASTRenderer } from "./ast-renderer";
 import { BuilderSidebar } from "./builder/builder-sidebar";
-import { MODERN_CONFIG } from "../types/presets";
-import type { ResumeStyleConfig } from "../types/config";
 import { Download, FileText, Share2, Link2, Check, Settings, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { LoadingState } from "@/shared/components/ui";
@@ -22,31 +20,22 @@ export function ResumeBuilder() {
   const { data: resumesList, isLoading: resumesListLoading } = useResumes();
   const resumeId = resumesList?.[0]?.id;
 
-  // Fetch full resume data
-  const {
-    data: resume,
-    isLoading: resumeLoading,
-    refetch: refetchResume,
-  } = useResume(resumeId ?? "");
+  // Fetch compiled AST from backend
+  const { data: ast, isLoading: astLoading, refetch: refetchAst } = useResumeAst(resumeId);
 
   // Combined loading state
-  const isLoading = resumesListLoading || (resumeId && resumeLoading);
+  const isLoading = resumesListLoading || (resumeId && astLoading);
 
-  // Fetch active theme details
-  const { data: activeTheme } = useTheme(resume?.activeThemeId ?? undefined);
+  // Get resume metadata from list
+  const resume = resumesList?.[0];
 
   // Export mutations
   const exportPDF = useExportResumePDF();
   const exportDOCX = useExportResumeDOCX();
 
-  // Get style config from theme or use default
-  const styleConfig: Partial<ResumeStyleConfig> = activeTheme?.styleConfig
-    ? (activeTheme.styleConfig as Partial<ResumeStyleConfig>)
-    : MODERN_CONFIG;
-
   const handleThemeApplied = useCallback(() => {
-    refetchResume();
-  }, [refetchResume]);
+    refetchAst();
+  }, [refetchAst]);
 
   const handleExportPDF = async () => {
     if (!resume) return;
@@ -214,7 +203,11 @@ export function ResumeBuilder() {
         <div className="flex-1 overflow-auto p-8">
           <div className="mx-auto max-w-4xl">
             <div className="overflow-hidden rounded-lg bg-[#0A0A0A]/80 shadow-xl ring-1 ring-white/10">
-              <ResumeRenderer resume={resume} styleConfig={styleConfig} />
+              {ast ? (
+                <ASTRenderer ast={ast} />
+              ) : (
+                <div className="p-8 text-center text-gray-400">No AST data</div>
+              )}
             </div>
           </div>
         </div>
