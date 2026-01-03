@@ -363,11 +363,18 @@ export const useOnboardingStore = create<OnboardingState>()(
           templateSelection,
         } = get();
 
+        // Simple email validation regex
+        const isValidEmail = (email: string) => {
+          return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        };
+
         switch (currentStep) {
           case "welcome":
             return true;
           case "personal-info":
-            return !!personalInfo?.fullName && !!personalInfo?.email;
+            return (
+              !!personalInfo?.fullName && !!personalInfo?.email && isValidEmail(personalInfo.email)
+            );
           case "username":
             return !!username && username.length >= 3 && username.length <= 30;
           case "professional-profile":
@@ -423,25 +430,19 @@ export const useOnboardingStore = create<OnboardingState>()(
 
         return {
           username: state.username,
-          personalInfo: state.personalInfo,
+          personalInfo: state.personalInfo || null,
           professionalProfile: {
             ...state.professionalProfile,
             linkedin: normalizeUrl(state.professionalProfile.linkedin),
             github: normalizeUrl(state.professionalProfile.github),
             website: normalizeUrl(state.professionalProfile.website),
           },
-          skillsStep: {
-            skills: state.skills.map(({ id: _id, ...s }) => s),
-            noSkills: state.noSkills,
-          },
-          experiencesStep: {
-            experiences: state.experiences.map(({ id: _id, ...e }) => e),
-            noExperience: state.noExperience,
-          },
-          educationStep: {
-            education: state.education.map(({ id: _id, ...e }) => e),
-            noEducation: state.noEducation,
-          },
+          skills: state.skills.map(({ id: _id, ...s }) => s),
+          noSkills: state.noSkills || false,
+          experiences: state.experiences.map(({ id: _id, ...e }) => e),
+          noExperience: state.noExperience || false,
+          education: state.education.map(({ id: _id, ...e }) => e),
+          noEducation: state.noEducation || false,
           languages: state.languages.map(({ id: _id, ...l }) => l),
           templateSelection: {
             template: state.templateSelection.template.toUpperCase(),
