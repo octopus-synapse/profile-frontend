@@ -363,18 +363,13 @@ export const useOnboardingStore = create<OnboardingState>()(
           templateSelection,
         } = get();
 
-        // Simple email validation regex
-        const isValidEmail = (email: string) => {
-          return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-        };
-
+        // TODO: Use validation schemas from @profile/contracts
+        // Inline validation is architectural violation (SRP)
         switch (currentStep) {
           case "welcome":
             return true;
           case "personal-info":
-            return (
-              !!personalInfo?.fullName && !!personalInfo?.email && isValidEmail(personalInfo.email)
-            );
+            return !!personalInfo?.fullName && !!personalInfo?.email;
           case "username":
             return !!username && username.length >= 3 && username.length <= 30;
           case "professional-profile":
