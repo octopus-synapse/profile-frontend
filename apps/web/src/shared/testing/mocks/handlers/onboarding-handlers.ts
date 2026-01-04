@@ -6,11 +6,8 @@
  * and return deterministic responses for testing.
  */
 
-import { http, HttpResponse } from "msw";
-import {
-  createMockOnboardingProgress,
-  createCompleteOnboardingProgress,
-} from "../../factories";
+import { rest } from "msw";
+import { createMockOnboardingProgress, createCompleteOnboardingProgress } from "../../factories";
 
 const API_BASE = "http://localhost:3001/api";
 
@@ -23,49 +20,55 @@ export const onboardingHandlers = [
    * GET /api/onboarding/status
    * Returns the current onboarding status
    */
-  http.get(`${API_BASE}/onboarding/status`, () => {
-    return HttpResponse.json({
-      isCompleted: false,
-      currentStep: "personal-info",
-      completedSteps: ["welcome"],
-    });
+  rest.get(`${API_BASE}/onboarding/status`, (_req, res, ctx) => {
+    return res(
+      ctx.json({
+        isCompleted: false,
+        currentStep: "personal-info",
+        completedSteps: ["welcome"],
+      })
+    );
   }),
 
   /**
    * GET /api/onboarding/progress
    * Returns the current saved progress
    */
-  http.get(`${API_BASE}/onboarding/progress`, () => {
+  rest.get(`${API_BASE}/onboarding/progress`, (_req, res, ctx) => {
     const progress = createMockOnboardingProgress();
-    return HttpResponse.json(progress);
+    return res(ctx.json(progress));
   }),
 
   /**
    * PUT /api/onboarding/progress
    * Saves progress and returns confirmation
    */
-  http.put(`${API_BASE}/onboarding/progress`, async ({ request }) => {
-    const body = await request.json();
+  rest.put(`${API_BASE}/onboarding/progress`, async (req, res, ctx) => {
+    const body = await req.json();
 
-    return HttpResponse.json({
-      success: true,
-      currentStep: (body as { currentStep: string }).currentStep,
-      completedSteps: (body as { completedSteps: string[] }).completedSteps,
-    });
+    return res(
+      ctx.json({
+        success: true,
+        currentStep: (body as { currentStep: string }).currentStep,
+        completedSteps: (body as { completedSteps: string[] }).completedSteps,
+      })
+    );
   }),
 
   /**
    * POST /api/onboarding
    * Submits completed onboarding
    */
-  http.post(`${API_BASE}/onboarding`, async ({ request }) => {
-    const body = await request.json();
+  rest.post(`${API_BASE}/onboarding`, async (req, res, ctx) => {
+    const body = await req.json();
 
-    return HttpResponse.json({
-      success: true,
-      resumeId: "resume-123",
-      message: "Onboarding completed successfully!",
-    });
+    return res(
+      ctx.json({
+        success: true,
+        resumeId: "resume-123",
+        message: "Onboarding completed successfully!",
+      })
+    );
   }),
 ];
 
@@ -73,13 +76,10 @@ export const onboardingHandlers = [
  * Helper: Handler for failed progress save
  * Use in tests to simulate network errors
  */
-export const failedProgressSaveHandler = http.put(
+export const failedProgressSaveHandler = rest.put(
   `${API_BASE}/onboarding/progress`,
-  () => {
-    return HttpResponse.json(
-      { message: "Failed to save progress" },
-      { status: 500 }
-    );
+  (_req, res, ctx) => {
+    return res(ctx.status(500), ctx.json({ message: "Failed to save progress" }));
   }
 );
 
@@ -87,11 +87,11 @@ export const failedProgressSaveHandler = http.put(
  * Helper: Handler for completed onboarding progress
  * Use in tests when testing the review step
  */
-export const completeProgressHandler = http.get(
+export const completeProgressHandler = rest.get(
   `${API_BASE}/onboarding/progress`,
-  () => {
+  (_req, res, ctx) => {
     const progress = createCompleteOnboardingProgress();
-    return HttpResponse.json(progress);
+    return res(ctx.json(progress));
   }
 );
 
@@ -99,31 +99,22 @@ export const completeProgressHandler = http.get(
  * Helper: Handler for validation error on submission
  * Use in tests to verify error handling
  */
-export const validationErrorHandler = http.post(
-  `${API_BASE}/onboarding`,
-  () => {
-    return HttpResponse.json(
-      {
-        message: "Validation failed",
-        errors: {
-          username: "Username already exists",
-        },
+export const validationErrorHandler = rest.post(`${API_BASE}/onboarding`, (_req, res, ctx) => {
+  return res(
+    ctx.status(400),
+    ctx.json({
+      message: "Validation failed",
+      errors: {
+        username: "Username already exists",
       },
-      { status: 400 }
-    );
-  }
-);
+    })
+  );
+});
 
 /**
  * Helper: Handler for network timeout
  * Use in tests to verify retry logic
  */
-export const timeoutHandler = http.put(
-  `${API_BASE}/onboarding/progress`,
-  () => {
-    return HttpResponse.json(
-      { message: "Request timeout" },
-      { status: 408 }
-    );
-  }
-);
+export const timeoutHandler = rest.put(`${API_BASE}/onboarding/progress`, (_req, res, ctx) => {
+  return res(ctx.status(408), ctx.json({ message: "Request timeout" }));
+});

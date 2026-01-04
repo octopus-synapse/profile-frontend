@@ -3,6 +3,33 @@
  * Uncle Bob: "Setup should be explicit and minimal"
  */
 
+// Load test environment variables FIRST
+// CRITICAL: This must run before ANY module imports to ensure env vars are available
+require("dotenv").config({ path: ".env.test" });
+
+// Set environment variables for tests (backup if .env.test fails)
+process.env.NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
+process.env.NEXT_PUBLIC_APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+process.env.NEXT_PUBLIC_APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || "Profile";
+
+// Add Node.js fetch polyfills for MSW 2.x compatibility
+require("whatwg-fetch");
+const nodeFetch = require("node-fetch");
+
+if (typeof globalThis.fetch === "undefined") {
+  globalThis.fetch = nodeFetch.default;
+  globalThis.Request = nodeFetch.Request;
+  globalThis.Response = nodeFetch.Response;
+  globalThis.Headers = nodeFetch.Headers;
+}
+
+// TextEncoder/TextDecoder polyfill for Node.js < 18
+if (typeof globalThis.TextEncoder === "undefined") {
+  const { TextEncoder, TextDecoder } = require("util");
+  globalThis.TextEncoder = TextEncoder;
+  globalThis.TextDecoder = TextDecoder;
+}
+
 // Add custom jest matchers from jest-dom
 require("@testing-library/jest-dom");
 

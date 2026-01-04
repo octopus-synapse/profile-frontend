@@ -500,6 +500,45 @@ export const useOnboardingStore = create<OnboardingState>()(
         templateSelection: state.templateSelection,
         completedSteps: state.completedSteps,
       }),
+      // Custom storage with quota error handling
+      storage: {
+        getItem: (name) => {
+          try {
+            const str = localStorage.getItem(name);
+            return str ? JSON.parse(str) : null;
+          } catch (error) {
+            console.error("Failed to read from localStorage:", error);
+            return null;
+          }
+        },
+        setItem: (name, value) => {
+          try {
+            localStorage.setItem(name, JSON.stringify(value));
+          } catch (error) {
+            // Handle QuotaExceededError gracefully
+            if (error instanceof Error && error.name === "QuotaExceededError") {
+              console.warn("localStorage quota exceeded - clearing old data");
+              try {
+                // Try to clear this specific key and retry
+                localStorage.removeItem(name);
+                localStorage.setItem(name, JSON.stringify(value));
+              } catch (retryError) {
+                // If still fails, operate in memory-only mode
+                console.error("localStorage unavailable - running in memory mode");
+              }
+            } else {
+              console.error("Failed to write to localStorage:", error);
+            }
+          }
+        },
+        removeItem: (name) => {
+          try {
+            localStorage.removeItem(name);
+          } catch (error) {
+            console.error("Failed to remove from localStorage:", error);
+          }
+        },
+      },
     }
   )
 );

@@ -83,9 +83,12 @@ export interface SubmitOnboardingDto {
   username: string;
   personalInfo: PersonalInfoData;
   professionalProfile: ProfessionalProfileData;
-  skillsStep: SkillsStepData;
-  experiencesStep?: ExperiencesStepData;
-  educationStep?: EducationStepData;
-  languages?: LanguageData[];
+  skills: Omit<SkillData, "id">[];
+  noSkills: boolean;
+  experiences: Omit<ExperienceData, "id">[];
+  noExperience: boolean;
+  education: Omit<EducationData, "id">[];
+  noEducation: boolean;
+  languages: Omit<LanguageData, "id">[];
   templateSelection: TemplateSelectionData;
 }

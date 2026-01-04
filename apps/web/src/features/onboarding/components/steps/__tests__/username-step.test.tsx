@@ -51,7 +51,15 @@ describe("UsernameStep - Validation & UX", () => {
     // Mock authenticated session
     mockUseSession.mockReturnValue({
       data: {
-        user: { id: "test-user", email: "test@example.com" },
+        user: {
+          id: "test-user",
+          email: "test@example.com",
+          name: "Test User",
+          image: null,
+          role: "USER" as const,
+          username: null,
+          hasCompletedOnboarding: false,
+        },
         accessToken: "mock-token",
         expires: new Date(Date.now() + 3600000).toISOString(),
       },
@@ -62,6 +70,7 @@ describe("UsernameStep - Validation & UX", () => {
     // Mock sync hook
     mockUseOnboardingSync.mockReturnValue({
       isLoading: false,
+      isHydrated: true,
       isError: false,
       isSaving: false,
       lastSavedAt: null,

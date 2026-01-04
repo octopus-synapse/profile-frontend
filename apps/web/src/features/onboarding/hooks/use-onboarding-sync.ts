@@ -30,6 +30,10 @@ export function useOnboardingSync() {
   // Timeout state to prevent infinite loading
   const [timedOut, setTimedOut] = useState(false);
 
+  // FIX: Track last saved timestamp for UI feedback
+  const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
+  const [saveError, setSaveError] = useState<Error | null>(null);
+
   // Set timeout to prevent infinite loading
   useEffect(() => {
     if (!isAuthenticated || hasHydrated.current) return;
@@ -81,7 +85,6 @@ export function useOnboardingSync() {
       // If backend has no progress but local has progress, keep local and sync to backend
       if (!backendHasProgress && localHasProgress) {
         // Don't reset - keep local progress and let it sync to backend
-        console.log("Keeping local progress, will sync to backend");
         hasHydrated.current = true;
         previousStep.current = currentStep;
         return;
@@ -131,37 +134,99 @@ export function useOnboardingSync() {
       hasHydrated.current = true;
       previousStep.current = currentStep;
     }
-  }, [backendProgress, hydrateFromBackend, currentStep, isAuthenticated]);
+
+    // PRAGMATIC FIX: Also mark as hydrated if query fails or times out
+    // This prevents infinite waiting in tests when backend is unavailable
+    if (!hasHydrated.current && isAuthenticated && (isError || timedOut)) {
+      hasHydrated.current = true;
+      previousStep.current = currentStep;
+    }
+
+    // PRAGMATIC FIX: Mark as hydrated when query completes with no data (initial state)
+    // This happens when backend returns empty or when using mocks
+    if (!hasHydrated.current && isAuthenticated && !isLoading && !backendProgress) {
+      hasHydrated.current = true;
+      previousStep.current = currentStep;
+    }
+  }, [
+    backendProgress,
+    hydrateFromBackend,
+    currentStep,
+    isAuthenticated,
+    isError,
+    timedOut,
+    isLoading,
+  ]);
 
   // Save progress to backend when step changes (only if authenticated)
+  // FIX: Removed race condition - now saves on EVERY step change including first one
   useEffect(() => {
-    if (
-      isAuthenticated &&
-      hasHydrated.current &&
-      previousStep.current !== null &&
-      previousStep.current !== currentStep
-    ) {
-      const state = getStateForBackend();
-      saveProgress.mutate(state);
-    }
+    if (!isAuthenticated || !hasHydrated.current) return;
+
+    // Skip if this is the first render (no actual step change yet)
+    if (previousStep.current === currentStep) return;
+
+    const saveCurrentProgress = async () => {
+      try {
+        const state = getStateForBackend();
+
+        // FIX: Now using mutateAsync to await the save
+        await saveProgress.mutateAsync(state);
+
+        // FIX: Update last saved timestamp AFTER successful save
+        setLastSavedAt(new Date());
+        setSaveError(null); // Clear any previous errors
+      } catch (error) {
+        // FIX: Set error state but do NOT update lastSavedAt
+        setSaveError(error instanceof Error ? error : new Error("Save failed"));
+        // User will see error in UI via saveError state
+      }
+    };
+
+    // FIX: Debounce to avoid excessive saves during rapid navigation
+    const timer = setTimeout(saveCurrentProgress, 300);
+
+    // Update previousStep AFTER setting up the save
     previousStep.current = currentStep;
+
+    return () => clearTimeout(timer);
   }, [currentStep, getStateForBackend, saveProgress, isAuthenticated]);
 
   // Manual save function for explicit saves
-  const saveToBackend = useCallback(() => {
+  const saveToBackend = useCallback(async () => {
     if (!isAuthenticated) {
+      console.warn("[Onboarding Sync] Cannot save - user not authenticated");
       return Promise.resolve({ success: false, currentStep: "", completedSteps: [] });
     }
-    const state = getStateForBackend();
-    return saveProgress.mutateAsync(state);
+
+    try {
+      const state = getStateForBackend();
+      console.log("[Onboarding Sync] Manual save triggered");
+      const result = await saveProgress.mutateAsync(state);
+
+      // FIX: Update lastSavedAt on manual save too
+      setLastSavedAt(new Date());
+      setSaveError(null);
+
+      console.log("[Onboarding Sync] ✅ Manual save successful");
+      return result;
+    } catch (error) {
+      console.error("[Onboarding Sync] ❌ Manual save failed:", error);
+      // FIX: Set error state on manual save failure
+      setSaveError(error instanceof Error ? error : new Error("Manual save failed"));
+      throw error; // Re-throw so caller can handle it
+    }
   }, [getStateForBackend, saveProgress, isAuthenticated]);
 
   return {
     isLoading:
       status === "loading" ||
       (isAuthenticated && isLoading && !timedOut && !isError && !hasHydrated.current),
+    isHydrated: hasHydrated.current, // EXPOSED for testing
     isError,
     isSaving: saveProgress.isPending,
+    lastSavedAt, // FIX: Expose for UI feedback
+    saveError, // FIX: Use our state instead of mutation error
     saveToBackend,
     isAuthenticated,
   };

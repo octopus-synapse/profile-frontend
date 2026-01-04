@@ -5,7 +5,7 @@
  * Mock Service Worker handlers for authentication endpoints.
  */
 
-import { http, HttpResponse } from "msw";
+import { rest } from "msw";
 
 const API_BASE = "http://localhost:3001/api";
 
@@ -17,81 +17,86 @@ export const authHandlers = [
    * POST /api/auth/signup
    * Creates a new user account
    */
-  http.post(`${API_BASE}/auth/signup`, async ({ request }) => {
-    const body = await request.json();
+  rest.post(`${API_BASE}/auth/signup`, async (req, res, ctx) => {
+    const body = await req.json();
 
-    return HttpResponse.json({
-      success: true,
-      userId: "test-user-123",
-      message: "Account created successfully",
-    });
+    return res(
+      ctx.json({
+        success: true,
+        userId: "test-user-123",
+        message: "Account created successfully",
+      })
+    );
   }),
 
   /**
    * POST /api/auth/signin
    * Authenticates a user
    */
-  http.post(`${API_BASE}/auth/signin`, async ({ request }) => {
-    const body = await request.json();
+  rest.post(`${API_BASE}/auth/signin`, async (req, res, ctx) => {
+    const body = await req.json();
     const { email, password } = body as { email: string; password: string };
 
     // Simple mock authentication
     if (email && password) {
-      return HttpResponse.json({
-        success: true,
-        accessToken: "mock-access-token",
-        user: {
-          id: "test-user-123",
-          email,
-          name: "Test User",
-        },
-      });
+      return res(
+        ctx.json({
+          success: true,
+          accessToken: "mock-access-token",
+          user: {
+            id: "test-user-123",
+            email,
+            name: "Test User",
+          },
+        })
+      );
     }
 
-    return HttpResponse.json(
-      { message: "Invalid credentials" },
-      { status: 401 }
-    );
+    return res(ctx.status(401), ctx.json({ message: "Invalid credentials" }));
   }),
 
   /**
    * POST /api/auth/signout
    * Signs out the current user
    */
-  http.post(`${API_BASE}/auth/signout`, () => {
-    return HttpResponse.json({
-      success: true,
-      message: "Signed out successfully",
-    });
+  rest.post(`${API_BASE}/auth/signout`, (_req, res, ctx) => {
+    return res(
+      ctx.json({
+        success: true,
+        message: "Signed out successfully",
+      })
+    );
   }),
 
   /**
    * GET /api/auth/me
    * Returns current user info
    */
-  http.get(`${API_BASE}/auth/me`, () => {
-    return HttpResponse.json({
-      id: "test-user-123",
-      email: "test@example.com",
-      name: "Test User",
-    });
+  rest.get(`${API_BASE}/auth/me`, (_req, res, ctx) => {
+    return res(
+      ctx.json({
+        id: "test-user-123",
+        email: "test@example.com",
+        name: "Test User",
+      })
+    );
   }),
 ];
 
 /**
  * Helper: Handler for signup validation error
  */
-export const signupValidationErrorHandler = http.post(
+export const signupValidationErrorHandler = rest.post(
   `${API_BASE}/auth/signup`,
-  () => {
-    return HttpResponse.json(
-      {
+  (_req, res, ctx) => {
+    return res(
+      ctx.status(400),
+      ctx.json({
         message: "Validation failed",
         errors: {
           email: "Email already exists",
         },
-      },
-      { status: 400 }
+      })
     );
   }
 );
@@ -99,6 +104,6 @@ export const signupValidationErrorHandler = http.post(
 /**
  * Helper: Handler for unauthorized user
  */
-export const unauthorizedHandler = http.get(`${API_BASE}/auth/me`, () => {
-  return HttpResponse.json({ message: "Unauthorized" }, { status: 401 });
+export const unauthorizedHandler = rest.get(`${API_BASE}/auth/me`, (_req, res, ctx) => {
+  return res(ctx.status(401), ctx.json({ message: "Unauthorized" }));
 });

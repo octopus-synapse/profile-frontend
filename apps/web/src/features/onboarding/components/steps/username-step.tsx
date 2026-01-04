@@ -10,6 +10,8 @@ import { useState, useEffect, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import { useOnboardingStore } from "../../stores";
 import { StepNavigation } from "../step-navigation";
+import { SaveIndicator } from "../save-indicator";
+import { useOnboardingSync } from "../../hooks/use-onboarding-sync";
 import { AtSign, Check, X, Loader2, AlertCircle, ExternalLink, RefreshCw } from "lucide-react";
 import { useDebounce } from "@/shared/hooks/use-debounce";
 import { HelpTooltip } from "@/shared/components/ui";
@@ -70,6 +72,7 @@ function validateUsername(value: string): ValidationResult {
 export function UsernameStep() {
   const { username, setUsername, goToNextStep, markStepComplete } = useOnboardingStore();
   const { data: session, status: sessionStatus } = useSession();
+  const { isSaving, lastSavedAt, saveError, saveToBackend } = useOnboardingSync();
 
   const [inputValue, setInputValue] = useState(username || "");
   const [isChecking, setIsChecking] = useState(false);
@@ -227,11 +230,19 @@ export function UsernameStep() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* Header with Save Indicator */}
       <div>
-        <div className="flex items-center gap-2">
-          <span className="font-mono text-sm text-cyan-400">{`>`}</span>
-          <h2 className="text-xl font-bold text-white">Choose Your Username</h2>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-sm text-cyan-400">{`>`}</span>
+            <h2 className="text-xl font-bold text-white">Choose Your Username</h2>
+          </div>
+          <SaveIndicator
+            isSaving={isSaving}
+            lastSavedAt={lastSavedAt}
+            error={saveError}
+            onRetry={saveToBackend}
+          />
         </div>
         <p className="mt-1 font-mono text-xs text-zinc-400">This will be your public profile URL</p>
       </div>
@@ -255,19 +266,25 @@ export function UsernameStep() {
 
       {/* Username Input */}
       <div>
-        <label className="mb-1.5 flex items-center gap-2 font-mono text-sm text-white">
+        <label
+          htmlFor="username-input"
+          className="mb-1.5 flex items-center gap-2 font-mono text-sm text-white"
+        >
           <AtSign className="h-4 w-4" strokeWidth={1.5} />
           username<span className="text-red-500">*</span>
           <HelpTooltip content="Your unique identifier on PATCH. This cannot be changed later, so choose wisely!" />
         </label>
         <div className="relative">
           <input
+            id="username-input"
             type="text"
             value={inputValue}
             onChange={(e) => handleChange(e.target.value)}
             onBlur={handleBlur}
             placeholder="johndoe"
             maxLength={MAX_LENGTH}
+            aria-invalid={touched && (!validation.valid || isAvailable === false)}
+            aria-describedby={statusMessage ? "username-status" : undefined}
             className={`w-full border border-white/10 bg-white/5 px-3 py-2 pr-10 font-mono text-sm text-white placeholder:text-zinc-500 focus:border-cyan-500 focus:outline-none ${
               touched && (!validation.valid || isAvailable === false)
                 ? "border-red-500"
@@ -321,7 +338,7 @@ export function UsernameStep() {
 
       {/* Rules */}
       <div className="space-y-1 border border-white/10 bg-white/5 p-3">
-        <p className="font-mono text-xs font-medium text-zinc-400">{'//'} Username rules:</p>
+        <p className="font-mono text-xs font-medium text-zinc-400">{"//"} Username rules:</p>
         <ul className="space-y-1 font-mono text-xs text-zinc-500">
           <li className="flex items-center gap-2">
             <span className={inputValue.length >= MIN_LENGTH ? "text-emerald-500" : ""}>

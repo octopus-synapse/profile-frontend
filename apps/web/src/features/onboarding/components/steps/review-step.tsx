@@ -9,6 +9,7 @@
 import { useState } from "react";
 import { useOnboardingStore, type OnboardingStep, type Experience, type Skill } from "../../stores";
 import { StepNavigation } from "../step-navigation";
+import { SaveIndicator } from "../save-indicator";
 import { useSubmitOnboarding } from "../../hooks/use-onboarding-mutations";
 import { useOnboardingSync } from "../../hooks/use-onboarding-sync";
 import { isApiError } from "@/shared/types/errors";
@@ -47,7 +48,7 @@ export function ReviewStep() {
   } = useOnboardingStore();
 
   const submitOnboarding = useSubmitOnboarding();
-  const { saveToBackend } = useOnboardingSync();
+  const { isSaving, lastSavedAt, saveError, saveToBackend } = useOnboardingSync();
   const [error, setError] = useState<string | null>(null);
 
   // Check what's complete
@@ -206,11 +207,19 @@ export function ReviewStep() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* Header with Save Indicator */}
       <div>
-        <div className="flex items-center gap-2">
-          <span className="font-mono text-sm text-cyan-400">{`>`}</span>
-          <h2 className="text-xl font-bold text-white">Review & Submit</h2>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-sm text-cyan-400">{`>`}</span>
+            <h2 className="text-xl font-bold text-white">Review & Submit</h2>
+          </div>
+          <SaveIndicator
+            isSaving={isSaving}
+            lastSavedAt={lastSavedAt}
+            error={saveError}
+            onRetry={saveToBackend}
+          />
         </div>
         <p className="mt-1 font-mono text-xs text-zinc-400">
           Review your information before creating your profile

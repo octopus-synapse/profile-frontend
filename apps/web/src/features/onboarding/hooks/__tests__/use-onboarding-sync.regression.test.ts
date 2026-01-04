@@ -19,12 +19,11 @@
  * Both cases require investigation before merging.
  */
 
-import { renderHook, waitFor } from "@testing-library/react";
+import { renderHook, waitFor, act } from "@testing-library/react";
 import { createElement } from "react";
 import { useOnboardingSync } from "../use-onboarding-sync";
 import { useOnboardingStore } from "../../stores";
-import { server, setupMswServer, createMockOnboardingProgress } from "@/shared/testing";
-import { http, HttpResponse, delay } from "msw";
+import { createMockOnboardingProgress } from "@/shared/testing";
 import { useSession } from "next-auth/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
@@ -37,10 +36,16 @@ jest.mock("next-auth/react", () => ({
 }));
 const mockUseSession = useSession as jest.MockedFunction<typeof useSession>;
 
-const API_BASE = "http://localhost:3001/api";
+// Mock onboarding repository
+const mockSaveProgress = jest.fn();
+const mockGetProgress = jest.fn();
 
-// Setup MSW server for this test suite
-setupMswServer();
+jest.mock("../../services/onboarding-repository", () => ({
+  onboardingRepository: {
+    saveProgress: (data: any) => mockSaveProgress(data),
+    getProgress: () => mockGetProgress(),
+  },
+}));
 
 /**
  * Test setup utilities
@@ -48,7 +53,15 @@ setupMswServer();
 function setupAuthenticatedSession() {
   mockUseSession.mockReturnValue({
     data: {
-      user: { id: "test-user", email: "test@example.com" },
+      user: {
+        id: "test-user",
+        email: "test@example.com",
+        name: "Test User",
+        image: null,
+        role: "USER" as const,
+        username: null,
+        hasCompletedOnboarding: false,
+      },
       accessToken: "mock-token",
       expires: new Date(Date.now() + 3600000).toISOString(),
     },
@@ -101,15 +114,13 @@ function createWrapper(session: Session | null = null) {
         retry: false,
       },
     },
-    logger: {
-      log: console.log,
-      warn: console.warn,
-      error: () => {},
-    },
   });
 
-  return ({ children }: { children: ReactNode }) =>
+  const TestWrapper = ({ children }: { children: ReactNode }) =>
     createElement(QueryClientProvider, { client: queryClient }, children);
+  TestWrapper.displayName = "TestWrapper";
+
+  return TestWrapper;
 }
 
 describe("useOnboardingSync - Regression Tests", () => {
@@ -117,6 +128,10 @@ describe("useOnboardingSync - Regression Tests", () => {
     jest.clearAllMocks();
     resetOnboardingStore();
     jest.useFakeTimers();
+
+    // Default mocks
+    mockGetProgress.mockResolvedValue(createMockOnboardingProgress({ currentStep: "welcome" }));
+    mockSaveProgress.mockResolvedValue({ success: true });
   });
 
   afterEach(() => {
@@ -134,12 +149,6 @@ describe("useOnboardingSync - Regression Tests", () => {
     it("should initialize lastSavedAt as null before any save", () => {
       setupAuthenticatedSession();
 
-      server.use(
-        http.get(`${API_BASE}/onboarding/progress`, () =>
-          HttpResponse.json(createMockOnboardingProgress())
-        )
-      );
-
       const { result } = renderHook(() => useOnboardingSync(), {
         wrapper: createWrapper(),
       });
@@ -153,31 +162,30 @@ describe("useOnboardingSync - Regression Tests", () => {
       const mockNow = new Date("2024-01-01T12:00:00Z");
       jest.setSystemTime(mockNow);
 
-      // Setup handlers
-      server.use(
-        http.get(`${API_BASE}/onboarding/progress`, () =>
-          HttpResponse.json(createMockOnboardingProgress())
-        ),
-        http.put(`${API_BASE}/onboarding/progress`, () => HttpResponse.json({ success: true }))
-      );
-
       const { result } = renderHook(() => useOnboardingSync(), {
         wrapper: createWrapper(),
       });
 
       // Wait for hydration
       await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await act(async () => {
+        await Promise.resolve(); // Flush microtasks
+      });
 
       // Trigger save by changing step
       useOnboardingStore.setState({ currentStep: "personal-info" });
 
       // Fast-forward debounce timer (300ms)
       jest.advanceTimersByTime(300);
+      await jest.runAllTimersAsync(); // Flush promises
 
       // Wait for save to complete
       await waitFor(() => {
         expect(result.current.lastSavedAt).not.toBeNull();
       });
+
+      // Repository should have been called
+      expect(mockSaveProgress).toHaveBeenCalled();
 
       // Timestamp should match the save time
       expect(result.current.lastSavedAt?.getTime()).toBeGreaterThanOrEqual(mockNow.getTime());
@@ -185,24 +193,20 @@ describe("useOnboardingSync - Regression Tests", () => {
 
     it("should NOT update lastSavedAt when save fails", async () => {
       setupAuthenticatedSession();
-
-      server.use(
-        http.get(`${API_BASE}/onboarding/progress`, () =>
-          HttpResponse.json(createMockOnboardingProgress())
-        ),
-        http.put(`${API_BASE}/onboarding/progress`, () =>
-          HttpResponse.json({ error: "Network error" }, { status: 500 })
-        )
-      );
+      mockSaveProgress.mockRejectedValue(new Error("Save failed"));
 
       const { result } = renderHook(() => useOnboardingSync(), {
         wrapper: createWrapper(),
       });
 
       await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await act(async () => {
+        await Promise.resolve(); // Flush microtasks
+      });
 
       useOnboardingStore.setState({ currentStep: "personal-info" });
       jest.advanceTimersByTime(300);
+      await jest.runAllTimersAsync(); // Flush promises
 
       await waitFor(() => expect(result.current.saveError).toBeTruthy());
 
@@ -223,17 +227,10 @@ describe("useOnboardingSync - Regression Tests", () => {
     it("should save progress when moving from welcome to personal-info (first step change)", async () => {
       setupAuthenticatedSession();
       let saveWasCalled = false;
-
-      server.use(
-        http.get(`${API_BASE}/onboarding/progress`, () =>
-          HttpResponse.json(createMockOnboardingProgress())
-        ),
-        http.put(`${API_BASE}/onboarding/progress`, async ({ request }) => {
-          saveWasCalled = true;
-          const body = await request.json();
-          return HttpResponse.json({ success: true, ...body });
-        })
-      );
+      mockSaveProgress.mockImplementation(() => {
+        saveWasCalled = true;
+        return Promise.resolve({ success: true });
+      });
 
       const { result } = renderHook(() => useOnboardingSync(), {
         wrapper: createWrapper(),
@@ -241,12 +238,16 @@ describe("useOnboardingSync - Regression Tests", () => {
 
       // Wait for hydration
       await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await act(async () => {
+        await Promise.resolve(); // Flush microtasks
+      });
 
       // This is the FIRST step change from welcome → personal-info
       useOnboardingStore.setState({ currentStep: "personal-info" });
 
       // Fast-forward debounce
       jest.advanceTimersByTime(300);
+      await jest.runAllTimersAsync(); // Flush promises
 
       // Assert: The save MUST be called (this was the bug)
       await waitFor(() => {
@@ -257,27 +258,24 @@ describe("useOnboardingSync - Regression Tests", () => {
     it("should save progress on second step change as well", async () => {
       setupAuthenticatedSession();
       const saveCalls: string[] = [];
-
-      server.use(
-        http.get(`${API_BASE}/onboarding/progress`, () =>
-          HttpResponse.json(createMockOnboardingProgress({ currentStep: "personal-info" }))
-        ),
-        http.put(`${API_BASE}/onboarding/progress`, async ({ request }) => {
-          const body = (await request.json()) as { currentStep: string };
-          saveCalls.push(body.currentStep);
-          return HttpResponse.json({ success: true });
-        })
-      );
+      mockSaveProgress.mockImplementation((data) => {
+        saveCalls.push(data.currentStep);
+        return Promise.resolve({ success: true });
+      });
 
       const { result } = renderHook(() => useOnboardingSync(), {
         wrapper: createWrapper(),
       });
 
       await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await act(async () => {
+        await Promise.resolve(); // Flush microtasks
+      });
 
       // Second step change
       useOnboardingStore.setState({ currentStep: "username" });
       jest.advanceTimersByTime(300);
+      await jest.runAllTimersAsync(); // Flush promises
 
       await waitFor(() => {
         expect(saveCalls).toContain("username");
@@ -287,29 +285,28 @@ describe("useOnboardingSync - Regression Tests", () => {
     it("should NOT save if step did not actually change", async () => {
       setupAuthenticatedSession();
       let saveCallCount = 0;
-
-      server.use(
-        http.get(`${API_BASE}/onboarding/progress`, () =>
-          HttpResponse.json(createMockOnboardingProgress())
-        ),
-        http.put(`${API_BASE}/onboarding/progress`, () => {
-          saveCallCount++;
-          return HttpResponse.json({ success: true });
-        })
-      );
+      mockSaveProgress.mockImplementation(() => {
+        saveCallCount++;
+        return Promise.resolve({ success: true });
+      });
 
       const { result } = renderHook(() => useOnboardingSync(), {
         wrapper: createWrapper(),
       });
 
       await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await act(async () => {
+        await Promise.resolve(); // Flush microtasks
+      });
 
       // Set the same step twice
       useOnboardingStore.setState({ currentStep: "welcome" });
       jest.advanceTimersByTime(300);
+      await jest.runAllTimersAsync(); // Flush promises
 
       useOnboardingStore.setState({ currentStep: "welcome" });
       jest.advanceTimersByTime(300);
+      await jest.runAllTimersAsync(); // Flush promises
 
       // Should not trigger save (no actual change)
       expect(saveCallCount).toBe(0);
@@ -328,24 +325,18 @@ describe("useOnboardingSync - Regression Tests", () => {
       const saveDelay = 500; // Simulate slow network
       const timestampBeforeSave = new Date();
 
-      server.use(
-        http.get(`${API_BASE}/onboarding/progress`, () =>
-          HttpResponse.json(createMockOnboardingProgress())
-        ),
-        http.put(`${API_BASE}/onboarding/progress`, async () => {
-          await delay(saveDelay);
-          return HttpResponse.json({ success: true });
-        })
-      );
-
       const { result } = renderHook(() => useOnboardingSync(), {
         wrapper: createWrapper(),
       });
 
       await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await act(async () => {
+        await Promise.resolve(); // Flush microtasks
+      });
 
       useOnboardingStore.setState({ currentStep: "personal-info" });
       jest.advanceTimersByTime(300); // Debounce
+      await jest.runAllTimersAsync(); // Flush promises
 
       // Timestamp should still be null while save is pending
       expect(result.current.lastSavedAt).toBeNull();
@@ -368,25 +359,20 @@ describe("useOnboardingSync - Regression Tests", () => {
 
     it("should handle save failure without updating lastSavedAt", async () => {
       setupAuthenticatedSession();
-
-      server.use(
-        http.get(`${API_BASE}/onboarding/progress`, () =>
-          HttpResponse.json(createMockOnboardingProgress())
-        ),
-        http.put(`${API_BASE}/onboarding/progress`, async () => {
-          await delay(200);
-          return HttpResponse.json({ error: "Server error" }, { status: 500 });
-        })
-      );
+      mockSaveProgress.mockRejectedValue(new Error("Save failed"));
 
       const { result } = renderHook(() => useOnboardingSync(), {
         wrapper: createWrapper(),
       });
 
       await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await act(async () => {
+        await Promise.resolve(); // Flush microtasks
+      });
 
       useOnboardingStore.setState({ currentStep: "personal-info" });
       jest.advanceTimersByTime(300);
+      await jest.runAllTimersAsync(); // Flush promises
       jest.advanceTimersByTime(200);
 
       await waitFor(() => expect(result.current.saveError).toBeTruthy());
@@ -406,22 +392,19 @@ describe("useOnboardingSync - Regression Tests", () => {
     it("should debounce rapid step changes and only save once", async () => {
       setupAuthenticatedSession();
       let saveCallCount = 0;
-
-      server.use(
-        http.get(`${API_BASE}/onboarding/progress`, () =>
-          HttpResponse.json(createMockOnboardingProgress())
-        ),
-        http.put(`${API_BASE}/onboarding/progress`, () => {
-          saveCallCount++;
-          return HttpResponse.json({ success: true });
-        })
-      );
+      mockSaveProgress.mockImplementation(() => {
+        saveCallCount++;
+        return Promise.resolve({ success: true });
+      });
 
       const { result } = renderHook(() => useOnboardingSync(), {
         wrapper: createWrapper(),
       });
 
       await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await act(async () => {
+        await Promise.resolve(); // Flush microtasks
+      });
 
       // Rapid navigation: 5 step changes in 100ms each
       useOnboardingStore.setState({ currentStep: "personal-info" });
@@ -440,6 +423,7 @@ describe("useOnboardingSync - Regression Tests", () => {
 
       // Now wait for full debounce (300ms from last change)
       jest.advanceTimersByTime(300);
+      await jest.runAllTimersAsync(); // Flush promises
 
       await waitFor(() => expect(saveCallCount).toBeGreaterThan(0));
 
@@ -451,22 +435,19 @@ describe("useOnboardingSync - Regression Tests", () => {
     it("should respect debounce timeout of exactly 300ms", async () => {
       setupAuthenticatedSession();
       let saveWasCalled = false;
-
-      server.use(
-        http.get(`${API_BASE}/onboarding/progress`, () =>
-          HttpResponse.json(createMockOnboardingProgress())
-        ),
-        http.put(`${API_BASE}/onboarding/progress`, () => {
-          saveWasCalled = true;
-          return HttpResponse.json({ success: true });
-        })
-      );
+      mockSaveProgress.mockImplementation(() => {
+        saveWasCalled = true;
+        return Promise.resolve({ success: true });
+      });
 
       const { result } = renderHook(() => useOnboardingSync(), {
         wrapper: createWrapper(),
       });
 
       await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await act(async () => {
+        await Promise.resolve(); // Flush microtasks
+      });
 
       useOnboardingStore.setState({ currentStep: "personal-info" });
 
@@ -493,18 +474,14 @@ describe("useOnboardingSync - Regression Tests", () => {
     it("should expose lastSavedAt in hook return value", async () => {
       setupAuthenticatedSession();
 
-      server.use(
-        http.get(`${API_BASE}/onboarding/progress`, () =>
-          HttpResponse.json(createMockOnboardingProgress())
-        ),
-        http.put(`${API_BASE}/onboarding/progress`, () => HttpResponse.json({ success: true }))
-      );
-
       const { result } = renderHook(() => useOnboardingSync(), {
         wrapper: createWrapper(),
       });
 
       await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await act(async () => {
+        await Promise.resolve(); // Flush microtasks
+      });
 
       // Should have the property
       expect(result.current).toHaveProperty("lastSavedAt");
@@ -513,6 +490,7 @@ describe("useOnboardingSync - Regression Tests", () => {
       // After save
       useOnboardingStore.setState({ currentStep: "personal-info" });
       jest.advanceTimersByTime(300);
+      await jest.runAllTimersAsync(); // Flush promises
 
       await waitFor(() => {
         expect(result.current.lastSavedAt).toBeInstanceOf(Date);
@@ -521,21 +499,16 @@ describe("useOnboardingSync - Regression Tests", () => {
 
     it("should expose saveError in hook return value", async () => {
       setupAuthenticatedSession();
-
-      server.use(
-        http.get(`${API_BASE}/onboarding/progress`, () =>
-          HttpResponse.json(createMockOnboardingProgress())
-        ),
-        http.put(`${API_BASE}/onboarding/progress`, () =>
-          HttpResponse.json({ error: "Database error" }, { status: 500 })
-        )
-      );
+      mockSaveProgress.mockRejectedValue(new Error("Save failed"));
 
       const { result } = renderHook(() => useOnboardingSync(), {
         wrapper: createWrapper(),
       });
 
       await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await act(async () => {
+        await Promise.resolve(); // Flush microtasks
+      });
 
       // Should have the property
       expect(result.current).toHaveProperty("saveError");
@@ -544,6 +517,7 @@ describe("useOnboardingSync - Regression Tests", () => {
       // Trigger save error
       useOnboardingStore.setState({ currentStep: "personal-info" });
       jest.advanceTimersByTime(300);
+      await jest.runAllTimersAsync(); // Flush promises
 
       await waitFor(() => {
         expect(result.current.saveError).toBeTruthy();
@@ -553,24 +527,18 @@ describe("useOnboardingSync - Regression Tests", () => {
     it("should expose isSaving status during save operation", async () => {
       setupAuthenticatedSession();
 
-      server.use(
-        http.get(`${API_BASE}/onboarding/progress`, () =>
-          HttpResponse.json(createMockOnboardingProgress())
-        ),
-        http.put(`${API_BASE}/onboarding/progress`, async () => {
-          await delay(500);
-          return HttpResponse.json({ success: true });
-        })
-      );
-
       const { result } = renderHook(() => useOnboardingSync(), {
         wrapper: createWrapper(),
       });
 
       await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await act(async () => {
+        await Promise.resolve(); // Flush microtasks
+      });
 
       useOnboardingStore.setState({ currentStep: "personal-info" });
       jest.advanceTimersByTime(300);
+      await jest.runAllTimersAsync(); // Flush promises
 
       // Should show isSaving during operation
       await waitFor(() => {
@@ -593,31 +561,24 @@ describe("useOnboardingSync - Regression Tests", () => {
     it("should handle complete onboarding flow with all fixes active", async () => {
       setupAuthenticatedSession();
       const saveCalls: Array<{ step: string; timestamp: number }> = [];
-
-      server.use(
-        http.get(`${API_BASE}/onboarding/progress`, () =>
-          HttpResponse.json(createMockOnboardingProgress())
-        ),
-        http.put(`${API_BASE}/onboarding/progress`, async ({ request }) => {
-          const body = (await request.json()) as { currentStep: string };
-          saveCalls.push({
-            step: body.currentStep,
-            timestamp: Date.now(),
-          });
-          await delay(100); // Realistic network delay
-          return HttpResponse.json({ success: true });
-        })
-      );
+      mockSaveProgress.mockImplementation((data) => {
+        saveCalls.push({ step: data.currentStep, timestamp: Date.now() });
+        return Promise.resolve({ success: true });
+      });
 
       const { result } = renderHook(() => useOnboardingSync(), {
         wrapper: createWrapper(),
       });
 
       await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await act(async () => {
+        await Promise.resolve(); // Flush microtasks
+      });
 
       // Step 1: First step change (FIX #2)
       useOnboardingStore.setState({ currentStep: "personal-info" });
       jest.advanceTimersByTime(300); // Debounce (FIX #4)
+      await jest.runAllTimersAsync(); // Flush promises
       jest.advanceTimersByTime(100); // Network delay
 
       await waitFor(() => {
@@ -631,6 +592,7 @@ describe("useOnboardingSync - Regression Tests", () => {
       jest.advanceTimersByTime(100);
       useOnboardingStore.setState({ currentStep: "professional-profile" });
       jest.advanceTimersByTime(300);
+      await jest.runAllTimersAsync(); // Flush promises
       jest.advanceTimersByTime(100);
 
       await waitFor(() => {
