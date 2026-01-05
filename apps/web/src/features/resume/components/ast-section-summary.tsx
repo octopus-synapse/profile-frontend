@@ -23,7 +23,7 @@ export function ASTSectionSummary({ section }: Props) {
     fontSize: `${styles.title.fontSizePx}px`,
     lineHeight: styles.title.lineHeight,
     fontWeight: styles.title.fontWeight,
-    textTransform: styles.title.textTransform as any,
+    textTransform: styles.title.textTransform,
     marginBottom: "12px",
   };
 

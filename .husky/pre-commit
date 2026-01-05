@@ -1,0 +1,15 @@
+echo "Running pre-commit checks..."
+
+# Type checking
+echo "Checking types..."
+pnpm type-check || exit 1
+
+# Linting
+echo "Running linter..."
+pnpm lint || exit 1
+
+# Unit Tests (skip integration tests, pass if no tests found)
+echo "Running unit tests..."
+pnpm --filter @profile/web test -- --passWithNoTests || exit 1
+
+echo "✓ All pre-commit checks passed!"
