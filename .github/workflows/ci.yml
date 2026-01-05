@@ -4,18 +4,45 @@ on:
   pull_request:
     branches: [main, dev]
   push:
-    branches: [dev]
 
 permissions:
   contents: read
-  actions: read
+  pull-requests: write
+  packages: read
 
 jobs:
-  ci:
-    uses: octopus-synapse/octopus-workflows/.github/workflows/ci.yml@main
+  quality:
+    uses: octopus-synapse/octopus-workflows/.github/workflows/quality-check.yml@main
     with:
       node-version: "20"
+      package-manager: "pnpm"
+    secrets: inherit
+
+  test:
+    uses: octopus-synapse/octopus-workflows/.github/workflows/unit-tests.yml@main
+    with:
+      node-version: "20"
+      package-manager: "pnpm"
       has-database: false
       has-redis: false
-      build-output-dir: ".next"
     secrets: inherit
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [quality, test]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 8
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+          registry-url: https://npm.pkg.github.com
+      - run: pnpm install --frozen-lockfile
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: pnpm build
+      - run: test -d .next
