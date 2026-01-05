@@ -7,7 +7,6 @@
 
 import type {
   PlacedSection,
-  ExperienceData,
   ExperienceItem,
 } from "@octopus-synapse/profile-contracts";
 
@@ -20,8 +19,6 @@ export function ASTSectionExperience({ section }: Props) {
 
   if (data.type !== "experience") return null;
 
-  const experienceData = data.data as ExperienceData;
-
   const titleStyle = {
     fontFamily: styles.title.fontFamily,
     fontSize: `${styles.title.fontSizePx}px`,
@@ -31,24 +28,26 @@ export function ASTSectionExperience({ section }: Props) {
     marginBottom: "16px",
   };
 
-  const itemStyle = {
-    fontFamily: styles.item.fontFamily,
-    fontSize: `${styles.item.fontSizePx}px`,
-    lineHeight: styles.item.lineHeight,
+  const contentStyle = {
+    fontFamily: styles.content.fontFamily,
+    fontSize: `${styles.content.fontSizePx}px`,
+    lineHeight: styles.content.lineHeight,
     marginBottom: "16px",
   };
 
   return (
     <section>
       <h3 style={titleStyle}>Experience</h3>
-      {experienceData.items.map((item: ExperienceItem, idx: number) => (
-        <div key={idx} style={itemStyle}>
+      {data.items.map((item: ExperienceItem, idx: number) => (
+        <div key={idx} style={contentStyle}>
           <div style={{ fontWeight: 600 }}>
-            {item.position} at {item.company}
+            {item.title} at {item.company}
           </div>
           <div style={{ fontSize: "14px", color: "#666" }}>
-            {item.startDate} - {item.endDate || "Present"}
-            {item.location && ` • ${item.location}`}
+            {item.dateRange.startDate} -{" "}
+            {item.dateRange.isCurrent ? "Present" : item.dateRange.endDate}
+            {item.location?.city && ` • ${item.location.city}`}
+            {item.location?.remote && " (Remote)"}
           </div>
           {item.description && <p style={{ marginTop: "8px" }}>{item.description}</p>}
           {item.achievements && item.achievements.length > 0 && (

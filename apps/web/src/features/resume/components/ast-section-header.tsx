@@ -47,7 +47,7 @@ export function ASTSectionHeader({ section }: Props) {
 
         {links && links.length > 0 && (
           <div>
-            {links.map((link, idx) => (
+            {links.map((link: { url: string; label: string }, idx: number) => (
               <a key={idx} href={link.url} style={{ marginRight: "16px" }}>
                 {link.label}
               </a>

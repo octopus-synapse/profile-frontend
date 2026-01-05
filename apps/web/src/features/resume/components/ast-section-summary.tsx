@@ -5,7 +5,7 @@
 
 "use client";
 
-import type { PlacedSection, SummaryData } from "@octopus-synapse/profile-contracts";
+import type { PlacedSection, TextSectionData } from "@octopus-synapse/profile-contracts";
 
 interface Props {
   section: PlacedSection;
@@ -16,7 +16,7 @@ export function ASTSectionSummary({ section }: Props) {
 
   if (data.type !== "summary") return null;
 
-  const summaryData = data.data as SummaryData;
+  const summaryData = data.data as TextSectionData;
 
   const titleStyle = {
     fontFamily: styles.title.fontFamily,

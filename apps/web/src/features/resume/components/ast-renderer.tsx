@@ -8,6 +8,7 @@
 
 import type { ResumeAst, PlacedSection } from "@octopus-synapse/profile-contracts";
 import { ASTSection } from "./ast-section";
+import { mmToPx } from "../utils/ast-dimensions";
 
 interface Props {
   ast: ResumeAst;
@@ -21,18 +22,18 @@ export function ASTRenderer({ ast, className }: Props) {
   const containerStyle = {
     backgroundColor: globalStyles.background,
     color: globalStyles.textPrimary,
-    width: `${page.widthPx}px`,
-    minHeight: `${page.heightPx}px`,
+    width: `${mmToPx(page.widthMm)}px`,
+    minHeight: `${mmToPx(page.heightMm)}px`,
   };
 
   return (
     <div style={containerStyle} className={className}>
       {/* Render columns */}
-      {page.columns.length === 1 ? (
+      {page.columns.length === 1 && page.columns[0] ? (
         <SingleColumnLayout column={page.columns[0]} sections={sections} />
-      ) : (
+      ) : page.columns.length > 1 ? (
         <TwoColumnLayout columns={page.columns} sections={sections} />
-      )}
+      ) : null}
     </div>
   );
 }
@@ -48,14 +49,10 @@ function SingleColumnLayout({
   sections: PlacedSection[];
 }) {
   const columnStyle = {
-    width: `${column.widthPx}px`,
-    paddingLeft: `${column.paddingPx.left}px`,
-    paddingRight: `${column.paddingPx.right}px`,
-    paddingTop: `${column.paddingPx.top}px`,
-    paddingBottom: `${column.paddingPx.bottom}px`,
+    width: "100%",
   };
 
-  const columnSections = sections.filter((s) => s.columnId === column.columnId);
+  const columnSections = sections.filter((s) => s.columnId === column.id);
 
   return (
     <div style={columnStyle}>
@@ -87,17 +84,13 @@ function TwoColumnLayout({
     <div style={containerStyle}>
       {columns.map((column) => {
         const columnStyle = {
-          width: `${column.widthPx}px`,
-          paddingLeft: `${column.paddingPx.left}px`,
-          paddingRight: `${column.paddingPx.right}px`,
-          paddingTop: `${column.paddingPx.top}px`,
-          paddingBottom: `${column.paddingPx.bottom}px`,
+          width: `${column.widthPercentage}%`,
         };
 
-        const columnSections = sections.filter((s) => s.columnId === column.columnId);
+        const columnSections = sections.filter((s) => s.columnId === column.id);
 
         return (
-          <div key={column.columnId} style={columnStyle}>
+          <div key={column.id} style={columnStyle}>
             {columnSections
               .sort((a, b) => a.order - b.order)
               .map((section) => (
