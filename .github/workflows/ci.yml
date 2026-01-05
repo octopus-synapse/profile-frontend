@@ -15,6 +15,7 @@ jobs:
     uses: octopus-synapse/octopus-workflows/.github/workflows/ci.yml@main
     with:
       node-version: "20"
+      package-manager: "pnpm"
       has-database: false
       has-redis: false
       build-output-dir: ".next"
