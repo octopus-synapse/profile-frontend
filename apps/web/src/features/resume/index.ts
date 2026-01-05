@@ -72,7 +72,7 @@ export {
 } from "./hooks";
 
 // Main Components
-export { ResumeBuilder, ResumeRenderer } from "./components";
+export { ResumeBuilder, ASTRenderer } from "./components";
 
 // Theme Components
 export {

@@ -4,7 +4,7 @@
  */
 
 import { useQuery } from "@tanstack/react-query";
-import { dslRepository } from "@/shared/lib/api-client";
+import { apiClient } from "@/shared/lib/api-client";
 import { astKeys } from "./ast-query-keys";
 import type { ResumeAst } from "@octopus-synapse/profile-contracts";
 

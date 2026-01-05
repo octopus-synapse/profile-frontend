@@ -6,7 +6,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { useResumes, useResumeAst, useExportResumePDF, useExportResumeDOCX } from "../hooks";
+import { useResumes, useResume, useResumeAst, useExportResumePDF, useExportResumeDOCX } from "../hooks";
 import { ASTRenderer } from "./ast-renderer";
 import { BuilderSidebar } from "./builder/builder-sidebar";
 import { Download, FileText, Share2, Link2, Check, Settings, Loader2 } from "lucide-react";
@@ -20,14 +20,14 @@ export function ResumeBuilder() {
   const { data: resumesList, isLoading: resumesListLoading } = useResumes();
   const resumeId = resumesList?.[0]?.id;
 
+  // Fetch full resume data
+  const { data: resume, isLoading: resumeLoading } = useResume(resumeId);
+
   // Fetch compiled AST from backend
   const { data: ast, isLoading: astLoading, refetch: refetchAst } = useResumeAst(resumeId);
 
   // Combined loading state
-  const isLoading = resumesListLoading || (resumeId && astLoading);
-
-  // Get resume metadata from list
-  const resume = resumesList?.[0];
+  const isLoading = resumesListLoading || resumeLoading || (resumeId && astLoading);
 
   // Export mutations
   const exportPDF = useExportResumePDF();
@@ -119,9 +119,9 @@ export function ResumeBuilder() {
       {/* Sidebar */}
       <BuilderSidebar
         resume={resume}
-        activeThemeName={activeTheme?.name}
+        activeThemeName={undefined}
         onThemeApplied={handleThemeApplied}
-        onRefresh={() => refetchResume()}
+        onRefresh={() => refetchAst()}
       />
 
       {/* Main Content */}
