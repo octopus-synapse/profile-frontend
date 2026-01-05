@@ -11,6 +11,12 @@ import { useOnboardingStore } from "../../stores";
 import { StepNavigation } from "../step-navigation";
 import { User, Mail, Phone, MapPin, AlertCircle } from "lucide-react";
 import { PhoneInput } from "@/shared/components/ui";
+import {
+  EmailSchema,
+  FullNameSchema,
+  PhoneSchema,
+  UserLocationSchema,
+} from "@octopus-synapse/profile-contracts";
 
 export function PersonalInfoStep() {
   const { personalInfo, setPersonalInfo, goToNextStep, markStepComplete } = useOnboardingStore();
@@ -24,19 +30,35 @@ export function PersonalInfoStep() {
 
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-  // Validate using useMemo instead of useEffect + setState
+  // Validate using contract schemas
   const errors = useMemo(() => {
     const newErrors: Record<string, string> = {};
 
-    if (touched.fullName && formData.fullName.length < 2) {
-      newErrors.fullName = "Name must be at least 2 characters";
+    if (touched.fullName) {
+      const nameResult = FullNameSchema.safeParse(formData.fullName);
+      if (!nameResult.success) {
+        newErrors.fullName = nameResult.error.errors[0]?.message || "Invalid name";
+      }
     }
 
     if (touched.email) {
-      if (!formData.email) {
-        newErrors.email = "Email is required";
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-        newErrors.email = "Invalid email format";
+      const emailResult = EmailSchema.safeParse(formData.email);
+      if (!emailResult.success) {
+        newErrors.email = emailResult.error.errors[0]?.message || "Invalid email";
+      }
+    }
+
+    if (touched.phone && formData.phone) {
+      const phoneResult = PhoneSchema.safeParse(formData.phone);
+      if (!phoneResult.success) {
+        newErrors.phone = phoneResult.error.errors[0]?.message || "Invalid phone";
+      }
+    }
+
+    if (touched.location && formData.location) {
+      const locationResult = UserLocationSchema.safeParse(formData.location);
+      if (!locationResult.success) {
+        newErrors.location = locationResult.error.errors[0]?.message || "Invalid location";
       }
     }
 
@@ -55,12 +77,13 @@ export function PersonalInfoStep() {
     // Touch all fields to show errors
     setTouched({ fullName: true, email: true, phone: true, location: true });
 
-    // Validate
-    if (
-      formData.fullName.length < 2 ||
-      !formData.email ||
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
-    ) {
+    // Validate using contract schemas
+    const nameResult = FullNameSchema.safeParse(formData.fullName);
+    const emailResult = EmailSchema.safeParse(formData.email);
+    const phoneResult = formData.phone ? PhoneSchema.safeParse(formData.phone) : { success: true };
+    const locationResult = formData.location ? UserLocationSchema.safeParse(formData.location) : { success: true };
+
+    if (!nameResult.success || !emailResult.success || !phoneResult.success || !locationResult.success) {
       return;
     }
 
@@ -75,8 +98,11 @@ export function PersonalInfoStep() {
     goToNextStep();
   };
 
-  const canProceed =
-    formData.fullName.length >= 2 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
+  const canProceed = useMemo(() => {
+    const nameResult = FullNameSchema.safeParse(formData.fullName);
+    const emailResult = EmailSchema.safeParse(formData.email);
+    return nameResult.success && emailResult.success;
+  }, [formData.fullName, formData.email]);
 
   return (
     <div className="space-y-6">

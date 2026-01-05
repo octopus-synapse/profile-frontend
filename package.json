@@ -35,6 +35,6 @@
     "pnpm": ">=9.0.0"
   },
   "dependencies": {
-    "@octopus-synapse/profile-contracts": "^0.0.2"
+    "@octopus-synapse/profile-contracts": "^1.1.0"
   }
 }
