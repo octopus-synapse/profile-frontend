@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@octopus-synapse/profile-contracts':
-        specifier: ^1.1.0
-        version: 1.1.0
+        specifier: ^1.1.1
+        version: 1.1.1
     devDependencies:
       husky:
         specifier: ^9.1.7
@@ -1002,6 +1002,9 @@ packages:
 
   '@octopus-synapse/profile-contracts@1.1.0':
     resolution: {integrity: sha512-WeV17qG2Zqy6erHAoMDanTi3ndJyHWA2JGl4BjZheRXb2c+tQjujrLtDDhhgisyr3Nt/NUUV7Uytp8QD5GYzUw==, tarball: https://npm.pkg.github.com/download/@octopus-synapse/profile-contracts/1.1.0/555ea79f12a39536be416b17ce11adb78a04746f}
+
+  '@octopus-synapse/profile-contracts@1.1.1':
+    resolution: {integrity: sha512-VzdCcTDf7n3KKzM/31fePKivKpbpZMKghziW9nbubJRKZAwdRS1rAoF9QvGtnBbHYfkwg+/EoJAsUMZHHuwfog==, tarball: https://npm.pkg.github.com/download/@octopus-synapse/profile-contracts/1.1.1/998a59e23e797b43525e9e839959d3119824fbab}
 
   '@octopus-synapse/profile-ui@0.4.0':
     resolution: {integrity: sha512-Ng9ig01AjXwdM95q9ds8PemOnoUv88wjG8EBI6lbfawm4tc+pRJEEtEkxKw0v46bdjOJBbIRWebF7FIUAQA2uQ==, tarball: https://npm.pkg.github.com/download/@octopus-synapse/profile-ui/0.4.0/947d278c9a6a1d9919bfddb0c9deb3754829a0f1}
@@ -5389,6 +5392,10 @@ snapshots:
     dependencies:
       zod: 3.25.76
 
+  '@octopus-synapse/profile-contracts@1.1.1':
+    dependencies:
+      zod: 3.25.76
+
   '@octopus-synapse/profile-ui@0.4.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
       class-variance-authority: 0.7.1
@@ -6959,7 +6966,7 @@ snapshots:
       '@next/eslint-plugin-next': 16.1.1
       eslint: 9.39.2(jiti@2.6.1)
       eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0)(eslint@9.39.2(jiti@2.6.1))
+      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0(eslint@9.39.2(jiti@2.6.1)))(eslint@9.39.2(jiti@2.6.1))
       eslint-plugin-import: 2.32.0(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.2(jiti@2.6.1))
       eslint-plugin-jsx-a11y: 6.10.2(eslint@9.39.2(jiti@2.6.1))
       eslint-plugin-react: 7.37.5(eslint@9.39.2(jiti@2.6.1))
@@ -6982,7 +6989,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0)(eslint@9.39.2(jiti@2.6.1)):
+  eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(eslint@9.39.2(jiti@2.6.1)))(eslint@9.39.2(jiti@2.6.1)):
     dependencies:
       '@nolyfill/is-core-module': 1.0.39
       debug: 4.4.3(supports-color@10.2.2)
@@ -6997,13 +7004,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.12.1(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.2(jiti@2.6.1)):
+  eslint-module-utils@2.12.1(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(eslint@9.39.2(jiti@2.6.1)))(eslint@9.39.2(jiti@2.6.1)))(eslint@9.39.2(jiti@2.6.1)):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
       eslint: 9.39.2(jiti@2.6.1)
       eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0)(eslint@9.39.2(jiti@2.6.1))
+      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0(eslint@9.39.2(jiti@2.6.1)))(eslint@9.39.2(jiti@2.6.1))
     transitivePeerDependencies:
       - supports-color
 
@@ -7018,7 +7025,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.39.2(jiti@2.6.1)
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.1(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.2(jiti@2.6.1))
+      eslint-module-utils: 2.12.1(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(eslint@9.39.2(jiti@2.6.1)))(eslint@9.39.2(jiti@2.6.1)))(eslint@9.39.2(jiti@2.6.1))
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3

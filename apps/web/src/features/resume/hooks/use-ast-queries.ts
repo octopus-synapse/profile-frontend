@@ -20,7 +20,7 @@ export function useResumeAst(
     queryKey: resumeId ? astKeys.render(resumeId, target) : [],
     queryFn: async () => {
       if (!resumeId) throw new Error("Resume ID required");
-      const result = await dslRepository.render(resumeId, target);
+      const result = await apiClient.dsl.render(resumeId, target);
       return result.ast as ResumeAst;
     },
     enabled: !!resumeId && (options?.enabled ?? true),
@@ -40,7 +40,7 @@ export function usePublicResumeAst(
     queryKey: slug ? astKeys.publicRender(slug, target) : [],
     queryFn: async () => {
       if (!slug) throw new Error("Slug required");
-      const result = await dslRepository.renderPublic(slug, target);
+      const result = await apiClient.dsl.renderPublic(slug, target);
       return result.ast as ResumeAst;
     },
     enabled: !!slug && (options?.enabled ?? true),
@@ -60,7 +60,7 @@ export function usePreviewDsl(
     queryKey: ["ast", "preview", dsl, target],
     queryFn: async () => {
       if (!dsl) throw new Error("DSL required");
-      const result = await dslRepository.preview(dsl, target);
+      const result = await apiClient.dsl.preview(dsl, target);
       return result.ast as ResumeAst;
     },
     enabled: !!dsl && (options?.enabled ?? true),
