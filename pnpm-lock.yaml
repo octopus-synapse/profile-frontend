@@ -184,9 +184,15 @@ importers:
 
   packages/api-client:
     dependencies:
+      '@octopus-synapse/profile-contracts':
+        specifier: ^1.1.0
+        version: 1.1.0
       axios:
         specifier: ^1.13.2
         version: 1.13.2
+      zod:
+        specifier: ^4.2.1
+        version: 4.2.1
     devDependencies:
       '@eslint/js':
         specifier: ^9.39.2
@@ -996,6 +1002,9 @@ packages:
 
   '@octopus-synapse/profile-contracts@0.0.2':
     resolution: {integrity: sha512-r7HIJQlFuontUo82R/D8ui8k4xZIRwnVhd2oFrUHB/QBEcdWw3tUyGo9r/xiFN0K3pu5CK4Wgm33GT5YwTgqoA==, tarball: https://npm.pkg.github.com/download/@octopus-synapse/profile-contracts/0.0.2/052ef0b42d1f7f81f976865a26eb12db855c485f}
+
+  '@octopus-synapse/profile-contracts@1.1.0':
+    resolution: {integrity: sha512-WeV17qG2Zqy6erHAoMDanTi3ndJyHWA2JGl4BjZheRXb2c+tQjujrLtDDhhgisyr3Nt/NUUV7Uytp8QD5GYzUw==, tarball: https://npm.pkg.github.com/download/@octopus-synapse/profile-contracts/1.1.0/555ea79f12a39536be416b17ce11adb78a04746f}
 
   '@octopus-synapse/profile-ui@0.4.0':
     resolution: {integrity: sha512-Ng9ig01AjXwdM95q9ds8PemOnoUv88wjG8EBI6lbfawm4tc+pRJEEtEkxKw0v46bdjOJBbIRWebF7FIUAQA2uQ==, tarball: https://npm.pkg.github.com/download/@octopus-synapse/profile-ui/0.4.0/947d278c9a6a1d9919bfddb0c9deb3754829a0f1}
@@ -5380,6 +5389,10 @@ snapshots:
   '@nolyfill/is-core-module@1.0.39': {}
 
   '@octopus-synapse/profile-contracts@0.0.2':
+    dependencies:
+      zod: 3.25.76
+
+  '@octopus-synapse/profile-contracts@1.1.0':
     dependencies:
       zod: 3.25.76
 

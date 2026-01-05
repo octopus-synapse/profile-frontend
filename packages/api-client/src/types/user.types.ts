@@ -3,6 +3,17 @@
  * API types for user-related operations
  */
 
+import { z } from 'zod';
+import {
+  UsernameSchema,
+  FullNameSchema,
+  PhoneSchema,
+  UserLocationSchema,
+  SocialUrlSchema,
+  LinkedInUrlSchema,
+  GitHubUrlSchema,
+} from '@octopus-synapse/profile-contracts';
+
 export type UserRole = "USER" | "ADMIN";
 
 export interface User {
@@ -35,18 +46,19 @@ export interface UserProfile extends User {
   twitter: string | null;
 }
 
+// Use contract types for updates
 export interface UpdateUserDto {
-  name?: string;
-  username?: string;
+  name?: z.infer<typeof FullNameSchema>;
+  username?: z.infer<typeof UsernameSchema>;
   bio?: string;
-  location?: string;
-  website?: string;
+  location?: z.infer<typeof UserLocationSchema>;
+  website?: z.infer<typeof SocialUrlSchema>;
   company?: string;
   title?: string;
-  phone?: string;
-  linkedin?: string;
-  github?: string;
-  twitter?: string;
+  phone?: z.infer<typeof PhoneSchema>;
+  linkedin?: z.infer<typeof LinkedInUrlSchema>;
+  github?: z.infer<typeof GitHubUrlSchema>;
+  twitter?: z.infer<typeof SocialUrlSchema>;
   image?: string;
 }
 

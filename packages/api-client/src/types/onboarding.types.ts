@@ -3,6 +3,12 @@
  * API types for onboarding operations
  */
 
+import { z } from 'zod';
+import {
+  PersonalInfoSchema,
+  ProfessionalProfileSchema,
+} from '@octopus-synapse/profile-contracts';
+
 // ============================================================================
 // Step Types
 // ============================================================================
@@ -22,23 +28,11 @@ export type OnboardingApiStep =
 export type OnboardingStep = OnboardingApiStep | string;
 
 // ============================================================================
-// Data Types
+// Data Types (Using Contracts)
 // ============================================================================
 
-export interface PersonalInfoData {
- fullName: string;
- email: string;
- phone?: string;
- location?: string;
-}
-
-export interface ProfessionalProfileData {
- jobTitle: string;
- summary: string;
- linkedin?: string;
- github?: string;
- website?: string;
-}
+export type PersonalInfoData = z.infer<typeof PersonalInfoSchema>;
+export type ProfessionalProfileData = z.infer<typeof ProfessionalProfileSchema>;
 
 export interface ExperienceData {
  company: string;
