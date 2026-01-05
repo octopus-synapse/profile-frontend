@@ -16,6 +16,15 @@ const config = {
   ],
   extensionsToTreatAsEsm: ['.ts'],
   setupFilesAfterEnv: [],
+  // Show test summary
+  reporters: [
+    'default',
+    ['jest-junit', {
+      outputDirectory: './test-results',
+      outputName: 'junit.xml',
+      suiteName: 'Unit Tests',
+    }],
+  ],
 };
 
 module.exports = config;
