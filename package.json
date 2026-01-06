@@ -5,7 +5,7 @@
  "packageManager": "pnpm@9.15.0",
  "scripts": {
   "dev": "pnpm --filter @profile/web dev",
-  "build": "pnpm --filter @profile/web build",
+  "build": "pnpm --filter @profile/api-client build && pnpm --filter @profile/web build",
   "start": "pnpm --filter @profile/web start",
   "lint": "pnpm -r lint",
   "lint:fix": "pnpm -r lint:fix",
