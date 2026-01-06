@@ -46,4 +46,4 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: pnpm build
-      - run: test -d .next
+      - run: test -d apps/web/.next
