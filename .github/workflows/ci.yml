@@ -17,6 +17,7 @@ jobs:
     with:
       node-version: "20"
       package-manager: "pnpm"
+      typecheck-script: "type-check"
     secrets:
       npm-auth-token: ${{ secrets.GH_PAT }}
 
