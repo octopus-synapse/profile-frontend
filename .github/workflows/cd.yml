@@ -31,3 +31,50 @@ jobs:
         NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
         NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
         NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
+
+  smoke-test:
+    name: Smoke Test - Backend Connectivity
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify Backend is Reachable
+        env:
+          BACKEND_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+        run: |
+          echo "🔍 Verifying backend connectivity..."
+          
+          # Check backend health endpoint
+          for i in {1..5}; do
+            if curl -sf "${BACKEND_URL}/api/health" > /dev/null; then
+              echo "✅ Backend is healthy and reachable"
+              exit 0
+            fi
+            echo "⏳ Attempt $i/5 - Backend not ready, waiting..."
+            sleep 5
+          done
+          
+          echo "❌ Backend unreachable at ${BACKEND_URL}/api/health"
+          exit 1
+
+      - name: Verify Frontend-Backend Integration
+        env:
+          FRONTEND_URL: http://${{ secrets.OCTOPUS_VM_HOST }}:${{ secrets.FRONTEND_PORT }}
+          BACKEND_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+        run: |
+          echo "🔍 Verifying frontend can reach backend..."
+          
+          # Test frontend health
+          curl -sf "${FRONTEND_URL}/api/health" > /dev/null || {
+            echo "❌ Frontend health check failed"
+            exit 1
+          }
+          echo "✅ Frontend is healthy"
+          
+          # Test backend from same network perspective
+          curl -sf "${BACKEND_URL}/api/health" > /dev/null || {
+            echo "❌ Backend health check failed"
+            exit 1
+          }
+          echo "✅ Backend is healthy"
+          
+          echo "🎉 Frontend-Backend integration verified!"
