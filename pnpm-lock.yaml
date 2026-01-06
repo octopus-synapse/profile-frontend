@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@octopus-synapse/profile-contracts':
-        specifier: ^1.1.1
-        version: 1.1.1
+        specifier: ^1.3.2
+        version: 1.3.2
     devDependencies:
       '@commitlint/cli':
         specifier: ^20.3.0
@@ -33,6 +33,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@octopus-synapse/profile-contracts':
+        specifier: ^1.3.2
+        version: 1.3.2
       '@octopus-synapse/profile-ui':
         specifier: ^1.0.0
         version: 1.0.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -194,8 +197,8 @@ importers:
   packages/api-client:
     dependencies:
       '@octopus-synapse/profile-contracts':
-        specifier: ^1.1.0
-        version: 1.1.0
+        specifier: ^1.3.2
+        version: 1.3.2
       axios:
         specifier: ^1.13.2
         version: 1.13.2
@@ -1078,11 +1081,8 @@ packages:
     resolution: {integrity: sha512-nn5ozdjYQpUCZlWGuxcJY/KpxkWQs4DcbMCmKojjyrYDEAGy4Ce19NN4v5MduafTwJlbKc99UA8YhSVqq9yPZA==}
     engines: {node: '>=12.4.0'}
 
-  '@octopus-synapse/profile-contracts@1.1.0':
-    resolution: {integrity: sha512-WeV17qG2Zqy6erHAoMDanTi3ndJyHWA2JGl4BjZheRXb2c+tQjujrLtDDhhgisyr3Nt/NUUV7Uytp8QD5GYzUw==, tarball: https://npm.pkg.github.com/download/@octopus-synapse/profile-contracts/1.1.0/555ea79f12a39536be416b17ce11adb78a04746f}
-
-  '@octopus-synapse/profile-contracts@1.1.1':
-    resolution: {integrity: sha512-VzdCcTDf7n3KKzM/31fePKivKpbpZMKghziW9nbubJRKZAwdRS1rAoF9QvGtnBbHYfkwg+/EoJAsUMZHHuwfog==, tarball: https://npm.pkg.github.com/download/@octopus-synapse/profile-contracts/1.1.1/998a59e23e797b43525e9e839959d3119824fbab}
+  '@octopus-synapse/profile-contracts@1.3.2':
+    resolution: {integrity: sha512-76wtGeZBgk4m6bMEVDo8g8YxOAXWI3+NctCpqAZVbw1P5TgQTiaqxD9A3xSr4Qk2WGw8d9RyE7l5jG2PgaLm+A==, tarball: https://npm.pkg.github.com/download/@octopus-synapse/profile-contracts/1.3.2/b854c2628a3240ce21d6ff8fb6457166f28fdbb4}
 
   '@octopus-synapse/profile-ui@1.0.0':
     resolution: {integrity: sha512-ojAg9RwsHMrYyhjkw0zc+QCoYkdOP0GnD0/md7Pxis+9rsw5VK3RxbeHAoHKbnKFGnsGuvdpesaRl4QxUXzFxg==, tarball: https://npm.pkg.github.com/download/@octopus-synapse/profile-ui/1.0.0/01079ff2442a7c798e83351b8a955df0fd65230d}
@@ -5753,11 +5753,7 @@ snapshots:
 
   '@nolyfill/is-core-module@1.0.39': {}
 
-  '@octopus-synapse/profile-contracts@1.1.0':
-    dependencies:
-      zod: 3.25.76
-
-  '@octopus-synapse/profile-contracts@1.1.1':
+  '@octopus-synapse/profile-contracts@1.3.2':
     dependencies:
       zod: 3.25.76
 

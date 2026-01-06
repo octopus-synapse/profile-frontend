@@ -13,29 +13,12 @@ import { StepNavigation } from "../step-navigation";
 import { AtSign, Check, X, Loader2, AlertCircle, ExternalLink, RefreshCw } from "lucide-react";
 import { useDebounce } from "@/shared/hooks/use-debounce";
 import { HelpTooltip } from "@/shared/components/ui";
+import { UsernameSchema } from "@octopus-synapse/profile-contracts";
 
-const USERNAME_REGEX = /^[a-z0-9_]+$/;
+/** UI constants - must match UsernameSchema constraints */
 const MIN_LENGTH = 3;
 const MAX_LENGTH = 30;
-
-// Reserved usernames that cannot be used
-const RESERVED_USERNAMES = [
-  "admin",
-  "api",
-  "auth",
-  "login",
-  "signup",
-  "settings",
-  "profile",
-  "user",
-  "users",
-  "help",
-  "support",
-  "about",
-  "home",
-  "dashboard",
-  "onboarding",
-];
+const USERNAME_REGEX = /^[a-z0-9_]+$/;
 
 interface ValidationResult {
   valid: boolean;
@@ -46,25 +29,11 @@ function validateUsername(value: string): ValidationResult {
   if (!value) {
     return { valid: false, message: "Username is required" };
   }
-  if (value.length < MIN_LENGTH) {
-    return { valid: false, message: `At least ${MIN_LENGTH} characters` };
+  const result = UsernameSchema.safeParse(value);
+  if (result.success) {
+    return { valid: true, message: "" };
   }
-  if (value.length > MAX_LENGTH) {
-    return { valid: false, message: `Maximum ${MAX_LENGTH} characters` };
-  }
-  if (!USERNAME_REGEX.test(value)) {
-    return { valid: false, message: "Only lowercase letters, numbers, and underscores" };
-  }
-  if (value.startsWith("_") || value.endsWith("_")) {
-    return { valid: false, message: "Cannot start or end with underscore" };
-  }
-  if (value.includes("__")) {
-    return { valid: false, message: "Cannot have consecutive underscores" };
-  }
-  if (RESERVED_USERNAMES.includes(value)) {
-    return { valid: false, message: "This username is reserved" };
-  }
-  return { valid: true, message: "" };
+  return { valid: false, message: result.error.errors[0]?.message ?? "Invalid username" };
 }
 
 export function UsernameStep() {
@@ -321,7 +290,7 @@ export function UsernameStep() {
 
       {/* Rules */}
       <div className="space-y-1 border border-white/10 bg-white/5 p-3">
-        <p className="font-mono text-xs font-medium text-zinc-400">{'//'} Username rules:</p>
+        <p className="font-mono text-xs font-medium text-zinc-400">{"//"} Username rules:</p>
         <ul className="space-y-1 font-mono text-xs text-zinc-500">
           <li className="flex items-center gap-2">
             <span className={inputValue.length >= MIN_LENGTH ? "text-emerald-500" : ""}>

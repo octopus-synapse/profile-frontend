@@ -11,9 +11,9 @@ import { useDebounce } from "@/shared/hooks/use-debounce";
 import { useProfile, useUpdateUsername } from "../hooks";
 import { profileRepository } from "../services/settings-repository";
 import { formatDistanceToNow, addDays, isAfter } from "date-fns";
+import { UsernameSchema } from "@octopus-synapse/profile-contracts";
 
-const USERNAME_REGEX = /^[a-zA-Z0-9_]+$/;
-const MIN_LENGTH = 3;
+/** UI constant - must match UsernameSchema constraints */
 const MAX_LENGTH = 30;
 const RESTRICTION_DAYS = 30;
 
@@ -26,16 +26,11 @@ function validateUsername(value: string): ValidationResult {
   if (!value) {
     return { valid: false, message: "Username is required" };
   }
-  if (value.length < MIN_LENGTH) {
-    return { valid: false, message: `At least ${MIN_LENGTH} characters` };
+  const result = UsernameSchema.safeParse(value);
+  if (result.success) {
+    return { valid: true, message: "" };
   }
-  if (value.length > MAX_LENGTH) {
-    return { valid: false, message: `Maximum ${MAX_LENGTH} characters` };
-  }
-  if (!USERNAME_REGEX.test(value)) {
-    return { valid: false, message: "Only letters, numbers, and underscores" };
-  }
-  return { valid: true, message: "" };
+  return { valid: false, message: result.error.errors[0]?.message ?? "Invalid username" };
 }
 
 function getNextChangeDate(usernameUpdatedAt: string | null): Date | null {
