@@ -18,6 +18,7 @@ jobs:
       node-version: "20"
       package-manager: "pnpm"
       typecheck-script: "type-check"
+      pre-build-script: "pnpm --filter @profile/api-client build"
     secrets:
       npm-auth-token: ${{ secrets.GH_PAT }}
 
