@@ -17,7 +17,8 @@ jobs:
     with:
       node-version: "20"
       package-manager: "pnpm"
-    secrets: inherit
+    secrets:
+      npm-auth-token: ${{ secrets.GH_PAT }}
 
   test:
     uses: octopus-synapse/octopus-workflows/.github/workflows/unit-tests.yml@main
@@ -26,7 +27,8 @@ jobs:
       package-manager: "pnpm"
       has-database: false
       has-redis: false
-    secrets: inherit
+    secrets:
+      npm-auth-token: ${{ secrets.GH_PAT }}
 
   build:
     name: Build
