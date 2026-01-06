@@ -1,13 +1,24 @@
 /**
  * Onboarding Domain Types
  * API types for onboarding operations
+ *
+ * IMPORTANT: Entity types (Experience, Education, Skill, Language) are
+ * imported from @octopus-synapse/profile-contracts (single source of truth).
+ * Only API-specific types (steps, DTOs, responses) are defined here.
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 import {
-  PersonalInfoSchema,
-  ProfessionalProfileSchema,
-} from '@octopus-synapse/profile-contracts';
+ PersonalInfoSchema,
+ ProfessionalProfileSchema,
+ type Experience,
+ type Education,
+ type Skill,
+ type Language,
+} from "@octopus-synapse/profile-contracts";
+
+// Re-export contract types for convenience
+export type { Experience, Education, Skill, Language };
 
 // ============================================================================
 // Step Types
@@ -34,64 +45,36 @@ export type OnboardingStep = OnboardingApiStep | string;
 export type PersonalInfoData = z.infer<typeof PersonalInfoSchema>;
 export type ProfessionalProfileData = z.infer<typeof ProfessionalProfileSchema>;
 
-export interface ExperienceData {
- company: string;
- position: string;
- startDate: string;
- endDate?: string;
- isCurrent: boolean;
- description?: string;
- location?: string;
-}
-
+// Step wrapper types (API-specific, not in contracts)
 export interface ExperiencesStepData {
- experiences: ExperienceData[];
+ experiences: Experience[];
  noExperience: boolean;
 }
 
-export interface EducationData {
- institution: string;
- degree: string;
- field: string;
- startDate: string;
- endDate?: string;
- isCurrent: boolean;
-}
-
 export interface EducationStepData {
- education: EducationData[];
+ education: Education[];
  noEducation: boolean;
 }
 
-export interface SkillData {
- name: string;
- category: string;
- level?: number;
-}
-
 export interface SkillsStepData {
- skills: SkillData[];
+ skills: Skill[];
  noSkills: boolean;
 }
 
-export interface LanguageData {
- name: string;
- level: string;
- cefrLevel?: string;
-}
-
+// Template selection (API-specific)
 export interface TemplateSelectionData {
  template: string;
  palette: string;
 }
 
+// Complete onboarding data structure
 export interface OnboardingData {
  personalInfo?: PersonalInfoData;
  professionalProfile?: ProfessionalProfileData;
  experiencesStep?: ExperiencesStepData;
  educationStep?: EducationStepData;
  skillsStep?: SkillsStepData;
- languages?: LanguageData[];
+ languages?: Language[];
  templateSelection?: TemplateSelectionData;
 }
 
@@ -110,13 +93,13 @@ export interface OnboardingProgress {
  username?: string | null;
  personalInfo: PersonalInfoData | null;
  professionalProfile: ProfessionalProfileData | null;
- experiences: ExperienceData[];
+ experiences: Experience[];
  noExperience: boolean;
- education: EducationData[];
+ education: Education[];
  noEducation: boolean;
- skills: SkillData[];
+ skills: Skill[];
  noSkills: boolean;
- languages: LanguageData[];
+ languages: Language[];
  templateSelection: TemplateSelectionData | null;
 }
 
@@ -143,6 +126,6 @@ export interface SubmitOnboardingDto {
  skillsStep: SkillsStepData;
  experiencesStep?: ExperiencesStepData;
  educationStep?: EducationStepData;
- languages?: LanguageData[];
+ languages?: Language[];
  templateSelection: TemplateSelectionData;
 }
