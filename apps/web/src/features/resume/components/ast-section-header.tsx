@@ -5,18 +5,28 @@
 
 "use client";
 
-import type { PlacedSection, HeaderData } from "@octopus-synapse/profile-contracts";
+import type { PlacedSection } from "@octopus-synapse/profile-contracts";
 
 interface Props {
   section: PlacedSection;
 }
 
+interface HeaderData {
+  fullName?: string;
+  jobTitle?: string;
+  email?: string;
+  phone?: string;
+  location?: string;
+  links?: Array<{ url: string; label: string }>;
+}
+
 export function ASTSectionHeader({ section }: Props) {
   const { data, styles } = section;
 
-  if (data.type !== "header") return null;
+  // Header section uses custom type for now
+  if (data.type !== "custom") return null;
 
-  const headerData = data.data as HeaderData;
+  const headerData = data.items[0] as unknown as HeaderData;
   const { fullName, jobTitle, email, phone, location, links } = headerData;
 
   const titleStyle = {
@@ -24,7 +34,7 @@ export function ASTSectionHeader({ section }: Props) {
     fontSize: `${styles.title.fontSizePx}px`,
     lineHeight: styles.title.lineHeight,
     fontWeight: styles.title.fontWeight,
-    textTransform: styles.title.textTransform as any,
+    textTransform: styles.title.textTransform,
     textDecoration: styles.title.textDecoration,
   };
 

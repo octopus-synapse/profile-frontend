@@ -10,8 +10,21 @@ const config = {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
   testMatch: ['**/__tests__/**/*.test.ts'],
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/__tests__/.*\\.integration\\.test\\.ts$', // Skip integration tests by default
+  ],
   extensionsToTreatAsEsm: ['.ts'],
   setupFilesAfterEnv: [],
+  // Show test summary
+  reporters: [
+    'default',
+    ['jest-junit', {
+      outputDirectory: './test-results',
+      outputName: 'junit.xml',
+      suiteName: 'Unit Tests',
+    }],
+  ],
 };
 
 module.exports = config;

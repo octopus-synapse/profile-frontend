@@ -21,7 +21,7 @@ export function ResumeBuilder() {
   const resumeId = resumesList?.[0]?.id;
 
   // Fetch full resume data
-  const { data: resume, isLoading: resumeLoading } = useResume(resumeId);
+  const { data: resume, isLoading: resumeLoading } = useResume(resumeId ?? "");
 
   // Fetch compiled AST from backend
   const { data: ast, isLoading: astLoading, refetch: refetchAst } = useResumeAst(resumeId);

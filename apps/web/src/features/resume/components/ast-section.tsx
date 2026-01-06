@@ -35,7 +35,7 @@ export function ASTSection({ section }: Props) {
   return (
     <div style={containerStyle}>
       {/* Render specific section type */}
-      {data.type === "header" && <ASTSectionHeader section={section} />}
+      {data.type === "custom" && <ASTSectionHeader section={section} />}
       {data.type === "summary" && <ASTSectionSummary section={section} />}
       {data.type === "experience" && <ASTSectionExperience section={section} />}
       {data.type === "education" && <ASTSectionEducation section={section} />}

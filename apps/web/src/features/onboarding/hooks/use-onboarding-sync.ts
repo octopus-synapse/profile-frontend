@@ -22,7 +22,7 @@ export function useOnboardingSync() {
   const { data: backendProgress, isLoading, isError } = useOnboardingProgress();
   const saveProgress = useSaveOnboardingProgress();
 
-  const { currentStep, hydrateFromBackend, getStateForBackend } = useOnboardingStore();
+  const { currentStep, hydrateFromBackend, getStateForBackend} = useOnboardingStore();
 
   const hasHydrated = useRef(false);
   const previousStep = useRef<OnboardingStep | null>(null);
@@ -32,18 +32,17 @@ export function useOnboardingSync() {
 
   // Set timeout to prevent infinite loading
   useEffect(() => {
-    if (!isAuthenticated || hasHydrated.current) return;
+    if (!isAuthenticated || hasHydrated.current || timedOut) return;
 
     const timeout = setTimeout(() => {
       if (isLoading && !hasHydrated.current) {
         console.warn("Onboarding sync timed out, proceeding with local state");
         setTimedOut(true);
-        hasHydrated.current = true;
       }
     }, SYNC_TIMEOUT_MS);
 
     return () => clearTimeout(timeout);
-  }, [isAuthenticated, isLoading]);
+  }, [isAuthenticated, isLoading, timedOut]);
 
   // Hydrate store from backend on initial load
   useEffect(() => {
@@ -159,7 +158,7 @@ export function useOnboardingSync() {
   return {
     isLoading:
       status === "loading" ||
-      (isAuthenticated && isLoading && !timedOut && !isError && !hasHydrated.current),
+      (isAuthenticated && isLoading && !timedOut && !isError),
     isError,
     isSaving: saveProgress.isPending,
     saveToBackend,

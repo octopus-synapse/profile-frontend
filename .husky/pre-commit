@@ -1,0 +1,15 @@
+echo "Running pre-commit checks..."
+
+# Type checking
+echo "Checking types..."
+pnpm type-check || exit 1
+
+# Linting
+echo "Running linter..."
+pnpm lint || exit 1
+
+# Unit Tests with summary
+./scripts/test-summary.sh || exit 1
+
+echo ""
+echo "✓ All pre-commit checks passed!"
