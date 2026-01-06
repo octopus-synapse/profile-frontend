@@ -34,8 +34,8 @@ importers:
   apps/web:
     dependencies:
       '@octopus-synapse/profile-ui':
-        specifier: ^0.4.0
-        version: 0.4.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        specifier: ^1.0.0
+        version: 1.0.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@profile/api-client':
         specifier: workspace:*
         version: link:../../packages/api-client
@@ -1084,8 +1084,8 @@ packages:
   '@octopus-synapse/profile-contracts@1.1.1':
     resolution: {integrity: sha512-VzdCcTDf7n3KKzM/31fePKivKpbpZMKghziW9nbubJRKZAwdRS1rAoF9QvGtnBbHYfkwg+/EoJAsUMZHHuwfog==, tarball: https://npm.pkg.github.com/download/@octopus-synapse/profile-contracts/1.1.1/998a59e23e797b43525e9e839959d3119824fbab}
 
-  '@octopus-synapse/profile-ui@0.4.0':
-    resolution: {integrity: sha512-Ng9ig01AjXwdM95q9ds8PemOnoUv88wjG8EBI6lbfawm4tc+pRJEEtEkxKw0v46bdjOJBbIRWebF7FIUAQA2uQ==, tarball: https://npm.pkg.github.com/download/@octopus-synapse/profile-ui/0.4.0/947d278c9a6a1d9919bfddb0c9deb3754829a0f1}
+  '@octopus-synapse/profile-ui@1.0.0':
+    resolution: {integrity: sha512-ojAg9RwsHMrYyhjkw0zc+QCoYkdOP0GnD0/md7Pxis+9rsw5VK3RxbeHAoHKbnKFGnsGuvdpesaRl4QxUXzFxg==, tarball: https://npm.pkg.github.com/download/@octopus-synapse/profile-ui/1.0.0/01079ff2442a7c798e83351b8a955df0fd65230d}
     peerDependencies:
       react: '>=18.0.0'
       react-dom: '>=18.0.0'
@@ -5761,7 +5761,7 @@ snapshots:
     dependencies:
       zod: 3.25.76
 
-  '@octopus-synapse/profile-ui@0.4.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
+  '@octopus-synapse/profile-ui@1.0.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
       class-variance-authority: 0.7.1
       clsx: 2.1.1
