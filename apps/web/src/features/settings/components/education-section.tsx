@@ -1,6 +1,7 @@
 /**
  * Education Section
  * Manage education entries
+ * Validation via @octopus-synapse/profile-contracts (single source of truth)
  */
 
 "use client";
@@ -15,6 +16,8 @@ import {
   type MecInstitution,
   type MecCourse,
 } from "@/features/mec";
+import { EducationSchema } from "@octopus-synapse/profile-contracts";
+import { toast } from "sonner";
 
 // Map MEC grau to degree options
 const mapGrauToDegree = (grau: string | null): string => {
@@ -117,27 +120,39 @@ export function EducationSection() {
   };
 
   const handleSave = async () => {
-    if (!formData.institution || !formData.degree || !formData.field || !formData.startDate) return;
-
-    const payload: CreateEducationPayload = {
-      institution: formData.institution,
-      degree: formData.degree,
-      field: formData.field,
-      startDate: formData.startDate,
-      endDate: formData.isCurrent ? null : formData.endDate || null,
+    const payload = {
+      institution: formData.institution || "",
+      degree: formData.degree || "",
+      field: formData.field || "",
+      startDate: formData.startDate || "",
+      endDate: formData.isCurrent ? undefined : formData.endDate || undefined,
       isCurrent: formData.isCurrent || false,
-      description: formData.description || null,
+      description: formData.description || undefined,
     };
 
+    const validation = EducationSchema.safeParse(payload);
+    if (!validation.success) {
+      const firstError = validation.error.errors[0];
+      toast.error(firstError?.message || "Invalid data");
+      return;
+    }
+
     try {
+      const apiPayload: CreateEducationPayload = {
+        ...validation.data,
+        endDate: validation.data.endDate ?? null,
+        description: validation.data.description ?? null,
+      };
+
       if (editingId) {
-        await updateEducation.mutateAsync({ id: editingId, data: payload });
+        await updateEducation.mutateAsync({ id: editingId, data: apiPayload });
       } else {
-        await createEducation.mutateAsync(payload);
+        await createEducation.mutateAsync(apiPayload);
       }
       handleCancel();
     } catch (error) {
       console.error("Failed to save education:", error);
+      toast.error("Failed to save education");
     }
   };
 

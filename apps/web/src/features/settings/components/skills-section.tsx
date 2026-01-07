@@ -1,6 +1,7 @@
 /**
  * Skills Section
  * Manage professional skills with API-powered autocomplete
+ * Validation via @octopus-synapse/profile-contracts (single source of truth)
  */
 
 "use client";
@@ -10,6 +11,8 @@ import { Sparkles, Plus, Trash2, Pencil, X, Loader2, Search } from "lucide-react
 import { useSkills, useCreateSkill, useUpdateSkill, useDeleteSkill } from "../hooks";
 import type { Skill, CreateSkillPayload } from "../types";
 import { useTechNiches, useSearchAllTechSkills } from "@/features/tech-skills";
+import { SkillSchema } from "@octopus-synapse/profile-contracts";
+import { toast } from "sonner";
 
 const emptySkill: Partial<CreateSkillPayload> = {
   name: "",
@@ -126,23 +129,34 @@ export function SkillsSection() {
   };
 
   const handleSave = async () => {
-    if (!formData.name || !formData.category) return;
-
-    const payload: CreateSkillPayload = {
-      name: formData.name,
-      category: formData.category,
-      level: formData.level,
+    const payload = {
+      name: formData.name || "",
+      category: formData.category || undefined,
     };
 
+    const validation = SkillSchema.safeParse(payload);
+    if (!validation.success) {
+      const firstError = validation.error.errors[0];
+      toast.error(firstError?.message || "Invalid data");
+      return;
+    }
+
     try {
+      const apiPayload: CreateSkillPayload = {
+        name: validation.data.name,
+        category: validation.data.category ?? formData.category ?? "Technical Skills",
+        level: formData.level,
+      };
+
       if (editingId) {
-        await updateSkill.mutateAsync({ id: editingId, data: payload });
+        await updateSkill.mutateAsync({ id: editingId, data: apiPayload });
       } else {
-        await createSkill.mutateAsync(payload);
+        await createSkill.mutateAsync(apiPayload);
       }
       handleCancel();
     } catch (error) {
       console.error("Failed to save skill:", error);
+      toast.error("Failed to save skill");
     }
   };
 

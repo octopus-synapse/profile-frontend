@@ -1,6 +1,7 @@
 /**
  * Experiences Section
  * Manage work experiences
+ * Validation via @octopus-synapse/profile-contracts (single source of truth)
  */
 
 "use client";
@@ -24,6 +25,8 @@ import {
   useDeleteExperience,
 } from "../hooks";
 import type { Experience, CreateExperiencePayload } from "../types";
+import { ExperienceSchema } from "@octopus-synapse/profile-contracts";
+import { toast } from "sonner";
 
 const emptyExperience: Partial<CreateExperiencePayload> = {
   company: "",
@@ -74,27 +77,40 @@ export function ExperiencesSection() {
   };
 
   const handleSave = async () => {
-    if (!formData.company || !formData.position || !formData.startDate) return;
-
-    const payload: CreateExperiencePayload = {
-      company: formData.company,
-      position: formData.position,
-      startDate: formData.startDate,
-      endDate: formData.isCurrent ? null : formData.endDate || null,
+    const payload = {
+      company: formData.company || "",
+      position: formData.position || "",
+      startDate: formData.startDate || "",
+      endDate: formData.isCurrent ? undefined : formData.endDate || undefined,
       isCurrent: formData.isCurrent || false,
-      description: formData.description || null,
-      location: formData.location || null,
+      description: formData.description || undefined,
+      location: formData.location || undefined,
     };
 
+    const validation = ExperienceSchema.safeParse(payload);
+    if (!validation.success) {
+      const firstError = validation.error.errors[0];
+      toast.error(firstError?.message || "Invalid data");
+      return;
+    }
+
     try {
+      const apiPayload: CreateExperiencePayload = {
+        ...validation.data,
+        endDate: validation.data.endDate ?? null,
+        description: validation.data.description ?? null,
+        location: validation.data.location ?? null,
+      };
+
       if (editingId) {
-        await updateExperience.mutateAsync({ id: editingId, data: payload });
+        await updateExperience.mutateAsync({ id: editingId, data: apiPayload });
       } else {
-        await createExperience.mutateAsync(payload);
+        await createExperience.mutateAsync(apiPayload);
       }
       handleCancel();
     } catch (error) {
       console.error("Failed to save experience:", error);
+      toast.error("Failed to save experience");
     }
   };
 

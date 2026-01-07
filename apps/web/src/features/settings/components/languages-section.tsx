@@ -1,6 +1,7 @@
 /**
  * Languages Section
  * Manage spoken languages with autocomplete and CEFR levels
+ * Validation via @octopus-synapse/profile-contracts (single source of truth)
  */
 
 "use client";
@@ -11,6 +12,12 @@ import { useLanguages, useCreateLanguage, useUpdateLanguage, useDeleteLanguage }
 import { useI18n } from "@/features/i18n/context";
 import { SpokenLanguageAutocomplete } from "./spoken-language-autocomplete";
 import type { Language, CreateLanguagePayload } from "../types";
+import { LanguageSchema, type LanguageProficiency } from "@octopus-synapse/profile-contracts";
+import { toast } from "sonner";
+
+/** Map frontend lowercase level to backend uppercase enum */
+const toBackendLevel = (level: string): LanguageProficiency =>
+  level.toUpperCase() as LanguageProficiency;
 
 const LANGUAGE_LEVELS = [
   { value: "basic", labelEn: "Basic", labelPtBr: "Básico" },
@@ -77,23 +84,35 @@ export function LanguagesSection() {
   };
 
   const handleSave = async () => {
-    if (!formData.name || !formData.level) return;
-
-    const payload: CreateLanguagePayload = {
+    const payload = {
       name: formData.name,
-      level: formData.level,
-      cefrLevel: formData.cefrLevel || null,
+      level: toBackendLevel(formData.level),
+      cefrLevel: formData.cefrLevel || undefined,
     };
 
+    const validation = LanguageSchema.safeParse(payload);
+    if (!validation.success) {
+      const firstError = validation.error.errors[0];
+      toast.error(firstError?.message || "Invalid data");
+      return;
+    }
+
     try {
+      const apiPayload: CreateLanguagePayload = {
+        name: validation.data.name,
+        level: formData.level, // Keep frontend format for API (lowercase)
+        cefrLevel: validation.data.cefrLevel ?? null,
+      };
+
       if (editingId) {
-        await updateLanguage.mutateAsync({ id: editingId, data: payload });
+        await updateLanguage.mutateAsync({ id: editingId, data: apiPayload });
       } else {
-        await createLanguage.mutateAsync(payload);
+        await createLanguage.mutateAsync(apiPayload);
       }
       handleCancel();
     } catch (error) {
       console.error("Failed to save language:", error);
+      toast.error("Failed to save language");
     }
   };
 
