@@ -49,5 +49,6 @@ jobs:
       - run: pnpm install --frozen-lockfile
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GH_PAT }}
+      - run: pnpm --filter @profile/api-client build
       - run: pnpm build
       - run: test -d apps/web/.next
