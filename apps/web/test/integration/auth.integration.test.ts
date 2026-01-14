@@ -3,6 +3,7 @@
  * Tests the authentication flow against the real backend
  */
 
+import { describe, it, expect, beforeAll } from "bun:test";
 import axios from "axios";
 
 const API_URL = "http://localhost:3001/api";
@@ -30,10 +31,10 @@ describe("Auth Integration Tests", () => {
       const { user } = response.data;
 
       // Required fields for NextAuth
-      expect(user).toHaveProperty("id");
-      expect(user).toHaveProperty("email");
-      expect(user).toHaveProperty("role");
-      expect(user).toHaveProperty("hasCompletedOnboarding");
+      expect(user.id).toBeDefined();
+      expect(user.email).toBeDefined();
+      expect(user.role).toBeDefined();
+      expect(user.hasCompletedOnboarding).toBeDefined();
 
       // Type checks
       expect(typeof user.id).toBe("string");
@@ -42,9 +43,9 @@ describe("Auth Integration Tests", () => {
       expect(typeof user.hasCompletedOnboarding).toBe("boolean");
 
       // Optional fields should exist (can be null)
-      expect(user).toHaveProperty("name");
-      expect(user).toHaveProperty("username");
-      expect(user).toHaveProperty("image");
+      expect("name" in user).toBe(true);
+      expect("username" in user).toBe(true);
+      expect("image" in user).toBe(true);
 
       // Log the response for visual verification
       console.log("\n✅ LOGIN RESPONSE:");
@@ -90,8 +91,8 @@ describe("Onboarding Progress Endpoints", () => {
       });
 
       expect(response.status).toBe(200);
-      expect(response.data).toHaveProperty("currentStep");
-      expect(response.data).toHaveProperty("completedSteps");
+      expect(response.data.currentStep).toBeDefined();
+      expect(response.data.completedSteps).toBeDefined();
 
       console.log("\n✅ ONBOARDING PROGRESS:");
       console.log(JSON.stringify(response.data, null, 2));

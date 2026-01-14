@@ -45,7 +45,7 @@ export function ThemeEditor({ theme, onSave, onCancel }: Props) {
 
       for (let i = 0; i < keys.length - 1; i++) {
         const key = keys[i]!;
-        current[key] = { ...(current[key] || {}) };
+        current[key] = { ...current[key] };
         current = current[key];
       }
       const lastKey = keys[keys.length - 1]!;

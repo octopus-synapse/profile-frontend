@@ -26,6 +26,19 @@ export {
  createAuthRepository,
  createSectionConfigRepository,
  createDslRepository,
+ createSocialRepository,
+ createChatRepository,
+ createGitHubRepository,
+ createExportRepository,
+ createPublicResumeRepository,
+ createShareRepository,
+ createATSRepository,
+ createTranslationRepository,
+ createGDPRRepository,
+ createTwoFactorRepository,
+ createResumeImportRepository,
+ createAnalyticsRepository,
+ createSpokenLanguagesRepository,
  type UserRepository,
  type ResumeRepository,
  type OnboardingRepository,
@@ -35,6 +48,19 @@ export {
  type AuthRepository,
  type SectionConfigRepository,
  type DslRepository,
+ type SocialRepository,
+ type ChatRepository,
+ type GitHubRepository,
+ type ExportRepository,
+ type PublicResumeRepository,
+ type ShareRepository,
+ type ATSRepository,
+ type TranslationRepository,
+ type GDPRRepository,
+ type TwoFactorRepository,
+ type ResumeImportRepository,
+ type AnalyticsRepository,
+ type SpokenLanguagesRepository,
 } from "./repositories";
 
 // Type exports
@@ -57,6 +83,19 @@ import { createAdminRepository } from "./repositories/admin.repository";
 import { createAuthRepository } from "./repositories/auth.repository";
 import { createSectionConfigRepository } from "./repositories/section-config.repository";
 import { createDslRepository } from "./repositories/dsl.repository";
+import { createSocialRepository } from "./repositories/social.repository";
+import { createChatRepository } from "./repositories/chat.repository";
+import { createGitHubRepository } from "./repositories/github.repository";
+import { createExportRepository } from "./repositories/export.repository";
+import { createPublicResumeRepository } from "./repositories/public-resume.repository";
+import { createShareRepository } from "./repositories/share.repository";
+import { createATSRepository } from "./repositories/ats.repository";
+import { createTranslationRepository } from "./repositories/translation.repository";
+import { createGDPRRepository } from "./repositories/gdpr.repository";
+import { createTwoFactorRepository } from "./repositories/two-factor.repository";
+import { createResumeImportRepository } from "./repositories/resume-import.repository";
+import { createAnalyticsRepository } from "./repositories/analytics.repository";
+import { createSpokenLanguagesRepository } from "./repositories/spoken-languages.repository";
 
 export interface ProfileApiClient {
  users: ReturnType<typeof createUserRepository>;
@@ -68,6 +107,19 @@ export interface ProfileApiClient {
  auth: ReturnType<typeof createAuthRepository>;
  sectionConfig: ReturnType<typeof createSectionConfigRepository>;
  dsl: ReturnType<typeof createDslRepository>;
+ social: ReturnType<typeof createSocialRepository>;
+ chat: ReturnType<typeof createChatRepository>;
+ github: ReturnType<typeof createGitHubRepository>;
+ export: ReturnType<typeof createExportRepository>;
+ publicResume: ReturnType<typeof createPublicResumeRepository>;
+ share: ReturnType<typeof createShareRepository>;
+ ats: ReturnType<typeof createATSRepository>;
+ translation: ReturnType<typeof createTranslationRepository>;
+ gdpr: ReturnType<typeof createGDPRRepository>;
+ twoFactor: ReturnType<typeof createTwoFactorRepository>;
+ resumeImport: ReturnType<typeof createResumeImportRepository>;
+ analytics: ReturnType<typeof createAnalyticsRepository>;
+ spokenLanguages: ReturnType<typeof createSpokenLanguagesRepository>;
 }
 
 /**
@@ -111,5 +163,18 @@ export function createProfileApiClient(
   auth: createAuthRepository(httpClient),
   sectionConfig: createSectionConfigRepository(httpClient),
   dsl: createDslRepository(httpClient),
+  social: createSocialRepository(httpClient),
+  chat: createChatRepository(httpClient),
+  github: createGitHubRepository(httpClient),
+  export: createExportRepository(httpClient),
+  publicResume: createPublicResumeRepository(httpClient),
+  share: createShareRepository(httpClient),
+  ats: createATSRepository(httpClient),
+  translation: createTranslationRepository(httpClient),
+  gdpr: createGDPRRepository(httpClient),
+  twoFactor: createTwoFactorRepository(httpClient),
+  resumeImport: createResumeImportRepository(httpClient),
+  analytics: createAnalyticsRepository(httpClient),
+  spokenLanguages: createSpokenLanguagesRepository(httpClient),
  };
 }

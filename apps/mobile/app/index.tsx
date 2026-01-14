@@ -1,0 +1,46 @@
+/**
+ * Index Screen
+ * Landing/splash screen with auth check
+ */
+
+import { useEffect } from "react";
+import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
+import { useRouter } from "expo-router";
+import { useAuthStore } from "../providers/StoresProvider";
+
+export default function Index() {
+ const router = useRouter();
+ const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+ const isLoading = useAuthStore((state) => state.isLoading);
+
+ useEffect(() => {
+  if (!isLoading) {
+   if (isAuthenticated) {
+    router.replace("/(tabs)");
+   } else {
+    router.replace("/(auth)/login");
+   }
+  }
+ }, [isAuthenticated, isLoading]);
+
+ return (
+  <View style={styles.container}>
+   <ActivityIndicator size="large" color="#0000ff" />
+   <Text style={styles.text}>Profile</Text>
+  </View>
+ );
+}
+
+const styles = StyleSheet.create({
+ container: {
+  flex: 1,
+  justifyContent: "center",
+  alignItems: "center",
+  backgroundColor: "#fff",
+ },
+ text: {
+  marginTop: 20,
+  fontSize: 24,
+  fontWeight: "bold",
+ },
+});
