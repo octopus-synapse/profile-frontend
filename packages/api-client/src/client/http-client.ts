@@ -29,6 +29,7 @@ export interface RetryConfig {
 export type TokenGetter = () => string | null | Promise<string | null>;
 export type TokenRefresher = () => Promise<string | null>;
 export type OnUnauthorized = () => void;
+export type CsrfTokenGetter = () => string | null | Promise<string | null>;
 
 export interface HttpClientConfig {
  baseURL: string;
@@ -37,6 +38,10 @@ export interface HttpClientConfig {
  refreshToken?: TokenRefresher;
  onUnauthorized?: OnUnauthorized;
  headers?: Record<string, string>;
+ /** CSRF token getter for state-changing requests (POST, PUT, PATCH, DELETE) */
+ getCsrfToken?: CsrfTokenGetter;
+ /** Custom CSRF header name (default: X-CSRF-Token) */
+ csrfHeaderName?: string;
 }
 
 export interface HttpClient {
@@ -173,6 +178,8 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
   refreshToken,
   onUnauthorized,
   headers: customHeaders,
+  getCsrfToken,
+  csrfHeaderName = "X-CSRF-Token",
  } = config;
 
  const client = axios.create({
@@ -182,17 +189,33 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
    "Content-Type": "application/json",
    ...customHeaders,
   },
+  // Enable credentials for same-origin CSRF cookies
+  withCredentials: true,
  });
 
- // Request interceptor - add auth token
+ // State-changing HTTP methods that require CSRF protection
+ const stateChangingMethods = ["post", "put", "patch", "delete"];
+
+ // Request interceptor - add auth token and CSRF token
  client.interceptors.request.use(
   async (requestConfig) => {
+   // Add auth token
    if (getToken) {
     const token = await Promise.resolve(getToken());
     if (token) {
      requestConfig.headers.Authorization = `Bearer ${token}`;
     }
    }
+
+   // Add CSRF token for state-changing requests
+   const method = requestConfig.method?.toLowerCase();
+   if (getCsrfToken && method && stateChangingMethods.includes(method)) {
+    const csrfToken = await Promise.resolve(getCsrfToken());
+    if (csrfToken) {
+     requestConfig.headers[csrfHeaderName] = csrfToken;
+    }
+   }
+
    return requestConfig;
   },
   (error: unknown) => Promise.reject(error)

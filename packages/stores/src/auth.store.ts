@@ -4,11 +4,17 @@
  */
 
 import { create } from "zustand";
-import type { User, AuthTokens } from "@octopus-synapse/profile-contracts";
-import type { ProfileApiClient } from "@profile/api-client";
+import type {
+ ProfileApiClient,
+ AuthResponse,
+ AuthTokens,
+} from "@profile/api-client";
+
+// Use the auth response user type instead of full User type
+type AuthUser = AuthResponse["user"];
 
 export interface AuthState {
- user: User | null;
+ user: AuthUser | null;
  tokens: AuthTokens | null;
  isAuthenticated: boolean;
  isLoading: boolean;
@@ -16,12 +22,16 @@ export interface AuthState {
 }
 
 export interface AuthActions {
- setUser: (user: User | null) => void;
+ setUser: (user: AuthUser | null) => void;
  setTokens: (tokens: AuthTokens | null) => void;
  setLoading: (loading: boolean) => void;
  setError: (error: string | null) => void;
  login: (email: string, password: string) => Promise<void>;
- register: (email: string, password: string, username: string) => Promise<void>;
+ register: (
+  email: string,
+  password: string,
+  username?: string
+ ) => Promise<void>;
  logout: () => Promise<void>;
  refreshToken: () => Promise<void>;
  clearAuth: () => void;
@@ -77,7 +87,7 @@ export const createAuthStore = (apiClient: ProfileApiClient) =>
     const response = await apiClient.auth.register({
      email,
      password,
-     username,
+     name: username,
     });
     set({
      user: response.user,
@@ -128,6 +138,7 @@ export const createAuthStore = (apiClient: ProfileApiClient) =>
     set({
      tokens: {
       accessToken: response.accessToken,
+      expiresIn: response.expiresIn,
       refreshToken: tokens.refreshToken,
      },
     });

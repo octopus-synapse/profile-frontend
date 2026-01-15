@@ -5,10 +5,7 @@
 
 "use client";
 
-import type {
-  PlacedSection,
-  ExperienceItem,
-} from "@octopus-synapse/profile-contracts";
+import type { PlacedSection, ExperienceItem } from "@octopus-synapse/profile-contracts";
 
 interface Props {
   section: PlacedSection;
@@ -52,7 +49,7 @@ export function ASTSectionExperience({ section }: Props) {
           {item.description && <p style={{ marginTop: "8px" }}>{item.description}</p>}
           {item.achievements && item.achievements.length > 0 && (
             <ul style={{ marginTop: "8px", paddingLeft: "20px" }}>
-              {item.achievements.map((achievement, aIdx) => (
+              {item.achievements.map((achievement: string, aIdx: number) => (
                 <li key={aIdx}>{achievement}</li>
               ))}
             </ul>

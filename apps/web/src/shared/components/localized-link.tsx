@@ -7,14 +7,13 @@
 
 import Link, { type LinkProps } from "next/link";
 import { useParams } from "next/navigation";
-import type { ReactNode, AnchorHTMLAttributes } from "react";
+import type { AnchorHTMLAttributes } from "react";
 import { i18nConfig, type Locale } from "@/config/i18n.config";
 
 interface LocalizedLinkProps
-  extends Omit<LinkProps, "href">,
-    Omit<AnchorHTMLAttributes<HTMLAnchorElement>, keyof LinkProps> {
+  extends Omit<LinkProps, "href">, Omit<AnchorHTMLAttributes<HTMLAnchorElement>, keyof LinkProps> {
   href: string;
-  children: ReactNode;
+  children: React.ReactNode;
   locale?: Locale;
 }
 
@@ -61,7 +60,9 @@ export function LocalizedLink({
   }
 
   // Add locale prefix to internal URLs
-  const localizedHref = href.startsWith("/") ? `/${targetLocale}${href}` : `/${targetLocale}/${href}`;
+  const localizedHref = href.startsWith("/")
+    ? `/${targetLocale}${href}`
+    : `/${targetLocale}/${href}`;
 
   return (
     <Link href={localizedHref} {...props}>

@@ -4,6 +4,8 @@ import { useState, useCallback } from "react";
 import { X, Shield, Check, ExternalLink } from "lucide-react";
 import type { TranslationKeys } from "@/locales";
 import { trackEvent, AnalyticsEvent } from "@/lib/analytics";
+import { useApiClient } from "@/hooks/useApiClient";
+import type { ConsentStatus } from "@octopus-synapse/profile-contracts";
 
 interface ConsentModalProps {
   t: TranslationKeys;
@@ -14,37 +16,81 @@ interface ConsentModalProps {
 
 const CONSENT_STORAGE_KEY = "autoapply_consent";
 
+/**
+ * ConsentModal - Integrated with Backend
+ *
+ * Clean Architecture:
+ * - Uses api-client for backend calls (Infrastructure)
+ * - Validates against profile-contracts schemas (Domain)
+ * - Maintains localStorage as fallback/cache (Application)
+ */
 export function ConsentModal({ t, isOpen, onClose, onAccept }: ConsentModalProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const apiClient = useApiClient();
 
   const handleAccept = useCallback(async () => {
     setIsLoading(true);
+    setError(null);
 
-    // Store consent with timestamp
-    const consentData = {
-      granted: true,
-      timestamp: new Date().toISOString(),
-      version: "1.0",
-    };
+    const userAgent = typeof navigator !== "undefined" ? navigator.userAgent : "";
 
     try {
+      // Accept ToS via backend API
+      await apiClient.consent.acceptConsent({
+        documentType: "TERMS_OF_SERVICE",
+        userAgent,
+      });
+
+      // Accept Privacy Policy via backend API
+      await apiClient.consent.acceptConsent({
+        documentType: "PRIVACY_POLICY",
+        userAgent,
+      });
+
+      // Store consent locally as cache/fallback
+      const consentData = {
+        granted: true,
+        timestamp: new Date().toISOString(),
+        version: "1.0",
+        syncedWithBackend: true,
+      };
       localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(consentData));
 
       // Track analytics event
       trackEvent(AnalyticsEvent.AUTOAPPLY_CONSENT_GRANTED, {
         timestamp: consentData.timestamp,
+        syncedWithBackend: true,
       });
 
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
       onAccept();
-    } catch (error) {
-      console.error("Failed to save consent:", error);
+    } catch (err) {
+      console.error("Failed to save consent:", err);
+      const message = err instanceof Error ? err.message : "Failed to record consent";
+      setError(message);
+
+      // Fallback to localStorage-only if backend fails
+      // This allows user to proceed but marks as not synced
+      const fallbackData = {
+        granted: true,
+        timestamp: new Date().toISOString(),
+        version: "1.0",
+        syncedWithBackend: false,
+      };
+      localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(fallbackData));
+
+      trackEvent(AnalyticsEvent.AUTOAPPLY_CONSENT_GRANTED, {
+        timestamp: fallbackData.timestamp,
+        syncedWithBackend: false,
+        error: message,
+      });
+
+      // Still allow user to proceed (graceful degradation)
+      onAccept();
     } finally {
       setIsLoading(false);
     }
-  }, [onAccept]);
+  }, [apiClient, onAccept]);
 
   const handleDecline = useCallback(() => {
     trackEvent(AnalyticsEvent.AUTOAPPLY_CONSENT_DECLINED, {
@@ -119,6 +165,13 @@ export function ConsentModal({ t, isOpen, onClose, onAccept }: ConsentModalProps
           ))}
         </ul>
 
+        {/* Error message */}
+        {error && (
+          <p className="mb-4 text-center text-sm text-red-400" role="alert">
+            {error}
+          </p>
+        )}
+
         {/* Revoke notice */}
         <p className="mb-6 text-center text-xs text-zinc-500">{t.consent.revoke}</p>
 
@@ -177,30 +230,89 @@ export function ConsentModal({ t, isOpen, onClose, onAccept }: ConsentModalProps
   );
 }
 
-// Hook to manage consent state
+/**
+ * Hook to manage consent state
+ *
+ * Checks backend first, falls back to localStorage.
+ * Syncs unsynced localStorage consent to backend on mount.
+ */
 export function useConsentModal() {
   const [isOpen, setIsOpen] = useState(false);
+  const [consentStatus, setConsentStatus] = useState<ConsentStatus | null>(null);
+  const apiClient = useApiClient();
 
   const openModal = useCallback(() => setIsOpen(true), []);
   const closeModal = useCallback(() => setIsOpen(false), []);
 
-  const checkExistingConsent = useCallback((): boolean => {
+  /**
+   * Check if user has already accepted consent
+   * Prefers backend status, falls back to localStorage
+   */
+  const checkExistingConsent = useCallback(async (): Promise<boolean> => {
     try {
+      // Try backend first
+      const status = await apiClient.consent.getConsentStatus();
+      setConsentStatus(status);
+
+      // If backend says both are accepted, we're good
+      if (status.tosAccepted && status.privacyPolicyAccepted) {
+        return true;
+      }
+
+      // Check localStorage as fallback
       const stored = localStorage.getItem(CONSENT_STORAGE_KEY);
       if (stored) {
         const data = JSON.parse(stored);
+
+        // If localStorage has consent but backend doesn't, try to sync
+        if (data.granted && !data.syncedWithBackend) {
+          try {
+            const userAgent = typeof navigator !== "undefined" ? navigator.userAgent : "";
+            await apiClient.consent.acceptConsent({
+              documentType: "TERMS_OF_SERVICE",
+              userAgent,
+            });
+            await apiClient.consent.acceptConsent({
+              documentType: "PRIVACY_POLICY",
+              userAgent,
+            });
+
+            // Update localStorage to mark as synced
+            localStorage.setItem(
+              CONSENT_STORAGE_KEY,
+              JSON.stringify({ ...data, syncedWithBackend: true })
+            );
+            return true;
+          } catch {
+            // If sync fails, still return true based on localStorage
+            return data.granted === true;
+          }
+        }
+
         return data.granted === true;
       }
+
+      return false;
     } catch {
-      // Ignore parsing errors
+      // If backend is unavailable, check localStorage only
+      try {
+        const stored = localStorage.getItem(CONSENT_STORAGE_KEY);
+        if (stored) {
+          const data = JSON.parse(stored);
+          return data.granted === true;
+        }
+      } catch {
+        // Ignore parsing errors
+      }
+      return false;
     }
-    return false;
-  }, []);
+  }, [apiClient]);
 
   return {
     isOpen,
     openModal,
     closeModal,
     checkExistingConsent,
+    consentStatus,
   };
 }

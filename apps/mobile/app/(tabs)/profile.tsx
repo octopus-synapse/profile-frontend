@@ -1,16 +1,21 @@
 /**
  * Profile Tab Screen
+ * Uses NativeWind for styling and useAuth hook
  */
 
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { useRouter } from "expo-router";
+import { useAuth } from "@profile/features";
 import { useAuthStore } from "../../providers/StoresProvider";
 import { tokenManager } from "../../providers/ApiProvider";
 
 export default function ProfileScreen() {
  const router = useRouter();
- const user = useAuthStore((state) => state.user);
- const logout = useAuthStore((state) => state.logout);
+ const authStore = useAuthStore();
+
+ const { user, logout } = useAuth({
+  store: authStore,
+ });
 
  const handleLogout = async () => {
   Alert.alert("Logout", "Are you sure you want to logout?", [
@@ -28,77 +33,31 @@ export default function ProfileScreen() {
  };
 
  return (
-  <View style={styles.container}>
-   <View style={styles.header}>
-    <View style={styles.avatar}>
-     <Text style={styles.avatarText}>
+  <View className="flex-1 bg-secondary-50">
+   <View className="bg-white pt-10 pb-8 items-center border-b border-secondary-200">
+    <View className="w-20 h-20 rounded-full bg-primary-500 justify-center items-center mb-4">
+     <Text className="text-white text-3xl font-semibold">
       {user?.name?.charAt(0)?.toUpperCase() ??
        user?.username?.charAt(0)?.toUpperCase() ??
        "U"}
      </Text>
     </View>
-    <Text style={styles.name}>{user?.name ?? user?.username ?? "User"}</Text>
-    <Text style={styles.email}>{user?.email ?? "user@example.com"}</Text>
+    <Text className="text-2xl font-semibold mb-1 text-secondary-900">
+     {user?.name ?? user?.username ?? "User"}
+    </Text>
+    <Text className="text-base text-secondary-500">
+     {user?.email ?? "user@example.com"}
+    </Text>
    </View>
 
-   <View style={styles.actions}>
-    <TouchableOpacity style={styles.button} onPress={handleLogout}>
-     <Text style={styles.buttonText}>Logout</Text>
+   <View className="mt-5 px-4">
+    <TouchableOpacity
+     className="bg-red-500 rounded-xl p-4 items-center"
+     onPress={handleLogout}
+    >
+     <Text className="text-white text-base font-semibold">Logout</Text>
     </TouchableOpacity>
    </View>
   </View>
  );
 }
-
-const styles = StyleSheet.create({
- container: {
-  flex: 1,
-  backgroundColor: "#F2F2F7",
- },
- header: {
-  backgroundColor: "#fff",
-  paddingTop: 40,
-  paddingBottom: 30,
-  alignItems: "center",
-  borderBottomWidth: 1,
-  borderBottomColor: "#E5E5EA",
- },
- avatar: {
-  width: 80,
-  height: 80,
-  borderRadius: 40,
-  backgroundColor: "#007AFF",
-  justifyContent: "center",
-  alignItems: "center",
-  marginBottom: 16,
- },
- avatarText: {
-  color: "#fff",
-  fontSize: 32,
-  fontWeight: "600",
- },
- name: {
-  fontSize: 24,
-  fontWeight: "600",
-  marginBottom: 4,
- },
- email: {
-  fontSize: 16,
-  color: "#666",
- },
- actions: {
-  marginTop: 20,
-  paddingHorizontal: 16,
- },
- button: {
-  backgroundColor: "#FF3B30",
-  borderRadius: 12,
-  padding: 16,
-  alignItems: "center",
- },
- buttonText: {
-  color: "#fff",
-  fontSize: 16,
-  fontWeight: "600",
- },
-});

@@ -5,7 +5,7 @@
 
 import type { HttpClient } from "../client";
 
-const BASE_URL = "/resume-import";
+const BASE_URL = "/v1/resume-import";
 
 export interface ImportResumeDto {
  file: File | Blob;

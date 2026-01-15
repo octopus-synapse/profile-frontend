@@ -1,0 +1,26 @@
+{
+ "compilerOptions": {
+  "target": "ES2022",
+  "lib": ["DOM", "DOM.Iterable", "ES2022"],
+  "module": "ESNext",
+  "moduleResolution": "bundler",
+  "jsx": "react-jsx",
+  "strict": true,
+  "esModuleInterop": true,
+  "skipLibCheck": true,
+  "forceConsistentCasingInFileNames": true,
+  "resolveJsonModule": true,
+  "isolatedModules": true,
+  "noEmit": true
+ },
+ "references": [
+  { "path": "./apps/web" },
+  { "path": "./apps/mobile" },
+  { "path": "./packages/api-client" },
+  { "path": "./packages/features" },
+  { "path": "./packages/stores" },
+  { "path": "./packages/test-utils" }
+ ],
+ "include": [],
+ "exclude": ["node_modules", "dist"]
+}

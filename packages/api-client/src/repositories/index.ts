@@ -72,3 +72,11 @@ export {
  createSpokenLanguagesRepository,
  type SpokenLanguagesRepository,
 } from "./spoken-languages.repository";
+export {
+ createConsentRepository,
+ type ConsentRepository,
+} from "./consent.repository";
+export {
+ createAdvancedSectionsRepository,
+ type AdvancedSectionsRepository,
+} from "./advanced-sections.repository";

@@ -5,7 +5,7 @@
 
 import type { HttpClient } from "../client";
 
-const BASE_URL = "/auth/2fa";
+const BASE_URL = "/v1/auth/2fa";
 
 export interface SetupTwoFactorResponse {
  secret: string;

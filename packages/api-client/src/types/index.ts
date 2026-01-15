@@ -73,6 +73,9 @@ export * from "./user.types";
 // Resume types (extended local types)
 export * from "./resume.types";
 
+// Advanced resume sections types
+export * from "./advanced-sections.types";
+
 // Onboarding types
 export * from "./onboarding.types";
 
@@ -90,3 +93,12 @@ export * from "./auth.types";
 
 // Common types
 export * from "./common.types";
+
+// Consent types
+export * from "./consent.types";
+
+// Chat types
+export * from "./chat.types";
+
+// Social types
+export * from "./social.types";

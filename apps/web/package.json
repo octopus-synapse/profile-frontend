@@ -17,9 +17,14 @@
     "test:integration": "bun test test/integration/",
     "test:watch": "bun test --watch",
     "test:coverage": "bun test --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:report": "playwright show-report",
     "precommit": "bun run typecheck && bun run lint:fast",
     "ci:lint": "bun run lint",
-    "clean": "rm -rf .next .turbo node_modules"
+    "clean": "rm -rf .next .turbo node_modules playwright-report test-results"
   },
   "dependencies": {
     "@octopus-synapse/profile-contracts": "^1.4.0",

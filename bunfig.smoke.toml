@@ -1,0 +1,7 @@
+[test]
+# Configuration for smoke tests
+# These tests run without external dependencies and are fast
+root = "./test/smoke"
+
+[install.scopes]
+"@octopus-synapse" = { token = "$BUN_AUTH_TOKEN", url = "https://npm.pkg.github.com" }

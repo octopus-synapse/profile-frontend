@@ -1,10 +1,11 @@
 /**
  * Index Screen
  * Landing/splash screen with auth check
+ * Uses NativeWind for styling
  */
 
 import { useEffect } from "react";
-import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
+import { View, Text, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuthStore } from "../providers/StoresProvider";
 
@@ -21,26 +22,12 @@ export default function Index() {
     router.replace("/(auth)/login");
    }
   }
- }, [isAuthenticated, isLoading]);
+ }, [isAuthenticated, isLoading, router]);
 
  return (
-  <View style={styles.container}>
-   <ActivityIndicator size="large" color="#0000ff" />
-   <Text style={styles.text}>Profile</Text>
+  <View className="flex-1 justify-center items-center bg-white">
+   <ActivityIndicator size="large" color="#0ea5e9" />
+   <Text className="mt-5 text-2xl font-bold text-secondary-900">Profile</Text>
   </View>
  );
 }
-
-const styles = StyleSheet.create({
- container: {
-  flex: 1,
-  justifyContent: "center",
-  alignItems: "center",
-  backgroundColor: "#fff",
- },
- text: {
-  marginTop: 20,
-  fontSize: 24,
-  fontWeight: "bold",
- },
-});

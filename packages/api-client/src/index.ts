@@ -39,6 +39,7 @@ export {
  createResumeImportRepository,
  createAnalyticsRepository,
  createSpokenLanguagesRepository,
+ createConsentRepository,
  type UserRepository,
  type ResumeRepository,
  type OnboardingRepository,
@@ -61,6 +62,7 @@ export {
  type ResumeImportRepository,
  type AnalyticsRepository,
  type SpokenLanguagesRepository,
+ type ConsentRepository,
 } from "./repositories";
 
 // Type exports
@@ -96,6 +98,8 @@ import { createTwoFactorRepository } from "./repositories/two-factor.repository"
 import { createResumeImportRepository } from "./repositories/resume-import.repository";
 import { createAnalyticsRepository } from "./repositories/analytics.repository";
 import { createSpokenLanguagesRepository } from "./repositories/spoken-languages.repository";
+import { createConsentRepository } from "./repositories/consent.repository";
+import { createAdvancedSectionsRepository } from "./repositories/advanced-sections.repository";
 
 export interface ProfileApiClient {
  users: ReturnType<typeof createUserRepository>;
@@ -120,6 +124,8 @@ export interface ProfileApiClient {
  resumeImport: ReturnType<typeof createResumeImportRepository>;
  analytics: ReturnType<typeof createAnalyticsRepository>;
  spokenLanguages: ReturnType<typeof createSpokenLanguagesRepository>;
+ consent: ReturnType<typeof createConsentRepository>;
+ advancedSections: ReturnType<typeof createAdvancedSectionsRepository>;
 }
 
 /**
@@ -176,5 +182,7 @@ export function createProfileApiClient(
   resumeImport: createResumeImportRepository(httpClient),
   analytics: createAnalyticsRepository(httpClient),
   spokenLanguages: createSpokenLanguagesRepository(httpClient),
+  consent: createConsentRepository(httpClient),
+  advancedSections: createAdvancedSectionsRepository(httpClient),
  };
 }

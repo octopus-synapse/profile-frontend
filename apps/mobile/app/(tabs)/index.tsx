@@ -1,52 +1,55 @@
 /**
  * Resumes Tab Screen
+ * Uses NativeWind for styling and useResume hook
  */
 
-import { useEffect } from "react";
 import {
  View,
  Text,
  FlatList,
  TouchableOpacity,
- StyleSheet,
  ActivityIndicator,
 } from "react-native";
+import { useResume } from "@profile/features";
 import { useResumeStore } from "../../providers/StoresProvider";
 
 export default function ResumesScreen() {
- const resumes = useResumeStore((state) => state.resumes);
- const isLoading = useResumeStore((state) => state.isLoading);
- const fetchResumes = useResumeStore((state) => state.fetchResumes);
+ const resumeStore = useResumeStore();
 
- useEffect(() => {
-  fetchResumes();
- }, []);
+ const { resumes, isLoading } = useResume({
+  store: resumeStore,
+  autoFetch: true,
+ });
 
  if (isLoading && resumes.length === 0) {
   return (
-   <View style={styles.centered}>
-    <ActivityIndicator size="large" color="#007AFF" />
+   <View className="flex-1 justify-center items-center bg-secondary-50">
+    <ActivityIndicator size="large" color="#0ea5e9" />
    </View>
   );
  }
 
  return (
-  <View style={styles.container}>
+  <View className="flex-1 bg-secondary-50">
    <FlatList
     data={resumes}
     keyExtractor={(item) => item.id}
     renderItem={({ item }) => (
-     <TouchableOpacity style={styles.card}>
-      <Text style={styles.cardTitle}>{item.title}</Text>
-      <Text style={styles.cardSubtitle}>
+     <TouchableOpacity className="bg-white p-4 mx-4 my-2 rounded-xl shadow-sm">
+      <Text className="text-lg font-semibold mb-1 text-secondary-900">
+       {item.title}
+      </Text>
+      <Text className="text-sm text-secondary-500">
        Updated: {new Date(item.updatedAt).toLocaleDateString()}
       </Text>
      </TouchableOpacity>
     )}
     ListEmptyComponent={
-     <View style={styles.empty}>
-      <Text style={styles.emptyText}>No resumes yet</Text>
-      <Text style={styles.emptySubtext}>
+     <View className="flex-1 justify-center items-center pt-24">
+      <Text className="text-lg font-semibold text-secondary-500">
+       No resumes yet
+      </Text>
+      <Text className="text-sm text-secondary-400 mt-2">
        Create your first resume to get started
       </Text>
      </View>
@@ -55,52 +58,3 @@ export default function ResumesScreen() {
   </View>
  );
 }
-
-const styles = StyleSheet.create({
- container: {
-  flex: 1,
-  backgroundColor: "#F2F2F7",
- },
- centered: {
-  flex: 1,
-  justifyContent: "center",
-  alignItems: "center",
- },
- card: {
-  backgroundColor: "#fff",
-  padding: 16,
-  marginHorizontal: 16,
-  marginVertical: 8,
-  borderRadius: 12,
-  shadowColor: "#000",
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.1,
-  shadowRadius: 4,
-  elevation: 3,
- },
- cardTitle: {
-  fontSize: 18,
-  fontWeight: "600",
-  marginBottom: 4,
- },
- cardSubtitle: {
-  fontSize: 14,
-  color: "#666",
- },
- empty: {
-  flex: 1,
-  justifyContent: "center",
-  alignItems: "center",
-  paddingTop: 100,
- },
- emptyText: {
-  fontSize: 18,
-  fontWeight: "600",
-  color: "#666",
- },
- emptySubtext: {
-  fontSize: 14,
-  color: "#999",
-  marginTop: 8,
- },
-});

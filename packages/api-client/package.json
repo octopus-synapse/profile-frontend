@@ -43,7 +43,10 @@
   "lint": "eslint src --ext .ts",
   "lint:fix": "eslint src --ext .ts --fix",
   "type-check": "tsc --noEmit",
-  "clean": "rm -rf dist node_modules"
+  "clean": "rm -rf dist node_modules",
+  "test": "bun test",
+  "test:watch": "bun test --watch",
+  "test:coverage": "bun test --coverage"
  },
  "dependencies": {
   "@octopus-synapse/profile-contracts": "^1.4.0",

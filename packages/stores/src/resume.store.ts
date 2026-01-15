@@ -4,25 +4,29 @@
  */
 
 import { create } from "zustand";
-import type { Resume } from "@octopus-synapse/profile-contracts";
-import type { ProfileApiClient } from "@profile/api-client";
+import type {
+ ProfileApiClient,
+ ResumeListItem,
+ Resume,
+ UpdateResumeDto,
+} from "@profile/api-client";
 
 export interface ResumeState {
- resumes: Resume[];
+ resumes: ResumeListItem[];
  currentResume: Resume | null;
  isLoading: boolean;
  error: string | null;
 }
 
 export interface ResumeActions {
- setResumes: (resumes: Resume[]) => void;
+ setResumes: (resumes: ResumeListItem[]) => void;
  setCurrentResume: (resume: Resume | null) => void;
  setLoading: (loading: boolean) => void;
  setError: (error: string | null) => void;
  fetchResumes: () => Promise<void>;
  fetchResume: (id: string) => Promise<void>;
  createResume: (data: { title: string; slug: string }) => Promise<Resume>;
- updateResume: (id: string, data: Partial<Resume>) => Promise<void>;
+ updateResume: (id: string, data: UpdateResumeDto) => Promise<void>;
  deleteResume: (id: string) => Promise<void>;
  clearError: () => void;
 }
@@ -30,7 +34,7 @@ export interface ResumeActions {
 export type ResumeStore = ResumeState & ResumeActions;
 
 export const createResumeStore = (apiClient: ProfileApiClient) =>
- create<ResumeStore>((set, get) => ({
+ create<ResumeStore>((set, _get) => ({
   // State
   resumes: [],
   currentResume: null,
@@ -78,11 +82,13 @@ export const createResumeStore = (apiClient: ProfileApiClient) =>
    set({ isLoading: true, error: null });
    try {
     const newResume = await apiClient.resumes.create(data);
-    set((state) => ({
-     resumes: [...state.resumes, newResume],
+    // Refetch list to get updated ResumeListItem format
+    const resumes = await apiClient.resumes.getAll();
+    set({
+     resumes,
      currentResume: newResume,
      isLoading: false,
-    }));
+    });
     return newResume;
    } catch (error) {
     const message =
@@ -96,12 +102,13 @@ export const createResumeStore = (apiClient: ProfileApiClient) =>
    set({ isLoading: true, error: null });
    try {
     const updated = await apiClient.resumes.update(id, data);
-    set((state) => ({
-     resumes: state.resumes.map((r) => (r.id === id ? updated : r)),
-     currentResume:
-      state.currentResume?.id === id ? updated : state.currentResume,
+    // Refetch list to get updated ResumeListItem format
+    const resumes = await apiClient.resumes.getAll();
+    set({
+     resumes,
+     currentResume: updated,
      isLoading: false,
-    }));
+    });
    } catch (error) {
     const message =
      error instanceof Error ? error.message : "Failed to update resume";

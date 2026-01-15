@@ -3,6 +3,8 @@
  * Sets up navigation structure and providers
  */
 
+import "../global.css";
+
 import { Slot } from "expo-router";
 import { ApiProvider } from "../providers/ApiProvider";
 import { StoresProvider } from "../providers/StoresProvider";

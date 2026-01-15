@@ -11,7 +11,7 @@
 "use client";
 
 import { createContext, useContext, type ReactNode } from "react";
-import type { ResumeAst } from "@octopus-synapse/profile-contracts";
+import type { ResumeAst, PlacedSection } from "@octopus-synapse/profile-contracts";
 
 interface RenderContextValue {
   ast: ResumeAst;
@@ -58,7 +58,7 @@ export function RenderProvider({ ast, children }: RenderProviderProps) {
  */
 export function useSectionStyles(sectionId: string) {
   const { sections } = useRenderContext();
-  const section = sections.find((s) => s.sectionId === sectionId);
+  const section = sections.find((s: PlacedSection) => s.sectionId === sectionId);
 
   if (!section) {
     return null;

@@ -15,13 +15,13 @@ export function HeroActions({ t }: HeroActionsProps) {
   const router = useRouter();
   const { isOpen, openModal, closeModal, checkExistingConsent } = useConsentModal();
 
-  const handlePrimaryCTA = useCallback(() => {
+  const handlePrimaryCTA = useCallback(async () => {
     trackEvent(AnalyticsEvent.HERO_CTA_CLICK, {
       text: t.hero.cta,
     });
 
     // Check if user already has consent
-    if (checkExistingConsent()) {
+    if (await checkExistingConsent()) {
       router.push(ROUTES.AUTH.SIGN_UP);
     } else {
       openModal();

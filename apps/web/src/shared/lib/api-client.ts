@@ -6,6 +6,7 @@
 import { createProfileApiClient, type ProfileApiClient } from "@profile/api-client";
 import { getSession } from "next-auth/react";
 import { API_URL } from "@/config/env";
+import { getCsrfTokenAsync } from "./csrf";
 
 // ============================================================================
 // Singleton API Client Instance
@@ -42,6 +43,7 @@ function createApiClient(): ProfileApiClient {
       const session = await getSession();
       return session?.accessToken ?? null;
     },
+    getCsrfToken: getCsrfTokenAsync,
     onUnauthorized: () => {
       // Handle unauthorized - redirect to login
       if (typeof window !== "undefined") {
@@ -74,17 +76,17 @@ export function createServerApiClient(accessToken?: string | null): ProfileApiCl
 /**
  * Default API client instance
  * Use this for most client-side operations
- * 
+ *
  * @example
  * ```ts
  * import { apiClient } from "@/shared/lib/api-client";
- * 
+ *
  * // In a React Query hook
  * const { data } = useQuery({
  *   queryKey: ["user", "me"],
  *   queryFn: () => apiClient.users.getMe(),
  * });
- * 
+ *
  * // Direct usage
  * const resumes = await apiClient.resumes.getAll();
  * ```

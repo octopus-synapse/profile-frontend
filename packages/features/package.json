@@ -1,0 +1,38 @@
+{
+ "name": "@profile/features",
+ "version": "0.1.0",
+ "description": "Shared feature hooks for web and mobile",
+ "main": "./dist/index.js",
+ "module": "./dist/index.mjs",
+ "types": "./dist/index.d.ts",
+ "exports": {
+  ".": {
+   "import": "./dist/index.mjs",
+   "require": "./dist/index.js",
+   "types": "./dist/index.d.ts"
+  }
+ },
+ "scripts": {
+  "build": "tsup",
+  "dev": "tsup --watch",
+  "typecheck": "tsc --noEmit",
+  "test": "bun test",
+  "test:watch": "bun test --watch",
+  "test:coverage": "bun test --coverage"
+ },
+ "dependencies": {
+  "@octopus-synapse/profile-contracts": "^1.4.0",
+  "@profile/api-client": "workspace:*",
+  "@profile/stores": "workspace:*"
+ },
+ "devDependencies": {
+  "@testing-library/react": "^16.0.0",
+  "@types/bun": "latest",
+  "tsup": "^8.0.0",
+  "typescript": "^5.3.0"
+ },
+ "peerDependencies": {
+  "react": "^18.0.0 || ^19.0.0",
+  "zustand": "^4.0.0 || ^5.0.0"
+ }
+}

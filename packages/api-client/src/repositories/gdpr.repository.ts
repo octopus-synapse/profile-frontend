@@ -5,7 +5,7 @@
 
 import type { HttpClient } from "../client";
 
-const BASE_URL = "/users/me";
+const BASE_URL = "/v1/users/me";
 
 export interface UserDataExport {
  exportedAt: string;
