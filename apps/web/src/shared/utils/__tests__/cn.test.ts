@@ -12,7 +12,9 @@ describe("cn", () => {
   });
 
   it("handles conditional classes", () => {
-    expect(cn("foo", true && "bar", false && "baz")).toBe("foo bar");
+    const showBar = true;
+    const showBaz = false;
+    expect(cn("foo", showBar && "bar", showBaz && "baz")).toBe("foo bar");
   });
 
   it("resolves Tailwind conflicts (last wins)", () => {
@@ -49,4 +51,3 @@ describe("cn", () => {
     expect(cn("px-2", "py-4", "text-center")).toBe("px-2 py-4 text-center");
   });
 });
-
