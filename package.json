@@ -17,7 +17,6 @@
   "format": "bun -r format",
   "format:check": "bun -r format:check",
   "typecheck": "tsc --noEmit",
-  "type-check": "tsc --noEmit",
   "test": "bun test",
   "test:unit": "bun test packages/",
   "test:smoke": "bun test --config=bunfig.smoke.toml",
