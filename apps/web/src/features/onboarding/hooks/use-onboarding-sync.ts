@@ -75,9 +75,7 @@ const SKILL_LEVEL_MAP: Record<string, number> = {
 /**
  * Maps API skills format to store format
  */
-function mapSkillsToStore(
-  skills: ApiOnboardingProgress["skills"] | undefined
-): Skill[] {
+function mapSkillsToStore(skills: ApiOnboardingProgress["skills"] | undefined): Skill[] {
   if (!skills) return [];
   return skills.map((skill) => ({
     id: skill.id,
@@ -214,7 +212,8 @@ export function useOnboardingSync() {
           completedSteps: (backendProgress.completedSteps || []) as OnboardingStep[],
           personalInfo: (backendProgress.personalInfo ?? null) as PersonalInfo | null,
           username: backendProgress.username || null,
-          professionalProfile: (backendProgress.professionalProfile ?? null) as ProfessionalProfile | null,
+          professionalProfile: (backendProgress.professionalProfile ??
+            null) as ProfessionalProfile | null,
           experiences: mapExperiencesToStore(backendProgress.experiences),
           noExperience: backendProgress.noExperience || false,
           education: mapEducationToStore(backendProgress.education),
@@ -222,7 +221,8 @@ export function useOnboardingSync() {
           skills: mapSkillsToStore(backendProgress.skills),
           noSkills: backendProgress.noSkills || false,
           languages: mapLanguagesToStore(backendProgress.languages),
-          templateSelection: (backendProgress.templateSelection ?? null) as TemplateSelection | null,
+          templateSelection: (backendProgress.templateSelection ??
+            null) as TemplateSelection | null,
         });
       }
 
