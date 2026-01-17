@@ -1,9 +1,7 @@
 # ==================================
 # Stage 1: Dependencies
 # ==================================
-FROM oven/bun:1.2.23-alpine AS deps
-
-RUN apk add --no-cache libc6-compat git
+FROM oven/bun:1.2.23 AS deps
 
 WORKDIR /app
 
@@ -35,9 +33,7 @@ RUN --mount=type=secret,id=github_token \
 # ==================================
 # Stage 2: Builder
 # ==================================
-FROM oven/bun:1.2.23-alpine AS builder
-
-RUN apk add --no-cache libc6-compat
+FROM oven/bun:1.2.23 AS builder
 
 WORKDIR /app
 
@@ -51,6 +47,7 @@ COPY --from=deps /app/profile-frontend/node_modules ./profile-frontend/node_modu
 
 # Build external dependencies first so they are available for frontend build
 WORKDIR /app/profile-contracts
+# Ensure we use the built version of sister packages
 RUN bun install --frozen-lockfile && bun run build
 
 WORKDIR /app/profile-ui
@@ -58,7 +55,7 @@ RUN bun install --frozen-lockfile && bun run build
 
 # Build internal frontend dependencies
 WORKDIR /app/profile-frontend
-# Re-run install to ensure symlinks to sister packages are correctly resolved with their new build outputs
+# Refresh symlinks and ensure everything is built in order
 RUN bun install
 RUN bun --filter @profile/api-client build
 RUN bun --filter @profile/stores build
@@ -75,7 +72,7 @@ RUN bun --filter @profile/web build
 # ==================================
 # Stage 3: Runner
 # ==================================
-FROM oven/bun:1.2.23-alpine AS runner
+FROM oven/bun:1.2.23-slim AS runner
 
 WORKDIR /app
 
