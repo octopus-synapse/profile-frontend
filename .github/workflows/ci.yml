@@ -45,7 +45,7 @@ jobs:
         run: bun run build
 
       - name: Configure npm auth
-        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> ~/.npmrc
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> frontend/.npmrc
 
       - name: Install dependencies
         working-directory: frontend
@@ -92,7 +92,7 @@ jobs:
         run: bun run build
 
       - name: Configure npm auth
-        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> ~/.npmrc
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> frontend/.npmrc
 
       - name: Install dependencies
         working-directory: frontend
@@ -131,7 +131,7 @@ jobs:
         run: bun run build
 
       - name: Configure npm auth
-        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> ~/.npmrc
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> frontend/.npmrc
 
       - name: Install dependencies
         working-directory: frontend
@@ -186,7 +186,7 @@ jobs:
         run: bun run build
 
       - name: Configure npm auth
-        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> ~/.npmrc
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> frontend/.npmrc
 
       - name: Install dependencies
         working-directory: frontend
@@ -225,7 +225,7 @@ jobs:
         run: bun run build
 
       - name: Configure npm auth
-        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> ~/.npmrc
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> frontend/.npmrc
 
       - name: Install frontend dependencies
         working-directory: frontend
@@ -276,7 +276,7 @@ jobs:
         run: bun run build
 
       - name: Configure npm auth
-        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> ~/.npmrc
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> frontend/.npmrc
 
       - name: Install dependencies
         working-directory: frontend
