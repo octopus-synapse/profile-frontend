@@ -53,6 +53,6 @@
   "bun": ">=1.0.0"
  },
  "dependencies": {
-  "@octopus-synapse/profile-contracts": "1.4.0"
+  "@octopus-synapse/profile-contracts": "latest"
  }
 }
