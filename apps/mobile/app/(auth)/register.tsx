@@ -15,6 +15,7 @@ import {
  ScrollView,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { Button, Input } from "@octopus-synapse/profile-ui";
 import { useAuth } from "@profile/features";
 import { useAuthStore } from "../../providers/StoresProvider";
 import { tokenManager } from "../../providers/ApiProvider";
@@ -76,64 +77,70 @@ export default function RegisterScreen() {
       Sign up to get started
      </Text>
 
-     <TextInput
-      className="border border-secondary-200 rounded-lg p-4 mb-4 text-base bg-white"
+     <Input
       placeholder="Email"
-      placeholderTextColor="#94a3b8"
       value={email}
       onChangeText={setEmail}
-      autoCapitalize="none"
-      keyboardType="email-address"
-      editable={!isLoading}
+      disabled={isLoading}
+      textInputProps={{
+       autoCapitalize: "none",
+       keyboardType: "email-address",
+      }}
      />
 
-     <TextInput
-      className="border border-secondary-200 rounded-lg p-4 mb-4 text-base bg-white"
+     <View className="h-4" />
+
+     <Input
       placeholder="Username"
-      placeholderTextColor="#94a3b8"
       value={username}
       onChangeText={setUsername}
-      autoCapitalize="none"
-      editable={!isLoading}
+      disabled={isLoading}
+      textInputProps={{
+       autoCapitalize: "none",
+      }}
      />
 
-     <TextInput
-      className="border border-secondary-200 rounded-lg p-4 mb-4 text-base bg-white"
+     <View className="h-4" />
+
+     <Input
       placeholder="Password"
-      placeholderTextColor="#94a3b8"
       value={password}
       onChangeText={setPassword}
-      secureTextEntry
-      editable={!isLoading}
+      disabled={isLoading}
+      textInputProps={{
+       secureTextEntry: true,
+      }}
      />
 
-     <TextInput
-      className="border border-secondary-200 rounded-lg p-4 mb-4 text-base bg-white"
+     <View className="h-4" />
+
+     <Input
       placeholder="Confirm Password"
-      placeholderTextColor="#94a3b8"
       value={confirmPassword}
       onChangeText={setConfirmPassword}
-      secureTextEntry
-      editable={!isLoading}
+      disabled={isLoading}
+      textInputProps={{
+       secureTextEntry: true,
+      }}
      />
 
-     <TouchableOpacity
-      className={`bg-primary-500 rounded-lg p-4 items-center mt-2 ${
-       isLoading ? "opacity-60" : ""
-      }`}
+     <View className="h-6" />
+
+     <Button
+      variant="primary"
+      loading={isLoading}
       onPress={handleRegister}
       disabled={isLoading}
+      fullWidth
      >
-      <Text className="text-white text-base font-semibold">
-       {isLoading ? "Creating..." : "Register"}
-      </Text>
-     </TouchableOpacity>
+      Register
+     </Button>
 
-     <TouchableOpacity onPress={() => router.back()} className="mt-5">
-      <Text className="text-primary-500 text-center text-sm">
-       Already have an account? Login
-      </Text>
-     </TouchableOpacity>
+     <View className="h-4" />
+
+     <Button variant="ghost" onPress={() => router.back()}>
+      Already have an account? Login
+     </Button>
     </View>
    </ScrollView>
   </KeyboardAvoidingView>

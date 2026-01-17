@@ -14,6 +14,7 @@ import {
  Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { Button, Input } from "@octopus-synapse/profile-ui";
 import { useAuth } from "@profile/features";
 import { useAuthStore } from "../../providers/StoresProvider";
 import { tokenManager } from "../../providers/ApiProvider";
@@ -62,47 +63,46 @@ export default function LoginScreen() {
      Login to your account
     </Text>
 
-    <TextInput
-     className="border border-secondary-200 rounded-lg p-4 mb-4 text-base bg-white"
+    <Input
      placeholder="Email"
-     placeholderTextColor="#94a3b8"
      value={email}
      onChangeText={setEmail}
-     autoCapitalize="none"
-     keyboardType="email-address"
-     editable={!isLoading}
+     disabled={isLoading}
+     textInputProps={{
+      autoCapitalize: "none",
+      keyboardType: "email-address",
+     }}
     />
 
-    <TextInput
-     className="border border-secondary-200 rounded-lg p-4 mb-4 text-base bg-white"
+    <View className="h-4" />
+
+    <Input
      placeholder="Password"
-     placeholderTextColor="#94a3b8"
      value={password}
      onChangeText={setPassword}
-     secureTextEntry
-     editable={!isLoading}
+     disabled={isLoading}
+     textInputProps={{
+      secureTextEntry: true,
+     }}
     />
 
-    <TouchableOpacity
-     className={`bg-primary-500 rounded-lg p-4 items-center mt-2 ${
-      isLoading ? "opacity-60" : ""
-     }`}
+    <View className="h-6" />
+
+    <Button
+     variant="primary"
+     loading={isLoading}
      onPress={handleLogin}
      disabled={isLoading}
+     fullWidth
     >
-     <Text className="text-white text-base font-semibold">
-      {isLoading ? "Loading..." : "Login"}
-     </Text>
-    </TouchableOpacity>
+     Login
+    </Button>
 
-    <TouchableOpacity
-     onPress={() => router.push("/(auth)/register")}
-     className="mt-5"
-    >
-     <Text className="text-primary-500 text-center text-sm">
-      Don't have an account? Register
-     </Text>
-    </TouchableOpacity>
+    <View className="h-4" />
+
+    <Button variant="ghost" onPress={() => router.push("/(auth)/register")}>
+     Don't have an account? Register
+    </Button>
    </View>
   </KeyboardAvoidingView>
  );

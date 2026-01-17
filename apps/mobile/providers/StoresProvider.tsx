@@ -17,12 +17,14 @@ import type {
  SocialStore,
 } from "@profile/stores";
 import { useApi } from "./ApiProvider";
+import type { AxiosInstance } from "axios";
 
 interface StoresContextValue {
  authStore: AuthStore;
  resumeStore: ResumeStore;
  chatStore: ChatStore;
  socialStore: SocialStore;
+ apiClient: AxiosInstance;
 }
 
 const StoresContext = createContext<StoresContextValue | null>(null);
@@ -40,6 +42,7 @@ export function StoresProvider({ children }: StoresProviderProps) {
    resumeStore: createResumeStore(apiClient),
    chatStore: createChatStore(apiClient),
    socialStore: createSocialStore(apiClient),
+   apiClient,
   };
  }, [apiClient]);
 
@@ -71,4 +74,8 @@ export function useChatStore() {
 
 export function useSocialStore() {
  return useStores().socialStore;
+}
+
+export function useApiClient() {
+ return useStores().apiClient;
 }
