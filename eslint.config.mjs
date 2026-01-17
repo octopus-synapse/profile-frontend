@@ -105,5 +105,17 @@ export default tseslint.config(
    "@typescript-eslint/await-thenable": "off",
    "@typescript-eslint/no-redundant-type-constituents": "off"
   },
+ },
+
+ // Shadcn/UI components - auto-generated, relaxed type-safety rules
+ {
+  files: ["**/components/ui/**/*.tsx", "**/shared/components/ui/**/*.tsx"],
+  rules: {
+   "@typescript-eslint/no-unsafe-argument": "off",
+   "@typescript-eslint/no-unsafe-assignment": "off",
+   "@typescript-eslint/no-unsafe-call": "off",
+   "@typescript-eslint/no-unsafe-member-access": "off",
+   "@typescript-eslint/no-unsafe-return": "off",
+  },
  }
 );
