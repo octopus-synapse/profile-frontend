@@ -6,29 +6,6 @@
 import { useCallback, useEffect } from "react";
 import type { SocialStore } from "@profile/stores";
 
-export interface UserProfile {
- id: string;
- username: string;
- fullName: string | null;
- avatar: string | null;
- bio: string | null;
- isFollowing: boolean;
- followerCount: number;
- followingCount: number;
-}
-
-export interface ActivityItem {
- id: string;
- userId: string;
- username: string;
- avatar: string | null;
- action: string;
- targetType: string;
- targetId: string;
- targetTitle: string;
- createdAt: string;
-}
-
 export interface UseSocialOptions {
  store: SocialStore;
  autoFetchFeed?: boolean;
@@ -38,40 +15,39 @@ export interface UseSocialOptions {
 
 export interface UseSocialReturn {
  // State
- feed: ActivityItem[];
- followers: UserProfile[];
- following: UserProfile[];
- searchResults: UserProfile[];
+ activities: SocialStore["activities"];
+ followers: SocialStore["followers"];
+ following: SocialStore["following"];
+ stats: SocialStore["stats"];
  isLoading: boolean;
  error: string | null;
 
  // Actions
- fetchFeed: () => Promise<void>;
- fetchFollowers: (userId?: string) => Promise<void>;
- fetchFollowing: (userId?: string) => Promise<void>;
+ fetchActivityFeed: () => Promise<void>;
+ fetchFollowers: (userId: string) => Promise<void>;
+ fetchFollowing: (userId: string) => Promise<void>;
+ fetchSocialStats: (userId: string) => Promise<void>;
  followUser: (userId: string) => Promise<void>;
  unfollowUser: (userId: string) => Promise<void>;
- searchUsers: (query: string) => Promise<void>;
- clearSearch: () => void;
  clearError: () => void;
 }
 
 export function useSocial(options: UseSocialOptions): UseSocialReturn {
  const { store, autoFetchFeed = false, onSuccess, onError } = options;
 
- const feed = store.feed;
+ const activities = store.activities;
  const followers = store.followers;
  const following = store.following;
- const searchResults = store.searchResults;
+ const stats = store.stats;
  const isLoading = store.isLoading;
  const error = store.error;
 
- // Auto-fetch feed
+ // Auto-fetch activity feed
  useEffect(() => {
-  if (autoFetchFeed && feed.length === 0 && !isLoading) {
-   store.fetchFeed().catch(() => {});
+  if (autoFetchFeed && activities.length === 0 && !isLoading) {
+   store.fetchActivityFeed().catch(() => {});
   }
- }, [autoFetchFeed, feed.length, isLoading, store]);
+ }, [autoFetchFeed, activities.length, isLoading, store]);
 
  // Notify on error
  useEffect(() => {
@@ -80,17 +56,17 @@ export function useSocial(options: UseSocialOptions): UseSocialReturn {
   }
  }, [error, onError]);
 
- const fetchFeed = useCallback(async () => {
+ const fetchActivityFeed = useCallback(async () => {
   try {
-   await store.fetchFeed();
-   onSuccess?.("fetchFeed");
+   await store.fetchActivityFeed();
+   onSuccess?.("fetchActivityFeed");
   } catch {
    // Error handled by store
   }
  }, [store, onSuccess]);
 
  const fetchFollowers = useCallback(
-  async (userId?: string) => {
+  async (userId: string) => {
    try {
     await store.fetchFollowers(userId);
     onSuccess?.("fetchFollowers");
@@ -102,10 +78,22 @@ export function useSocial(options: UseSocialOptions): UseSocialReturn {
  );
 
  const fetchFollowing = useCallback(
-  async (userId?: string) => {
+  async (userId: string) => {
    try {
     await store.fetchFollowing(userId);
     onSuccess?.("fetchFollowing");
+   } catch {
+    // Error handled by store
+   }
+  },
+  [store, onSuccess]
+ );
+
+ const fetchSocialStats = useCallback(
+  async (userId: string) => {
+   try {
+    await store.fetchSocialStats(userId);
+    onSuccess?.("fetchSocialStats");
    } catch {
     // Error handled by store
    }
@@ -137,40 +125,23 @@ export function useSocial(options: UseSocialOptions): UseSocialReturn {
   [store, onSuccess]
  );
 
- const searchUsers = useCallback(
-  async (query: string) => {
-   try {
-    await store.searchUsers(query);
-    onSuccess?.("search");
-   } catch {
-    // Error handled by store
-   }
-  },
-  [store, onSuccess]
- );
-
- const clearSearch = useCallback(() => {
-  store.clearSearch();
- }, [store]);
-
  const clearError = useCallback(() => {
   store.clearError();
  }, [store]);
 
  return {
-  feed,
+  activities,
   followers,
   following,
-  searchResults,
+  stats,
   isLoading,
   error,
-  fetchFeed,
+  fetchActivityFeed,
   fetchFollowers,
   fetchFollowing,
+  fetchSocialStats,
   followUser,
   unfollowUser,
-  searchUsers,
-  clearSearch,
   clearError,
  };
 }

@@ -4,7 +4,7 @@
  */
 
 import { useCallback, useEffect } from "react";
-import type { SettingsStore } from "@profile/stores";
+import type { SettingsStore, UserSettings } from "@profile/stores";
 
 export interface UseSettingsOptions {
  store: SettingsStore;
@@ -16,14 +16,17 @@ export interface UseSettingsOptions {
 export interface UseSettingsReturn {
  // State
  settings: SettingsStore["settings"];
+ dataExport: SettingsStore["dataExport"];
  isLoading: boolean;
+ isExporting: boolean;
+ isDeleting: boolean;
  error: string | null;
 
  // Actions
  fetchSettings: () => Promise<void>;
- updateSettings: (data: Partial<SettingsStore["settings"]>) => Promise<void>;
- requestGdprExport: () => Promise<void>;
- requestAccountDeletion: () => Promise<void>;
+ updateSettings: (data: Partial<UserSettings>) => Promise<void>;
+ exportUserData: () => Promise<void>;
+ deleteAccount: () => Promise<void>;
  clearError: () => void;
 }
 
@@ -31,7 +34,10 @@ export function useSettings(options: UseSettingsOptions): UseSettingsReturn {
  const { store, autoFetch = false, onSuccess, onError } = options;
 
  const settings = store.settings;
+ const dataExport = store.dataExport;
  const isLoading = store.isLoading;
+ const isExporting = store.isExporting;
+ const isDeleting = store.isDeleting;
  const error = store.error;
 
  // Auto-fetch settings
@@ -58,7 +64,7 @@ export function useSettings(options: UseSettingsOptions): UseSettingsReturn {
  }, [store, onSuccess]);
 
  const updateSettings = useCallback(
-  async (data: Partial<SettingsStore["settings"]>) => {
+  async (data: Partial<UserSettings>) => {
    try {
     await store.updateSettings(data);
     onSuccess?.("updateSettings");
@@ -69,19 +75,19 @@ export function useSettings(options: UseSettingsOptions): UseSettingsReturn {
   [store, onSuccess]
  );
 
- const requestGdprExport = useCallback(async () => {
+ const exportUserData = useCallback(async () => {
   try {
-   await store.requestGdprExport();
-   onSuccess?.("requestGdprExport");
+   await store.exportUserData();
+   onSuccess?.("exportUserData");
   } catch {
    // Error handled by store
   }
  }, [store, onSuccess]);
 
- const requestAccountDeletion = useCallback(async () => {
+ const deleteAccount = useCallback(async () => {
   try {
-   await store.requestAccountDeletion();
-   onSuccess?.("requestAccountDeletion");
+   await store.deleteAccount();
+   onSuccess?.("deleteAccount");
   } catch {
    // Error handled by store
   }
@@ -93,12 +99,15 @@ export function useSettings(options: UseSettingsOptions): UseSettingsReturn {
 
  return {
   settings,
+  dataExport,
   isLoading,
+  isExporting,
+  isDeleting,
   error,
   fetchSettings,
   updateSettings,
-  requestGdprExport,
-  requestAccountDeletion,
+  exportUserData,
+  deleteAccount,
   clearError,
  };
 }

@@ -25,7 +25,8 @@ export interface UseAnalyticsReturn {
  fetchResumeAnalytics: (resumeId: string) => Promise<void>;
  fetchShareAnalytics: (shareId: string) => Promise<void>;
  fetchUserSummary: () => Promise<void>;
- trackEvent: (event: string, data?: Record<string, unknown>) => Promise<void>;
+ getResumeAnalytics: AnalyticsStore["getResumeAnalytics"];
+ getShareAnalytics: AnalyticsStore["getShareAnalytics"];
  clearError: () => void;
 }
 
@@ -85,18 +86,6 @@ export function useAnalytics(options: UseAnalyticsOptions): UseAnalyticsReturn {
   }
  }, [store, onSuccess]);
 
- const trackEvent = useCallback(
-  async (event: string, data?: Record<string, unknown>) => {
-   try {
-    await store.trackEvent(event, data);
-    onSuccess?.("trackEvent");
-   } catch {
-    // Error handled by store
-   }
-  },
-  [store, onSuccess]
- );
-
  const clearError = useCallback(() => {
   store.clearError();
  }, [store]);
@@ -110,7 +99,8 @@ export function useAnalytics(options: UseAnalyticsOptions): UseAnalyticsReturn {
   fetchResumeAnalytics,
   fetchShareAnalytics,
   fetchUserSummary,
-  trackEvent,
+  getResumeAnalytics: store.getResumeAnalytics,
+  getShareAnalytics: store.getShareAnalytics,
   clearError,
  };
 }

@@ -15,38 +15,38 @@ export interface UseTwoFactorOptions {
 
 export interface UseTwoFactorReturn {
  // State
- isEnabled: boolean;
- setupData: TwoFactorStore["setupData"];
+ status: TwoFactorStore["status"];
+ setup: TwoFactorStore["setup"];
  backupCodes: string[];
  isLoading: boolean;
  error: string | null;
 
  // Actions
  fetchStatus: () => Promise<void>;
- setup: () => Promise<void>;
- verify: (code: string) => Promise<boolean>;
- disable: (code: string) => Promise<boolean>;
- generateBackupCodes: () => Promise<void>;
- verifyBackupCode: (code: string) => Promise<boolean>;
- clearSetupData: () => void;
+ startSetup: () => Promise<void>;
+ verifySetup: (token: string) => Promise<string[]>;
+ verifyLogin: (token: string) => Promise<boolean>;
+ disable: (token: string) => Promise<void>;
+ regenerateBackupCodes: (token: string) => Promise<string[]>;
+ clearSetup: () => void;
  clearError: () => void;
 }
 
 export function useTwoFactor(options: UseTwoFactorOptions): UseTwoFactorReturn {
  const { store, autoFetchStatus = false, onSuccess, onError } = options;
 
- const isEnabled = store.isEnabled;
- const setupData = store.setupData;
+ const status = store.status;
+ const setup = store.setup;
  const backupCodes = store.backupCodes;
  const isLoading = store.isLoading;
  const error = store.error;
 
  // Auto-fetch 2FA status
  useEffect(() => {
-  if (autoFetchStatus && !isLoading) {
+  if (autoFetchStatus && !status && !isLoading) {
    store.fetchStatus().catch(() => {});
   }
- }, [autoFetchStatus, isLoading, store]);
+ }, [autoFetchStatus, status, isLoading, store]);
 
  // Notify on error
  useEffect(() => {
@@ -64,21 +64,34 @@ export function useTwoFactor(options: UseTwoFactorOptions): UseTwoFactorReturn {
   }
  }, [store, onSuccess]);
 
- const setup = useCallback(async () => {
+ const startSetup = useCallback(async () => {
   try {
-   await store.setup();
-   onSuccess?.("setup");
+   await store.startSetup();
+   onSuccess?.("startSetup");
   } catch {
    // Error handled by store
   }
  }, [store, onSuccess]);
 
- const verify = useCallback(
-  async (code: string): Promise<boolean> => {
+ const verifySetup = useCallback(
+  async (token: string): Promise<string[]> => {
    try {
-    const result = await store.verify(code);
+    const codes = await store.verifySetup(token);
+    onSuccess?.("verifySetup");
+    return codes;
+   } catch {
+    return [];
+   }
+  },
+  [store, onSuccess]
+ );
+
+ const verifyLogin = useCallback(
+  async (token: string): Promise<boolean> => {
+   try {
+    const result = await store.verifyLogin(token);
     if (result) {
-     onSuccess?.("verify");
+     onSuccess?.("verifyLogin");
     }
     return result;
    } catch {
@@ -89,46 +102,32 @@ export function useTwoFactor(options: UseTwoFactorOptions): UseTwoFactorReturn {
  );
 
  const disable = useCallback(
-  async (code: string): Promise<boolean> => {
+  async (token: string): Promise<void> => {
    try {
-    const result = await store.disable(code);
-    if (result) {
-     onSuccess?.("disable");
-    }
-    return result;
+    await store.disable(token);
+    onSuccess?.("disable");
    } catch {
-    return false;
+    // Error handled by store
    }
   },
   [store, onSuccess]
  );
 
- const generateBackupCodes = useCallback(async () => {
-  try {
-   await store.generateBackupCodes();
-   onSuccess?.("generateBackupCodes");
-  } catch {
-   // Error handled by store
-  }
- }, [store, onSuccess]);
-
- const verifyBackupCode = useCallback(
-  async (code: string): Promise<boolean> => {
+ const regenerateBackupCodes = useCallback(
+  async (token: string): Promise<string[]> => {
    try {
-    const result = await store.verifyBackupCode(code);
-    if (result) {
-     onSuccess?.("verifyBackupCode");
-    }
-    return result;
+    const codes = await store.regenerateBackupCodes(token);
+    onSuccess?.("regenerateBackupCodes");
+    return codes;
    } catch {
-    return false;
+    return [];
    }
   },
   [store, onSuccess]
  );
 
- const clearSetupData = useCallback(() => {
-  store.clearSetupData();
+ const clearSetup = useCallback(() => {
+  store.clearSetup();
  }, [store]);
 
  const clearError = useCallback(() => {
@@ -136,18 +135,18 @@ export function useTwoFactor(options: UseTwoFactorOptions): UseTwoFactorReturn {
  }, [store]);
 
  return {
-  isEnabled,
-  setupData,
+  status,
+  setup,
   backupCodes,
   isLoading,
   error,
   fetchStatus,
-  setup,
-  verify,
+  startSetup,
+  verifySetup,
+  verifyLogin,
   disable,
-  generateBackupCodes,
-  verifyBackupCode,
-  clearSetupData,
+  regenerateBackupCodes,
+  clearSetup,
   clearError,
  };
 }

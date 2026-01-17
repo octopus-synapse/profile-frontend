@@ -6,57 +6,33 @@
 import { useCallback, useEffect } from "react";
 import type { ChatStore } from "@profile/stores";
 
-export interface Conversation {
- id: string;
- participantId: string;
- participantUsername: string;
- participantAvatar: string | null;
- lastMessage: string | null;
- lastMessageAt: string | null;
- unreadCount: number;
-}
-
-export interface Message {
- id: string;
- conversationId: string;
- senderId: string;
- content: string;
- createdAt: string;
- readAt: string | null;
-}
-
 export interface UseChatOptions {
  store: ChatStore;
  autoFetchConversations?: boolean;
- onNewMessage?: (message: Message) => void;
  onError?: (error: string) => void;
 }
 
 export interface UseChatReturn {
  // State
- conversations: Conversation[];
- currentConversation: Conversation | null;
- messages: Message[];
+ conversations: ChatStore["conversations"];
+ currentConversation: ChatStore["currentConversation"];
+ messages: ChatStore["messages"];
  isLoading: boolean;
  error: string | null;
 
  // Actions
  fetchConversations: () => Promise<void>;
+ fetchConversation: (id: string) => Promise<void>;
  fetchMessages: (conversationId: string) => Promise<void>;
- sendMessage: (conversationId: string, content: string) => Promise<void>;
- startConversation: (userId: string) => Promise<Conversation>;
- selectConversation: (conversation: Conversation | null) => void;
+ sendMessage: (recipientId: string, content: string) => Promise<void>;
+ sendMessageToConversation: (conversationId: string, content: string) => Promise<void>;
+ selectConversation: (conversation: ChatStore["currentConversation"]) => void;
  markAsRead: (conversationId: string) => Promise<void>;
  clearError: () => void;
 }
 
 export function useChat(options: UseChatOptions): UseChatReturn {
- const {
-  store,
-  autoFetchConversations = false,
-  onNewMessage,
-  onError,
- } = options;
+ const { store, autoFetchConversations = false, onError } = options;
 
  const conversations = store.conversations;
  const currentConversation = store.currentConversation;
@@ -86,6 +62,17 @@ export function useChat(options: UseChatOptions): UseChatReturn {
   }
  }, [store]);
 
+ const fetchConversation = useCallback(
+  async (id: string) => {
+   try {
+    await store.fetchConversation(id);
+   } catch {
+    // Error handled by store
+   }
+  },
+  [store]
+ );
+
  const fetchMessages = useCallback(
   async (conversationId: string) => {
    try {
@@ -98,10 +85,9 @@ export function useChat(options: UseChatOptions): UseChatReturn {
  );
 
  const sendMessage = useCallback(
-  async (conversationId: string, content: string) => {
+  async (recipientId: string, content: string) => {
    try {
-    await store.sendMessage(conversationId, content);
-    // Optionally notify
+    await store.sendMessage(recipientId, content);
    } catch {
     // Error handled by store
    }
@@ -109,15 +95,19 @@ export function useChat(options: UseChatOptions): UseChatReturn {
   [store]
  );
 
- const startConversation = useCallback(
-  async (userId: string) => {
-   return store.startConversation(userId);
+ const sendMessageToConversation = useCallback(
+  async (conversationId: string, content: string) => {
+   try {
+    await store.sendMessageToConversation(conversationId, content);
+   } catch {
+    // Error handled by store
+   }
   },
   [store]
  );
 
  const selectConversation = useCallback(
-  (conversation: Conversation | null) => {
+  (conversation: ChatStore["currentConversation"]) => {
    store.setCurrentConversation(conversation);
    if (conversation) {
     store.fetchMessages(conversation.id).catch(() => {});
@@ -148,9 +138,10 @@ export function useChat(options: UseChatOptions): UseChatReturn {
   isLoading,
   error,
   fetchConversations,
+  fetchConversation,
   fetchMessages,
   sendMessage,
-  startConversation,
+  sendMessageToConversation,
   selectConversation,
   markAsRead,
   clearError,

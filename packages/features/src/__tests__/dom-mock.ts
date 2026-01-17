@@ -81,16 +81,16 @@ class WindowMock extends EventTargetMock {
   host: "localhost:3000",
   hostname: "localhost",
   port: "3000",
-  assign: (_url: string) => {},
+  assign: () => {},
   reload: () => {},
-  replace: (_url: string) => {},
+  replace: () => {},
  };
  history = {
-  pushState: (_data: unknown, _title: string, _url?: string) => {},
-  replaceState: (_data: unknown, _title: string, _url?: string) => {},
+  pushState: () => {},
+  replaceState: () => {},
   back: () => {},
   forward: () => {},
-  go: (_delta?: number) => {},
+  go: () => {},
   length: 1,
   state: null,
  };
@@ -100,7 +100,7 @@ class WindowMock extends EventTargetMock {
   languages: ["en-US", "en"],
   onLine: true,
   clipboard: {
-   writeText: async (_text: string) => {},
+   writeText: async () => {},
    readText: async () => "",
   },
  };
@@ -122,7 +122,7 @@ class WindowMock extends EventTargetMock {
   };
  }
 
- getComputedStyle(_el: Element): CSSStyleDeclaration {
+ getComputedStyle(): CSSStyleDeclaration {
   return {} as CSSStyleDeclaration;
  }
 
@@ -173,8 +173,8 @@ class DocumentMock extends EventTargetMock {
   style: {
    colorScheme: "",
   },
-  setAttribute: (_name: string, _value: string) => {},
-  getAttribute: (_name: string) => null,
+  setAttribute: () => {},
+  getAttribute: () => null,
  };
  body = {
   classList: {
@@ -189,12 +189,12 @@ class DocumentMock extends EventTargetMock {
     return this._classes.has(className);
    },
   },
-  appendChild: (_node: Node) => _node,
-  removeChild: (_node: Node) => _node,
+  appendChild: (node: Node) => node,
+  removeChild: (node: Node) => node,
  };
  head = {
-  appendChild: (_node: Node) => _node,
-  removeChild: (_node: Node) => _node,
+  appendChild: (node: Node) => node,
+  removeChild: (node: Node) => node,
  };
  cookie = "";
  readyState = "complete" as DocumentReadyState;
@@ -218,8 +218,8 @@ class DocumentMock extends EventTargetMock {
    },
    setAttribute: () => {},
    getAttribute: () => null,
-   appendChild: (_node: Node) => _node,
-   removeChild: (_node: Node) => _node,
+   appendChild: (node: Node) => node,
+   removeChild: (node: Node) => node,
    addEventListener: () => {},
    removeEventListener: () => {},
    dispatchEvent: () => true,
@@ -236,15 +236,15 @@ class DocumentMock extends EventTargetMock {
   return { textContent: text } as Text;
  }
 
- getElementById(_id: string): HTMLElement | null {
+ getElementById(): HTMLElement | null {
   return null;
  }
 
- querySelector(_selector: string): Element | null {
+ querySelector(): Element | null {
   return null;
  }
 
- querySelectorAll(_selector: string): NodeListOf<Element> {
+ querySelectorAll(): NodeListOf<Element> {
   return [] as unknown as NodeListOf<Element>;
  }
 }

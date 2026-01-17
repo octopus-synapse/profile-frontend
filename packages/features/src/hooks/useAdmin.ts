@@ -15,40 +15,38 @@ export interface UseAdminOptions {
 
 export interface UseAdminReturn {
  // State
- dashboardStats: AdminStore["dashboardStats"];
+ stats: AdminStore["stats"];
  recentActivity: AdminStore["recentActivity"];
  systemHealth: AdminStore["systemHealth"];
- users: AdminStore["users"];
+ recentUsers: AdminStore["recentUsers"];
  isLoading: boolean;
  error: string | null;
 
  // Actions
- fetchDashboardStats: () => Promise<void>;
- fetchRecentActivity: () => Promise<void>;
+ fetchStats: () => Promise<void>;
+ fetchRecentActivity: (limit?: number) => Promise<void>;
  fetchSystemHealth: () => Promise<void>;
- fetchUsers: (page?: number, limit?: number) => Promise<void>;
- updateUserRole: (userId: string, role: string) => Promise<void>;
- suspendUser: (userId: string) => Promise<void>;
- unsuspendUser: (userId: string) => Promise<void>;
+ fetchRecentUsers: (limit?: number) => Promise<void>;
+ fetchDashboardData: () => Promise<void>;
  clearError: () => void;
 }
 
 export function useAdmin(options: UseAdminOptions): UseAdminReturn {
  const { store, autoFetchDashboard = false, onSuccess, onError } = options;
 
- const dashboardStats = store.dashboardStats;
+ const stats = store.stats;
  const recentActivity = store.recentActivity;
  const systemHealth = store.systemHealth;
- const users = store.users;
+ const recentUsers = store.recentUsers;
  const isLoading = store.isLoading;
  const error = store.error;
 
- // Auto-fetch dashboard stats
+ // Auto-fetch dashboard data
  useEffect(() => {
-  if (autoFetchDashboard && !dashboardStats && !isLoading) {
-   store.fetchDashboardStats().catch(() => {});
+  if (autoFetchDashboard && !stats && !isLoading) {
+   store.fetchDashboardData().catch(() => {});
   }
- }, [autoFetchDashboard, dashboardStats, isLoading, store]);
+ }, [autoFetchDashboard, stats, isLoading, store]);
 
  // Notify on error
  useEffect(() => {
@@ -57,23 +55,26 @@ export function useAdmin(options: UseAdminOptions): UseAdminReturn {
   }
  }, [error, onError]);
 
- const fetchDashboardStats = useCallback(async () => {
+ const fetchStats = useCallback(async () => {
   try {
-   await store.fetchDashboardStats();
-   onSuccess?.("fetchDashboardStats");
+   await store.fetchStats();
+   onSuccess?.("fetchStats");
   } catch {
    // Error handled by store
   }
  }, [store, onSuccess]);
 
- const fetchRecentActivity = useCallback(async () => {
-  try {
-   await store.fetchRecentActivity();
-   onSuccess?.("fetchRecentActivity");
-  } catch {
-   // Error handled by store
-  }
- }, [store, onSuccess]);
+ const fetchRecentActivity = useCallback(
+  async (limit?: number) => {
+   try {
+    await store.fetchRecentActivity(limit);
+    onSuccess?.("fetchRecentActivity");
+   } catch {
+    // Error handled by store
+   }
+  },
+  [store, onSuccess]
+ );
 
  const fetchSystemHealth = useCallback(async () => {
   try {
@@ -84,11 +85,11 @@ export function useAdmin(options: UseAdminOptions): UseAdminReturn {
   }
  }, [store, onSuccess]);
 
- const fetchUsers = useCallback(
-  async (page?: number, limit?: number) => {
+ const fetchRecentUsers = useCallback(
+  async (limit?: number) => {
    try {
-    await store.fetchUsers(page, limit);
-    onSuccess?.("fetchUsers");
+    await store.fetchRecentUsers(limit);
+    onSuccess?.("fetchRecentUsers");
    } catch {
     // Error handled by store
    }
@@ -96,60 +97,31 @@ export function useAdmin(options: UseAdminOptions): UseAdminReturn {
   [store, onSuccess]
  );
 
- const updateUserRole = useCallback(
-  async (userId: string, role: string) => {
-   try {
-    await store.updateUserRole(userId, role);
-    onSuccess?.("updateUserRole");
-   } catch {
-    // Error handled by store
-   }
-  },
-  [store, onSuccess]
- );
-
- const suspendUser = useCallback(
-  async (userId: string) => {
-   try {
-    await store.suspendUser(userId);
-    onSuccess?.("suspendUser");
-   } catch {
-    // Error handled by store
-   }
-  },
-  [store, onSuccess]
- );
-
- const unsuspendUser = useCallback(
-  async (userId: string) => {
-   try {
-    await store.unsuspendUser(userId);
-    onSuccess?.("unsuspendUser");
-   } catch {
-    // Error handled by store
-   }
-  },
-  [store, onSuccess]
- );
+ const fetchDashboardData = useCallback(async () => {
+  try {
+   await store.fetchDashboardData();
+   onSuccess?.("fetchDashboardData");
+  } catch {
+   // Error handled by store
+  }
+ }, [store, onSuccess]);
 
  const clearError = useCallback(() => {
   store.clearError();
  }, [store]);
 
  return {
-  dashboardStats,
+  stats,
   recentActivity,
   systemHealth,
-  users,
+  recentUsers,
   isLoading,
   error,
-  fetchDashboardStats,
+  fetchStats,
   fetchRecentActivity,
   fetchSystemHealth,
-  fetchUsers,
-  updateUserRole,
-  suspendUser,
-  unsuspendUser,
+  fetchRecentUsers,
+  fetchDashboardData,
   clearError,
  };
 }

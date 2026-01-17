@@ -100,8 +100,8 @@ class WindowMock extends EventTargetMock {
   languages: ["en-US", "en"],
   onLine: true,
   clipboard: {
-   writeText: async (_text: string) => {},
-   readText: async () => "",
+   writeText: async (_text: string) => Promise.resolve(),
+   readText: async () => Promise.resolve(""),
   },
  };
  innerWidth = 1024;

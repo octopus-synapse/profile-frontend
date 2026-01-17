@@ -16,18 +16,24 @@ export interface UseOnboardingOptions {
 export interface UseOnboardingReturn {
  // State
  status: OnboardingStore["status"];
- currentStep: number;
- totalSteps: number;
- progress: number;
- isComplete: boolean;
+ progress: OnboardingStore["progress"];
  isLoading: boolean;
  error: string | null;
 
+ // Computed
+ isComplete: boolean;
+ currentStep: string | null;
+ completedSteps: string[];
+
  // Actions
  fetchStatus: () => Promise<void>;
- completeStep: (step: string) => Promise<void>;
- skipStep: (step: string) => Promise<void>;
- resetOnboarding: () => Promise<void>;
+ fetchProgress: () => Promise<void>;
+ saveProgress: (data: Partial<NonNullable<OnboardingStore["progress"]>>) => Promise<void>;
+ submit: Parameters<OnboardingStore["submit"]>[0] extends infer T ? (data: T) => Promise<void> : never;
+ skip: () => Promise<void>;
+ goToStep: (step: string) => void;
+ completeStep: (step: string) => void;
+ updateStepData: (data: Partial<NonNullable<OnboardingStore["progress"]>>) => void;
  clearError: () => void;
 }
 
@@ -37,12 +43,14 @@ export function useOnboarding(
  const { store, autoFetch = false, onComplete, onError } = options;
 
  const status = store.status;
- const currentStep = store.currentStep;
- const totalSteps = store.totalSteps;
  const progress = store.progress;
- const isComplete = store.isComplete;
  const isLoading = store.isLoading;
  const error = store.error;
+
+ // Computed values
+ const isComplete = status?.hasCompletedOnboarding ?? false;
+ const currentStep = progress?.currentStep ?? null;
+ const completedSteps = progress?.completedSteps ?? [];
 
  // Auto-fetch onboarding status
  useEffect(() => {
@@ -73,35 +81,64 @@ export function useOnboarding(
   }
  }, [store]);
 
- const completeStep = useCallback(
-  async (step: string) => {
-   try {
-    await store.completeStep(step);
-   } catch {
-    // Error handled by store
-   }
-  },
-  [store]
- );
-
- const skipStep = useCallback(
-  async (step: string) => {
-   try {
-    await store.skipStep(step);
-   } catch {
-    // Error handled by store
-   }
-  },
-  [store]
- );
-
- const resetOnboarding = useCallback(async () => {
+ const fetchProgress = useCallback(async () => {
   try {
-   await store.resetOnboarding();
+   await store.fetchProgress();
   } catch {
    // Error handled by store
   }
  }, [store]);
+
+ const saveProgress = useCallback(
+  async (data: Partial<NonNullable<OnboardingStore["progress"]>>) => {
+   try {
+    await store.saveProgress(data);
+   } catch {
+    // Error handled by store
+   }
+  },
+  [store]
+ );
+
+ const submit = useCallback(
+  async (data: Parameters<OnboardingStore["submit"]>[0]) => {
+   try {
+    await store.submit(data);
+   } catch {
+    // Error handled by store
+   }
+  },
+  [store]
+ );
+
+ const skip = useCallback(async () => {
+  try {
+   await store.skip();
+  } catch {
+   // Error handled by store
+  }
+ }, [store]);
+
+ const goToStep = useCallback(
+  (step: string) => {
+   store.goToStep(step);
+  },
+  [store]
+ );
+
+ const completeStep = useCallback(
+  (step: string) => {
+   store.completeStep(step);
+  },
+  [store]
+ );
+
+ const updateStepData = useCallback(
+  (data: Partial<NonNullable<OnboardingStore["progress"]>>) => {
+   store.updateStepData(data);
+  },
+  [store]
+ );
 
  const clearError = useCallback(() => {
   store.clearError();
@@ -109,16 +146,20 @@ export function useOnboarding(
 
  return {
   status,
-  currentStep,
-  totalSteps,
   progress,
-  isComplete,
   isLoading,
   error,
+  isComplete,
+  currentStep,
+  completedSteps,
   fetchStatus,
+  fetchProgress,
+  saveProgress,
+  submit,
+  skip,
+  goToStep,
   completeStep,
-  skipStep,
-  resetOnboarding,
+  updateStepData,
   clearError,
  };
 }
