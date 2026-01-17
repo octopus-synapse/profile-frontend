@@ -104,11 +104,12 @@ export const createResumeStore = (apiClient: ProfileApiClient) =>
     const updated = await apiClient.resumes.update(id, data);
     // Refetch list to get updated ResumeListItem format
     const resumes = await apiClient.resumes.getAll();
-    set({
+    set((state) => ({
      resumes,
-     currentResume: updated,
+     currentResume:
+      state.currentResume?.id === id ? updated : state.currentResume,
      isLoading: false,
-    });
+    }));
    } catch (error) {
     const message =
      error instanceof Error ? error.message : "Failed to update resume";

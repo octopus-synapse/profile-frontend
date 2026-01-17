@@ -12,7 +12,7 @@
  * - Test names describe behavior
  */
 
-import { describe, it, expect, beforeEach, mock } from "bun:test";
+import { describe, it, expect, mock } from "bun:test";
 import { createAuthStore } from "../auth.store";
 import type { ProfileApiClient } from "@profile/api-client";
 
@@ -209,7 +209,7 @@ describe("AuthStore", () => {
    expect(apiClient.auth.register).toHaveBeenCalledWith({
     email: "new@example.com",
     password: "password123",
-    username: "newuser",
+    name: "newuser",
    });
   });
 

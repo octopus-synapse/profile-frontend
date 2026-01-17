@@ -28,16 +28,19 @@ const createMockApiClient = (
  overrides: Partial<ProfileApiClient["resumes"]> = {}
 ) => {
  const mockResume = createMockResume();
+ // Track last update to return proper data
+ let lastUpdatedResume = mockResume;
  return {
   resumes: {
-   getAll: mock(() => Promise.resolve([mockResume])),
-   getById: mock(() => Promise.resolve(mockResume)),
+   getAll: mock(() => Promise.resolve([lastUpdatedResume])),
+   getById: mock(() => Promise.resolve(lastUpdatedResume)),
    create: mock((data: any) =>
     Promise.resolve(createMockResume({ ...data, id: "new-resume-id" }))
    ),
-   update: mock((id: string, data: any) =>
-    Promise.resolve(createMockResume({ id, ...data }))
-   ),
+   update: mock((id: string, data: any) => {
+    lastUpdatedResume = createMockResume({ id, ...lastUpdatedResume, ...data });
+    return Promise.resolve(lastUpdatedResume);
+   }),
    delete: mock(() => Promise.resolve()),
    ...overrides,
   },

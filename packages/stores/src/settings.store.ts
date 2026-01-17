@@ -68,15 +68,16 @@ export const createSettingsStore = (apiClient: ProfileApiClient) =>
   fetchSettings: async () => {
    set({ isLoading: true, error: null });
    try {
-    // Settings are fetched from dedicated endpoint or defaults
-    // User profile doesn't have preferences, so we use defaults
+    const user = await apiClient.users.getMe();
+    const prefs = (user as { preferences?: Partial<UserSettings> }).preferences;
     const settings: UserSettings = {
-     emailNotifications: true,
-     marketingEmails: false,
-     twoFactorEnabled: false,
-     language: "en",
-     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-     theme: "system",
+     emailNotifications: prefs?.emailNotifications ?? true,
+     marketingEmails: prefs?.marketingEmails ?? false,
+     twoFactorEnabled: prefs?.twoFactorEnabled ?? false,
+     language: prefs?.language ?? "en",
+     timezone:
+      prefs?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone,
+     theme: prefs?.theme ?? "system",
     };
     set({ settings, isLoading: false });
     return settings;
@@ -91,8 +92,7 @@ export const createSettingsStore = (apiClient: ProfileApiClient) =>
   updateSettings: async (newSettings) => {
    set({ isLoading: true, error: null });
    try {
-    // Settings updates could be done via dedicated settings endpoint
-    // For now, just update local state
+    await apiClient.users.updateMe({ preferences: newSettings });
     set((state) => ({
      settings: state.settings ? { ...state.settings, ...newSettings } : null,
      isLoading: false,

@@ -160,7 +160,12 @@ export const createOnboardingStore = (apiClient: ProfileApiClient) =>
 
   updateStepData: (data) => {
    set((state) => ({
-    progress: state.progress ? { ...state.progress, ...data } : null,
+    progress: state.progress
+     ? {
+        ...state.progress,
+        data: { ...state.progress.data, ...data },
+       }
+     : null,
    }));
   },
  }));

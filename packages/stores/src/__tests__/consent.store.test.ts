@@ -17,7 +17,7 @@
  * - Types come from profile-contracts (Domain)
  */
 
-import { describe, it, expect, beforeEach, mock } from "bun:test";
+import { describe, it, expect, mock } from "bun:test";
 import {
  createConsentStore,
  type ConsentStatus,

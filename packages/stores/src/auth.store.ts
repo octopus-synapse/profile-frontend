@@ -7,15 +7,22 @@ import { create } from "zustand";
 import type {
  ProfileApiClient,
  AuthResponse,
- AuthTokens,
+ RefreshTokenResponse,
 } from "@profile/api-client";
 
 // Use the auth response user type instead of full User type
 type AuthUser = AuthResponse["user"];
 
+// Define tokens interface locally to avoid type resolution issues
+interface StoredTokens {
+ accessToken: string;
+ refreshToken: string;
+ expiresIn?: number;
+}
+
 export interface AuthState {
  user: AuthUser | null;
- tokens: AuthTokens | null;
+ tokens: StoredTokens | null;
  isAuthenticated: boolean;
  isLoading: boolean;
  error: string | null;
@@ -23,7 +30,7 @@ export interface AuthState {
 
 export interface AuthActions {
  setUser: (user: AuthUser | null) => void;
- setTokens: (tokens: AuthTokens | null) => void;
+ setTokens: (tokens: StoredTokens | null) => void;
  setLoading: (loading: boolean) => void;
  setError: (error: string | null) => void;
  login: (email: string, password: string) => Promise<void>;
@@ -60,10 +67,15 @@ export const createAuthStore = (apiClient: ProfileApiClient) =>
   login: async (email, password) => {
    set({ isLoading: true, error: null });
    try {
-    const response = await apiClient.auth.login({ email, password });
+    const response: AuthResponse = await apiClient.auth.login({
+     email,
+     password,
+    });
+    const { user, accessToken, refreshToken } = response;
+    const expiresIn: number = response.expiresIn;
     set({
-     user: response.user,
-     tokens: response.tokens,
+     user,
+     tokens: { accessToken, refreshToken, expiresIn },
      isAuthenticated: true,
      isLoading: false,
      error: null,
@@ -84,14 +96,16 @@ export const createAuthStore = (apiClient: ProfileApiClient) =>
   register: async (email, password, username) => {
    set({ isLoading: true, error: null });
    try {
-    const response = await apiClient.auth.register({
+    const response: AuthResponse = await apiClient.auth.register({
      email,
      password,
      name: username,
     });
+    const { user, accessToken, refreshToken } = response;
+    const expiresIn: number = response.expiresIn;
     set({
-     user: response.user,
-     tokens: response.tokens,
+     user,
+     tokens: { accessToken, refreshToken, expiresIn },
      isAuthenticated: true,
      isLoading: false,
      error: null,
@@ -134,12 +148,16 @@ export const createAuthStore = (apiClient: ProfileApiClient) =>
    }
 
    try {
-    const response = await apiClient.auth.refreshToken(tokens.refreshToken);
+    const response: RefreshTokenResponse = await apiClient.auth.refreshToken(
+     tokens.refreshToken
+    );
+    const { accessToken, refreshToken } = response;
+    const expiresIn: number = response.expiresIn;
     set({
      tokens: {
-      accessToken: response.accessToken,
-      expiresIn: response.expiresIn,
-      refreshToken: tokens.refreshToken,
+      accessToken,
+      refreshToken,
+      expiresIn,
      },
     });
    } catch (error) {

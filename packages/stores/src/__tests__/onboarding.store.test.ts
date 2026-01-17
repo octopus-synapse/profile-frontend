@@ -5,7 +5,7 @@
  * Each test is independent and self-documenting.
  */
 
-import { describe, it, expect, beforeEach, mock } from "bun:test";
+import { describe, it, expect, mock } from "bun:test";
 import { createOnboardingStore } from "../onboarding.store";
 import type { ProfileApiClient } from "@profile/api-client";
 
