@@ -58,6 +58,8 @@ RUN bun install --frozen-lockfile && bun run build
 
 # Build internal frontend dependencies
 WORKDIR /app/profile-frontend
+# Re-run install to ensure symlinks to sister packages are correctly resolved with their new build outputs
+RUN bun install
 RUN bun --filter @profile/api-client build
 RUN bun --filter @profile/stores build
 
