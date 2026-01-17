@@ -1,15 +1,29 @@
-echo "Running pre-commit checks..."
+#!/bin/sh
+# Standardized pre-commit hook for ProFile repositories
+# Source: octopus-workflows/scripts/husky/pre-commit
+#
+# Run: bun test, bun run lint:fast, bun run typecheck
+# These are the minimum checks for fast feedback before committing.
+#
+# CI will run additional checks:
+# - Full ESLint with type-aware rules
+# - Integration tests (for profile-services)
+# - E2E tests (for profile-frontend)
 
-# Type checking
-echo "Checking types..."
-pnpm type-check || exit 1
+echo "Pre-commit checks (fast feedback loop)..."
+echo ""
 
-# Linting
-echo "Running linter..."
-pnpm lint || exit 1
+# 1. Type check
+echo "  -> Type checking..."
+bun run typecheck || exit 1
 
-# Unit Tests with summary
-./scripts/test-summary.sh || exit 1
+# 2. Fast lint with oxlint
+echo "  -> Fast lint (oxlint)..."
+bun run lint:fast || exit 1
+
+# 3. Unit tests
+echo "  -> Running tests..."
+bun test || exit 1
 
 echo ""
-echo "✓ All pre-commit checks passed!"
+echo "Pre-commit passed!"

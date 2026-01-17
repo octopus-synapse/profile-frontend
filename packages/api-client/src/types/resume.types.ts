@@ -2,6 +2,12 @@
  * Resume Domain Types
  * API types for resume-related operations
  *
+ * @deprecated Most types in this file are now available in @octopus-synapse/profile-contracts.
+ * Import from profile-contracts for new code:
+ * - Resume, ResumeExperience, ResumeEducation, ResumeSkill, ResumeLanguage
+ * - SkillLevel, LanguageProficiency
+ * - CreateResume, UpdateResume (was CreateResumeDto, UpdateResumeDto)
+ *
  * NAMING CONVENTION:
  * - ResumeXxx: Persisted entities with id, resumeId, order (API responses)
  * - CreateXxxDto: DTOs for creating new entities
@@ -18,7 +24,9 @@ import {
 export { LanguageProficiencyEnum };
 export type { LanguageProficiency };
 
+/** @deprecated Use PrismaResumeTemplate from @octopus-synapse/profile-contracts */
 export type ResumeTemplate = "MODERN" | "CLASSIC" | "MINIMAL" | "PROFESSIONAL";
+/** @deprecated Use SkillLevel from @octopus-synapse/profile-contracts */
 export type SkillLevel = "BEGINNER" | "INTERMEDIATE" | "ADVANCED" | "EXPERT";
 /** @deprecated Use LanguageProficiency from contracts */
 export type LanguageLevel = LanguageProficiency;
