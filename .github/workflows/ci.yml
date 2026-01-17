@@ -44,6 +44,11 @@ jobs:
         working-directory: profile-contracts
         run: bun run build
 
+      - name: Configure GitHub Packages auth
+        working-directory: frontend
+        run: |
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> .npmrc
+
       - name: Install dependencies
         working-directory: frontend
         run: bun install --frozen-lockfile
@@ -88,6 +93,11 @@ jobs:
         working-directory: profile-contracts
         run: bun run build
 
+      - name: Configure GitHub Packages auth
+        working-directory: frontend
+        run: |
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> .npmrc
+
       - name: Install dependencies
         working-directory: frontend
         run: bun install --frozen-lockfile
@@ -123,6 +133,11 @@ jobs:
       - name: Build contracts
         working-directory: profile-contracts
         run: bun run build
+
+      - name: Configure GitHub Packages auth
+        working-directory: frontend
+        run: |
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> .npmrc
 
       - name: Install dependencies
         working-directory: frontend
@@ -176,6 +191,11 @@ jobs:
         working-directory: profile-contracts
         run: bun run build
 
+      - name: Configure GitHub Packages auth
+        working-directory: frontend
+        run: |
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> .npmrc
+
       - name: Install dependencies
         working-directory: frontend
         run: bun install --frozen-lockfile
@@ -211,6 +231,11 @@ jobs:
       - name: Build contracts
         working-directory: profile-contracts
         run: bun run build
+
+      - name: Configure GitHub Packages auth
+        working-directory: frontend
+        run: |
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> .npmrc
 
       - name: Install frontend dependencies
         working-directory: frontend
@@ -259,6 +284,11 @@ jobs:
       - name: Build contracts
         working-directory: profile-contracts
         run: bun run build
+
+      - name: Configure GitHub Packages auth
+        working-directory: frontend
+        run: |
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> .npmrc
 
       - name: Install dependencies
         working-directory: frontend
