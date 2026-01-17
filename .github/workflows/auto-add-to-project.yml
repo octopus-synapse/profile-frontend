@@ -1,0 +1,13 @@
+name: Auto-add to Project
+
+# Automatically add new issues to Patch Careers project
+# Uses centralized workflow from octopus-workflows
+on:
+  issues:
+    types: [opened, reopened]
+
+jobs:
+  call-auto-add:
+    uses: octopus-synapse/octopus-workflows/.github/workflows/auto-add-to-project.yml@main
+    secrets:
+      GH_PAT: ${{ secrets.GH_PAT }}

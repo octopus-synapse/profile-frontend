@@ -7,8 +7,8 @@
 #
 # CI will run additional checks:
 # - Full ESLint with type-aware rules
-# - Integration tests
-# - E2E tests
+# - Integration tests (for profile-services)
+# - E2E tests (for profile-frontend)
 # - Docker build
 
 echo "Pre-commit checks (fast feedback loop)..."

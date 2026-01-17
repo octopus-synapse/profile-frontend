@@ -27,9 +27,9 @@
     "clean": "rm -rf .next .turbo node_modules playwright-report test-results"
   },
   "dependencies": {
-    "@octopus-synapse/profile-contracts": "^3.6.0",
-    "@octopus-synapse/profile-ui": "workspace:*",
-    "@profile/api-client": "*",
+    "@octopus-synapse/profile-contracts": "^1.4.0",
+    "@octopus-synapse/profile-ui": "^1.0.0",
+    "@profile/api-client": "workspace:*",
     "@radix-ui/react-avatar": "^1.1.11",
     "@radix-ui/react-checkbox": "^1.3.3",
     "@radix-ui/react-dialog": "^1.1.15",
