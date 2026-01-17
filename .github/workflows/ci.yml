@@ -44,11 +44,12 @@ jobs:
         working-directory: profile-contracts
         run: bun run build
 
+      - name: Configure npm auth
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> ~/.npmrc
+
       - name: Install dependencies
         working-directory: frontend
         run: bun install --frozen-lockfile
-        env:
-          BUN_AUTH_TOKEN: ${{ secrets.GH_PAT }}
 
       - name: Build api-client
         working-directory: frontend
@@ -90,11 +91,12 @@ jobs:
         working-directory: profile-contracts
         run: bun run build
 
+      - name: Configure npm auth
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> ~/.npmrc
+
       - name: Install dependencies
         working-directory: frontend
         run: bun install --frozen-lockfile
-        env:
-          BUN_AUTH_TOKEN: ${{ secrets.GH_PAT }}
 
       - name: Run smoke tests
         working-directory: frontend
@@ -128,11 +130,12 @@ jobs:
         working-directory: profile-contracts
         run: bun run build
 
+      - name: Configure npm auth
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> ~/.npmrc
+
       - name: Install dependencies
         working-directory: frontend
         run: bun install --frozen-lockfile
-        env:
-          BUN_AUTH_TOKEN: ${{ secrets.GH_PAT }}
 
       - name: Check if pre-commit hooks were bypassed
         working-directory: frontend
@@ -182,11 +185,12 @@ jobs:
         working-directory: profile-contracts
         run: bun run build
 
+      - name: Configure npm auth
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> ~/.npmrc
+
       - name: Install dependencies
         working-directory: frontend
         run: bun install --frozen-lockfile
-        env:
-          BUN_AUTH_TOKEN: ${{ secrets.GH_PAT }}
 
       - name: Run ESLint
         working-directory: frontend
@@ -220,11 +224,12 @@ jobs:
         working-directory: profile-contracts
         run: bun run build
 
+      - name: Configure npm auth
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> ~/.npmrc
+
       - name: Install frontend dependencies
         working-directory: frontend
         run: bun install --frozen-lockfile
-        env:
-          BUN_AUTH_TOKEN: ${{ secrets.GH_PAT }}
 
       - name: Verify contracts integration
         working-directory: frontend
@@ -270,11 +275,12 @@ jobs:
         working-directory: profile-contracts
         run: bun run build
 
+      - name: Configure npm auth
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> ~/.npmrc
+
       - name: Install dependencies
         working-directory: frontend
         run: bun install --frozen-lockfile
-        env:
-          BUN_AUTH_TOKEN: ${{ secrets.GH_PAT }}
 
       - name: Build all packages
         working-directory: frontend
