@@ -21,6 +21,12 @@
   { "path": "./packages/stores" },
   { "path": "./packages/test-utils" }
  ],
- "include": [],
+ "include": [
+  "commitlint.config.ts",
+  "test/**/*",
+  "apps/*/e2e/**/*",
+  "apps/*/playwright.config.ts",
+  "packages/*/*.config.ts"
+ ],
  "exclude": ["node_modules", "dist"]
 }

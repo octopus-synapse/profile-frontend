@@ -10,7 +10,6 @@
 
 import { describe, it, expect, mock, beforeEach } from "bun:test";
 import {
- createHttpClient,
  createAuthRepository,
  createResumeRepository,
  createThemeRepository,
@@ -81,9 +80,18 @@ describe("Integration: Authentication Flow", () => {
  it("should complete login -> get user flow", async () => {
   // Arrange
   const loginResponse = {
-   user: { id: "user-1", email: "test@example.com", name: "Test" },
-   accessToken: "access-token",
-   refreshToken: "refresh-token",
+   success: true,
+   data: {
+    user: {
+     id: "user-1",
+     email: "test@example.com",
+     name: "Test",
+     hasCompletedOnboarding: true,
+    },
+    accessToken: "access-token",
+    refreshToken: "refresh-token",
+    expiresIn: 3600,
+   },
   };
   (mockHttpClient.post as ReturnType<typeof mock>).mockResolvedValue(
    loginResponse
@@ -98,7 +106,7 @@ describe("Integration: Authentication Flow", () => {
   // Assert
   expect(result.user.email).toBe("test@example.com");
   expect(result.accessToken).toBe("access-token");
-  expect(mockHttpClient.post).toHaveBeenCalledWith("/auth/login", {
+  expect(mockHttpClient.post).toHaveBeenCalledWith("/v1/auth/login", {
    email: "test@example.com",
    password: "password123",
   });
@@ -107,9 +115,18 @@ describe("Integration: Authentication Flow", () => {
  it("should complete register -> login flow", async () => {
   // Arrange
   const authResponse = {
-   user: { id: "user-1", email: "new@example.com", name: "New User" },
-   accessToken: "access-token",
-   refreshToken: "refresh-token",
+   success: true,
+   data: {
+    user: {
+     id: "user-1",
+     email: "new@example.com",
+     name: "New User",
+     hasCompletedOnboarding: false,
+    },
+    accessToken: "access-token",
+    refreshToken: "refresh-token",
+    expiresIn: 3600,
+   },
   };
   (mockHttpClient.post as ReturnType<typeof mock>).mockResolvedValue(
    authResponse
@@ -138,8 +155,18 @@ describe("Integration: Authentication Flow", () => {
  it("should handle token refresh flow", async () => {
   // Arrange
   const refreshResponse = {
-   accessToken: "new-access-token",
-   refreshToken: "new-refresh-token",
+   success: true,
+   data: {
+    accessToken: "new-access-token",
+    refreshToken: "new-refresh-token",
+    expiresIn: 1800,
+    user: {
+     id: "user-1",
+     email: "test@example.com",
+     name: "Test",
+     hasCompletedOnboarding: true,
+    },
+   },
   };
   (mockHttpClient.post as ReturnType<typeof mock>).mockResolvedValue(
    refreshResponse
@@ -150,7 +177,7 @@ describe("Integration: Authentication Flow", () => {
 
   // Assert
   expect(result.accessToken).toBe("new-access-token");
-  expect(mockHttpClient.post).toHaveBeenCalledWith("/auth/refresh", {
+  expect(mockHttpClient.post).toHaveBeenCalledWith("/v1/auth/refresh", {
    refreshToken: "old-refresh-token",
   });
  });
@@ -214,7 +241,7 @@ describe("Integration: Resume CRUD Flow", () => {
    undefined
   );
   await resumeRepo.delete("resume-1");
-  expect(mockHttpClient.delete).toHaveBeenCalledWith("/resumes/resume-1");
+  expect(mockHttpClient.delete).toHaveBeenCalledWith("/v1/resumes/resume-1");
  });
 
  it("should handle nested resources (experiences)", async () => {
@@ -238,7 +265,7 @@ describe("Integration: Resume CRUD Flow", () => {
   // Assert
   expect(result.id).toBe("exp-1");
   expect(mockHttpClient.post).toHaveBeenCalledWith(
-   "/resumes/resume-1/experiences",
+   "/v1/resumes/resume-1/experiences",
    expect.any(Object)
   );
  });
@@ -315,8 +342,11 @@ describe("Integration: Two-Factor Authentication Flow", () => {
 
   // Assert
   expect(result.success).toBe(true);
-  expect(mockHttpClient.post).toHaveBeenCalledWith("/auth/2fa/verify-login", {
-   token: "123456",
-  });
+  expect(mockHttpClient.post).toHaveBeenCalledWith(
+   "/v1/auth/2fa/verify-login",
+   {
+    token: "123456",
+   }
+  );
  });
 });

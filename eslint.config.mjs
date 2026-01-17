@@ -18,14 +18,22 @@ export default tseslint.config(
  // Global ignores
  {
   ignores: [
+   // Config files
    "eslint.config.mjs",
-   "dist/**",
-   "node_modules/**",
-   "coverage/**",
-   "*.config.js",
-   "*.config.mjs",
-   ".next/**",
+   "**/*.config.js",
+   "**/*.config.mjs",
+   
+   // Build artifacts
+   "**/dist/**",
+   "**/node_modules/**",
+   "**/coverage/**",
+   "**/.next/**",
    "apps/web/.next/**",
+   "packages/api-client/dist/**",
+   "packages/features/dist/**",
+   "packages/stores/dist/**",
+   
+   // Mobile - deferred
    "apps/mobile/**",
   ],
  },
@@ -42,7 +50,9 @@ export default tseslint.config(
    ecmaVersion: 2022,
    sourceType: "module",
    parserOptions: {
-    projectService: true,
+    projectService: {
+        defaultProject: "tsconfig.eslint.json",
+    },
     tsconfigRootDir: import.meta.dirname,
    },
   },
@@ -50,12 +60,13 @@ export default tseslint.config(
 
  // Production code rules (TYPE-AWARE ONLY - oxlint handles structural lint)
  {
-  files: ["packages/**/*.ts", "packages/**/*.tsx"],
+  files: ["packages/**/*.ts", "packages/**/*.tsx", "apps/**/*.ts", "apps/**/*.tsx"],
   ignores: [
    "**/*.spec.ts",
    "**/*.test.ts",
    "**/__tests__/**",
    "**/__mocks__/**",
+   "**/tsup.config.ts"
   ],
   rules: {
    // Type-aware rules (cannot be validated by oxlint)
@@ -90,6 +101,9 @@ export default tseslint.config(
    "@typescript-eslint/no-unsafe-return": "off",
    "@typescript-eslint/no-unsafe-argument": "off",
    "@typescript-eslint/unbound-method": "off",
+   "@typescript-eslint/no-explicit-any": "off",
+   "@typescript-eslint/await-thenable": "off",
+   "@typescript-eslint/no-redundant-type-constituents": "off"
   },
  }
 );

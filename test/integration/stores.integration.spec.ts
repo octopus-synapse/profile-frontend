@@ -5,7 +5,7 @@
  * and maintain consistent state throughout complex operations.
  */
 
-import { describe, it, expect, mock, beforeEach } from "bun:test";
+import { describe, it, expect, mock } from "bun:test";
 import { createAuthStore } from "../../packages/stores/src/auth.store";
 import { createResumeStore } from "../../packages/stores/src/resume.store";
 import { createThemeStore } from "../../packages/stores/src/theme.store";
