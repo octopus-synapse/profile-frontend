@@ -5,12 +5,10 @@ on:
     branches: [main, dev]
     paths-ignore:
       - "CHANGELOG.md"
-      - "package.json"
   push:
     branches: [main, dev]
     paths-ignore:
       - "CHANGELOG.md"
-      - "package.json"
 
 permissions:
   contents: read
