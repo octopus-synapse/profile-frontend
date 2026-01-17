@@ -40,13 +40,13 @@ export function ThemeEditor({ theme, onSave, onCancel }: Props) {
       if (keys.length === 0) return prev;
 
       const result = { ...prev };
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let current: any = result;
+      let current = result as Record<string, unknown>;
 
       for (let i = 0; i < keys.length - 1; i++) {
         const key = keys[i]!;
-        current[key] = { ...(current[key] || {}) };
-        current = current[key];
+        const nextVal = (current[key] as Record<string, unknown>) || {};
+        current[key] = { ...nextVal };
+        current = current[key] as Record<string, unknown>;
       }
       const lastKey = keys[keys.length - 1]!;
       current[lastKey] = value;
@@ -62,18 +62,18 @@ export function ThemeEditor({ theme, onSave, onCancel }: Props) {
         saved = await createTheme.mutateAsync({
           name,
           category: "MODERN",
-          styleConfig: config as Record<string, unknown>,
+          styleConfig: config,
         });
       } else if (isPublicOrSystem) {
-        saved = await forkTheme.mutateAsync({ themeId: theme!.id, name: `${name} (Custom)` });
+        saved = await forkTheme.mutateAsync({ themeId: theme.id, name: `${name} (Custom)` });
         saved = await updateTheme.mutateAsync({
           id: saved.id,
-          input: { styleConfig: config as Record<string, unknown> },
+          input: { styleConfig: config },
         });
       } else {
         saved = await updateTheme.mutateAsync({
-          id: theme!.id,
-          input: { name, styleConfig: config as Record<string, unknown> },
+          id: theme.id,
+          input: { name, styleConfig: config },
         });
       }
 
@@ -107,7 +107,7 @@ export function ThemeEditor({ theme, onSave, onCancel }: Props) {
             Cancel
           </button>
           <button
-            onClick={handleSave}
+            onClick={() => void handleSave()}
             disabled={createTheme.isPending || updateTheme.isPending || forkTheme.isPending}
             className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis rounded-lg px-4 py-2 text-sm font-medium transition-colors hover:opacity-90 disabled:opacity-50"
           >
@@ -159,7 +159,7 @@ function JsonEditor({
   const handleChange = (value: string) => {
     setJson(value);
     try {
-      const parsed = JSON.parse(value);
+      const parsed = JSON.parse(value) as Partial<ResumeStyleConfig>;
       onChange(parsed);
       setError(null);
     } catch {

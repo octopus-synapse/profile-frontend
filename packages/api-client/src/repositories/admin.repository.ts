@@ -4,40 +4,45 @@
  */
 
 import type { HttpClient } from "../client";
-import type { AdminStats, AdminUser, RecentActivity, SystemHealth } from "../types";
+import type {
+ AdminStats,
+ AdminUser,
+ RecentActivity,
+ SystemHealth,
+} from "../types";
 
-const BASE_URL = "/admin";
+const BASE_URL = "/v1/admin";
 
 export function createAdminRepository(client: HttpClient) {
-  return {
-    /**
-     * Get admin dashboard stats
-     */
-    async getStats(): Promise<AdminStats> {
-      return client.get<AdminStats>(`${BASE_URL}/stats`);
-    },
+ return {
+  /**
+   * Get admin dashboard stats
+   */
+  async getStats(): Promise<AdminStats> {
+   return client.get<AdminStats>(`${BASE_URL}/stats`);
+  },
 
-    /**
-     * Get recent activity
-     */
-    async getRecentActivity(limit = 10): Promise<RecentActivity[]> {
-      return client.get<RecentActivity[]>(`${BASE_URL}/activity?limit=${limit}`);
-    },
+  /**
+   * Get recent activity
+   */
+  async getRecentActivity(limit = 10): Promise<RecentActivity[]> {
+   return client.get<RecentActivity[]>(`${BASE_URL}/activity?limit=${limit}`);
+  },
 
-    /**
-     * Get system health status
-     */
-    async getSystemHealth(): Promise<SystemHealth> {
-      return client.get<SystemHealth>(`${BASE_URL}/health`);
-    },
+  /**
+   * Get system health status
+   */
+  async getSystemHealth(): Promise<SystemHealth> {
+   return client.get<SystemHealth>(`${BASE_URL}/health`);
+  },
 
-    /**
-     * Get recent users
-     */
-    async getRecentUsers(limit = 5): Promise<AdminUser[]> {
-      return client.get<AdminUser[]>(`${BASE_URL}/users/recent?limit=${limit}`);
-    },
-  };
+  /**
+   * Get recent users
+   */
+  async getRecentUsers(limit = 5): Promise<AdminUser[]> {
+   return client.get<AdminUser[]>(`${BASE_URL}/users/recent?limit=${limit}`);
+  },
+ };
 }
 
 export type AdminRepository = ReturnType<typeof createAdminRepository>;

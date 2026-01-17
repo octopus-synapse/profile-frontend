@@ -125,11 +125,11 @@ export function ThemePicker({ resumeId, activeThemeId, onThemeApplied, onEditThe
               key={theme.id}
               theme={theme}
               isActive={theme.id === activeThemeId}
-              onSelect={() => handleSelect(theme)}
+              onSelect={() => void handleSelect(theme)}
               onEdit={() => handleEdit(theme)}
-              onFork={() => handleFork(theme)}
-              onDelete={() => handleDelete(theme)}
-              onSubmitForApproval={() => handleSubmitForApproval(theme)}
+              onFork={() => void handleFork(theme)}
+              onDelete={() => void handleDelete(theme)}
+              onSubmitForApproval={() => void handleSubmitForApproval(theme)}
             />
           ))}
 

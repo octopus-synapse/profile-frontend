@@ -37,7 +37,7 @@ export function useCreateEducation() {
   return useMutation({
     mutationFn: (data: CreateEducationPayload) => educationRepository.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: educationKeys.all });
+      void queryClient.invalidateQueries({ queryKey: educationKeys.all });
     },
   });
 }
@@ -49,7 +49,7 @@ export function useUpdateEducation() {
     mutationFn: ({ id, data }: { id: string; data: Partial<CreateEducationPayload> }) =>
       educationRepository.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: educationKeys.all });
+      void queryClient.invalidateQueries({ queryKey: educationKeys.all });
     },
   });
 }
@@ -60,7 +60,7 @@ export function useDeleteEducation() {
   return useMutation({
     mutationFn: (id: string) => educationRepository.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: educationKeys.all });
+      void queryClient.invalidateQueries({ queryKey: educationKeys.all });
     },
   });
 }

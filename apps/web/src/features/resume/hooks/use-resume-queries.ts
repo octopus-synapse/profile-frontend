@@ -2,10 +2,13 @@
 
 /**
  * Resume Queries
+ *
+ * Uses @profile/api-client for all API calls.
+ * This ensures web and mobile share the same implementation.
  */
 
 import { useQuery } from "@tanstack/react-query";
-import { resumeRepository } from "../services/resume-repository";
+import { apiClient } from "@/shared/lib/api-client";
 import { resumeKeys } from "./query-keys";
 
 /**
@@ -14,7 +17,7 @@ import { resumeKeys } from "./query-keys";
 export function useResumes() {
   return useQuery({
     queryKey: resumeKeys.list(),
-    queryFn: () => resumeRepository.getAll(),
+    queryFn: () => apiClient.resumes.getAll(),
     staleTime: 1 * 60 * 1000, // 1 minute
   });
 }
@@ -25,7 +28,7 @@ export function useResumes() {
 export function useResume(id: string) {
   return useQuery({
     queryKey: resumeKeys.detail(id),
-    queryFn: () => resumeRepository.getById(id),
+    queryFn: () => apiClient.resumes.getById(id),
     enabled: !!id,
     staleTime: 30 * 1000, // 30 seconds
   });
@@ -37,7 +40,7 @@ export function useResume(id: string) {
 export function usePublicResume(slug: string) {
   return useQuery({
     queryKey: resumeKeys.public(slug),
-    queryFn: () => resumeRepository.getBySlug(slug),
+    queryFn: () => apiClient.resumes.getBySlug(slug),
     enabled: !!slug,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });

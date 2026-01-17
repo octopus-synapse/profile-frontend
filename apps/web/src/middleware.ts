@@ -156,18 +156,8 @@ export default async function middleware(request: NextRequest) {
     pathnameWithoutLocale.startsWith("/protected") &&
     !pathnameWithoutLocale.startsWith("/onboarding")
   ) {
-    // Security bypass: Allow ?bypass=true for support/recovery scenarios
-    const bypassParam = request.nextUrl.searchParams.get("bypass");
-    if (bypassParam === "true") {
-      // Log bypass usage for security monitoring
-      console.warn("[Middleware] Onboarding bypass used", {
-        userId: session?.user?.id,
-        path: pathnameWithoutLocale,
-        timestamp: new Date().toISOString(),
-      });
-      return response;
-    }
-
+    // SECURITY: Removed bypass flag - onboarding is mandatory for all users
+    // If support/recovery scenarios are needed, use admin panel or database operations
     return NextResponse.redirect(createLocalizedUrl(ROUTES.ONBOARDING));
   }
 

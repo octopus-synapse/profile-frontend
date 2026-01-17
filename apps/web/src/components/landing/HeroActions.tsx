@@ -15,13 +15,13 @@ export function HeroActions({ t }: HeroActionsProps) {
   const router = useRouter();
   const { isOpen, openModal, closeModal, checkExistingConsent } = useConsentModal();
 
-  const handlePrimaryCTA = useCallback(() => {
+  const handlePrimaryCTA = useCallback(async () => {
     trackEvent(AnalyticsEvent.HERO_CTA_CLICK, {
       text: t.hero.cta,
     });
 
     // Check if user already has consent
-    if (checkExistingConsent()) {
+    if (await checkExistingConsent()) {
       router.push(ROUTES.AUTH.SIGN_UP);
     } else {
       openModal();
@@ -49,7 +49,7 @@ export function HeroActions({ t }: HeroActionsProps) {
     <>
       <div className="flex flex-col justify-center gap-4 sm:flex-row">
         <button
-          onClick={handlePrimaryCTA}
+          onClick={() => void handlePrimaryCTA()}
           className="group relative inline-flex items-center justify-center gap-2 rounded-xl bg-white px-8 py-4 font-semibold text-black shadow-lg transition-all duration-200 hover:bg-white/90 hover:shadow-xl"
           aria-label={t.hero.cta}
         >

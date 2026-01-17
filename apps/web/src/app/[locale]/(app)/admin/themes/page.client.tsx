@@ -72,10 +72,12 @@ export default function ThemeApprovalsClient() {
   );
 }
 
+import type { LucideIcon } from "lucide-react";
+
 interface StatsCardProps {
   label: string;
   value: number;
-  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+  icon: LucideIcon;
   variant: "attention" | "success" | "danger";
 }
 

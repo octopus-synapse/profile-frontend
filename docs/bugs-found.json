@@ -1,0 +1,211 @@
+{
+  "metadata": {
+    "auditor": "Uncle Bob (analisando frontend agora - sem café, sem almoço, sem paciência)",
+    "date": "2026-01-07",
+    "severity_levels": ["CRITICAL", "HIGH", "MEDIUM", "LOW"],
+    "status_options": ["OPEN", "IN_PROGRESS", "FIXED", "WONT_FIX"],
+    "total_bugs": 24
+  },
+  "bugs": [
+    {
+      "id": "FRONTEND-BUG-001",
+      "title": "dangerouslySetInnerHTML in Root Layout (XSS Risk)",
+      "severity": "CRITICAL",
+      "status": "OPEN",
+      "files_related": ["apps/web/src/app/layout.tsx"],
+      "description": "Theme script injected via dangerouslySetInnerHTML. While the script is static, this pattern is dangerous and could be exploited if script generation is modified. Should use Next.js Script component or safe DOM manipulation."
+    },
+    {
+      "id": "FRONTEND-BUG-002",
+      "title": "Onboarding Bypass Flag in Middleware (?bypass=true)",
+      "severity": "CRITICAL",
+      "status": "OPEN",
+      "files_related": ["apps/web/src/middleware.ts"],
+      "description": "Security bypass flag allows skipping onboarding requirement with ?bypass=true. While logged, this is a security vulnerability. Any user can bypass onboarding by adding query param. Should be admin-only or removed entirely."
+    },
+    {
+      "id": "FRONTEND-BUG-003",
+      "title": "No CSRF Protection on State-Changing Requests",
+      "severity": "CRITICAL",
+      "status": "OPEN",
+      "files_related": ["apps/web/src/shared/lib/http-client.ts", "packages/api-client/src/client/http-client.ts"],
+      "description": "POST/PUT/DELETE requests have no CSRF token validation. Next.js App Router should use Server Actions for CSRF protection, but API client calls bypass this. Vulnerable to cross-site request forgery attacks."
+    },
+    {
+      "id": "FRONTEND-BUG-004",
+      "title": "Console Logs in Production Code",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "files_related": [
+        "apps/web/src/features/auth/services/auth-config.ts",
+        "apps/web/src/middleware.ts",
+        "apps/web/src/features/settings/components/*.tsx"
+      ],
+      "description": "Multiple console.log/error statements in production code expose sensitive information (user IDs, auth attempts, errors). Should be removed or replaced with proper logging service that filters sensitive data."
+    },
+    {
+      "id": "FRONTEND-BUG-005",
+      "title": "Access Tokens Stored in JWT (Client-Side)",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "files_related": ["apps/web/src/features/auth/services/auth-config.ts"],
+      "description": "Access tokens stored in NextAuth JWT, which are client-accessible. If JWT is compromised (XSS), attacker gets access token. Should use httpOnly cookies or shorter-lived tokens with refresh mechanism."
+    },
+    {
+      "id": "FRONTEND-BUG-006",
+      "title": "No Rate Limiting on Client-Side API Calls",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "files_related": ["apps/web/src/shared/lib/http-client.ts", "packages/api-client/src/client/http-client.ts"],
+      "description": "No rate limiting implemented on client-side. User can spam API endpoints, potentially causing DoS or hitting rate limits. Should implement debouncing and request queuing."
+    },
+    {
+      "id": "FRONTEND-BUG-007",
+      "title": "Infinite Retry Loop Potential in Token Refresh",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "files_related": ["apps/web/src/shared/lib/http-client.ts"],
+      "description": "Token refresh logic retries once, but if refresh fails repeatedly, could cause infinite loop. Need maximum retry limit and exponential backoff. Current implementation only sets _retry flag once."
+    },
+    {
+      "id": "FRONTEND-BUG-008",
+      "title": "Analytics Data Stored in sessionStorage",
+      "severity": "MEDIUM",
+      "status": "OPEN",
+      "files_related": ["apps/web/src/lib/analytics.ts"],
+      "description": "Analytics events stored in sessionStorage with user data (userAgent, URL, timestamps). Could expose user behavior patterns. Should limit storage or encrypt sensitive data."
+    },
+    {
+      "id": "FRONTEND-BUG-009",
+      "title": "No Input Sanitization Before Display",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "files_related": ["apps/web/src/features/**/*.tsx"],
+      "description": "User input (bio, descriptions, etc.) rendered directly without sanitization. If backend doesn't sanitize, XSS attacks possible. Should sanitize all user-generated content before rendering."
+    },
+    {
+      "id": "FRONTEND-BUG-010",
+      "title": "Error Messages Exposed to Client",
+      "severity": "MEDIUM",
+      "status": "OPEN",
+      "files_related": ["apps/web/src/shared/lib/http-client.ts"],
+      "description": "Backend error messages exposed directly to client. Could leak sensitive information about system internals (stack traces, database errors, file paths). Should sanitize error messages on frontend."
+    },
+    {
+      "id": "FRONTEND-BUG-011",
+      "title": "No Content Security Policy (CSP) Headers",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "files_related": ["apps/web/next.config.ts"],
+      "description": "No CSP headers configured. Should implement strict CSP to prevent XSS attacks, inline script execution, and unauthorized resource loading."
+    },
+    {
+      "id": "FRONTEND-BUG-012",
+      "title": "localStorage Used for Theme (XSS Persistence)",
+      "severity": "MEDIUM",
+      "status": "OPEN",
+      "files_related": ["apps/web/src/shared/providers/theme-provider.tsx"],
+      "description": "Theme preference stored in localStorage. If XSS attack occurs, localStorage can be manipulated to persist attack. While theme is low-risk, pattern is problematic. Consider httpOnly cookies for sensitive preferences."
+    },
+    {
+      "id": "FRONTEND-BUG-013",
+      "title": "No Request Cancellation on Unmount",
+      "severity": "MEDIUM",
+      "status": "OPEN",
+      "files_related": ["apps/web/src/**/hooks/*.ts"],
+      "description": "React Query and axios requests not cancelled when components unmount. Could cause memory leaks, state updates on unmounted components, and wasted bandwidth."
+    },
+    {
+      "id": "FRONTEND-BUG-014",
+      "title": "No Debouncing on Username/Email Checks",
+      "severity": "MEDIUM",
+      "status": "OPEN",
+      "files_related": ["apps/web/src/features/settings/components/username-field.tsx", "apps/web/src/features/onboarding/components/steps/username-step.tsx"],
+      "description": "Username/email availability checks triggered on every keystroke. Should debounce to prevent API spam and reduce server load."
+    },
+    {
+      "id": "FRONTEND-BUG-015",
+      "title": "Insufficient Test Coverage",
+      "severity": "MEDIUM",
+      "status": "OPEN",
+      "files_related": ["apps/web/src/__tests__/"],
+      "description": "Only 1 integration test exists. No unit tests for components, hooks, or services. Critical functionality (auth, forms, API client) has no test coverage. Should implement comprehensive test suite."
+    },
+    {
+      "id": "FRONTEND-BUG-016",
+      "title": "No Input Length Validation on Client",
+      "severity": "MEDIUM",
+      "status": "OPEN",
+      "files_related": ["apps/web/src/features/**/components/*.tsx"],
+      "description": "Forms have maxLength attributes but no validation feedback. User can submit extremely long inputs that will be rejected by backend, causing poor UX. Should validate and show feedback before submission."
+    },
+    {
+      "id": "FRONTEND-BUG-017",
+      "title": "Password Strength Check Only on Frontend",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "files_related": ["apps/web/src/features/auth/components/sign-up-form.tsx"],
+      "description": "Password strength validation only on frontend. Attacker can bypass by calling API directly with weak password. Backend must also validate password strength."
+    },
+    {
+      "id": "FRONTEND-BUG-018",
+      "title": "API URL Exposed in Client Bundle",
+      "severity": "LOW",
+      "status": "OPEN",
+      "files_related": ["apps/web/src/config/env.ts"],
+      "description": "API URL in NEXT_PUBLIC_* env var, exposed in client bundle. While expected for public APIs, could help attackers discover internal endpoints. Should document and monitor."
+    },
+    {
+      "id": "FRONTEND-BUG-019",
+      "title": "No Request Timeout Handling UI",
+      "severity": "MEDIUM",
+      "status": "OPEN",
+      "files_related": ["apps/web/src/shared/lib/http-client.ts"],
+      "description": "Request timeout (30s) exists but no user feedback. Long-running requests just hang with no indication. Should show timeout error message and retry option."
+    },
+    {
+      "id": "FRONTEND-BUG-020",
+      "title": "Refresh Token Not Rotated",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "files_related": ["apps/web/src/features/auth/services/auth-service.ts"],
+      "description": "When refresh token is used, new refresh token is returned but old one might still be valid. Should implement token rotation - invalidate old token when new one is issued."
+    },
+    {
+      "id": "FRONTEND-BUG-021",
+      "title": "Session Expiry Not Handled Gracefully",
+      "severity": "MEDIUM",
+      "status": "OPEN",
+      "files_related": ["apps/web/src/features/auth/services/auth-config.ts"],
+      "description": "Session maxAge is 30 days but no refresh mechanism. If session expires during active use, user gets unexpected logout. Should refresh session before expiry or show warning."
+    },
+    {
+      "id": "FRONTEND-BUG-022",
+      "title": "No Request Deduplication",
+      "severity": "MEDIUM",
+      "status": "OPEN",
+      "files_related": ["apps/web/src/shared/lib/http-client.ts"],
+      "description": "Multiple components requesting same data cause duplicate API calls. React Query handles this for queries, but manual API calls (mutations, manual fetches) don't deduplicate."
+    },
+    {
+      "id": "FRONTEND-BUG-023",
+      "title": "Error Boundary Not Implemented",
+      "severity": "MEDIUM",
+      "status": "OPEN",
+      "files_related": ["apps/web/src/app/**/*.tsx"],
+      "description": "No React Error Boundaries to catch and handle component errors gracefully. Unhandled errors crash entire app. Should implement error boundaries at route level."
+    },
+    {
+      "id": "FRONTEND-BUG-024",
+      "title": "Middleware Logs User IDs in Production",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "files_related": ["apps/web/src/middleware.ts"],
+      "description": "console.warn logs user IDs when bypass is used. This exposes PII (Personally Identifiable Information) in logs. Should use proper logging service that masks sensitive data."
+    }
+  ]
+}
+
+
+
+

@@ -1,0 +1,4 @@
+[test]
+# Test configuration for Bun - Root workspace
+# DOM preload is required for @testing-library/react tests
+preload = ["./apps/web/test.setup.ts"]

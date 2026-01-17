@@ -1,27 +1,30 @@
 /**
  * Onboarding Feature
+ *
+ * Note: onboardingRepository has been removed - use apiClient.onboarding instead.
+ * This ensures web and mobile share the same implementation via @profile/api-client.
  */
 
-// Types
+// Types from api-client (for API communication)
 export type {
   OnboardingData,
   PersonalInfoData,
   ProfessionalProfileData,
-  ExperienceData,
-  EducationData,
-  SkillData,
-  LanguageData,
   TemplateSelectionData,
   SubmitOnboardingDto,
+  ExperiencesStepData,
+  EducationStepData,
+  SkillsStepData,
+  OnboardingProgress,
+  OnboardingStatus,
+  OnboardingResult,
+  SaveProgressResult,
 } from "./types";
-
-// Repository
-export { onboardingRepository } from "./services/onboarding-repository";
 
 // Hooks
 export { onboardingKeys, useOnboardingStatus, useSubmitOnboarding } from "./hooks";
 
-// Store-based system
+// Store-based system (local types for UI)
 export { useOnboardingStore, ONBOARDING_STEPS } from "./stores";
 export type {
   PersonalInfo,

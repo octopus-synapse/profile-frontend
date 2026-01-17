@@ -7,7 +7,7 @@
 
 import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { authService } from "../services/auth-service";
+import { apiClient } from "@/shared/lib/api-client";
 import { useT } from "@/features/i18n";
 import { Button, Input, Spinner } from "@/shared/components/ui";
 import { Label } from "@/shared/components/ui/label";
@@ -65,7 +65,8 @@ function ResetPasswordFormContent() {
     setIsLoading(true);
 
     try {
-      await authService.resetPassword(token, password);
+      // Use shared api-client
+      await apiClient.auth.resetPassword({ token, password });
       setSuccess(true);
       // Redirect to sign in after 2 seconds
       setTimeout(() => {
@@ -103,7 +104,7 @@ function ResetPasswordFormContent() {
       }}
       transition={{ duration: 0.4 }}
     >
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={(e) => void handleSubmit(e)} className="space-y-5">
         {/* Success Alert */}
         <AnimatePresence mode="wait">
           {success && (

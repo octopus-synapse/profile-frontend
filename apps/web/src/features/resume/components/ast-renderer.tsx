@@ -82,7 +82,7 @@ function TwoColumnLayout({
 
   return (
     <div style={containerStyle}>
-      {columns.map((column) => {
+      {columns.map((column: ResumeAst["page"]["columns"][number]) => {
         const columnStyle = {
           width: `${column.widthPercentage}%`,
         };

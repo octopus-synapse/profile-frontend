@@ -231,7 +231,7 @@ export function SkillsSection() {
                         <Pencil className="h-3.5 w-3.5" strokeWidth={1.5} />
                       </button>
                       <button
-                        onClick={() => handleDelete(skill.id)}
+                        onClick={() => void handleDelete(skill.id)}
                         disabled={deleteSkill.isPending}
                         className="p-1 text-zinc-400 transition-colors hover:text-red-500 disabled:opacity-50"
                         title="Delete"
@@ -373,7 +373,7 @@ export function SkillsSection() {
               Cancel
             </button>
             <button
-              onClick={handleSave}
+              onClick={() => void handleSave()}
               disabled={!formData.name || !formData.category || isSaving}
               className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition-opacity hover:opacity-90 disabled:opacity-50"
             >

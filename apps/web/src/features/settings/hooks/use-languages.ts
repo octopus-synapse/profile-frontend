@@ -37,7 +37,7 @@ export function useCreateLanguage() {
   return useMutation({
     mutationFn: (data: CreateLanguagePayload) => languagesRepository.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: languagesKeys.all });
+      void queryClient.invalidateQueries({ queryKey: languagesKeys.all });
     },
   });
 }
@@ -49,7 +49,7 @@ export function useUpdateLanguage() {
     mutationFn: ({ id, data }: { id: string; data: Partial<CreateLanguagePayload> }) =>
       languagesRepository.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: languagesKeys.all });
+      void queryClient.invalidateQueries({ queryKey: languagesKeys.all });
     },
   });
 }
@@ -60,7 +60,7 @@ export function useDeleteLanguage() {
   return useMutation({
     mutationFn: (id: string) => languagesRepository.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: languagesKeys.all });
+      void queryClient.invalidateQueries({ queryKey: languagesKeys.all });
     },
   });
 }

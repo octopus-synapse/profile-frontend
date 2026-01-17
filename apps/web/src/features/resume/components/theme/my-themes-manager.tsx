@@ -76,12 +76,12 @@ export function MyThemesManager({ onApply }: Props) {
                 theme={theme}
                 onSelect={() => onApply?.(theme.id)}
                 onEdit={() => setEditingTheme(theme)}
-                onSubmitForApproval={() => handleSubmit(theme.id)}
+                onSubmitForApproval={() => void handleSubmit(theme.id)}
               />
               <DeleteButton
                 onConfirm={() => setDeleteConfirm(theme.id)}
                 isOpen={deleteConfirm === theme.id}
-                onDelete={() => handleDelete(theme.id)}
+                onDelete={() => void handleDelete(theme.id)}
                 onCancel={() => setDeleteConfirm(null)}
                 isPending={deleteTheme.isPending}
               />
@@ -241,7 +241,7 @@ function CreateThemeModal({ onClose, onCreated }: { onClose: () => void; onCreat
             Cancel
           </button>
           <button
-            onClick={handleCreate}
+            onClick={() => void handleCreate()}
             disabled={!name.trim() || createTheme.isPending}
             className="bg-primary text-primary-foreground rounded px-4 py-2 text-sm"
           >

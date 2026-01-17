@@ -7,7 +7,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { authService } from "../services/auth-service";
+import { apiClient } from "@/shared/lib/api-client";
 import { useAuth } from "../hooks/use-auth";
 import { useT } from "@/features/i18n";
 import { Button, Input } from "@/shared/components/ui";
@@ -63,8 +63,8 @@ export function SignUpForm() {
     setIsLoading(true);
 
     try {
-      // Register user
-      await authService.register({ email, password, name });
+      // Register user using shared api-client
+      await apiClient.auth.register({ email, password, name });
 
       // Auto sign in after registration
       const success = await signIn(email, password, ROUTES.ONBOARDING);
@@ -87,7 +87,7 @@ export function SignUpForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={(e) => void handleSubmit(e)} className="space-y-5">
       {/* Error Alert */}
       {error && (
         <motion.div

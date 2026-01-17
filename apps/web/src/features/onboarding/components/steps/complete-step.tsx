@@ -30,14 +30,14 @@ export function CompleteStep() {
     const colors = ["#2563eb", "#16a34a", "#9333ea"];
 
     (function frame() {
-      confetti({
+      void confetti({
         particleCount: 3,
         angle: 60,
         spread: 55,
         origin: { x: 0 },
         colors,
       });
-      confetti({
+      void confetti({
         particleCount: 3,
         angle: 120,
         spread: 55,
@@ -79,7 +79,7 @@ export function CompleteStep() {
     };
 
     if (session?.user && !session.user.hasCompletedOnboarding) {
-      updateSessionData();
+      void updateSessionData();
     }
 
     // Countdown and auto-redirect

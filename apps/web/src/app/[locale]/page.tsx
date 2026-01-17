@@ -3,6 +3,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, useSpring, AnimatePresence } from "framer-motion";
 import { useRouter, useParams } from "next/navigation";
+import type { LucideIcon } from "lucide-react";
 import {
   ArrowRight,
   Check,
@@ -32,7 +33,7 @@ import type { Locale } from "@/config/i18n.config";
 
 interface CompilationState {
   roleKey: string;
-  icon: React.ElementType;
+  icon: LucideIcon;
   skills: string[];
   headlineKey: string;
   focusKey: string;

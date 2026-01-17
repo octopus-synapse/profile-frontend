@@ -2,9 +2,6 @@
  * Features Index
  */
 
-// Auth
-export { authService } from "./auth";
-
 // i18n
 export { I18nProvider, useI18n, useT } from "./i18n";
 export type { DictionaryKey } from "./i18n";
@@ -39,7 +36,6 @@ export type {
 
 // Resume
 export {
-  resumeRepository,
   resumeKeys,
   useResumes,
   useResume,
@@ -89,8 +85,8 @@ export type {
 } from "./resume";
 
 // Onboarding
+// Note: onboardingRepository removed - use apiClient.onboarding instead
 export {
-  onboardingRepository,
   onboardingKeys,
   useOnboardingStatus,
   useSubmitOnboarding,
@@ -105,8 +101,6 @@ export type {
   OnboardingData,
   PersonalInfoData,
   ProfessionalProfileData,
-  SkillData,
-  LanguageData,
 } from "./onboarding";
 // Onboarding types with aliases to avoid conflicts with Resume types
 export type {

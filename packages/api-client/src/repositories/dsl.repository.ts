@@ -26,7 +26,7 @@ export function createDslRepository(client: HttpClient) {
    * Validate DSL without compiling
    */
   async validate(dsl: unknown): Promise<DslValidationResult> {
-   return client.post<DslValidationResult>("/dsl/validate", dsl);
+   return client.post<DslValidationResult>("/v1/dsl/validate", dsl);
   },
 
   /**
@@ -36,7 +36,10 @@ export function createDslRepository(client: HttpClient) {
    dsl: unknown,
    target: "html" | "pdf" = "html"
   ): Promise<DslPreviewResult> {
-   return client.post<DslPreviewResult>(`/dsl/preview?target=${target}`, dsl);
+   return client.post<DslPreviewResult>(
+    `/v1/dsl/preview?target=${target}`,
+    dsl
+   );
   },
 
   /**
@@ -47,7 +50,7 @@ export function createDslRepository(client: HttpClient) {
    target: "html" | "pdf" = "html"
   ): Promise<DslRenderResult> {
    return client.get<DslRenderResult>(
-    `/dsl/render/${resumeId}?target=${target}`
+    `/v1/dsl/render/${resumeId}?target=${target}`
    );
   },
 
@@ -59,7 +62,7 @@ export function createDslRepository(client: HttpClient) {
    target: "html" | "pdf" = "html"
   ): Promise<DslRenderResult> {
    return client.get<DslRenderResult>(
-    `/dsl/render/public/${slug}?target=${target}`
+    `/v1/dsl/render/public/${slug}?target=${target}`
    );
   },
  };

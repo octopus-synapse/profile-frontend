@@ -7,7 +7,7 @@ echo "TEST SUMMARY"
 echo "================================"
 
 # Run tests and capture output
-TEST_OUTPUT=$(pnpm --filter @profile/web test 2>&1)
+TEST_OUTPUT=$(bun --filter @profile/web test 2>&1)
 TEST_EXIT_CODE=$?
 
 # Display output

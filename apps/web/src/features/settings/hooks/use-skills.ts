@@ -37,7 +37,7 @@ export function useCreateSkill() {
   return useMutation({
     mutationFn: (data: CreateSkillPayload) => skillsRepository.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: skillsKeys.all });
+      void queryClient.invalidateQueries({ queryKey: skillsKeys.all });
     },
   });
 }
@@ -49,7 +49,7 @@ export function useUpdateSkill() {
     mutationFn: ({ id, data }: { id: string; data: Partial<CreateSkillPayload> }) =>
       skillsRepository.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: skillsKeys.all });
+      void queryClient.invalidateQueries({ queryKey: skillsKeys.all });
     },
   });
 }
@@ -60,7 +60,7 @@ export function useDeleteSkill() {
   return useMutation({
     mutationFn: (id: string) => skillsRepository.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: skillsKeys.all });
+      void queryClient.invalidateQueries({ queryKey: skillsKeys.all });
     },
   });
 }

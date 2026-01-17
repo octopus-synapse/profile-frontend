@@ -37,15 +37,6 @@ export {
   type LoadingStateProps,
   EmptyState as DesignSystemEmptyState,
   type EmptyStateProps as DesignSystemEmptyStateProps,
-  // Primitives
-  Box,
-  type BoxProps,
-  Stack,
-  type StackProps,
-  Grid,
-  type GridProps,
-  Text,
-  type TextProps,
   // Utils
   cn,
 } from "@octopus-synapse/profile-ui";

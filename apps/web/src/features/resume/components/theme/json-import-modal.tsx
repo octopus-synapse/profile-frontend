@@ -128,7 +128,7 @@ export function JsonImportModal({ isOpen, onClose, onImported }: Props) {
                 JSON Configuration
               </label>
               <button
-                onClick={handlePaste}
+                onClick={() => void handlePaste()}
                 className="flex items-center gap-1.5 text-xs font-medium text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200"
               >
                 <Clipboard className="h-3.5 w-3.5" strokeWidth={1.5} />
@@ -214,7 +214,7 @@ export function JsonImportModal({ isOpen, onClose, onImported }: Props) {
             Cancel
           </button>
           <button
-            onClick={handleImport}
+            onClick={() => void handleImport()}
             disabled={!isValid || !name.trim() || createTheme.isPending}
             className="flex items-center gap-2 rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100"
           >

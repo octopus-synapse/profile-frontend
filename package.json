@@ -2,25 +2,42 @@
  "name": "profile",
  "version": "1.0.1",
  "private": true,
- "packageManager": "pnpm@9.15.0",
+ "workspaces": [
+  "apps/*",
+  "packages/*"
+ ],
  "scripts": {
-  "dev": "pnpm --filter @profile/web dev",
-  "build": "pnpm --filter @profile/api-client build && pnpm --filter @profile/web build",
-  "start": "pnpm --filter @profile/web start",
-  "lint": "pnpm -r lint",
-  "lint:fix": "pnpm -r lint:fix",
-  "format": "pnpm -r format",
-  "format:check": "pnpm -r format:check",
-  "type-check": "pnpm -r type-check",
-  "test": "pnpm -r test",
-  "clean": "pnpm -r clean && rm -rf node_modules",
+  "dev": "bun --filter @profile/web dev",
+  "dev:mobile": "bun --filter @profile/mobile start",
+  "build": "bun --filter @profile/api-client build && bun --filter @profile/stores build && bun --filter @profile/web build",
+  "start": "bun --filter @profile/web start",
+  "lint": "eslint .",
+  "lint:fast": "oxlint packages/ apps/ test/",
+  "lint:fix": "eslint . --fix",
+  "format": "bun -r format",
+  "format:check": "bun -r format:check",
+  "typecheck": "tsc --noEmit",
+  "test": "bun test",
+  "test:unit": "bun test packages/",
+  "test:smoke": "bun test --config=bunfig.smoke.toml",
+  "test:integration": "bun test test/integration/",
+  "test:watch": "bun test --watch",
+  "test:coverage": "bun test --coverage",
+  "precommit": "bun run typecheck && bun run lint:fast && bun run test:unit && bun run test:smoke",
+  "ci:lint": "bun run lint",
+  "ci:test": "bun run test:integration",
+  "clean": "bun -r clean && rm -rf node_modules",
   "prepare": "husky"
  },
  "devDependencies": {
   "@commitlint/cli": "^20.3.0",
   "@commitlint/config-conventional": "^20.3.0",
+  "@types/bun": "latest",
+  "@types/react": "^19",
+  "@types/react-dom": "^19",
   "husky": "^9.1.7",
   "lint-staged": "^16.2.7",
+  "oxlint": "^1.38.0",
   "prettier": "^3.7.4",
   "typescript": "^5.7.2"
  },
@@ -33,10 +50,13 @@
   ]
  },
  "engines": {
-  "node": ">=20.0.0",
-  "pnpm": ">=9.0.0"
+  "bun": ">=1.0.0"
+ },
+ "overrides": {
+  "react": "^19.0.0",
+  "react-dom": "^19.0.0"
  },
  "dependencies": {
-  "@octopus-synapse/profile-contracts": "1.4.0"
+  "@octopus-synapse/profile-contracts": "../profile-contracts"
  }
 }

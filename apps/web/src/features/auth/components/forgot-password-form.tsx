@@ -6,7 +6,7 @@
  */
 
 import { useState } from "react";
-import { authService } from "../services/auth-service";
+import { apiClient } from "@/shared/lib/api-client";
 import { useT } from "@/features/i18n";
 import { Button, Input, Spinner } from "@/shared/components/ui";
 import { Label } from "@/shared/components/ui/label";
@@ -27,15 +27,16 @@ export function ForgotPasswordForm() {
     setIsLoading(true);
 
     try {
-      const result = await authService.forgotPassword(email);
-      
-      // Only show success if email was actually sent
-      if (result.emailSent) {
+      // Use shared api-client
+      const result = await apiClient.auth.requestPasswordReset({ email });
+
+      // If we get here without error, the request was successful
+      if (result.success) {
         setSuccess(true);
         setEmail(""); // Clear email after successful submission
       } else {
-        // Email was not sent (user doesn't exist or email service failed)
-        setError(t("auth.error.emailNotSent") || "Unable to send reset email. Please try again later.");
+        // Request failed
+        setError(result.message || t("auth.error.emailNotSent") || "Unable to send reset email. Please try again later.");
       }
     } catch (err) {
       // Email service failed or other error
@@ -60,7 +61,7 @@ export function ForgotPasswordForm() {
       }}
       transition={{ duration: 0.4 }}
     >
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={(e) => void handleSubmit(e)} className="space-y-5">
         {/* Success Alert */}
         <AnimatePresence mode="wait">
           {success && (

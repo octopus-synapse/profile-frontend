@@ -48,8 +48,8 @@ export function ProfileSection() {
           location: profile.location || "",
           phone: profile.phone || "",
           website: profile.website || "",
-        linkedin: profile.linkedin || "",
-        github: profile.github || "",
+          linkedin: profile.linkedin || "",
+          github: profile.github || "",
         });
       });
     }
@@ -87,7 +87,7 @@ export function ProfileSection() {
         </div>
         {isDirty && (
           <button
-            onClick={handleSave}
+            onClick={() => void handleSave()}
             disabled={updateProfile.isPending}
             className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition-opacity hover:opacity-90 disabled:opacity-50"
           >

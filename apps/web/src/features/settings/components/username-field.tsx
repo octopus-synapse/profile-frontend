@@ -92,7 +92,7 @@ export function UsernameField() {
       }
     };
 
-    checkAvailability();
+    void checkAvailability();
   }, [debouncedUsername, validation.valid, isEditing, hasChanged]);
 
   const handleChange = (value: string) => {
@@ -274,7 +274,7 @@ export function UsernameField() {
       {isEditing && hasChanged && (
         <div className="flex items-center gap-2">
           <button
-            onClick={handleSave}
+            onClick={() => void handleSave()}
             disabled={!canSave}
             className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >

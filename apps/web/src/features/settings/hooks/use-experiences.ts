@@ -37,7 +37,7 @@ export function useCreateExperience() {
   return useMutation({
     mutationFn: (data: CreateExperiencePayload) => experiencesRepository.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: experiencesKeys.all });
+      void queryClient.invalidateQueries({ queryKey: experiencesKeys.all });
     },
   });
 }
@@ -49,7 +49,7 @@ export function useUpdateExperience() {
     mutationFn: ({ id, data }: { id: string; data: Partial<CreateExperiencePayload> }) =>
       experiencesRepository.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: experiencesKeys.all });
+      void queryClient.invalidateQueries({ queryKey: experiencesKeys.all });
     },
   });
 }
@@ -60,7 +60,7 @@ export function useDeleteExperience() {
   return useMutation({
     mutationFn: (id: string) => experiencesRepository.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: experiencesKeys.all });
+      void queryClient.invalidateQueries({ queryKey: experiencesKeys.all });
     },
   });
 }

@@ -25,9 +25,6 @@ export type {
   CreateProjectDto,
 } from "./types";
 
-// Repository
-export { resumeRepository } from "./services/resume-repository";
-
 // Hooks
 export {
   resumeKeys,

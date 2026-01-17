@@ -204,7 +204,7 @@ export function ExperiencesSection() {
                     <Pencil className="h-4 w-4" strokeWidth={1.5} />
                   </button>
                   <button
-                    onClick={() => handleDelete(exp.id)}
+                    onClick={() => void handleDelete(exp.id)}
                     disabled={deleteExperience.isPending}
                     className="rounded-lg p-2 text-zinc-400 transition-colors hover:bg-[#0A0A0A]/80 hover:text-red-500 disabled:opacity-50"
                     title="Delete"
@@ -340,7 +340,7 @@ export function ExperiencesSection() {
               Cancel
             </button>
             <button
-              onClick={handleSave}
+              onClick={() => void handleSave()}
               disabled={!formData.company || !formData.position || !formData.startDate || isSaving}
               className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition-opacity hover:opacity-90 disabled:opacity-50"
             >

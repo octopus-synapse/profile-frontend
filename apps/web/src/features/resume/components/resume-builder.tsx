@@ -6,7 +6,13 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { useResumes, useResume, useResumeAst, useExportResumePDF, useExportResumeDOCX } from "../hooks";
+import {
+  useResumes,
+  useResume,
+  useResumeAst,
+  useExportResumePDF,
+  useExportResumeDOCX,
+} from "../hooks";
 import { ASTRenderer } from "./ast-renderer";
 import { BuilderSidebar } from "./builder/builder-sidebar";
 import { Download, FileText, Share2, Link2, Check, Settings, Loader2 } from "lucide-react";
@@ -34,7 +40,7 @@ export function ResumeBuilder() {
   const exportDOCX = useExportResumeDOCX();
 
   const handleThemeApplied = useCallback(() => {
-    refetchAst();
+    void refetchAst();
   }, [refetchAst]);
 
   const handleExportPDF = async () => {
@@ -121,7 +127,7 @@ export function ResumeBuilder() {
         resume={resume}
         activeThemeName={undefined}
         onThemeApplied={handleThemeApplied}
-        onRefresh={() => refetchAst()}
+        onRefresh={() => void refetchAst()}
       />
 
       {/* Main Content */}
@@ -143,7 +149,7 @@ export function ResumeBuilder() {
           <div className="flex items-center gap-2">
             {/* Export PDF */}
             <button
-              onClick={handleExportPDF}
+              onClick={() => void handleExportPDF()}
               disabled={exportPDF.isPending}
               className="inline-flex h-9 items-center gap-2 rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-3.5 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50"
             >
@@ -157,7 +163,7 @@ export function ResumeBuilder() {
 
             {/* Export DOCX */}
             <button
-              onClick={handleExportDOCX}
+              onClick={() => void handleExportDOCX()}
               disabled={exportDOCX.isPending}
               className="inline-flex h-9 items-center gap-2 rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-3.5 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50"
             >
@@ -175,7 +181,7 @@ export function ResumeBuilder() {
             {/* Share */}
             {resume.isPublic && resume.slug ? (
               <button
-                onClick={handleCopyLink}
+                onClick={() => void handleCopyLink()}
                 className="inline-flex h-9 items-center gap-2 rounded-lg bg-white px-4 text-sm font-medium text-black transition-opacity hover:opacity-90"
               >
                 {copied ? (

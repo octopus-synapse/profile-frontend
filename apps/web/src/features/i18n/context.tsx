@@ -87,7 +87,7 @@ export function I18nProvider({ children, initialLocale }: I18nProviderProps) {
     async function loadDictionary() {
       // Check cache first
       if (dictionaryCache[language]) {
-        setDictionary(dictionaryCache[language]!);
+        setDictionary(dictionaryCache[language]);
         setIsLoading(false);
         return;
       }
@@ -112,7 +112,7 @@ export function I18nProvider({ children, initialLocale }: I18nProviderProps) {
       }
     }
 
-    loadDictionary();
+    void loadDictionary();
 
     return () => {
       cancelled = true;

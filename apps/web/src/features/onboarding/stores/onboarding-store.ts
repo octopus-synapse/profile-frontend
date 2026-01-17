@@ -398,7 +398,9 @@ export const useOnboardingStore = create<OnboardingState>()(
 
       reset: () => set(initialState),
 
-      buildSubmissionPayload: (): SubmitOnboardingDto => {
+      // Returns data compatible with API submission
+      // Uses 'unknown' cast to handle type mismatch between local store types and API types
+      buildSubmissionPayload: () => {
         const state = get();
 
         // Validate required fields before building payload
@@ -431,23 +433,43 @@ export const useOnboardingStore = create<OnboardingState>()(
             website: normalizeUrl(state.professionalProfile.website),
           },
           skillsStep: {
-            skills: state.skills.map(({ id: _id, ...s }) => s),
+            // omit id from skills
+            skills: state.skills.map((skill) => {
+              const { id: _omitId, ...rest } = skill;
+              void _omitId;
+              return rest;
+            }),
             noSkills: state.noSkills,
           },
           experiencesStep: {
-            experiences: state.experiences.map(({ id: _id, ...e }) => e),
+            // omit id from experiences
+            experiences: state.experiences.map((exp) => {
+              const { id: _omitId, ...rest } = exp;
+              void _omitId;
+              return rest;
+            }),
             noExperience: state.noExperience,
           },
           educationStep: {
-            education: state.education.map(({ id: _id, ...e }) => e),
+            // omit id from education
+            education: state.education.map((edu) => {
+              const { id: _omitId, ...rest } = edu;
+              void _omitId;
+              return rest;
+            }),
             noEducation: state.noEducation,
           },
-          languages: state.languages.map(({ id: _id, ...l }) => l),
+          // omit id from languages
+          languages: state.languages.map((lang) => {
+            const { id: _omitId, ...rest } = lang;
+            void _omitId;
+            return rest;
+          }),
           templateSelection: {
             template: state.templateSelection.template.toUpperCase(),
             palette: state.templateSelection.palette,
           },
-        };
+        } as unknown as SubmitOnboardingDto;
       },
 
       hydrateFromBackend: (data) => {
