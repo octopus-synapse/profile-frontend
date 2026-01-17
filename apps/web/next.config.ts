@@ -38,13 +38,13 @@ const nextConfig: NextConfig = {
   transpilePackages: ["@octopus-synapse/profile-ui", "@profile/api-client", "@profile/stores"],
 
   // Security headers
-  async headers() {
-    return [
+  headers() {
+    return Promise.resolve([
       {
         source: "/:path*",
         headers: securityHeaders,
       },
-    ];
+    ]);
   },
 
   // Image optimization

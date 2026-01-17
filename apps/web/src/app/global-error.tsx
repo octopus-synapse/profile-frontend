@@ -6,6 +6,7 @@
  */
 
 import { useEffect } from "react";
+import Link from "next/link";
 
 interface GlobalErrorProps {
   error: Error & { digest?: string };
@@ -76,8 +77,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
               >
                 Try again
               </button>
-              {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-              <a
+              <Link
                 href="/"
                 style={{
                   padding: "0.75rem 1.5rem",
@@ -90,7 +90,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                 }}
               >
                 Go home
-              </a>
+              </Link>
             </div>
             {process.env.NODE_ENV === "development" && error.digest && (
               <p

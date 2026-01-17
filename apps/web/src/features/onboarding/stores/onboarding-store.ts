@@ -433,22 +433,38 @@ export const useOnboardingStore = create<OnboardingState>()(
             website: normalizeUrl(state.professionalProfile.website),
           },
           skillsStep: {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            skills: state.skills.map(({ id: _, ...s }) => s),
+            // omit id from skills
+            skills: state.skills.map((skill) => {
+              const { id: _omitId, ...rest } = skill;
+              void _omitId;
+              return rest;
+            }),
             noSkills: state.noSkills,
           },
           experiencesStep: {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            experiences: state.experiences.map(({ id: _, ...e }) => e),
+            // omit id from experiences
+            experiences: state.experiences.map((exp) => {
+              const { id: _omitId, ...rest } = exp;
+              void _omitId;
+              return rest;
+            }),
             noExperience: state.noExperience,
           },
           educationStep: {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            education: state.education.map(({ id: _, ...e }) => e),
+            // omit id from education
+            education: state.education.map((edu) => {
+              const { id: _omitId, ...rest } = edu;
+              void _omitId;
+              return rest;
+            }),
             noEducation: state.noEducation,
           },
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          languages: state.languages.map(({ id: _, ...l }) => l),
+          // omit id from languages
+          languages: state.languages.map((lang) => {
+            const { id: _omitId, ...rest } = lang;
+            void _omitId;
+            return rest;
+          }),
           templateSelection: {
             template: state.templateSelection.template.toUpperCase(),
             palette: state.templateSelection.palette,

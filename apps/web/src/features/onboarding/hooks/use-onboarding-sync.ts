@@ -20,9 +20,99 @@ import type {
   Language,
   TemplateSelection,
 } from "../stores";
+import type { OnboardingProgress as ApiOnboardingProgress } from "@profile/api-client";
 
 // Maximum time to wait for backend sync before proceeding with local state
 const SYNC_TIMEOUT_MS = 3000;
+
+/**
+ * Maps API experience format (current) to store format (isCurrent)
+ */
+function mapExperiencesToStore(
+  experiences: ApiOnboardingProgress["experiences"] | undefined
+): Experience[] {
+  if (!experiences) return [];
+  return experiences.map((exp) => ({
+    id: exp.id,
+    company: exp.company,
+    position: exp.position,
+    startDate: exp.startDate,
+    endDate: exp.endDate,
+    isCurrent: exp.current,
+    description: exp.description,
+    location: exp.location,
+  }));
+}
+
+/**
+ * Maps API education format (current) to store format (isCurrent)
+ */
+function mapEducationToStore(
+  education: ApiOnboardingProgress["education"] | undefined
+): Education[] {
+  if (!education) return [];
+  return education.map((edu) => ({
+    id: edu.id,
+    institution: edu.institution,
+    degree: edu.degree,
+    field: edu.field ?? "",
+    startDate: edu.startDate,
+    endDate: edu.endDate,
+    isCurrent: edu.current,
+  }));
+}
+
+/**
+ * Maps API skill level enum to store numeric level
+ */
+const SKILL_LEVEL_MAP: Record<string, number> = {
+  BEGINNER: 1,
+  INTERMEDIATE: 2,
+  ADVANCED: 3,
+  EXPERT: 4,
+};
+
+/**
+ * Maps API skills format to store format
+ */
+function mapSkillsToStore(
+  skills: ApiOnboardingProgress["skills"] | undefined
+): Skill[] {
+  if (!skills) return [];
+  return skills.map((skill) => ({
+    id: skill.id,
+    name: skill.name,
+    category: skill.category ?? "general",
+    level: SKILL_LEVEL_MAP[skill.level] ?? undefined,
+  }));
+}
+
+/**
+ * Maps API language level enum to store Portuguese level
+ */
+const LANGUAGE_LEVEL_MAP: Record<string, Language["level"]> = {
+  BEGINNER: "básico",
+  ELEMENTARY: "básico",
+  INTERMEDIATE: "intermediário",
+  UPPER_INTERMEDIATE: "avançado",
+  ADVANCED: "avançado",
+  PROFICIENT: "fluente",
+  NATIVE: "nativo",
+};
+
+/**
+ * Maps API languages format to store format
+ */
+function mapLanguagesToStore(
+  languages: ApiOnboardingProgress["languages"] | undefined
+): Language[] {
+  if (!languages) return [];
+  return languages.map((lang) => ({
+    id: lang.id,
+    name: lang.name,
+    level: LANGUAGE_LEVEL_MAP[lang.level] ?? "básico",
+  }));
+}
 
 export function useOnboardingSync() {
   const { data: session, status } = useSession();
@@ -122,19 +212,17 @@ export function useOnboardingSync() {
         hydrateFromBackend({
           currentStep: backendProgress.currentStep as OnboardingStep,
           completedSteps: (backendProgress.completedSteps || []) as OnboardingStep[],
-          personalInfo: backendProgress.personalInfo as unknown as PersonalInfo | null,
+          personalInfo: (backendProgress.personalInfo ?? null) as PersonalInfo | null,
           username: backendProgress.username || null,
-          professionalProfile:
-            backendProgress.professionalProfile as unknown as ProfessionalProfile | null,
-          experiences: (backendProgress.experiences || []) as unknown as Experience[],
+          professionalProfile: (backendProgress.professionalProfile ?? null) as ProfessionalProfile | null,
+          experiences: mapExperiencesToStore(backendProgress.experiences),
           noExperience: backendProgress.noExperience || false,
-          education: (backendProgress.education || []) as unknown as Education[],
+          education: mapEducationToStore(backendProgress.education),
           noEducation: backendProgress.noEducation || false,
-          skills: (backendProgress.skills || []) as unknown as Skill[],
+          skills: mapSkillsToStore(backendProgress.skills),
           noSkills: backendProgress.noSkills || false,
-          languages: (backendProgress.languages || []) as unknown as Language[],
-          templateSelection:
-            backendProgress.templateSelection as unknown as TemplateSelection | null,
+          languages: mapLanguagesToStore(backendProgress.languages),
+          templateSelection: (backendProgress.templateSelection ?? null) as TemplateSelection | null,
         });
       }
 
