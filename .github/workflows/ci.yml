@@ -59,6 +59,11 @@ jobs:
         working-directory: profile-ui
         run: bun run build
 
+      - name: Configure npm auth for GitHub Packages
+        run: |
+          echo "@octopus-synapse:registry=https://npm.pkg.github.com" >> ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> ~/.npmrc
+
       - name: Install dependencies
         working-directory: frontend
         run: bun install --frozen-lockfile
@@ -118,6 +123,11 @@ jobs:
         working-directory: profile-ui
         run: bun run build
 
+      - name: Configure npm auth for GitHub Packages
+        run: |
+          echo "@octopus-synapse:registry=https://npm.pkg.github.com" >> ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> ~/.npmrc
+
       - name: Install dependencies
         working-directory: frontend
         run: bun install --frozen-lockfile
@@ -168,6 +178,11 @@ jobs:
       - name: Build UI
         working-directory: profile-ui
         run: bun run build
+
+      - name: Configure npm auth for GitHub Packages
+        run: |
+          echo "@octopus-synapse:registry=https://npm.pkg.github.com" >> ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> ~/.npmrc
 
       - name: Install dependencies
         working-directory: frontend
@@ -236,6 +251,11 @@ jobs:
         working-directory: profile-ui
         run: bun run build
 
+      - name: Configure npm auth for GitHub Packages
+        run: |
+          echo "@octopus-synapse:registry=https://npm.pkg.github.com" >> ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> ~/.npmrc
+
       - name: Install dependencies
         working-directory: frontend
         run: bun install --frozen-lockfile
@@ -286,6 +306,11 @@ jobs:
       - name: Build UI
         working-directory: profile-ui
         run: bun run build
+
+      - name: Configure npm auth for GitHub Packages
+        run: |
+          echo "@octopus-synapse:registry=https://npm.pkg.github.com" >> ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> ~/.npmrc
 
       - name: Install frontend dependencies
         working-directory: frontend
@@ -349,6 +374,11 @@ jobs:
       - name: Build UI
         working-directory: profile-ui
         run: bun run build
+
+      - name: Configure npm auth for GitHub Packages
+        run: |
+          echo "@octopus-synapse:registry=https://npm.pkg.github.com" >> ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PAT }}" >> ~/.npmrc
 
       - name: Install dependencies
         working-directory: frontend
