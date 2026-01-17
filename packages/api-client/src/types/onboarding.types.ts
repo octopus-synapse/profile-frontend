@@ -35,8 +35,8 @@ export type OnboardingApiStep =
  | "template";
 
 // Extended step type for frontend (includes UI-only steps)
-// Frontend can use any string, but these are the recommended ones
-export type OnboardingStep = OnboardingApiStep | string;
+// Frontend can use any string, but OnboardingApiStep values are recommended
+export type OnboardingStep = string;
 
 // ============================================================================
 // Data Types (Using Contracts)
@@ -90,9 +90,9 @@ export interface OnboardingStatus {
 export interface OnboardingProgress {
  currentStep: OnboardingStep;
  completedSteps: OnboardingStep[];
- username?: string | null;
- personalInfo: PersonalInfoData | null;
- professionalProfile: ProfessionalProfileData | null;
+ username: string | null;
+ personalInfo?: PersonalInfoData;
+ professionalProfile?: ProfessionalProfileData;
  experiences: Experience[];
  noExperience: boolean;
  education: Education[];

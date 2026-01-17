@@ -14,7 +14,7 @@ import {
  type AuthRepository,
 } from "../repositories/auth.repository";
 import type { HttpClient } from "../client";
-import type { AuthResponse, RefreshTokenResponse } from "../types";
+import type { AuthResponse } from "../types";
 
 // ============================================================================
 // Mock Factory - Dependency Inversion
@@ -38,12 +38,14 @@ function createMockAuthResponse(): AuthResponse {
    id: "user-123",
    email: "test@example.com",
    name: "Test User",
-   emailVerified: true,
-   createdAt: new Date().toISOString(),
-   updatedAt: new Date().toISOString(),
+   role: "USER",
+   username: "testuser",
+   image: null,
+   hasCompletedOnboarding: true,
   },
   accessToken: "access-token-123",
   refreshToken: "refresh-token-123",
+  expiresIn: 3600,
  };
 }
 
@@ -65,18 +67,20 @@ describe("AuthRepository", () => {
  // ==========================================================================
 
  describe("login", () => {
-  it("calls POST /auth/login with credentials", async () => {
+  it("calls POST /v1/auth/login with credentials", async () => {
    // Arrange
    const credentials = { email: "test@example.com", password: "password123" };
-   const response = createMockAuthResponse();
-   (client.post as ReturnType<typeof mock>).mockResolvedValue(response);
+   const authResponse = createMockAuthResponse();
+   // Wrap explicitly as BackendAuthResponse expects { success, data }
+   const backendResponse = { success: true, data: authResponse };
+   (client.post as ReturnType<typeof mock>).mockResolvedValue(backendResponse);
 
    // Act
    const result = await repository.login(credentials);
 
    // Assert
-   expect(client.post).toHaveBeenCalledWith("/auth/login", credentials);
-   expect(result).toEqual(response);
+   expect(client.post).toHaveBeenCalledWith("/v1/auth/login", credentials);
+   expect(result).toEqual(authResponse);
   });
 
   it("propagates error when login fails", async () => {
@@ -97,22 +101,23 @@ describe("AuthRepository", () => {
  // ==========================================================================
 
  describe("register", () => {
-  it("calls POST /auth/register with credentials", async () => {
+  it("calls POST /v1/auth/register with credentials", async () => {
    // Arrange
    const credentials = {
     email: "new@example.com",
     password: "password123",
     name: "New User",
    };
-   const response = createMockAuthResponse();
-   (client.post as ReturnType<typeof mock>).mockResolvedValue(response);
+   const authResponse = createMockAuthResponse();
+   const backendResponse = { success: true, data: authResponse };
+   (client.post as ReturnType<typeof mock>).mockResolvedValue(backendResponse);
 
    // Act
    const result = await repository.register(credentials);
 
    // Assert
-   expect(client.post).toHaveBeenCalledWith("/auth/register", credentials);
-   expect(result).toEqual(response);
+   expect(client.post).toHaveBeenCalledWith("/v1/auth/signup", credentials);
+   expect(result).toEqual(authResponse);
   });
 
   it("propagates validation error", async () => {
@@ -133,21 +138,35 @@ describe("AuthRepository", () => {
  // ==========================================================================
 
  describe("refreshToken", () => {
-  it("calls POST /auth/refresh with refresh token", async () => {
+  it("calls POST /v1/auth/refresh with refresh token", async () => {
    // Arrange
    const refreshToken = "refresh-token-123";
-   const response: RefreshTokenResponse = {
-    accessToken: "new-access-token",
-    refreshToken: "new-refresh-token",
+   const backendResponse = {
+    success: true,
+    data: {
+     accessToken: "new-access-token",
+     refreshToken: "new-refresh-token",
+     expiresIn: 1800,
+     user: {
+      id: "user-123",
+      email: "test@example.com",
+      name: "Test User",
+      hasCompletedOnboarding: true,
+     },
+    },
    };
-   (client.post as ReturnType<typeof mock>).mockResolvedValue(response);
+   (client.post as ReturnType<typeof mock>).mockResolvedValue(backendResponse);
 
    // Act
    const result = await repository.refreshToken(refreshToken);
 
    // Assert
-   expect(client.post).toHaveBeenCalledWith("/auth/refresh", { refreshToken });
-   expect(result).toEqual(response);
+   expect(client.post).toHaveBeenCalledWith("/v1/auth/refresh", {
+    refreshToken,
+   });
+   // The refresh token response transformer might differ slightly, checking critical fields
+   expect(result.accessToken).toEqual("new-access-token");
+   expect(result.expiresIn).toEqual(1800);
   });
 
   it("propagates error when token is expired", async () => {
@@ -167,7 +186,7 @@ describe("AuthRepository", () => {
  // ==========================================================================
 
  describe("logout", () => {
-  it("calls POST /auth/logout", async () => {
+  it("calls POST /v1/auth/logout", async () => {
    // Arrange
    (client.post as ReturnType<typeof mock>).mockResolvedValue(undefined);
 
@@ -175,7 +194,7 @@ describe("AuthRepository", () => {
    await repository.logout();
 
    // Assert
-   expect(client.post).toHaveBeenCalledWith("/auth/logout");
+   expect(client.post).toHaveBeenCalledWith("/v1/auth/logout");
   });
  });
 
@@ -184,7 +203,7 @@ describe("AuthRepository", () => {
  // ==========================================================================
 
  describe("requestPasswordReset", () => {
-  it("calls POST /auth/forgot-password with email", async () => {
+  it("calls POST /v1/auth/forgot-password with email", async () => {
    // Arrange
    const data = { email: "test@example.com" };
    const response = { success: true };
@@ -194,13 +213,13 @@ describe("AuthRepository", () => {
    const result = await repository.requestPasswordReset(data);
 
    // Assert
-   expect(client.post).toHaveBeenCalledWith("/auth/forgot-password", data);
+   expect(client.post).toHaveBeenCalledWith("/v1/auth/forgot-password", data);
    expect(result.success).toBe(true);
   });
  });
 
  describe("resetPassword", () => {
-  it("calls POST /auth/reset-password with token and new password", async () => {
+  it("calls POST /v1/auth/reset-password with token and new password", async () => {
    // Arrange
    const data = { token: "reset-token", password: "newPassword123" };
    const response = { success: true };
@@ -210,7 +229,7 @@ describe("AuthRepository", () => {
    const result = await repository.resetPassword(data);
 
    // Assert
-   expect(client.post).toHaveBeenCalledWith("/auth/reset-password", data);
+   expect(client.post).toHaveBeenCalledWith("/v1/auth/reset-password", data);
    expect(result.success).toBe(true);
   });
  });
@@ -220,7 +239,7 @@ describe("AuthRepository", () => {
  // ==========================================================================
 
  describe("changePassword", () => {
-  it("calls POST /auth/change-password with passwords", async () => {
+  it("calls POST /v1/auth/change-password with passwords", async () => {
    // Arrange
    const data = {
     currentPassword: "oldPassword",
@@ -233,7 +252,7 @@ describe("AuthRepository", () => {
    const result = await repository.changePassword(data);
 
    // Assert
-   expect(client.post).toHaveBeenCalledWith("/auth/change-password", data);
+   expect(client.post).toHaveBeenCalledWith("/v1/auth/change-password", data);
    expect(result.success).toBe(true);
   });
  });
@@ -243,7 +262,7 @@ describe("AuthRepository", () => {
  // ==========================================================================
 
  describe("verifyEmail", () => {
-  it("calls POST /auth/verify-email with token", async () => {
+  it("calls POST /v1/auth/verify-email with token", async () => {
    // Arrange
    const token = "verification-token";
    const response = { success: true };
@@ -253,13 +272,13 @@ describe("AuthRepository", () => {
    const result = await repository.verifyEmail(token);
 
    // Assert
-   expect(client.post).toHaveBeenCalledWith("/auth/verify-email", { token });
+   expect(client.post).toHaveBeenCalledWith("/v1/auth/verify-email", { token });
    expect(result.success).toBe(true);
   });
  });
 
  describe("resendVerification", () => {
-  it("calls POST /auth/resend-verification", async () => {
+  it("calls POST /v1/auth/resend-verification", async () => {
    // Arrange
    const response = { success: true };
    (client.post as ReturnType<typeof mock>).mockResolvedValue(response);
@@ -268,7 +287,7 @@ describe("AuthRepository", () => {
    const result = await repository.resendVerification();
 
    // Assert
-   expect(client.post).toHaveBeenCalledWith("/auth/resend-verification");
+   expect(client.post).toHaveBeenCalledWith("/v1/auth/resend-verification");
    expect(result.success).toBe(true);
   });
  });

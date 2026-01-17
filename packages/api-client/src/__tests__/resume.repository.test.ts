@@ -86,7 +86,7 @@ describe("ResumeRepository", () => {
    const result = await repository.getAll();
 
    // Assert
-   expect(client.get).toHaveBeenCalledWith("/resumes");
+   expect(client.get).toHaveBeenCalledWith("/v1/resumes");
    expect(result).toEqual(resumes);
   });
  });
@@ -101,7 +101,7 @@ describe("ResumeRepository", () => {
    const result = await repository.getById("resume-123");
 
    // Assert
-   expect(client.get).toHaveBeenCalledWith("/resumes/resume-123");
+   expect(client.get).toHaveBeenCalledWith("/v1/resumes/resume-123");
    expect(result).toEqual(resume);
   });
  });
@@ -116,7 +116,7 @@ describe("ResumeRepository", () => {
    const result = await repository.getBySlug("software-engineer");
 
    // Assert
-   expect(client.get).toHaveBeenCalledWith("/resumes/public/software-engineer");
+   expect(client.get).toHaveBeenCalledWith("/v1/resumes/public/software-engineer");
    expect(result).toEqual(resume);
   });
  });
@@ -132,7 +132,7 @@ describe("ResumeRepository", () => {
    const result = await repository.create(createData);
 
    // Assert
-   expect(client.post).toHaveBeenCalledWith("/resumes", createData);
+   expect(client.post).toHaveBeenCalledWith("/v1/resumes", createData);
    expect(result.title).toBe("New Resume");
   });
  });
@@ -148,7 +148,7 @@ describe("ResumeRepository", () => {
    const result = await repository.update("resume-123", updateData);
 
    // Assert
-   expect(client.patch).toHaveBeenCalledWith("/resumes/resume-123", updateData);
+   expect(client.patch).toHaveBeenCalledWith("/v1/resumes/resume-123", updateData);
    expect(result.title).toBe("Updated Title");
   });
  });
@@ -162,7 +162,7 @@ describe("ResumeRepository", () => {
    await repository.delete("resume-123");
 
    // Assert
-   expect(client.delete).toHaveBeenCalledWith("/resumes/resume-123");
+   expect(client.delete).toHaveBeenCalledWith("/v1/resumes/resume-123");
   });
  });
 
@@ -179,7 +179,7 @@ describe("ResumeRepository", () => {
    const result = await repository.duplicate("resume-123");
 
    // Assert
-   expect(client.post).toHaveBeenCalledWith("/resumes/resume-123/duplicate");
+   expect(client.post).toHaveBeenCalledWith("/v1/resumes/resume-123/duplicate");
    expect(result.id).toBe("resume-456");
   });
  });
@@ -207,7 +207,7 @@ describe("ResumeRepository", () => {
 
    // Assert
    expect(client.post).toHaveBeenCalledWith(
-    "/resumes/resume-123/experiences",
+    "/v1/resumes/resume-123/experiences",
     experienceData
    );
    expect(result.id).toBe("exp-1");
@@ -226,7 +226,7 @@ describe("ResumeRepository", () => {
 
    // Assert
    expect(client.patch).toHaveBeenCalledWith(
-    "/resumes/resume-123/experiences/exp-1",
+    "/v1/resumes/resume-123/experiences/exp-1",
     updateData
    );
   });
@@ -240,7 +240,7 @@ describe("ResumeRepository", () => {
 
    // Assert
    expect(client.delete).toHaveBeenCalledWith(
-    "/resumes/resume-123/experiences/exp-1"
+    "/v1/resumes/resume-123/experiences/exp-1"
    );
   });
 
@@ -254,7 +254,7 @@ describe("ResumeRepository", () => {
 
    // Assert
    expect(client.patch).toHaveBeenCalledWith(
-    "/resumes/resume-123/experiences/reorder",
+    "/v1/resumes/resume-123/experiences/reorder",
     {
      order,
     }
@@ -284,7 +284,7 @@ describe("ResumeRepository", () => {
 
    // Assert
    expect(client.post).toHaveBeenCalledWith(
-    "/resumes/resume-123/educations",
+    "/v1/resumes/resume-123/educations",
     educationData
    );
   });
@@ -302,7 +302,7 @@ describe("ResumeRepository", () => {
 
    // Assert
    expect(client.patch).toHaveBeenCalledWith(
-    "/resumes/resume-123/educations/edu-1",
+    "/v1/resumes/resume-123/educations/edu-1",
     updateData
    );
   });
@@ -316,7 +316,7 @@ describe("ResumeRepository", () => {
 
    // Assert
    expect(client.delete).toHaveBeenCalledWith(
-    "/resumes/resume-123/educations/edu-1"
+    "/v1/resumes/resume-123/educations/edu-1"
    );
   });
  });
@@ -339,7 +339,7 @@ describe("ResumeRepository", () => {
 
    // Assert
    expect(client.post).toHaveBeenCalledWith(
-    "/resumes/resume-123/skills",
+    "/v1/resumes/resume-123/skills",
     skillData
    );
   });
@@ -357,7 +357,7 @@ describe("ResumeRepository", () => {
 
    // Assert
    expect(client.patch).toHaveBeenCalledWith(
-    "/resumes/resume-123/skills/skill-1",
+    "/v1/resumes/resume-123/skills/skill-1",
     updateData
    );
   });
@@ -371,7 +371,7 @@ describe("ResumeRepository", () => {
 
    // Assert
    expect(client.delete).toHaveBeenCalledWith(
-    "/resumes/resume-123/skills/skill-1"
+    "/v1/resumes/resume-123/skills/skill-1"
    );
   });
  });

@@ -25,7 +25,7 @@ export function createThemeRepository(client: HttpClient) {
    */
   async getAll(params?: ThemeQueryParams): Promise<Theme[]> {
    const query = params
-    ? `?${new URLSearchParams(params as Record<string, string>)}`
+    ? `?${new URLSearchParams(params as Record<string, string>).toString()}`
     : "";
    return client.get<Theme[]>(`${BASE_URL}${query}`);
   },

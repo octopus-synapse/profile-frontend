@@ -66,7 +66,7 @@ describe("TwoFactorRepository", () => {
    const result = await repository.setup();
 
    // Assert
-   expect(client.post).toHaveBeenCalledWith("/auth/2fa/setup");
+   expect(client.post).toHaveBeenCalledWith("/v1/auth/2fa/setup");
    expect(result.secret).toBe("JBSWY3DPEHPK3PXP");
    expect(result.qrCodeUrl).toContain("data:image/png");
    expect(result.backupCodes).toHaveLength(5);
@@ -96,7 +96,7 @@ describe("TwoFactorRepository", () => {
    const result = await repository.verifySetup({ token: "123456" });
 
    // Assert
-   expect(client.post).toHaveBeenCalledWith("/auth/2fa/verify-setup", {
+   expect(client.post).toHaveBeenCalledWith("/v1/auth/2fa/verify-setup", {
     token: "123456",
    });
    expect(result.success).toBe(true);
@@ -129,7 +129,7 @@ describe("TwoFactorRepository", () => {
    const result = await repository.verifyLogin({ token: "123456" });
 
    // Assert
-   expect(client.post).toHaveBeenCalledWith("/auth/2fa/verify-login", {
+   expect(client.post).toHaveBeenCalledWith("/v1/auth/2fa/verify-login", {
     token: "123456",
    });
    expect(result.success).toBe(true);
@@ -144,7 +144,7 @@ describe("TwoFactorRepository", () => {
    const result = await repository.verifyLogin({ token: "12345678" });
 
    // Assert
-   expect(client.post).toHaveBeenCalledWith("/auth/2fa/verify-login", {
+   expect(client.post).toHaveBeenCalledWith("/v1/auth/2fa/verify-login", {
     token: "12345678",
    });
    expect(result.success).toBe(true);
@@ -176,7 +176,7 @@ describe("TwoFactorRepository", () => {
    const result = await repository.disable("123456");
 
    // Assert
-   expect(client.post).toHaveBeenCalledWith("/auth/2fa/disable", {
+   expect(client.post).toHaveBeenCalledWith("/v1/auth/2fa/disable", {
     token: "123456",
    });
    expect(result.success).toBe(true);
@@ -208,7 +208,7 @@ describe("TwoFactorRepository", () => {
 
    // Assert
    expect(client.post).toHaveBeenCalledWith(
-    "/auth/2fa/regenerate-backup-codes",
+    "/v1/auth/2fa/regenerate-backup-codes",
     {
      token: "123456",
     }
@@ -245,7 +245,7 @@ describe("TwoFactorRepository", () => {
    const result = await repository.getStatus();
 
    // Assert
-   expect(client.get).toHaveBeenCalledWith("/auth/2fa/status");
+   expect(client.get).toHaveBeenCalledWith("/v1/auth/2fa/status");
    expect(result.enabled).toBe(true);
   });
 

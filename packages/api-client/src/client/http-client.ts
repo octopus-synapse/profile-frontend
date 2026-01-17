@@ -218,7 +218,8 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
 
    return requestConfig;
   },
-  (error: unknown) => Promise.reject(error)
+  (error: unknown) =>
+   Promise.reject(error instanceof Error ? error : new Error(String(error)))
  );
 
  // Response interceptor - handle errors and refresh token
@@ -256,7 +257,7 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
 
    // Transform to ApiError
    const apiError = transformError(error);
-   return Promise.reject(apiError);
+   return Promise.reject(new Error(apiError.message));
   }
  );
 
@@ -335,5 +336,5 @@ export async function withRetry<T>(
   }
  }
 
- throw lastError;
+ throw lastError instanceof Error ? lastError : new Error(String(lastError));
 }

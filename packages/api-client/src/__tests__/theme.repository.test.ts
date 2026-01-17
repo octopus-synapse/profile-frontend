@@ -81,7 +81,7 @@ describe("ThemeRepository", () => {
    const result = await repository.getAll();
 
    // Assert
-   expect(client.get).toHaveBeenCalledWith("/themes");
+   expect(client.get).toHaveBeenCalledWith("/v1/themes");
    expect(result).toEqual(themes);
   });
 
@@ -95,7 +95,7 @@ describe("ThemeRepository", () => {
 
    // Assert
    const calledUrl = (client.get as ReturnType<typeof mock>).mock.calls[0][0];
-   expect(calledUrl).toContain("/themes?");
+   expect(calledUrl).toContain("/v1/themes?");
    expect(calledUrl).toContain("isPublic=true");
   });
  });
@@ -110,7 +110,7 @@ describe("ThemeRepository", () => {
    const result = await repository.getById("theme-123");
 
    // Assert
-   expect(client.get).toHaveBeenCalledWith("/themes/theme-123");
+   expect(client.get).toHaveBeenCalledWith("/v1/themes/theme-123");
    expect(result).toEqual(theme);
   });
  });
@@ -125,7 +125,7 @@ describe("ThemeRepository", () => {
    await repository.getPopular();
 
    // Assert
-   expect(client.get).toHaveBeenCalledWith("/themes/popular?limit=10");
+   expect(client.get).toHaveBeenCalledWith("/v1/themes/popular?limit=10");
   });
 
   it("calls GET /themes/popular with custom limit", async () => {
@@ -136,7 +136,7 @@ describe("ThemeRepository", () => {
    await repository.getPopular(5);
 
    // Assert
-   expect(client.get).toHaveBeenCalledWith("/themes/popular?limit=5");
+   expect(client.get).toHaveBeenCalledWith("/v1/themes/popular?limit=5");
   });
  });
 
@@ -150,7 +150,7 @@ describe("ThemeRepository", () => {
    const result = await repository.getSystem();
 
    // Assert
-   expect(client.get).toHaveBeenCalledWith("/themes/system");
+   expect(client.get).toHaveBeenCalledWith("/v1/themes/system");
    expect(result[0].isSystem).toBe(true);
   });
  });
@@ -169,7 +169,7 @@ describe("ThemeRepository", () => {
    const result = await repository.getMyThemes();
 
    // Assert
-   expect(client.get).toHaveBeenCalledWith("/themes/me");
+   expect(client.get).toHaveBeenCalledWith("/v1/themes/me");
    expect(result).toEqual(myThemes);
   });
  });
@@ -189,7 +189,7 @@ describe("ThemeRepository", () => {
    const result = await repository.create(createData as any);
 
    // Assert
-   expect(client.post).toHaveBeenCalledWith("/themes", createData);
+   expect(client.post).toHaveBeenCalledWith("/v1/themes", createData);
    expect(result.name).toBe("New Theme");
   });
  });
@@ -205,7 +205,7 @@ describe("ThemeRepository", () => {
    const result = await repository.update("theme-123", updateData as any);
 
    // Assert
-   expect(client.put).toHaveBeenCalledWith("/themes/theme-123", updateData);
+   expect(client.put).toHaveBeenCalledWith("/v1/themes/theme-123", updateData);
    expect(result.name).toBe("Updated Theme");
   });
  });
@@ -219,7 +219,7 @@ describe("ThemeRepository", () => {
    await repository.delete("theme-123");
 
    // Assert
-   expect(client.delete).toHaveBeenCalledWith("/themes/theme-123");
+   expect(client.delete).toHaveBeenCalledWith("/v1/themes/theme-123");
   });
  });
 
@@ -233,7 +233,7 @@ describe("ThemeRepository", () => {
    const result = await repository.fork("theme-123", "My Fork");
 
    // Assert
-   expect(client.post).toHaveBeenCalledWith("/themes/fork", {
+   expect(client.post).toHaveBeenCalledWith("/v1/themes/fork", {
     themeId: "theme-123",
     name: "My Fork",
    });
@@ -250,7 +250,7 @@ describe("ThemeRepository", () => {
    await repository.apply({ themeId: "theme-123", resumeId: "resume-456" });
 
    // Assert
-   expect(client.post).toHaveBeenCalledWith("/themes/apply", {
+   expect(client.post).toHaveBeenCalledWith("/v1/themes/apply", {
     themeId: "theme-123",
     resumeId: "resume-456",
    });

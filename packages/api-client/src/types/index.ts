@@ -30,10 +30,10 @@ export {
  UserProfileSchema,
  type CheckUsernameResponse,
  type UserStats,
- type AuthTokens,
- AuthTokensSchema,
- type AuthResponse,
- type RefreshTokenResponse,
+ // NOTE: AuthTokens, AuthResponse, RefreshTokenResponse are intentionally NOT
+ // re-exported from profile-contracts because they don't match the actual
+ // backend response structure. Use local types from ./auth.types.ts instead.
+ // TODO: Update profile-contracts to match backend response structure.
  type Resume,
  ResumeSchema,
  type ResumeExperience,

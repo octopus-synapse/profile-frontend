@@ -264,7 +264,7 @@ describe("ConsentRepository", () => {
    (client.post as ReturnType<typeof mock>).mockResolvedValue(response);
 
    // Act
-   const result = await repository.acceptPrivacyPolicy();
+   await repository.acceptPrivacyPolicy();
 
    // Assert
    expect(client.post).toHaveBeenCalledWith("/v1/users/me/accept-consent", {
@@ -288,7 +288,7 @@ describe("ConsentRepository", () => {
    (client.post as ReturnType<typeof mock>).mockResolvedValue(response);
 
    // Act
-   const result = await repository.acceptMarketingConsent();
+   await repository.acceptMarketingConsent();
 
    // Assert
    expect(client.post).toHaveBeenCalledWith("/v1/users/me/accept-consent", {
