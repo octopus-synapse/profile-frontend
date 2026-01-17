@@ -228,7 +228,10 @@ export function UsersTable() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem
                             onClick={() =>
-                              handleRoleChange(user.id, user.role === "ADMIN" ? "USER" : "ADMIN")
+                              void handleRoleChange(
+                                user.id,
+                                user.role === "ADMIN" ? "USER" : "ADMIN"
+                              )
                             }
                           >
                             <Shield className="mr-2 h-4 w-4" />
@@ -302,7 +305,11 @@ export function UsersTable() {
             <Button variant="outline" onClick={() => setDeleteUserId(null)}>
               Cancel
             </Button>
-            <Button variant="danger" onClick={handleDeleteUser} loading={deleteUser.isPending}>
+            <Button
+              variant="danger"
+              onClick={() => void handleDeleteUser()}
+              loading={deleteUser.isPending}
+            >
               Delete
             </Button>
           </DialogFooter>

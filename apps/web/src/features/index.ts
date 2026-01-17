@@ -89,8 +89,8 @@ export type {
 } from "./resume";
 
 // Onboarding
+// Note: onboardingRepository removed - use apiClient.onboarding instead
 export {
-  onboardingRepository,
   onboardingKeys,
   useOnboardingStatus,
   useSubmitOnboarding,

@@ -29,7 +29,7 @@ export function useUpdateProfile() {
   return useMutation({
     mutationFn: (data: UpdateProfilePayload) => profileRepository.updateProfile(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: profileKeys.all });
+      void queryClient.invalidateQueries({ queryKey: profileKeys.all });
     },
   });
 }
@@ -49,7 +49,7 @@ export function useUpdateUsername() {
   return useMutation({
     mutationFn: (username: string) => profileRepository.updateUsername(username),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: profileKeys.all });
+      void queryClient.invalidateQueries({ queryKey: profileKeys.all });
     },
   });
 }

@@ -19,7 +19,7 @@ export function useUpdateMe() {
   return useMutation({
     mutationFn: (data: UpdateUserDto) => userRepository.updateMe(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: userKeys.me() });
+      void queryClient.invalidateQueries({ queryKey: userKeys.me() });
     },
   });
 }
@@ -33,7 +33,7 @@ export function useUploadProfileImage() {
   return useMutation({
     mutationFn: (file: File) => userRepository.uploadImage(file),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: userKeys.me() });
+      void queryClient.invalidateQueries({ queryKey: userKeys.me() });
     },
   });
 }
@@ -52,8 +52,8 @@ export function useAdminUpdateUserRole() {
     mutationFn: ({ userId, role }: { userId: string; role: UserRole }) =>
       userRepository.adminUpdateUserRole(userId, role),
     onSuccess: (_, { userId }) => {
-      queryClient.invalidateQueries({ queryKey: userKeys.admin.detail(userId) });
-      queryClient.invalidateQueries({ queryKey: userKeys.admin.list() });
+      void queryClient.invalidateQueries({ queryKey: userKeys.admin.detail(userId) });
+      void queryClient.invalidateQueries({ queryKey: userKeys.admin.list() });
     },
   });
 }
@@ -67,7 +67,7 @@ export function useAdminDeleteUser() {
   return useMutation({
     mutationFn: (userId: string) => userRepository.adminDeleteUser(userId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: userKeys.admin.list() });
+      void queryClient.invalidateQueries({ queryKey: userKeys.admin.list() });
     },
   });
 }

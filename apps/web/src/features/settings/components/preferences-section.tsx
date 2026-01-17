@@ -29,7 +29,7 @@ export function PreferencesSection() {
     mutationFn: (data: { profileVisibility: "public" | "private" }) =>
       preferencesRepository.updateFullPreferences(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["preferences"] });
+      void queryClient.invalidateQueries({ queryKey: ["preferences"] });
     },
   });
 

@@ -237,7 +237,7 @@ export function EducationSection() {
                     <Pencil className="h-4 w-4" strokeWidth={1.5} />
                   </button>
                   <button
-                    onClick={() => handleDelete(edu.id)}
+                    onClick={() => void handleDelete(edu.id)}
                     disabled={deleteEducation.isPending}
                     className="rounded-lg p-2 text-zinc-400 transition-colors hover:bg-[#0A0A0A]/80 hover:text-red-500 disabled:opacity-50"
                     title="Delete"
@@ -379,7 +379,7 @@ export function EducationSection() {
               Cancel
             </button>
             <button
-              onClick={handleSave}
+              onClick={() => void handleSave()}
               disabled={
                 !formData.institution ||
                 !formData.degree ||

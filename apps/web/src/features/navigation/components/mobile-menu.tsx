@@ -170,7 +170,7 @@ export function MobileMenu({ menu, navItems }: MobileMenuProps) {
           <button
             onClick={() => {
               menu.close();
-              signOut();
+              void signOut();
             }}
             className="flex w-full items-center justify-center gap-2 rounded-md py-3 text-[15px] font-medium text-white transition-colors duration-150 hover:bg-zinc-900"
           >
