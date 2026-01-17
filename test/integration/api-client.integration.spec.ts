@@ -26,13 +26,12 @@ describe("Integration: API Client Assembly", () => {
   it("should create a complete API client with all repositories", async () => {
    // Arrange - Create mock HTTP client
    const mockHttpClient: HttpClient = {
-    get: mock(() => Promise.resolve({})),
-    post: mock(() => Promise.resolve({})),
-    put: mock(() => Promise.resolve({})),
-    patch: mock(() => Promise.resolve({})),
-    delete: mock(() => Promise.resolve()),
-    setToken: mock(() => {}),
-    clearToken: mock(() => {}),
+    get: mock(() => Promise.resolve({})) as any,
+    post: mock(() => Promise.resolve({})) as any,
+    put: mock(() => Promise.resolve({})) as any,
+    patch: mock(() => Promise.resolve({})) as any,
+    delete: mock(() => Promise.resolve()) as any,
+    instance: {} as any,
    };
 
    // Act - Create all repositories
@@ -66,13 +65,12 @@ describe("Integration: Authentication Flow", () => {
 
  beforeEach(() => {
   mockHttpClient = {
-   get: mock(() => Promise.resolve({})),
-   post: mock(() => Promise.resolve({})),
-   put: mock(() => Promise.resolve({})),
-   patch: mock(() => Promise.resolve({})),
-   delete: mock(() => Promise.resolve()),
-   setToken: mock(() => {}),
-   clearToken: mock(() => {}),
+   get: mock(() => Promise.resolve({})) as any,
+   post: mock(() => Promise.resolve({})) as any,
+   put: mock(() => Promise.resolve({})) as any,
+   patch: mock(() => Promise.resolve({})) as any,
+   delete: mock(() => Promise.resolve()) as any,
+   instance: {} as any,
   };
   authRepo = createAuthRepository(mockHttpClient);
  });
@@ -193,13 +191,12 @@ describe("Integration: Resume CRUD Flow", () => {
 
  beforeEach(() => {
   mockHttpClient = {
-   get: mock(() => Promise.resolve({})),
-   post: mock(() => Promise.resolve({})),
-   put: mock(() => Promise.resolve({})),
-   patch: mock(() => Promise.resolve({})),
-   delete: mock(() => Promise.resolve()),
-   setToken: mock(() => {}),
-   clearToken: mock(() => {}),
+   get: mock(() => Promise.resolve({})) as any,
+   post: mock(() => Promise.resolve({})) as any,
+   put: mock(() => Promise.resolve({})) as any,
+   patch: mock(() => Promise.resolve({})) as any,
+   delete: mock(() => Promise.resolve()) as any,
+   instance: {} as any,
   };
   resumeRepo = createResumeRepository(mockHttpClient);
  });
@@ -258,12 +255,12 @@ describe("Integration: Resume CRUD Flow", () => {
   // Act
   const result = await resumeRepo.addExperience("resume-1", {
    company: "Tech Corp",
-   title: "Developer",
+   position: "Developer",
    startDate: "2020-01-01",
   } as any);
 
   // Assert
-  expect(result.id).toBe("exp-1");
+  expect((result as any).id).toBe("exp-1");
   expect(mockHttpClient.post).toHaveBeenCalledWith(
    "/v1/resumes/resume-1/experiences",
    expect.any(Object)
@@ -281,13 +278,12 @@ describe("Integration: Two-Factor Authentication Flow", () => {
 
  beforeEach(() => {
   mockHttpClient = {
-   get: mock(() => Promise.resolve({})),
-   post: mock(() => Promise.resolve({})),
-   put: mock(() => Promise.resolve({})),
-   patch: mock(() => Promise.resolve({})),
-   delete: mock(() => Promise.resolve()),
-   setToken: mock(() => {}),
-   clearToken: mock(() => {}),
+   get: mock(() => Promise.resolve({})) as any,
+   post: mock(() => Promise.resolve({})) as any,
+   put: mock(() => Promise.resolve({})) as any,
+   patch: mock(() => Promise.resolve({})) as any,
+   delete: mock(() => Promise.resolve()) as any,
+   instance: {} as any,
   };
   twoFactorRepo = createTwoFactorRepository(mockHttpClient);
  });

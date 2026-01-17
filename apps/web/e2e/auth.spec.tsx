@@ -22,15 +22,15 @@ describe("Authentication E2E", () => {
     it("should have password field with type password", () => {
       render(<SignInForm />);
 
-      const passwordField = screen.getByLabelText(/password/i) as HTMLInputElement;
-      expect(passwordField.type).toBe("password");
+      const passwordField = screen.getByLabelText(/password/i);
+      expect(passwordField.getAttribute("type")).toBe("password");
     });
 
     it("should have link to forgot password", () => {
       render(<SignInForm />);
 
       const forgotLink = screen.getByRole("link", { name: /forgot/i });
-      expect(forgotLink).not.toBeNull();
+      expect(forgotLink).toBeDefined();
       expect(forgotLink.getAttribute("href")).toContain("forgot-password");
     });
   });

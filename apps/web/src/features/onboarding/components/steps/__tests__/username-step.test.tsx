@@ -11,11 +11,11 @@ import { UsernameStep } from "../username-step";
 import { useOnboardingStore } from "../../../stores";
 
 // Mock StepNavigation component (internal component, not in global setup)
+import React from "react";
+
 void mock.module("../step-navigation", () => ({
-  StepNavigation: ({ onNext }: { onNext?: () => void }) => {
-    const React = require("react");
-    return React.createElement("button", { onClick: onNext, "data-testid": "next-btn" }, "Next");
-  },
+  StepNavigation: ({ onNext }: { onNext?: () => void }) =>
+    React.createElement("button", { onClick: onNext, "data-testid": "next-btn" }, "Next"),
 }));
 
 // Mock debounce hook to make tests synchronous
@@ -49,7 +49,7 @@ global.fetch = mock(() =>
 ) as typeof fetch;
 
 /** Helper to get the username input field */
-const getUsernameInput = () => screen.getByPlaceholderText("johndoe") as HTMLInputElement;
+const getUsernameInput = () => screen.getByPlaceholderText("johndoe");
 
 describe("UsernameStep", () => {
   beforeEach(() => {

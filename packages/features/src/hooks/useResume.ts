@@ -5,6 +5,7 @@
 
 import { useCallback, useEffect } from "react";
 import type { Resume } from "@octopus-synapse/profile-contracts";
+import type { ResumeListItem, UpdateResumeDto } from "@profile/api-client";
 import type { ResumeStore } from "@profile/stores";
 
 export interface UseResumeOptions {
@@ -16,7 +17,7 @@ export interface UseResumeOptions {
 
 export interface UseResumeReturn {
  // State
- resumes: Resume[];
+ resumes: ResumeListItem[];
  currentResume: Resume | null;
  isLoading: boolean;
  error: string | null;
@@ -86,7 +87,14 @@ export function useResume(options: UseResumeOptions): UseResumeReturn {
  const updateResume = useCallback(
   async (id: string, data: Partial<Resume>) => {
    try {
-    await store.updateResume(id, data);
+    // Convert null values to undefined for UpdateResumeDto
+    const updateData: UpdateResumeDto = Object.fromEntries(
+     Object.entries(data).map(([key, value]) => [
+      key,
+      value === null ? undefined : value,
+     ])
+    ) as UpdateResumeDto;
+    await store.updateResume(id, updateData);
     onSuccess?.("update");
    } catch {
     // Error handled by store

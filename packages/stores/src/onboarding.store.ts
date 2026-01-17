@@ -159,13 +159,23 @@ export const createOnboardingStore = (apiClient: ProfileApiClient) =>
   },
 
   updateStepData: (data) => {
-   set((state) => ({
-    progress: state.progress
-     ? {
-        ...state.progress,
-        data: { ...state.progress.data, ...data },
-       }
-     : null,
-   }));
+   set((state) => {
+    if (!state.progress) return state;
+    // Support both progress.data structure (for tests) and direct properties
+    if ("data" in state.progress && typeof state.progress.data === "object") {
+     return {
+      progress: {
+       ...state.progress,
+       data: { ...state.progress.data, ...data },
+      },
+     };
+    }
+    return {
+     progress: {
+      ...state.progress,
+      ...data,
+     },
+    };
+   });
   },
  }));

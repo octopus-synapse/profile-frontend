@@ -28,9 +28,8 @@ export { useSocial } from "./useSocial";
 export type {
  UseSocialOptions,
  UseSocialReturn,
- UserProfile,
- ActivityItem,
 } from "./useSocial";
+export type { UserProfile } from "@profile/api-client";
 
 // Analytics
 export { useAnalytics } from "./useAnalytics";

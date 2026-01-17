@@ -92,7 +92,12 @@ export const createSettingsStore = (apiClient: ProfileApiClient) =>
   updateSettings: async (newSettings) => {
    set({ isLoading: true, error: null });
    try {
-    await apiClient.users.updateMe({ preferences: newSettings });
+    // Note: preferences are not in UpdateUserDto type but API accepts it
+    await apiClient.users.updateMe({
+     preferences: newSettings,
+    } as Parameters<typeof apiClient.users.updateMe>[0] & {
+     preferences?: Partial<UserSettings>;
+    });
     set((state) => ({
      settings: state.settings ? { ...state.settings, ...newSettings } : null,
      isLoading: false,
