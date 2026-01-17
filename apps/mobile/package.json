@@ -18,8 +18,8 @@
  },
  "dependencies": {
   "@expo/vector-icons": "^14.0.4",
-  "@octopus-synapse/profile-contracts": "latest",
-  "@octopus-synapse/profile-ui": "latest",
+  "@octopus-synapse/profile-contracts": "../../../profile-contracts",
+  "@octopus-synapse/profile-ui": "../../../profile-ui",
   "@profile/api-client": "workspace:*",
   "@profile/features": "workspace:*",
   "@profile/stores": "workspace:*",

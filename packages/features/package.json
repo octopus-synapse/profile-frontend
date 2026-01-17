@@ -21,7 +21,7 @@
   "test:coverage": "bun test --coverage"
  },
  "dependencies": {
-  "@octopus-synapse/profile-contracts": "^3.6.0",
+  "@octopus-synapse/profile-contracts": "../../../profile-contracts",
   "@profile/api-client": "workspace:*",
   "@profile/stores": "workspace:*"
  },

@@ -30,7 +30,7 @@
  },
  "dependencies": {
   "@profile/api-client": "workspace:*",
-  "@octopus-synapse/profile-contracts": "1.4.0",
+  "@octopus-synapse/profile-contracts": "../../../profile-contracts",
   "zustand": "^5.0.2"
  },
  "devDependencies": {

@@ -49,7 +49,7 @@
   "test:coverage": "bun test --coverage"
  },
  "dependencies": {
-  "@octopus-synapse/profile-contracts": "latest",
+  "@octopus-synapse/profile-contracts": "../../../profile-contracts",
   "axios": "^1.13.2",
   "zod": "^4.2.1"
  },
