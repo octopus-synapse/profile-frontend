@@ -1,6 +1,8 @@
 /**
  * SignInForm component tests
  * Tests behavior, error handling, and edge cases
+ *
+ * Note: UI component mocks are provided globally in test.setup.ts
  */
 
 import { describe, it, expect, beforeEach, mock } from "bun:test";
@@ -8,10 +10,9 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { SignInForm } from "../sign-in-form";
 import { useAuth } from "../../hooks/use-auth";
 import { useSearchParams } from "next/navigation";
-import { useT } from "@/features/i18n";
 
-// Mock dependencies
-mock.module("../../hooks/use-auth", () => ({
+// Mock auth hook for this test file
+void mock.module("../../hooks/use-auth", () => ({
   useAuth: mock(() => ({
     signIn: mock(() => Promise.resolve(true)),
     user: null,
@@ -20,23 +21,10 @@ mock.module("../../hooks/use-auth", () => ({
   })),
 }));
 
-mock.module("next/navigation", () => ({
+void mock.module("next/navigation", () => ({
   useSearchParams: mock(() => ({
     get: mock(() => null),
   })),
-}));
-
-mock.module("@/features/i18n", () => ({
-  useT: mock(() => (key: string) => {
-    const translations: Record<string, string> = {
-      "auth.error.invalidCredentials": "Invalid email or password",
-      "error.generic": "An error occurred",
-      "auth.signIn.email": "Email",
-      "auth.signIn.password": "Password",
-      "auth.signIn.submit": "Sign In",
-    };
-    return translations[key] || key;
-  }),
 }));
 
 describe("SignInForm", () => {
@@ -101,7 +89,7 @@ describe("SignInForm", () => {
   });
 
   it("disables submit button while loading", async () => {
-    let resolveSignIn: () => void;
+    let resolveSignIn = () => {};
     const signInPromise = new Promise<boolean>((resolve) => {
       resolveSignIn = () => resolve(true);
     });
@@ -119,12 +107,14 @@ describe("SignInForm", () => {
 
     // Button should be disabled during loading
     await waitFor(() => {
-      expect(submitButton).toBeDisabled();
+      expect(submitButton.disabled).toBe(true);
     });
 
-    resolveSignIn!();
+    if (typeof resolveSignIn === "function") {
+      resolveSignIn();
+    }
     await waitFor(() => {
-      expect(submitButton).not.toBeDisabled();
+      expect(submitButton.disabled).toBe(false);
     });
   });
 
@@ -173,30 +163,28 @@ describe("SignInForm", () => {
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(mockSignIn).toHaveBeenCalledWith(
-        "test@example.com",
-        "password",
-        "/custom-callback"
-      );
+      expect(mockSignIn).toHaveBeenCalledWith("test@example.com", "password", "/custom-callback");
     });
   });
 
   it("toggles password visibility", () => {
     render(<SignInForm />);
 
-    const passwordInput = screen.getByLabelText(/password/i) as HTMLInputElement;
-    const toggleButton = screen.getByRole("button", { name: /show|hide/i });
+    const passwordInput = screen.getByLabelText(/password/i);
+    // The toggle button contains an icon, find it by test-id set in the mock
+    const toggleButton = screen.getByTestId("icon-eye").closest("button");
+    if (!toggleButton) throw new Error("Toggle button not found");
 
     // Initially password should be hidden
-    expect(passwordInput.type).toBe("password");
+    expect((passwordInput as HTMLInputElement).type).toBe("password");
 
     // Click to show
     fireEvent.click(toggleButton);
-    expect(passwordInput.type).toBe("text");
+    expect((passwordInput as HTMLInputElement).type).toBe("text");
 
     // Click to hide
     fireEvent.click(toggleButton);
-    expect(passwordInput.type).toBe("password");
+    expect((passwordInput as HTMLInputElement).type).toBe("password");
   });
 
   it("prevents form submission with empty fields", () => {
@@ -230,7 +218,7 @@ describe("SignInForm", () => {
     fireEvent.change(emailInput, { target: { value: "test@example.com" } });
     fireEvent.change(passwordInput, { target: { value: "password" } });
 
-    // Rapid clicks
+    // Rapid clicks - button should be disabled after first submission
     fireEvent.click(submitButton);
     fireEvent.click(submitButton);
     fireEvent.click(submitButton);
@@ -239,8 +227,7 @@ describe("SignInForm", () => {
       expect(resolveCount).toBeGreaterThan(0);
     });
 
-    // Should have been called multiple times (potential bug if not handled)
-    expect(mockSignIn).toHaveBeenCalledTimes(3);
+    // Button is disabled while loading, so only first click should trigger signIn
+    expect(mockSignIn).toHaveBeenCalledTimes(1);
   });
 });
-

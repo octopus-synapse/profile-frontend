@@ -18,4 +18,4 @@ export {
 export { useAuth } from "./hooks";
 
 // Services
-export { authService, auth, signIn, signOut } from "./services";
+export { auth, signIn, signOut } from "./services";

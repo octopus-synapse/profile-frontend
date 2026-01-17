@@ -110,9 +110,9 @@ export function StepNavigation({
         <Button
           variant="primary"
           size="md"
-          onClick={handleNext}
+          onClick={() => void handleNext()}
           disabled={!canProceed || isLoading}
-          isLoading={isLoading}
+          loading={isLoading}
           rightIcon={!isLoading ? <ArrowRight className="h-4 w-4" strokeWidth={1.5} /> : undefined}
           className="font-mono"
         >

@@ -55,7 +55,7 @@ function SignInFormContent() {
       }}
       transition={{ duration: 0.4 }}
     >
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={(e) => void handleSubmit(e)} className="space-y-5">
         {/* Error Alert */}
         <AnimatePresence mode="wait">
           {error && (

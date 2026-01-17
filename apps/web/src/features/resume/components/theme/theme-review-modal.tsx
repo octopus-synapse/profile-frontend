@@ -143,7 +143,7 @@ export function ThemeReviewModal({ theme, isOpen, onClose }: Props) {
                 Back
               </button>
               <button
-                onClick={handleReject}
+                onClick={() => void handleReject()}
                 disabled={!rejectionReason.trim() || isPending}
                 className="bg-pf-danger-emphasis text-pf-fg-on-emphasis rounded px-4 py-2 text-sm hover:opacity-90 disabled:opacity-50"
               >
@@ -160,7 +160,7 @@ export function ThemeReviewModal({ theme, isOpen, onClose }: Props) {
                 Reject
               </button>
               <button
-                onClick={handleApprove}
+                onClick={() => void handleApprove()}
                 disabled={isPending}
                 className="bg-pf-success-emphasis text-pf-fg-on-emphasis rounded px-4 py-2 text-sm hover:opacity-90 disabled:opacity-50"
               >

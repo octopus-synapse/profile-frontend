@@ -1,23 +1,26 @@
 /**
  * Theme Query Hooks
+ *
+ * Uses @profile/api-client for all API calls.
+ * This ensures web and mobile share the same implementation.
  */
 
 import { useQuery } from "@tanstack/react-query";
-import { themeRepository } from "../services";
+import { apiClient } from "@/shared/lib/api-client";
 import { themeKeys } from "./theme-query-keys";
-import type { ThemeQueryParams } from "../services";
+import type { ThemeQueryParams } from "@profile/api-client";
 
 export function useThemes(params?: ThemeQueryParams) {
   return useQuery({
     queryKey: themeKeys.list((params ?? {}) as Record<string, unknown>),
-    queryFn: () => themeRepository.getAll(params),
+    queryFn: () => apiClient.themes.getAll(params),
   });
 }
 
 export function useTheme(id: string | undefined) {
   return useQuery({
     queryKey: themeKeys.detail(id!),
-    queryFn: () => themeRepository.getById(id!),
+    queryFn: () => apiClient.themes.getById(id!),
     enabled: !!id,
   });
 }
@@ -25,21 +28,21 @@ export function useTheme(id: string | undefined) {
 export function usePopularThemes(limit = 10) {
   return useQuery({
     queryKey: themeKeys.popular(limit),
-    queryFn: () => themeRepository.getPopular(limit),
+    queryFn: () => apiClient.themes.getPopular(limit),
   });
 }
 
 export function useSystemThemes() {
   return useQuery({
     queryKey: themeKeys.system(),
-    queryFn: () => themeRepository.getSystem(),
+    queryFn: () => apiClient.themes.getSystem(),
   });
 }
 
 export function useMyThemes() {
   return useQuery({
     queryKey: themeKeys.mine(),
-    queryFn: () => themeRepository.getMyThemes(),
+    queryFn: () => apiClient.themes.getMyThemes(),
   });
 }
 
@@ -47,6 +50,6 @@ export function useMyThemes() {
 export function usePendingThemes() {
   return useQuery({
     queryKey: themeKeys.pending(),
-    queryFn: () => themeRepository.getPendingApprovals(),
+    queryFn: () => apiClient.themes.getPendingApprovals(),
   });
 }

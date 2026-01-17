@@ -1,5 +1,8 @@
 /**
  * Onboarding Feature
+ *
+ * Note: onboardingRepository has been removed - use apiClient.onboarding instead.
+ * This ensures web and mobile share the same implementation via @profile/api-client.
  */
 
 // Types
@@ -13,10 +16,12 @@ export type {
   LanguageData,
   TemplateSelectionData,
   SubmitOnboardingDto,
+  // API types (re-exported from api-client)
+  OnboardingProgress,
+  OnboardingStatus,
+  OnboardingResult,
+  SaveProgressResult,
 } from "./types";
-
-// Repository
-export { onboardingRepository } from "./services/onboarding-repository";
 
 // Hooks
 export { onboardingKeys, useOnboardingStatus, useSubmitOnboarding } from "./hooks";

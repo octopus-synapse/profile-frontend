@@ -105,7 +105,7 @@ export function UsernameStep() {
           return;
         }
 
-        const result = await response.json();
+        const result = (await response.json()) as { available: boolean };
         setIsAvailable(result.available);
       } catch {
         setApiError("Connection error. Check your internet.");
@@ -115,7 +115,7 @@ export function UsernameStep() {
       }
     };
 
-    checkAvailability();
+    void checkAvailability();
   }, [debouncedUsername, validation.valid, username, session?.accessToken, sessionStatus]);
 
   const handleChange = (value: string) => {

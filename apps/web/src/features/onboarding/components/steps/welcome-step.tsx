@@ -14,7 +14,7 @@ import { Sparkles, Clock, Shield, Code } from "lucide-react";
 export function WelcomeStep() {
   const { goToNextStep } = useOnboardingStore();
 
-  const handleStartSetup = async () => {
+  const handleStartSetup = () => {
     goToNextStep();
   };
 
@@ -33,7 +33,7 @@ export function WelcomeStep() {
       </div>
 
       {/* Code Block */}
-      <div className="border-white/10 bg-[#0A0A0A] rounded-lg border p-4 font-mono text-sm">
+      <div className="rounded-lg border border-white/10 bg-[#0A0A0A] p-4 font-mono text-sm">
         <div className="mb-2 text-xs text-zinc-500">
           <span className="opacity-60">{"//"}</span> initialization
         </div>

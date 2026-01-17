@@ -1,19 +1,22 @@
 /**
  * Theme Mutation Hooks
+ *
+ * Uses @profile/api-client for all API calls.
+ * This ensures web and mobile share the same implementation.
  */
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { themeRepository } from "../services";
+import { apiClient } from "@/shared/lib/api-client";
 import { themeKeys } from "./theme-query-keys";
-import type { CreateThemeInput, UpdateThemeInput } from "../services";
+import type { CreateThemeDto, UpdateThemeDto } from "@profile/api-client";
 
 export function useCreateTheme() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (input: CreateThemeInput) => themeRepository.create(input),
+    mutationFn: (input: CreateThemeDto) => apiClient.themes.create(input),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: themeKeys.mine() });
+      void queryClient.invalidateQueries({ queryKey: themeKeys.mine() });
     },
   });
 }
@@ -22,11 +25,11 @@ export function useUpdateTheme() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, input }: { id: string; input: UpdateThemeInput }) =>
-      themeRepository.update(id, input),
+    mutationFn: ({ id, input }: { id: string; input: UpdateThemeDto }) =>
+      apiClient.themes.update(id, input),
     onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: themeKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: themeKeys.mine() });
+      void queryClient.invalidateQueries({ queryKey: themeKeys.detail(id) });
+      void queryClient.invalidateQueries({ queryKey: themeKeys.mine() });
     },
   });
 }
@@ -35,9 +38,9 @@ export function useDeleteTheme() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) => themeRepository.delete(id),
+    mutationFn: (id: string) => apiClient.themes.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: themeKeys.mine() });
+      void queryClient.invalidateQueries({ queryKey: themeKeys.mine() });
     },
   });
 }
@@ -47,9 +50,9 @@ export function useForkTheme() {
 
   return useMutation({
     mutationFn: ({ themeId, name }: { themeId: string; name: string }) =>
-      themeRepository.fork(themeId, name),
+      apiClient.themes.fork(themeId, name),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: themeKeys.mine() });
+      void queryClient.invalidateQueries({ queryKey: themeKeys.mine() });
     },
   });
 }
@@ -66,9 +69,9 @@ export function useApplyTheme() {
       resumeId: string;
       themeId: string;
       customizations?: Record<string, unknown>;
-    }) => themeRepository.apply({ resumeId, themeId, customizations }),
+    }) => apiClient.themes.apply({ resumeId, themeId, customizations }),
     onSuccess: (_, { resumeId }) => {
-      queryClient.invalidateQueries({ queryKey: ["resumes", resumeId] });
+      void queryClient.invalidateQueries({ queryKey: ["resumes", resumeId] });
     },
   });
 }
@@ -78,9 +81,9 @@ export function useSubmitForApproval() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (themeId: string) => themeRepository.submitForApproval(themeId),
+    mutationFn: (themeId: string) => apiClient.themes.submitForApproval(themeId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: themeKeys.mine() });
+      void queryClient.invalidateQueries({ queryKey: themeKeys.mine() });
     },
   });
 }
@@ -89,10 +92,10 @@ export function useApproveTheme() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (themeId: string) => themeRepository.approve(themeId),
+    mutationFn: (themeId: string) => apiClient.themes.approve(themeId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: themeKeys.pending() });
-      queryClient.invalidateQueries({ queryKey: themeKeys.all });
+      void queryClient.invalidateQueries({ queryKey: themeKeys.pending() });
+      void queryClient.invalidateQueries({ queryKey: themeKeys.all });
     },
   });
 }
@@ -102,9 +105,9 @@ export function useRejectTheme() {
 
   return useMutation({
     mutationFn: ({ themeId, reason }: { themeId: string; reason: string }) =>
-      themeRepository.reject(themeId, reason),
+      apiClient.themes.reject(themeId, reason),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: themeKeys.pending() });
+      void queryClient.invalidateQueries({ queryKey: themeKeys.pending() });
     },
   });
 }

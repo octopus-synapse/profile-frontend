@@ -2,10 +2,13 @@
 
 /**
  * Resume Mutations
+ *
+ * Uses @profile/api-client for all API calls.
+ * This ensures web and mobile share the same implementation.
  */
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { resumeRepository } from "../services/resume-repository";
+import { apiClient } from "@/shared/lib/api-client";
 import { resumeKeys } from "./query-keys";
 import type {
   CreateResumeDto,
@@ -26,9 +29,9 @@ export function useCreateResume() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateResumeDto) => resumeRepository.create(data),
+    mutationFn: (data: CreateResumeDto) => apiClient.resumes.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: resumeKeys.lists() });
+      void queryClient.invalidateQueries({ queryKey: resumeKeys.lists() });
     },
   });
 }
@@ -37,10 +40,10 @@ export function useUpdateResume(resumeId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: UpdateResumeDto) => resumeRepository.update(resumeId, data),
+    mutationFn: (data: UpdateResumeDto) => apiClient.resumes.update(resumeId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
-      queryClient.invalidateQueries({ queryKey: resumeKeys.lists() });
+      void queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
+      void queryClient.invalidateQueries({ queryKey: resumeKeys.lists() });
     },
   });
 }
@@ -49,9 +52,9 @@ export function useDeleteResume() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (resumeId: string) => resumeRepository.delete(resumeId),
+    mutationFn: (resumeId: string) => apiClient.resumes.delete(resumeId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: resumeKeys.lists() });
+      void queryClient.invalidateQueries({ queryKey: resumeKeys.lists() });
     },
   });
 }
@@ -60,9 +63,9 @@ export function useDuplicateResume() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (resumeId: string) => resumeRepository.duplicate(resumeId),
+    mutationFn: (resumeId: string) => apiClient.resumes.duplicate(resumeId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: resumeKeys.lists() });
+      void queryClient.invalidateQueries({ queryKey: resumeKeys.lists() });
     },
   });
 }
@@ -75,9 +78,9 @@ export function useAddExperience(resumeId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateExperienceDto) => resumeRepository.addExperience(resumeId, data),
+    mutationFn: (data: CreateExperienceDto) => apiClient.resumes.addExperience(resumeId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
+      void queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
     },
   });
 }
@@ -92,9 +95,9 @@ export function useUpdateExperience(resumeId: string) {
     }: {
       experienceId: string;
       data: Partial<CreateExperienceDto>;
-    }) => resumeRepository.updateExperience(resumeId, experienceId, data),
+    }) => apiClient.resumes.updateExperience(resumeId, experienceId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
+      void queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
     },
   });
 }
@@ -103,9 +106,9 @@ export function useDeleteExperience(resumeId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (experienceId: string) => resumeRepository.deleteExperience(resumeId, experienceId),
+    mutationFn: (experienceId: string) => apiClient.resumes.deleteExperience(resumeId, experienceId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
+      void queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
     },
   });
 }
@@ -118,9 +121,9 @@ export function useAddEducation(resumeId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateEducationDto) => resumeRepository.addEducation(resumeId, data),
+    mutationFn: (data: CreateEducationDto) => apiClient.resumes.addEducation(resumeId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
+      void queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
     },
   });
 }
@@ -135,9 +138,9 @@ export function useUpdateEducation(resumeId: string) {
     }: {
       educationId: string;
       data: Partial<CreateEducationDto>;
-    }) => resumeRepository.updateEducation(resumeId, educationId, data),
+    }) => apiClient.resumes.updateEducation(resumeId, educationId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
+      void queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
     },
   });
 }
@@ -146,9 +149,9 @@ export function useDeleteEducation(resumeId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (educationId: string) => resumeRepository.deleteEducation(resumeId, educationId),
+    mutationFn: (educationId: string) => apiClient.resumes.deleteEducation(resumeId, educationId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
+      void queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
     },
   });
 }
@@ -161,9 +164,9 @@ export function useAddSkill(resumeId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateSkillDto) => resumeRepository.addSkill(resumeId, data),
+    mutationFn: (data: CreateSkillDto) => apiClient.resumes.addSkill(resumeId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
+      void queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
     },
   });
 }
@@ -172,9 +175,9 @@ export function useBulkAddSkills(resumeId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (skills: CreateSkillDto[]) => resumeRepository.bulkAddSkills(resumeId, skills),
+    mutationFn: (skills: CreateSkillDto[]) => apiClient.resumes.bulkAddSkills(resumeId, skills),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
+      void queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
     },
   });
 }
@@ -183,9 +186,9 @@ export function useDeleteSkill(resumeId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (skillId: string) => resumeRepository.deleteSkill(resumeId, skillId),
+    mutationFn: (skillId: string) => apiClient.resumes.deleteSkill(resumeId, skillId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
+      void queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
     },
   });
 }
@@ -198,9 +201,9 @@ export function useAddLanguage(resumeId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateLanguageDto) => resumeRepository.addLanguage(resumeId, data),
+    mutationFn: (data: CreateLanguageDto) => apiClient.resumes.addLanguage(resumeId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
+      void queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
     },
   });
 }
@@ -209,9 +212,9 @@ export function useDeleteLanguage(resumeId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (languageId: string) => resumeRepository.deleteLanguage(resumeId, languageId),
+    mutationFn: (languageId: string) => apiClient.resumes.deleteLanguage(resumeId, languageId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
+      void queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
     },
   });
 }
@@ -224,9 +227,9 @@ export function useAddCertification(resumeId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateCertificationDto) => resumeRepository.addCertification(resumeId, data),
+    mutationFn: (data: CreateCertificationDto) => apiClient.resumes.addCertification(resumeId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
+      void queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
     },
   });
 }
@@ -236,9 +239,9 @@ export function useDeleteCertification(resumeId: string) {
 
   return useMutation({
     mutationFn: (certificationId: string) =>
-      resumeRepository.deleteCertification(resumeId, certificationId),
+      apiClient.resumes.deleteCertification(resumeId, certificationId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
+      void queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
     },
   });
 }
@@ -251,9 +254,9 @@ export function useAddProject(resumeId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateProjectDto) => resumeRepository.addProject(resumeId, data),
+    mutationFn: (data: CreateProjectDto) => apiClient.resumes.addProject(resumeId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
+      void queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
     },
   });
 }
@@ -262,9 +265,9 @@ export function useDeleteProject(resumeId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (projectId: string) => resumeRepository.deleteProject(resumeId, projectId),
+    mutationFn: (projectId: string) => apiClient.resumes.deleteProject(resumeId, projectId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
+      void queryClient.invalidateQueries({ queryKey: resumeKeys.detail(resumeId) });
     },
   });
 }
@@ -275,12 +278,12 @@ export function useDeleteProject(resumeId: string) {
 
 export function useExportResumePDF() {
   return useMutation({
-    mutationFn: (resumeId: string) => resumeRepository.exportPDF(resumeId),
+    mutationFn: (resumeId: string) => apiClient.resumes.exportPDF(resumeId),
   });
 }
 
 export function useExportResumeDOCX() {
   return useMutation({
-    mutationFn: (resumeId: string) => resumeRepository.exportDOCX(resumeId),
+    mutationFn: (resumeId: string) => apiClient.resumes.exportDOCX(resumeId),
   });
 }

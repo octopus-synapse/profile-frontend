@@ -1,6 +1,8 @@
 /**
  * RoleGuard component tests
  * Tests all strategies, edge cases, and potential bugs
+ *
+ * Note: UI component mocks are provided globally in test.setup.ts
  */
 
 import { describe, it, expect, beforeEach, mock } from "bun:test";
@@ -8,8 +10,8 @@ import { render, screen } from "@testing-library/react";
 import { RoleGuard, AdminOnly, AuthenticatedOnly } from "../role-guard";
 import { useAuth } from "../../hooks/use-auth";
 
-// Mock useAuth
-mock.module("../../hooks/use-auth", () => ({
+// Mock useAuth for this test file
+void mock.module("../../hooks/use-auth", () => ({
   useAuth: mock(() => ({
     user: null,
     isAuthenticated: false,
@@ -29,7 +31,7 @@ describe("RoleGuard", () => {
       isAdmin: false,
     }));
 
-    (useAuth as ReturnType<typeof mock>).mockImplementation(mockUseAuth);
+    void (useAuth as ReturnType<typeof mock>).mockImplementation(mockUseAuth);
   });
 
   describe("strategy: any (default)", () => {
@@ -369,4 +371,3 @@ describe("AuthenticatedOnly", () => {
     expect(screen.queryByText("Authenticated Content")).toBeNull();
   });
 });
-

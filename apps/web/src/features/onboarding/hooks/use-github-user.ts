@@ -80,7 +80,12 @@ export function useGitHubUser(username: string | null): UseGitHubUserResult {
           throw new Error(`GitHub API error: ${response.status}`);
         }
 
-        const data = await response.json();
+        const data = (await response.json()) as {
+          login: string;
+          avatar_url: string;
+          name: string | null;
+          html_url: string;
+        };
         setUser({
           login: data.login,
           avatar_url: data.avatar_url,
@@ -90,19 +95,14 @@ export function useGitHubUser(username: string | null): UseGitHubUserResult {
         setError(null);
       } catch (err) {
         setUser(null);
-        setError(
-          err instanceof Error
-            ? err.message
-            : "Erro ao buscar usuário. Tente novamente."
-        );
+        setError(err instanceof Error ? err.message : "Erro ao buscar usuário. Tente novamente.");
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchUser();
+    void fetchUser();
   }, [debouncedUsername]);
 
   return { user, isLoading, error };
 }
-

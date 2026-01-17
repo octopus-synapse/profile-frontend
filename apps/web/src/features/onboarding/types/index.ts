@@ -1,7 +1,18 @@
 /**
  * Onboarding Domain Types
  * Types aligned with backend DTOs
+ *
+ * API-specific types (OnboardingProgress, OnboardingStatus, etc.) are
+ * re-exported from @profile/api-client for consistency.
  */
+
+// Re-export API types from api-client
+export type {
+  OnboardingProgress,
+  OnboardingStatus,
+  OnboardingResult,
+  SaveProgressResult,
+} from "@profile/api-client";
 
 export interface OnboardingData {
   personalInfo?: PersonalInfoData;

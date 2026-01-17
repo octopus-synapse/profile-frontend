@@ -52,7 +52,7 @@ export function usePublicResumeAst(
  * Preview DSL compilation without persisting
  */
 export function usePreviewDsl(
-  dsl: unknown | undefined,
+  dsl: unknown,
   target: "html" | "pdf" = "html",
   options?: { enabled?: boolean }
 ) {
