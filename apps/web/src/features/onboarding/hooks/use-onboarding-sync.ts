@@ -10,7 +10,16 @@ import { useSession } from "next-auth/react";
 import { useOnboardingProgress } from "./use-onboarding-queries";
 import { useSaveOnboardingProgress } from "./use-onboarding-mutations";
 import { useOnboardingStore, ONBOARDING_STEPS } from "../stores";
-import type { OnboardingStep } from "../stores";
+import type {
+  OnboardingStep,
+  PersonalInfo,
+  ProfessionalProfile,
+  Experience,
+  Education,
+  Skill,
+  Language,
+  TemplateSelection,
+} from "../stores";
 
 // Maximum time to wait for backend sync before proceeding with local state
 const SYNC_TIMEOUT_MS = 3000;
@@ -22,7 +31,7 @@ export function useOnboardingSync() {
   const { data: backendProgress, isLoading, isError } = useOnboardingProgress();
   const saveProgress = useSaveOnboardingProgress();
 
-  const { currentStep, hydrateFromBackend, getStateForBackend} = useOnboardingStore();
+  const { currentStep, hydrateFromBackend, getStateForBackend } = useOnboardingStore();
 
   const hasHydrated = useRef(false);
   const previousStep = useRef<OnboardingStep | null>(null);
@@ -113,17 +122,19 @@ export function useOnboardingSync() {
         hydrateFromBackend({
           currentStep: backendProgress.currentStep as OnboardingStep,
           completedSteps: (backendProgress.completedSteps || []) as OnboardingStep[],
-          personalInfo: backendProgress.personalInfo,
+          personalInfo: backendProgress.personalInfo as unknown as PersonalInfo | null,
           username: backendProgress.username || null,
-          professionalProfile: backendProgress.professionalProfile,
-          experiences: backendProgress.experiences || [],
+          professionalProfile:
+            backendProgress.professionalProfile as unknown as ProfessionalProfile | null,
+          experiences: (backendProgress.experiences || []) as unknown as Experience[],
           noExperience: backendProgress.noExperience || false,
-          education: backendProgress.education || [],
+          education: (backendProgress.education || []) as unknown as Education[],
           noEducation: backendProgress.noEducation || false,
-          skills: backendProgress.skills || [],
+          skills: (backendProgress.skills || []) as unknown as Skill[],
           noSkills: backendProgress.noSkills || false,
-          languages: backendProgress.languages || [],
-          templateSelection: backendProgress.templateSelection,
+          languages: (backendProgress.languages || []) as unknown as Language[],
+          templateSelection:
+            backendProgress.templateSelection as unknown as TemplateSelection | null,
         });
       }
 
@@ -141,7 +152,8 @@ export function useOnboardingSync() {
       previousStep.current !== currentStep
     ) {
       const state = getStateForBackend();
-      saveProgress.mutate(state);
+      // Cast to unknown first to allow type mismatch between local and API types
+      saveProgress.mutate(state as unknown as Parameters<typeof saveProgress.mutate>[0]);
     }
     previousStep.current = currentStep;
   }, [currentStep, getStateForBackend, saveProgress, isAuthenticated]);
@@ -152,13 +164,14 @@ export function useOnboardingSync() {
       return Promise.resolve({ success: false, currentStep: "", completedSteps: [] });
     }
     const state = getStateForBackend();
-    return saveProgress.mutateAsync(state);
+    // Cast to unknown first to allow type mismatch between local and API types
+    return saveProgress.mutateAsync(
+      state as unknown as Parameters<typeof saveProgress.mutateAsync>[0]
+    );
   }, [getStateForBackend, saveProgress, isAuthenticated]);
 
   return {
-    isLoading:
-      status === "loading" ||
-      (isAuthenticated && isLoading && !timedOut && !isError),
+    isLoading: status === "loading" || (isAuthenticated && isLoading && !timedOut && !isError),
     isError,
     isSaving: saveProgress.isPending,
     saveToBackend,

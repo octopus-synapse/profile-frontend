@@ -22,7 +22,7 @@ export default tseslint.config(
    "eslint.config.mjs",
    "**/*.config.js",
    "**/*.config.mjs",
-   
+
    // Build artifacts
    "**/dist/**",
    "**/node_modules/**",
@@ -32,7 +32,7 @@ export default tseslint.config(
    "packages/api-client/dist/**",
    "packages/features/dist/**",
    "packages/stores/dist/**",
-   
+
    // Mobile - deferred
    "apps/mobile/**",
   ],
@@ -51,7 +51,7 @@ export default tseslint.config(
    sourceType: "module",
    parserOptions: {
     projectService: {
-        defaultProject: "tsconfig.eslint.json",
+     defaultProject: "tsconfig.eslint.json",
     },
     tsconfigRootDir: import.meta.dirname,
    },
@@ -60,13 +60,18 @@ export default tseslint.config(
 
  // Production code rules (TYPE-AWARE ONLY - oxlint handles structural lint)
  {
-  files: ["packages/**/*.ts", "packages/**/*.tsx", "apps/**/*.ts", "apps/**/*.tsx"],
+  files: [
+   "packages/**/*.ts",
+   "packages/**/*.tsx",
+   "apps/**/*.ts",
+   "apps/**/*.tsx",
+  ],
   ignores: [
    "**/*.spec.ts",
    "**/*.test.ts",
    "**/__tests__/**",
    "**/__mocks__/**",
-   "**/tsup.config.ts"
+   "**/tsup.config.ts",
   ],
   rules: {
    // Type-aware rules (cannot be validated by oxlint)
@@ -103,7 +108,7 @@ export default tseslint.config(
    "@typescript-eslint/unbound-method": "off",
    "@typescript-eslint/no-explicit-any": "off",
    "@typescript-eslint/await-thenable": "off",
-   "@typescript-eslint/no-redundant-type-constituents": "off"
+   "@typescript-eslint/no-redundant-type-constituents": "off",
   },
  },
 

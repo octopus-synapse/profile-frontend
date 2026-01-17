@@ -76,7 +76,7 @@ export interface Education {
 export interface CreateEducationPayload {
   institution: string;
   degree: string;
-  field: string;
+  field?: string;
   startDate: string;
   endDate?: string | null;
   isCurrent?: boolean;

@@ -8,7 +8,7 @@
  * lives in the shared api-client.
  */
 
-import NextAuth, { type User, type Session } from "next-auth";
+import NextAuth, { type User } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { createProfileApiClient } from "@profile/api-client";
 import { API_URL } from "@/config/env";

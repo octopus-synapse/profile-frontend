@@ -5,7 +5,6 @@ import { X, Shield, Check, ExternalLink } from "lucide-react";
 import type { TranslationKeys } from "@/locales";
 import { trackEvent, AnalyticsEvent } from "@/lib/analytics";
 import { useApiClient } from "@/hooks/useApiClient";
-import type { ConsentStatus } from "@octopus-synapse/profile-contracts";
 
 interface ConsentModalProps {
   t: TranslationKeys;

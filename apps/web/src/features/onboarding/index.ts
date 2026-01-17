@@ -5,18 +5,16 @@
  * This ensures web and mobile share the same implementation via @profile/api-client.
  */
 
-// Types
+// Types from api-client (for API communication)
 export type {
   OnboardingData,
   PersonalInfoData,
   ProfessionalProfileData,
-  ExperienceData,
-  EducationData,
-  SkillData,
-  LanguageData,
   TemplateSelectionData,
   SubmitOnboardingDto,
-  // API types (re-exported from api-client)
+  ExperiencesStepData,
+  EducationStepData,
+  SkillsStepData,
   OnboardingProgress,
   OnboardingStatus,
   OnboardingResult,
@@ -26,7 +24,7 @@ export type {
 // Hooks
 export { onboardingKeys, useOnboardingStatus, useSubmitOnboarding } from "./hooks";
 
-// Store-based system
+// Store-based system (local types for UI)
 export { useOnboardingStore, ONBOARDING_STEPS } from "./stores";
 export type {
   PersonalInfo,

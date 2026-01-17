@@ -33,13 +33,12 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   output: "standalone",
-  reactCompiler: true,
 
   // Transpile local packages
   transpilePackages: ["@octopus-synapse/profile-ui", "@profile/api-client", "@profile/stores"],
 
   // Security headers
-  headers() {
+  async headers() {
     return [
       {
         source: "/:path*",
