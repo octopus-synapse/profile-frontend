@@ -16,6 +16,16 @@ interface ConsentModalProps {
 
 const CONSENT_STORAGE_KEY = "autoapply_consent";
 
+interface StoredConsent {
+  granted: boolean;
+  syncedWithBackend: boolean;
+}
+
+interface LocalConsentStatus {
+  tosAccepted: boolean;
+  privacyPolicyAccepted: boolean;
+}
+
 /**
  * ConsentModal - Integrated with Backend
  *
@@ -178,7 +188,7 @@ export function ConsentModal({ t, isOpen, onClose, onAccept }: ConsentModalProps
         {/* Actions */}
         <div className="space-y-3">
           <button
-            onClick={handleAccept}
+            onClick={() => void handleAccept()}
             disabled={isLoading}
             className="w-full rounded-xl bg-white px-4 py-3 font-semibold text-black transition-colors hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-50"
           >
@@ -238,7 +248,7 @@ export function ConsentModal({ t, isOpen, onClose, onAccept }: ConsentModalProps
  */
 export function useConsentModal() {
   const [isOpen, setIsOpen] = useState(false);
-  const [consentStatus, setConsentStatus] = useState<ConsentStatus | null>(null);
+  const [consentStatus, setConsentStatus] = useState<LocalConsentStatus | null>(null);
   const apiClient = useApiClient();
 
   const openModal = useCallback(() => setIsOpen(true), []);
@@ -251,7 +261,7 @@ export function useConsentModal() {
   const checkExistingConsent = useCallback(async (): Promise<boolean> => {
     try {
       // Try backend first
-      const status = await apiClient.consent.getConsentStatus();
+      const status = (await apiClient.consent.getConsentStatus()) as unknown as LocalConsentStatus;
       setConsentStatus(status);
 
       // If backend says both are accepted, we're good
@@ -262,7 +272,7 @@ export function useConsentModal() {
       // Check localStorage as fallback
       const stored = localStorage.getItem(CONSENT_STORAGE_KEY);
       if (stored) {
-        const data = JSON.parse(stored);
+        const data = JSON.parse(stored) as StoredConsent;
 
         // If localStorage has consent but backend doesn't, try to sync
         if (data.granted && !data.syncedWithBackend) {
@@ -298,7 +308,7 @@ export function useConsentModal() {
       try {
         const stored = localStorage.getItem(CONSENT_STORAGE_KEY);
         if (stored) {
-          const data = JSON.parse(stored);
+          const data = JSON.parse(stored) as StoredConsent;
           return data.granted === true;
         }
       } catch {

@@ -1,11 +1,9 @@
 /**
  * useDebounce hook tests
  * Tests debounce behavior, not implementation details
- */
-
-/**
- * useDebounce hook tests
- * Tests debounce behavior, not implementation details
+ *
+ * @note These tests require React @testing-library to be compatible.
+ * They may be skipped in environments with dual-React issues.
  */
 
 import { describe, it, expect, beforeEach, afterEach } from "bun:test";
@@ -30,12 +28,9 @@ describe("useDebounce", () => {
   });
 
   it("debounces value changes", async () => {
-    const { result, rerender } = renderHook(
-      ({ value, delay }) => useDebounce(value, delay),
-      {
-        initialProps: { value: "initial", delay: 100 },
-      }
-    );
+    const { result, rerender } = renderHook(({ value, delay }) => useDebounce(value, delay), {
+      initialProps: { value: "initial", delay: 100 },
+    });
 
     expect(result.current).toBe("initial");
 
@@ -53,12 +48,9 @@ describe("useDebounce", () => {
   });
 
   it("cancels previous debounce when value changes rapidly", async () => {
-    const { result, rerender } = renderHook(
-      ({ value, delay }) => useDebounce(value, delay),
-      {
-        initialProps: { value: "value1", delay: 200 },
-      }
-    );
+    const { result, rerender } = renderHook(({ value, delay }) => useDebounce(value, delay), {
+      initialProps: { value: "value1", delay: 200 },
+    });
 
     // Rapid changes
     rerender({ value: "value2", delay: 200 });
@@ -75,12 +67,9 @@ describe("useDebounce", () => {
   });
 
   it("respects custom delay", async () => {
-    const { result, rerender } = renderHook(
-      ({ value, delay }) => useDebounce(value, delay),
-      {
-        initialProps: { value: "initial", delay: 50 },
-      }
-    );
+    const { result, rerender } = renderHook(({ value, delay }) => useDebounce(value, delay), {
+      initialProps: { value: "initial", delay: 50 },
+    });
 
     rerender({ value: "changed", delay: 50 });
 
@@ -110,12 +99,9 @@ describe("useDebounce", () => {
   });
 
   it("cleans up timeout on unmount", () => {
-    const { unmount, rerender } = renderHook(
-      ({ value }) => useDebounce(value, 100),
-      {
-        initialProps: { value: "initial" },
-      }
-    );
+    const { unmount, rerender } = renderHook(({ value }) => useDebounce(value, 100), {
+      initialProps: { value: "initial" },
+    });
 
     rerender({ value: "changed" });
     unmount();
@@ -124,4 +110,3 @@ describe("useDebounce", () => {
     // (This is more of a smoke test - hard to verify cleanup directly)
   });
 });
-

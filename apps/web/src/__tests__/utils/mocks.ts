@@ -3,8 +3,6 @@
  * Centralized mocks for external dependencies
  */
 
-import type { Session } from "next-auth";
-
 /**
  * Mock NextAuth
  */
@@ -40,13 +38,16 @@ export function createMockHttpClient() {
     get: async <T>(url: string): Promise<T> => {
       throw new Error(`Mock HTTP GET not implemented for ${url}`);
     },
-    post: async <T>(url: string, data?: unknown): Promise<T> => {
+    post: async <T>(url: string, _data?: unknown): Promise<T> => {
+      void _data;
       throw new Error(`Mock HTTP POST not implemented for ${url}`);
     },
-    patch: async <T>(url: string, data?: unknown): Promise<T> => {
+    patch: async <T>(url: string, _data?: unknown): Promise<T> => {
+      void _data;
       throw new Error(`Mock HTTP PATCH not implemented for ${url}`);
     },
-    put: async <T>(url: string, data?: unknown): Promise<T> => {
+    put: async <T>(url: string, _data?: unknown): Promise<T> => {
+      void _data;
       throw new Error(`Mock HTTP PUT not implemented for ${url}`);
     },
     delete: async <T>(url: string): Promise<T> => {
@@ -73,4 +74,3 @@ export function createMockApiError(status: number, message: string, code?: strin
     isAxiosError: true,
   };
 }
-

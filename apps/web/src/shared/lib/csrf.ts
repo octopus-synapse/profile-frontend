@@ -19,8 +19,11 @@ const CSRF_TOKEN_LENGTH = 32;
 function generateToken(): string {
   if (typeof window === "undefined") {
     // Server-side: use Node.js crypto
-    const { randomBytes } = require("crypto");
-    return randomBytes(CSRF_TOKEN_LENGTH).toString("hex");
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const crypto = require("crypto") as {
+      randomBytes: (size: number) => { toString: (encoding: string) => string };
+    };
+    return crypto.randomBytes(CSRF_TOKEN_LENGTH).toString("hex");
   }
 
   // Client-side: use Web Crypto API
@@ -93,7 +96,7 @@ export function getCsrfToken(): string {
 /**
  * Async version for HTTP client compatibility
  */
-export async function getCsrfTokenAsync(): Promise<string | null> {
+export function getCsrfTokenAsync(): string | null {
   if (typeof window === "undefined") return null;
   return getCsrfToken();
 }

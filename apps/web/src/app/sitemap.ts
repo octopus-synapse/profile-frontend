@@ -7,7 +7,7 @@ import type { MetadataRoute } from "next";
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://profile.octopus-synapse.com";
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+export default function sitemap(): MetadataRoute.Sitemap {
   // Static routes
   const staticRoutes: MetadataRoute.Sitemap = [
     {

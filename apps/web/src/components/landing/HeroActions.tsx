@@ -49,7 +49,7 @@ export function HeroActions({ t }: HeroActionsProps) {
     <>
       <div className="flex flex-col justify-center gap-4 sm:flex-row">
         <button
-          onClick={handlePrimaryCTA}
+          onClick={() => void handlePrimaryCTA()}
           className="group relative inline-flex items-center justify-center gap-2 rounded-xl bg-white px-8 py-4 font-semibold text-black shadow-lg transition-all duration-200 hover:bg-white/90 hover:shadow-xl"
           aria-label={t.hero.cta}
         >

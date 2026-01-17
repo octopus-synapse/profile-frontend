@@ -78,7 +78,7 @@ export function trackEvent(event: AnalyticsEvent, payload?: AnalyticsPayload): v
   if (typeof window !== "undefined") {
     try {
       const stored = sessionStorage.getItem("analytics_events") || "[]";
-      const events = JSON.parse(stored);
+      const events = JSON.parse(stored) as unknown[];
       events.push(eventData);
       // Keep only last 100 events
       if (events.length > 100) events.shift();
@@ -106,7 +106,7 @@ export function getTrackedEvents(): unknown[] {
   if (typeof window === "undefined") return [];
   try {
     const stored = sessionStorage.getItem("analytics_events") || "[]";
-    return JSON.parse(stored);
+    return JSON.parse(stored) as unknown[];
   } catch {
     return [];
   }

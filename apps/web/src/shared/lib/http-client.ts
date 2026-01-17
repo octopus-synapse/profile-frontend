@@ -77,7 +77,7 @@ export function createHttpClient(config: HttpClientConfig = {}): AxiosInstance {
       }
       return config;
     },
-    (error: unknown) => Promise.reject(error)
+    (error: unknown) => Promise.reject(error instanceof Error ? error : new Error(String(error)))
   );
 
   // Response interceptor - handle errors and refresh token
@@ -111,7 +111,7 @@ export function createHttpClient(config: HttpClientConfig = {}): AxiosInstance {
 
       // Transform to ApiError
       const apiError = transformError(error);
-      return Promise.reject(apiError);
+      return Promise.reject(new Error(apiError.message));
     }
   );
 
@@ -173,7 +173,7 @@ export async function withRetry<T>(
     try {
       return await fn();
     } catch (error) {
-      lastError = error as Error;
+      lastError = error instanceof Error ? error : new Error(String(error));
 
       if (attempt === retries) break;
 
@@ -186,7 +186,7 @@ export async function withRetry<T>(
     }
   }
 
-  throw lastError;
+  throw lastError || new Error("Unknown error");
 }
 
 // ============================================================================
@@ -211,7 +211,7 @@ axiosClient.interceptors.request.use(
     }
     return config;
   },
-  (error: unknown) => Promise.reject(error)
+  (error: unknown) => Promise.reject(error instanceof Error ? error : new Error(String(error)))
 );
 
 // Add response interceptor to transform errors to ApiError
@@ -220,7 +220,7 @@ axiosClient.interceptors.response.use(
   async (error: AxiosError) => {
     // Transform to ApiError
     const apiError = transformError(error);
-    return Promise.reject(apiError);
+    return Promise.reject(new Error(apiError.message));
   }
 );
 

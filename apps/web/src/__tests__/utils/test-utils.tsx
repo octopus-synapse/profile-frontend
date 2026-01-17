@@ -6,7 +6,6 @@
 import { render, type RenderOptions } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode } from "react";
-import { ThemeProvider } from "@octopus-synapse/profile-ui";
 
 /**
  * Create a test QueryClient with default options
@@ -35,16 +34,16 @@ interface RenderWithProvidersOptions extends Omit<RenderOptions, "wrapper"> {
 
 export function renderWithProviders(
   ui: ReactNode,
-  { queryClient = createTestQueryClient(), locale = "en", ...options }: RenderWithProvidersOptions = {}
+  {
+    queryClient = createTestQueryClient(),
+    locale: _locale = "en",
+    ...options
+  }: RenderWithProvidersOptions = {}
 ) {
+  void _locale;
+
   function Wrapper({ children }: { children: ReactNode }) {
-    return (
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider defaultVariant="dev" defaultMode="dark">
-          {children}
-        </ThemeProvider>
-      </QueryClientProvider>
-    );
+    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
   }
 
   return render(ui, { wrapper: Wrapper, ...options });
@@ -96,4 +95,3 @@ export function createMockUser(overrides = {}) {
 // Re-export everything from testing-library
 export * from "@testing-library/react";
 export { default as userEvent } from "@testing-library/user-event";
-
