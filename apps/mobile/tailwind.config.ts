@@ -1,5 +1,7 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+import type { Config } from "tailwindcss";
+import nativewindPreset from "nativewind/preset";
+
+const config: Config = {
  content: [
   "./app/**/*.{js,jsx,ts,tsx}",
   "./src/**/*.{js,jsx,ts,tsx}",
@@ -7,7 +9,7 @@ module.exports = {
   // profile-ui primitives (sibling workspace)
   "../../../../profile-ui/src/**/*.{js,jsx,ts,tsx}",
  ],
- presets: [require("nativewind/preset")],
+ presets: [nativewindPreset],
  theme: {
   extend: {
    colors: {
@@ -44,3 +46,5 @@ module.exports = {
  },
  plugins: [],
 };
+
+export default config;

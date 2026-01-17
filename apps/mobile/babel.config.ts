@@ -1,12 +1,11 @@
-import type { ConfigAPI, TransformOptions } from "@babel/core";
-
-export default function (api: ConfigAPI): TransformOptions {
+// @ts-nocheck
+module.exports = function (api) {
  api.cache(true);
  return {
-  presets: ["babel-preset-expo"],
-  plugins: [
-   // Required for expo-router
-   "expo-router/babel",
+  presets: [
+   ["babel-preset-expo", { jsxImportSource: "nativewind" }],
+   "nativewind/babel",
   ],
+  plugins: ["expo-router/babel", "react-native-reanimated/plugin"],
  };
-}
+};
