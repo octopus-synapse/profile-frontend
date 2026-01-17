@@ -1,50 +1,51 @@
 # ==================================
 # Stage 1: Dependencies
 # ==================================
-FROM node:20-alpine AS deps
+FROM oven/bun:1.2.23-alpine AS deps
+
+RUN apk add --no-cache libc6-compat
+
+WORKDIR /app/frontend
+
+# Copy sibling dependencies needed for workspace installation
+# Context is the root of the workspace in CI
+COPY profile-contracts /profile-contracts
+COPY profile-ui /profile-ui
+
+# Copy frontend workspace configuration
+COPY profile-frontend/package.json profile-frontend/bun.lock ./
+COPY profile-frontend/apps/web/package.json ./apps/web/
+COPY profile-frontend/apps/mobile/package.json ./apps/mobile/
+COPY profile-frontend/packages/api-client/package.json ./packages/api-client/
+COPY profile-frontend/packages/features/package.json ./packages/features/
+COPY profile-frontend/packages/stores/package.json ./packages/stores/
+COPY profile-frontend/packages/test-utils/package.json ./packages/test-utils/
+
+# Install dependencies
+RUN bun install --frozen-lockfile
+
+# ==================================
+# Stage 2: Builder
+# ==================================
+FROM oven/bun:1.2.23-alpine AS builder
 
 RUN apk add --no-cache libc6-compat
 
 WORKDIR /app
 
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
+# Copy all from context
+COPY profile-contracts /profile-contracts
+COPY profile-ui /profile-ui
+COPY profile-frontend /app/frontend
 
-# Copy workspace configuration
-COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
-COPY apps/web/package.json ./apps/web/
-COPY packages/api-client/package.json ./packages/api-client/
+# Copy node_modules from deps stage
+COPY --from=deps /app/frontend/node_modules /app/frontend/node_modules
 
-# Install dependencies with GitHub Packages authentication using secrets
-RUN --mount=type=secret,id=github_token \
-    if [ -s /run/secrets/github_token ]; then \
-      GITHUB_TOKEN=$(cat /run/secrets/github_token) && \
-      echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" > .npmrc && \
-      echo "@octopus-synapse:registry=https://npm.pkg.github.com" >> .npmrc; \
-    fi && \
-    pnpm install --frozen-lockfile && \
-    rm -f .npmrc
+WORKDIR /app/frontend
 
-# ==================================
-# Stage 2: Builder
-# ==================================
-FROM node:20-alpine AS builder
-
-WORKDIR /app
-
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
-
-# Copy dependencies from deps stage
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
-COPY --from=deps /app/packages/api-client/node_modules ./packages/api-client/node_modules
-
-# Copy source code
-COPY . .
-
-# Build api-client first (workspace dependency)
-RUN pnpm --filter @profile/api-client build
+# Build internal dependencies
+RUN bun --filter @profile/api-client build
+RUN bun --filter @profile/stores build
 
 # Build Next.js app
 ENV NEXT_TELEMETRY_DISABLED=1
@@ -54,7 +55,7 @@ ENV NODE_ENV=production
 ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 
-RUN pnpm --filter @profile/web build
+RUN bun --filter @profile/web build
 
 # ==================================
 # Stage 3: Runner
@@ -70,9 +71,10 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Copy built application
-COPY --from=builder /app/apps/web/public ./apps/web/public
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
+# Next.js standalone output preserves monorepo structure
+COPY --from=builder /app/frontend/apps/web/public ./apps/web/public
+COPY --from=builder --chown=nextjs:nodejs /app/frontend/apps/web/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/frontend/apps/web/.next/static ./apps/web/.next/static
 
 USER nextjs
 
