@@ -82,6 +82,9 @@ RUN bun run build
 
 # Build internal frontend dependencies
 WORKDIR /app/profile-frontend
+# Refresh symlinks and resolve sister-repo builds (crucial for type resolution)
+RUN bun install
+
 # Build internal packages
 RUN bun --filter @profile/api-client build
 RUN bun --filter @profile/stores build
