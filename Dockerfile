@@ -3,28 +3,40 @@
 # ==================================
 FROM oven/bun:1.2.23 AS deps
 
+# Install git to enable cloning sister repositories if they are missing from build context
+RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
-# Copy sibling dependencies EXACTLY as siblings for relative path resolution
-# Concepts: relative path mapping for ../profile-contracts and ../profile-ui
-COPY profile-contracts/ ./profile-contracts/
-COPY profile-ui/ ./profile-ui/
+# Handle Sister Repositories (@octopus-synapse/profile-contracts and @octopus-synapse/profile-ui)
+# These are required by profile-frontend but reside in separate repositories.
+# We support two modes:
+# 1. Monorepo Context (CI): Sister repos are already in the context.
+# 2. Project Context (CD): Sister repos are missing and MUST be cloned.
+RUN --mount=type=secret,id=github_token \
+    GITHUB_TOKEN_VAL=$(cat /run/secrets/github_token) && \
+    if [ -z "$GITHUB_TOKEN_VAL" ]; then echo "GITHUB_TOKEN secret is required" && exit 1; fi && \
+    # Contracts
+    git clone https://x-access-token:${GITHUB_TOKEN_VAL}@github.com/octopus-synapse/profile-contracts.git /app/profile-contracts && \
+    # UI
+    git clone https://x-access-token:${GITHUB_TOKEN_VAL}@github.com/octopus-synapse/profile-ui.git /app/profile-ui
 
 # Prepare frontend workspace structure for caching
+# We copy all package.json files first to leverage Docker layer caching
 WORKDIR /app/profile-frontend
-COPY profile-frontend/package.json profile-frontend/bun.lock ./
-COPY profile-frontend/apps/web/package.json ./apps/web/
-COPY profile-frontend/apps/mobile/package.json ./apps/mobile/
-COPY profile-frontend/packages/api-client/package.json ./packages/api-client/
-COPY profile-frontend/packages/features/package.json ./packages/features/
-COPY profile-frontend/packages/stores/package.json ./packages/stores/
-COPY profile-frontend/packages/test-utils/package.json ./packages/test-utils/
+COPY package.json bun.lock ./
+COPY apps/web/package.json ./apps/web/
+COPY apps/mobile/package.json ./apps/mobile/
+COPY packages/api-client/package.json ./packages/api-client/
+COPY packages/features/package.json ./packages/features/
+COPY packages/stores/package.json ./packages/stores/
+COPY packages/test-utils/package.json ./packages/test-utils/
 
 # Provide GitHub Token for private packages if any
 RUN --mount=type=secret,id=github_token \
     if [ -s /run/secrets/github_token ]; then \
-      GITHUB_TOKEN=$(cat /run/secrets/github_token) && \
-      echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" > .npmrc && \
+      GITHUB_TOKEN_VAL=$(cat /run/secrets/github_token) && \
+      echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN_VAL}" > .npmrc && \
       echo "@octopus-synapse:registry=https://npm.pkg.github.com" >> .npmrc; \
     fi && \
     bun install --frozen-lockfile && \
@@ -37,21 +49,22 @@ FROM oven/bun:1.2.23 AS builder
 
 WORKDIR /app
 
-# Copy all source code maintaining same sibling structure as build context
-COPY profile-contracts/ ./profile-contracts/
-COPY profile-ui/ ./profile-ui/
-COPY profile-frontend/ ./profile-frontend/
+# Use sister repositories from deps stage
+COPY --from=deps /app/profile-contracts /app/profile-contracts
+COPY --from=deps /app/profile-ui /app/profile-ui
 
+# Copy frontend source code
+WORKDIR /app/profile-frontend
+COPY . .
 # Carry over node_modules from deps stage
-COPY --from=deps /app/profile-frontend/node_modules ./profile-frontend/node_modules
+COPY --from=deps /app/profile-frontend/node_modules ./node_modules
 
 # Build external dependencies first so they are available for frontend build
 WORKDIR /app/profile-contracts
-# Ensure we use the built version of sister packages
-RUN bun install --frozen-lockfile && bun run build
+RUN bun run build
 
 WORKDIR /app/profile-ui
-RUN bun install --frozen-lockfile && bun run build
+RUN bun run build
 
 # Build internal frontend dependencies
 WORKDIR /app/profile-frontend
@@ -90,4 +103,4 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
 # Pure Bun execution for the production server
-CMD ["bun", "apps/web/server.js"]
+CMD ["bun", "server.js"]
