@@ -84,6 +84,11 @@ RUN bun run build
 WORKDIR /app/profile-frontend
 # Refresh symlinks and resolve sister-repo builds (crucial for type resolution)
 RUN bun install
+RUN mkdir -p /app/profile-frontend/node_modules/@octopus-synapse && \
+    rm -rf /app/profile-frontend/node_modules/@octopus-synapse/profile-contracts && \
+    rm -rf /app/profile-frontend/node_modules/@octopus-synapse/profile-ui && \
+    ln -s /app/profile-contracts /app/profile-frontend/node_modules/@octopus-synapse/profile-contracts && \
+    ln -s /app/profile-ui /app/profile-frontend/node_modules/@octopus-synapse/profile-ui
 
 # Build internal packages
 RUN bun --filter @profile/api-client build
