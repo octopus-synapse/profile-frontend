@@ -3,44 +3,65 @@
 # ==================================
 FROM oven/bun:1.2.23 AS deps
 
-# Install git to enable cloning sister repositories if they are missing from build context
-RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
+# Install git and build essentials
+RUN apt-get update && apt-get install -y git ca-certificates && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Handle Sister Repositories (@octopus-synapse/profile-contracts and @octopus-synapse/profile-ui)
-# These are required by profile-frontend but reside in separate repositories.
-# We support two modes:
-# 1. Monorepo Context (CI): Sister repos are already in the context.
-# 2. Project Context (CD): Sister repos are missing and MUST be cloned.
-RUN --mount=type=secret,id=github_token \
-    GITHUB_TOKEN_VAL=$(cat /run/secrets/github_token) && \
-    if [ -z "$GITHUB_TOKEN_VAL" ]; then echo "GITHUB_TOKEN secret is required" && exit 1; fi && \
-    # Contracts
-    git clone https://x-access-token:${GITHUB_TOKEN_VAL}@github.com/octopus-synapse/profile-contracts.git /app/profile-contracts && \
-    # UI
-    git clone https://x-access-token:${GITHUB_TOKEN_VAL}@github.com/octopus-synapse/profile-ui.git /app/profile-ui
+# Handle Context Normalization and Sister Repositories
+# Supports both Monorepo Context (CI) and Project Root Context (CD)
+RUN --mount=type=bind,target=/context \
+    --mount=type=secret,id=github_token \
+    if [ -s /run/secrets/github_token ]; then \
+      GITHUB_TOKEN_VAL=$(cat /run/secrets/github_token); \
+    fi && \
+    # 1. Normalize profile-frontend location
+    if [ -f "/context/profile-frontend/package.json" ]; then \
+        echo "Detected Monorepo Context" && \
+        mkdir -p /app/profile-frontend && cp -a /context/profile-frontend/. /app/profile-frontend/; \
+        if [ -d "/context/profile-contracts" ] && [ -f "/context/profile-contracts/package.json" ]; then \
+            echo "Copying profile-contracts from context" && \
+            mkdir -p /app/profile-contracts && cp -a /context/profile-contracts/. /app/profile-contracts/; \
+        fi; \
+        if [ -d "/context/profile-ui" ] && [ -f "/context/profile-ui/package.json" ]; then \
+            echo "Copying profile-ui from context" && \
+            mkdir -p /app/profile-ui && cp -a /context/profile-ui/. /app/profile-ui/; \
+        fi; \
+    else \
+        echo "Detected Project Root Context" && \
+        mkdir -p /app/profile-frontend && cp -a /context/. /app/profile-frontend/; \
+    fi && \
+    # 2. Self-healing: Clone missing sister repositories if GITHUB_TOKEN is available
+    if [ -n "$GITHUB_TOKEN_VAL" ]; then \
+        if [ ! -f "/app/profile-contracts/package.json" ]; then \
+            echo "Cloning profile-contracts..." && rm -rf /app/profile-contracts && \
+            git clone https://x-access-token:${GITHUB_TOKEN_VAL}@github.com/octopus-synapse/profile-contracts.git /app/profile-contracts; \
+        fi && \
+        if [ ! -f "/app/profile-ui/package.json" ]; then \
+            echo "Cloning profile-ui..." && rm -rf /app/profile-ui && \
+            git clone https://x-access-token:${GITHUB_TOKEN_VAL}@github.com/octopus-synapse/profile-ui.git /app/profile-ui; \
+        fi; \
+    elif [ ! -f "/app/profile-contracts/package.json" ] || [ ! -f "/app/profile-ui/package.json" ]; then \
+        echo "ERROR: Sister repositories missing and no GITHUB_TOKEN for cloning" && exit 1; \
+    fi
 
-# Prepare frontend workspace structure for caching
-# We copy all package.json files first to leverage Docker layer caching
-WORKDIR /app/profile-frontend
-COPY package.json bun.lock ./
-COPY apps/web/package.json ./apps/web/
-COPY apps/mobile/package.json ./apps/mobile/
-COPY packages/api-client/package.json ./packages/api-client/
-COPY packages/features/package.json ./packages/features/
-COPY packages/stores/package.json ./packages/stores/
-COPY packages/test-utils/package.json ./packages/test-utils/
-
-# Provide GitHub Token for private packages if any
+# Step 2: Install dependencies for all
 RUN --mount=type=secret,id=github_token \
     if [ -s /run/secrets/github_token ]; then \
       GITHUB_TOKEN_VAL=$(cat /run/secrets/github_token) && \
-      echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN_VAL}" > .npmrc && \
-      echo "@octopus-synapse:registry=https://npm.pkg.github.com" >> .npmrc; \
+      echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN_VAL}" > ~/.npmrc && \
+      echo "@octopus-synapse:registry=https://npm.pkg.github.com" >> ~/.npmrc; \
     fi && \
-    bun install --frozen-lockfile && \
-    rm -f .npmrc
+    # Contracts
+    echo "Installing @octopus-synapse/profile-contracts..." && \
+    cd /app/profile-contracts && (bun install --frozen-lockfile || bun install) && \
+    # UI
+    echo "Installing @octopus-synapse/profile-ui..." && \
+    cd /app/profile-ui && (bun install --frozen-lockfile || bun install) && \
+    # Frontend
+    echo "Installing profile-frontend..." && \
+    cd /app/profile-frontend && (bun install --frozen-lockfile || bun install) && \
+    rm -f ~/.npmrc
 
 # ==================================
 # Stage 2: Builder
@@ -49,15 +70,8 @@ FROM oven/bun:1.2.23 AS builder
 
 WORKDIR /app
 
-# Use sister repositories from deps stage
-COPY --from=deps /app/profile-contracts /app/profile-contracts
-COPY --from=deps /app/profile-ui /app/profile-ui
-
-# Copy frontend source code
-WORKDIR /app/profile-frontend
-COPY . .
-# Carry over node_modules from deps stage
-COPY --from=deps /app/profile-frontend/node_modules ./node_modules
+# Copy EVERYTHING from deps stage (source + node_modules)
+COPY --from=deps /app /app
 
 # Build external dependencies first so they are available for frontend build
 WORKDIR /app/profile-contracts
@@ -68,8 +82,7 @@ RUN bun run build
 
 # Build internal frontend dependencies
 WORKDIR /app/profile-frontend
-# Refresh symlinks and ensure everything is built in order
-RUN bun install
+# Build internal packages
 RUN bun --filter @profile/api-client build
 RUN bun --filter @profile/stores build
 
