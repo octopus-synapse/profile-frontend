@@ -125,4 +125,4 @@ ENV HOSTNAME="0.0.0.0"
 
 # Pure Bun execution for the production server
 # If FRONTEND_PORT is provided, prefer it to match VM port mapping.
-CMD ["sh", "-c", "PORT=${FRONTEND_PORT:-$PORT} HOSTNAME=0.0.0.0 bun server.js"]
+CMD ["sh", "-c", "PORT=${FRONTEND_PORT:-$PORT} HOSTNAME=0.0.0.0 bun apps/web/server.js"]
