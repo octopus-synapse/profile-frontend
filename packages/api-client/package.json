@@ -1,8 +1,8 @@
 {
  "name": "@profile/api-client",
- "version": "1.0.0",
+ "version": "2.1.0",
  "private": true,
- "description": "Profile API client - framework agnostic HTTP client and repositories",
+ "description": "Profile API SDK - auto-generated from backend OpenAPI spec",
  "main": "./dist/index.js",
  "module": "./dist/index.mjs",
  "types": "./dist/index.d.ts",
@@ -12,25 +12,15 @@
    "import": "./dist/index.mjs",
    "require": "./dist/index.js"
   },
-  "./repositories": {
-   "types": "./dist/repositories/index.d.ts",
-   "import": "./dist/repositories/index.mjs",
-   "require": "./dist/repositories/index.js"
-  },
-  "./types": {
-   "types": "./dist/types/index.d.ts",
-   "import": "./dist/types/index.mjs",
-   "require": "./dist/types/index.js"
-  },
-  "./errors": {
-   "types": "./dist/errors/index.d.ts",
-   "import": "./dist/errors/index.mjs",
-   "require": "./dist/errors/index.js"
-  },
   "./client": {
    "types": "./dist/client/index.d.ts",
    "import": "./dist/client/index.mjs",
    "require": "./dist/client/index.js"
+  },
+  "./constants": {
+   "types": "./dist/constants/index.d.ts",
+   "import": "./dist/constants/index.mjs",
+   "require": "./dist/constants/index.js"
   }
  },
  "files": [
@@ -40,27 +30,27 @@
  "scripts": {
   "build": "tsup",
   "dev": "tsup --watch",
-  "lint": "eslint src --ext .ts",
-  "lint:fix": "eslint src --ext .ts --fix",
-  "type-check": "tsc --noEmit",
+  "lint": "biome check src/",
+  "lint:fix": "biome check --write src/",
+  "typecheck": "tsc --noEmit",
   "clean": "rm -rf dist node_modules",
   "test": "bun test",
   "test:watch": "bun test --watch",
-  "test:coverage": "bun test --coverage"
+  "test:coverage": "bun test --coverage",
+  "sdk:generate": "orval --config orval.config.ts && bun run scripts/generate-barrel.ts && bun run scripts/generate-routes.ts",
+  "sdk:watch": "orval --config orval.config.ts --watch",
+  "precommit": "bun run typecheck && bun run lint"
  },
  "dependencies": {
-  "@octopus-synapse/profile-contracts": "../../../profile-contracts",
-  "axios": "^1.13.2",
-  "zod": "^4.2.1"
+  "zod": "3.23.8"
  },
  "devDependencies": {
-  "@eslint/js": "^9.39.2",
+  "@tanstack/react-query": "^5.90.20",
   "@types/bun": "latest",
   "@types/node": "^20",
-  "eslint": "^9",
+  "orval": "^8.2.0",
   "tsup": "^8.3.5",
-  "typescript": "^5.7.2",
-  "typescript-eslint": "^8.50.1"
+  "typescript": "^5.7.2"
  },
  "peerDependencies": {
   "typescript": ">=5.0.0"

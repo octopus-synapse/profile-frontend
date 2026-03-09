@@ -6,7 +6,7 @@
  */
 
 import { Palette, Check, X, Clock } from "lucide-react";
-import { ThemeApprovalQueue, usePendingThemes } from "@/features/resume";
+import { ThemeApprovalQueue, usePendingThemes } from "@/components/resume";
 
 export default function ThemeApprovalsClient() {
   const { data: pendingThemes } = usePendingThemes();

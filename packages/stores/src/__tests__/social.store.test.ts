@@ -1,304 +1,170 @@
 /**
  * Social Store Tests
  *
- * Tests social features: follow/unfollow, activity feed, stats.
+ * Tests the pure state management for social features (followers/following).
+ * Zustand stores are pure state containers - no side effects.
  */
 
-import { describe, it, expect, mock } from "bun:test";
+import { describe, test, expect, beforeEach } from "bun:test";
 import { createSocialStore } from "../social.store";
-import type { ProfileApiClient } from "@profile/api-client";
 
-const mockFollower = {
- id: "user-2",
- username: "follower1",
- displayName: "Follower One",
- avatar: "avatar.jpg",
-};
+describe("SocialStore (Pure State)", () => {
+ let store: ReturnType<typeof createSocialStore>;
 
-const mockActivity = {
- id: "act-1",
- userId: "user-2",
- type: "resume_created",
- data: { resumeId: "resume-1", title: "New Resume" },
- createdAt: "2025-01-14T10:00:00Z",
-};
+ beforeEach(() => {
+  store = createSocialStore();
+ });
 
-const mockStats = {
- followersCount: 100,
- followingCount: 50,
- postsCount: 25,
-};
-
-const createMockApiClient = (
- overrides: Partial<ProfileApiClient["social"]> = {}
-) => {
- return {
-  social: {
-   follow: mock(() => Promise.resolve()),
-   unfollow: mock(() => Promise.resolve()),
-   getFollowers: mock(() => Promise.resolve({ data: [mockFollower] })),
-   getFollowing: mock(() => Promise.resolve({ data: [mockFollower] })),
-   getActivityFeed: mock(() => Promise.resolve({ data: [mockActivity] })),
-   getSocialStats: mock(() => Promise.resolve(mockStats)),
-   ...overrides,
-  },
- } as unknown as ProfileApiClient;
-};
-
-describe("SocialStore", () => {
- describe("Initial State", () => {
-  it("should have empty followers array", () => {
-   const apiClient = createMockApiClient();
-   const useStore = createSocialStore(apiClient);
-
-   expect(useStore.getState().followers).toEqual([]);
+ describe("initial state", () => {
+  test("should initialize with empty followers", () => {
+   expect(store.getState().followers).toEqual([]);
   });
 
-  it("should have empty following array", () => {
-   const apiClient = createMockApiClient();
-   const useStore = createSocialStore(apiClient);
-
-   expect(useStore.getState().following).toEqual([]);
+  test("should initialize with empty following", () => {
+   expect(store.getState().following).toEqual([]);
   });
 
-  it("should have empty activities array", () => {
-   const apiClient = createMockApiClient();
-   const useStore = createSocialStore(apiClient);
-
-   expect(useStore.getState().activities).toEqual([]);
+  test("should initialize with loading false", () => {
+   expect(store.getState().isLoading).toBe(false);
   });
 
-  it("should have null stats", () => {
-   const apiClient = createMockApiClient();
-   const useStore = createSocialStore(apiClient);
-
-   expect(useStore.getState().stats).toBeNull();
-  });
-
-  it("should not be loading initially", () => {
-   const apiClient = createMockApiClient();
-   const useStore = createSocialStore(apiClient);
-
-   expect(useStore.getState().isLoading).toBe(false);
-  });
-
-  it("should have no error initially", () => {
-   const apiClient = createMockApiClient();
-   const useStore = createSocialStore(apiClient);
-
-   expect(useStore.getState().error).toBeNull();
+  test("should initialize with null error", () => {
+   expect(store.getState().error).toBeNull();
   });
  });
 
- describe("setters", () => {
-  it("should set followers", () => {
-   const apiClient = createMockApiClient();
-   const useStore = createSocialStore(apiClient);
-   const followers = [mockFollower as any];
+ describe("setFollowers", () => {
+  test("should set followers array", () => {
+   const followers = [
+    { id: "1", username: "user1" },
+    { id: "2", username: "user2" },
+   ];
 
-   useStore.getState().setFollowers(followers);
+   store.getState().setFollowers(followers as any);
 
-   expect(useStore.getState().followers).toEqual(followers);
+   expect(store.getState().followers).toHaveLength(2);
   });
 
-  it("should set following", () => {
-   const apiClient = createMockApiClient();
-   const useStore = createSocialStore(apiClient);
-   const following = [mockFollower as any];
+  test("should replace existing followers", () => {
+   store.getState().setFollowers([{ id: "1" }] as any);
+   store.getState().setFollowers([{ id: "2" }, { id: "3" }] as any);
 
-   useStore.getState().setFollowing(following);
-
-   expect(useStore.getState().following).toEqual(following);
+   expect(store.getState().followers).toHaveLength(2);
   });
 
-  it("should set activities", () => {
-   const apiClient = createMockApiClient();
-   const useStore = createSocialStore(apiClient);
-   const activities = [mockActivity as any];
+  test("should handle empty array", () => {
+   store.getState().setFollowers([{ id: "1" }] as any);
+   store.getState().setFollowers([]);
 
-   useStore.getState().setActivities(activities);
-
-   expect(useStore.getState().activities).toEqual(activities);
-  });
-
-  it("should set stats", () => {
-   const apiClient = createMockApiClient();
-   const useStore = createSocialStore(apiClient);
-
-   useStore.getState().setStats(mockStats as any);
-
-   expect(useStore.getState().stats).toEqual(mockStats);
-  });
-
-  it("should set and clear error", () => {
-   const apiClient = createMockApiClient();
-   const useStore = createSocialStore(apiClient);
-
-   useStore.getState().setError("Social error");
-   expect(useStore.getState().error).toBe("Social error");
-
-   useStore.getState().clearError();
-   expect(useStore.getState().error).toBeNull();
+   expect(store.getState().followers).toEqual([]);
   });
  });
 
- describe("followUser", () => {
-  it("should follow user and update stats", async () => {
-   const apiClient = createMockApiClient();
-   const useStore = createSocialStore(apiClient);
+ describe("setFollowing", () => {
+  test("should set following array", () => {
+   const following = [
+    { id: "1", username: "user1" },
+    { id: "2", username: "user2" },
+   ];
 
-   // Set initial stats
-   useStore.getState().setStats(mockStats as any);
+   store.getState().setFollowing(following as any);
 
-   await useStore.getState().followUser("user-2");
-
-   expect(apiClient.social.follow).toHaveBeenCalledWith("user-2");
-   expect(useStore.getState().stats?.followingCount).toBe(51);
-   expect(useStore.getState().isLoading).toBe(false);
+   expect(store.getState().following).toHaveLength(2);
   });
 
-  it("should handle follow error", async () => {
-   const apiClient = createMockApiClient({
-    follow: mock(() => Promise.reject(new Error("Cannot follow user"))),
-   });
-   const useStore = createSocialStore(apiClient);
+  test("should replace existing following", () => {
+   store.getState().setFollowing([{ id: "1" }] as any);
+   store.getState().setFollowing([{ id: "2" }] as any);
 
-   await expect(useStore.getState().followUser("user-2")).rejects.toThrow(
-    "Cannot follow user"
-   );
-   expect(useStore.getState().error).toBe("Cannot follow user");
+   expect(store.getState().following).toHaveLength(1);
+   expect((store.getState().following[0] as any).id).toBe("2");
   });
  });
 
- describe("unfollowUser", () => {
-  it("should unfollow user and update stats", async () => {
-   const apiClient = createMockApiClient();
-   const useStore = createSocialStore(apiClient);
+ describe("loading state", () => {
+  test("should set loading to true", () => {
+   store.getState().setLoading(true);
 
-   // Set initial stats
-   useStore.getState().setStats(mockStats as any);
-
-   await useStore.getState().unfollowUser("user-2");
-
-   expect(apiClient.social.unfollow).toHaveBeenCalledWith("user-2");
-   expect(useStore.getState().stats?.followingCount).toBe(49);
+   expect(store.getState().isLoading).toBe(true);
   });
 
-  it("should handle unfollow error", async () => {
-   const apiClient = createMockApiClient({
-    unfollow: mock(() => Promise.reject(new Error("Cannot unfollow"))),
-   });
-   const useStore = createSocialStore(apiClient);
+  test("should set loading to false", () => {
+   store.getState().setLoading(true);
+   store.getState().setLoading(false);
 
-   await expect(useStore.getState().unfollowUser("user-2")).rejects.toThrow(
-    "Cannot unfollow"
-   );
-   expect(useStore.getState().error).toBe("Cannot unfollow");
+   expect(store.getState().isLoading).toBe(false);
   });
  });
 
- describe("fetchFollowers", () => {
-  it("should fetch and store followers for user", async () => {
-   const apiClient = createMockApiClient();
-   const useStore = createSocialStore(apiClient);
+ describe("error handling", () => {
+  test("should set error message", () => {
+   store.getState().setError("Failed to load followers");
 
-   await useStore.getState().fetchFollowers("user-1");
-
-   expect(apiClient.social.getFollowers).toHaveBeenCalledWith("user-1");
-   expect(useStore.getState().followers).toHaveLength(1);
-   expect(useStore.getState().followers[0].username).toBe("follower1");
+   expect(store.getState().error).toBe("Failed to load followers");
   });
 
-  it("should handle fetch error", async () => {
-   const apiClient = createMockApiClient({
-    getFollowers: mock(() =>
-     Promise.reject(new Error("Failed to fetch followers"))
-    ),
-   });
-   const useStore = createSocialStore(apiClient);
+  test("should clear error with setError null", () => {
+   store.getState().setError("Error");
+   store.getState().setError(null);
 
-   await expect(useStore.getState().fetchFollowers("user-1")).rejects.toThrow(
-    "Failed to fetch followers"
-   );
-   expect(useStore.getState().error).toBe("Failed to fetch followers");
+   expect(store.getState().error).toBeNull();
+  });
+
+  test("should clear error with clearError", () => {
+   store.getState().setError("Error");
+   store.getState().clearError();
+
+   expect(store.getState().error).toBeNull();
   });
  });
 
- describe("fetchFollowing", () => {
-  it("should fetch and store following list", async () => {
-   const apiClient = createMockApiClient();
-   const useStore = createSocialStore(apiClient);
+ describe("reset", () => {
+  test("should reset all state to initial", () => {
+   // Modify all state
+   store.getState().setFollowers([{ id: "1" }] as any);
+   store.getState().setFollowing([{ id: "2" }] as any);
+   store.getState().setLoading(true);
+   store.getState().setError("Error");
 
-   await useStore.getState().fetchFollowing("user-1");
+   // Reset
+   store.getState().reset();
 
-   expect(apiClient.social.getFollowing).toHaveBeenCalledWith("user-1");
-   expect(useStore.getState().following).toHaveLength(1);
-  });
-
-  it("should handle fetch error", async () => {
-   const apiClient = createMockApiClient({
-    getFollowing: mock(() =>
-     Promise.reject(new Error("Failed to fetch following"))
-    ),
-   });
-   const useStore = createSocialStore(apiClient);
-
-   await expect(useStore.getState().fetchFollowing("user-1")).rejects.toThrow(
-    "Failed to fetch following"
-   );
-   expect(useStore.getState().error).toBe("Failed to fetch following");
+   // Verify all back to initial
+   expect(store.getState().followers).toEqual([]);
+   expect(store.getState().following).toEqual([]);
+   expect(store.getState().isLoading).toBe(false);
+   expect(store.getState().error).toBeNull();
   });
  });
 
- describe("fetchActivityFeed", () => {
-  it("should fetch and store activity feed", async () => {
-   const apiClient = createMockApiClient();
-   const useStore = createSocialStore(apiClient);
+ describe("store isolation", () => {
+  test("should create independent store instances", () => {
+   const store1 = createSocialStore();
+   const store2 = createSocialStore();
 
-   await useStore.getState().fetchActivityFeed();
+   store1.getState().setFollowers([{ id: "1" }] as any);
+   store1.getState().setFollowing([{ id: "2" }] as any);
 
-   expect(apiClient.social.getActivityFeed).toHaveBeenCalled();
-   expect(useStore.getState().activities).toHaveLength(1);
-   expect(useStore.getState().activities[0].type).toBe("resume_created");
-  });
-
-  it("should handle fetch error", async () => {
-   const apiClient = createMockApiClient({
-    getActivityFeed: mock(() =>
-     Promise.reject(new Error("Activity feed unavailable"))
-    ),
-   });
-   const useStore = createSocialStore(apiClient);
-
-   await expect(useStore.getState().fetchActivityFeed()).rejects.toThrow(
-    "Activity feed unavailable"
-   );
-   expect(useStore.getState().error).toBe("Activity feed unavailable");
+   expect(store1.getState().followers).toHaveLength(1);
+   expect(store2.getState().followers).toHaveLength(0);
+   expect(store2.getState().following).toHaveLength(0);
   });
  });
 
- describe("fetchSocialStats", () => {
-  it("should fetch and store social stats", async () => {
-   const apiClient = createMockApiClient();
-   const useStore = createSocialStore(apiClient);
+ describe("followers and following independence", () => {
+  test("should manage followers and following independently", () => {
+   const followers = [{ id: "follower-1" }];
+   const following = [{ id: "following-1" }, { id: "following-2" }];
 
-   await useStore.getState().fetchSocialStats("user-1");
+   store.getState().setFollowers(followers as any);
+   store.getState().setFollowing(following as any);
 
-   expect(apiClient.social.getSocialStats).toHaveBeenCalledWith("user-1");
-   expect(useStore.getState().stats?.followersCount).toBe(100);
-   expect(useStore.getState().stats?.followingCount).toBe(50);
-  });
+   expect(store.getState().followers).toHaveLength(1);
+   expect(store.getState().following).toHaveLength(2);
 
-  it("should handle fetch error", async () => {
-   const apiClient = createMockApiClient({
-    getSocialStats: mock(() => Promise.reject(new Error("Stats unavailable"))),
-   });
-   const useStore = createSocialStore(apiClient);
-
-   await expect(useStore.getState().fetchSocialStats("user-1")).rejects.toThrow(
-    "Stats unavailable"
-   );
-   expect(useStore.getState().error).toBe("Stats unavailable");
+   // Modifying one shouldn't affect the other
+   store.getState().setFollowers([]);
+   expect(store.getState().following).toHaveLength(2);
   });
  });
 });

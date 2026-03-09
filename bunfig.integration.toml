@@ -1,6 +1,6 @@
 [test]
 # Configuration for integration tests
-root = "./test/integration"
+root = "./test/e2e"
 
 [install.scopes]
 "@octopus-synapse" = { token = "$BUN_AUTH_TOKEN", url = "https://npm.pkg.github.com" }

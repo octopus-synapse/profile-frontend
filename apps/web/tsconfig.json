@@ -1,68 +1,48 @@
 {
-  "compilerOptions": {
-    "target": "ES2017",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "allowJs": false,
-    "skipLibCheck": true,
-    "strict": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "strictBindCallApply": true,
-    "strictPropertyInitialization": true,
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noUncheckedIndexedAccess": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
-    "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@/config/*": [
-        "./src/config/*"
-      ],
-      "@/features/*": [
-        "./src/features/*"
-      ],
-      "@/shared/*": [
-        "./src/shared/*"
-      ],
-      "@octopus-synapse/profile-contracts": [
-        "../../node_modules/@octopus-synapse/profile-contracts/dist/index.d.ts"
-      ],
-      "@octopus-synapse/profile-contracts/*": [
-        "../../node_modules/@octopus-synapse/profile-contracts/dist/*"
-      ]
-    },
-    "baseUrl": "."
-  },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts",
-    "**/*.mts"
+ "compilerOptions": {
+  "target": "ES2017",
+  "lib": ["dom", "dom.iterable", "esnext"],
+  "allowJs": false,
+  "skipLibCheck": true,
+  "strict": true,
+  "strictNullChecks": true,
+  "strictFunctionTypes": true,
+  "strictBindCallApply": true,
+  "strictPropertyInitialization": true,
+  "noImplicitAny": true,
+  "noImplicitReturns": true,
+  "noImplicitThis": true,
+  "noUnusedLocals": true,
+  "noUnusedParameters": true,
+  "noUncheckedIndexedAccess": true,
+  "noEmit": true,
+  "esModuleInterop": true,
+  "module": "esnext",
+  "moduleResolution": "bundler",
+  "resolveJsonModule": true,
+  "isolatedModules": true,
+  "jsx": "preserve",
+  "incremental": true,
+  "plugins": [
+   {
+    "name": "next"
+   }
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "paths": {
+   "@/*": ["./src/*"],
+   "@/config/*": ["./src/config/*"],
+   "@/features/*": ["./src/features/*"],
+   "@/shared/*": ["./src/shared/*"]
+  },
+  "baseUrl": "."
+ },
+ "include": [
+  "next-env.d.ts",
+  "**/*.ts",
+  "**/*.tsx",
+  ".next/types/**/*.ts",
+  ".next/dev/types/**/*.ts",
+  "**/*.mts"
+ ],
+ "exclude": ["node_modules"]
 }

@@ -1,273 +1,179 @@
 /**
  * Admin Store Tests
  *
- * Tests admin dashboard operations including stats,
- * activity, health, and user management.
+ * Tests the pure state management for admin dashboard.
+ * Zustand stores are pure state containers - no side effects.
  */
 
-import { describe, it, expect, mock } from "bun:test";
+import { describe, test, expect, beforeEach } from "bun:test";
 import { createAdminStore } from "../admin.store";
-import type { ProfileApiClient } from "@profile/api-client";
+import type { PlatformStatsResponseDto } from "@profile/api-client";
 
-const mockStats = {
+// Helper to create valid mock stats
+const createMockStats = (
+ overrides: Partial<PlatformStatsResponseDto> = {},
+): PlatformStatsResponseDto => ({
  totalUsers: 1000,
- totalResumes: 5000,
- totalThemes: 50,
- activeUsersToday: 150,
- newUsersThisWeek: 75,
- resumesCreatedThisWeek: 200,
-};
+ totalResumes: 500,
+ totalViews: 5000,
+ activeUsersToday: 100,
+ activeUsersWeek: 250,
+ updatedAt: new Date().toISOString(),
+ ...overrides,
+});
 
-const mockActivity = [
- {
-  id: "act-1",
-  userId: "user-1",
-  username: "john",
-  action: "created",
-  resource: "resume",
-  resourceId: "resume-1",
-  timestamp: "2025-01-14T10:00:00Z",
- },
-];
+describe("AdminStore (Pure State)", () => {
+ let store: ReturnType<typeof createAdminStore>;
 
-const mockHealth = {
- status: "healthy" as const,
- database: { status: "connected", latency: 5 },
- redis: { status: "connected", latency: 2 },
- storage: { status: "ok", usedSpace: 75 },
- uptime: 864000,
-};
+ beforeEach(() => {
+  store = createAdminStore();
+ });
 
-const mockRecentUsers = [
- {
-  id: "user-1",
-  email: "john@example.com",
-  username: "john",
-  createdAt: "2025-01-14T00:00:00Z",
-  resumeCount: 3,
-  lastActiveAt: "2025-01-14T10:00:00Z",
- },
-];
-
-const createMockApiClient = (
- overrides: Partial<ProfileApiClient["admin"]> = {}
-) => {
- return {
-  admin: {
-   getStats: mock(() => Promise.resolve(mockStats)),
-   getRecentActivity: mock(() => Promise.resolve(mockActivity)),
-   getSystemHealth: mock(() => Promise.resolve(mockHealth)),
-   getRecentUsers: mock(() => Promise.resolve(mockRecentUsers)),
-   ...overrides,
-  },
- } as unknown as ProfileApiClient;
-};
-
-describe("AdminStore", () => {
- describe("Initial State", () => {
-  it("should have null stats when created", () => {
-   const apiClient = createMockApiClient();
-   const useStore = createAdminStore(apiClient);
-
-   expect(useStore.getState().stats).toBeNull();
+ describe("initial state", () => {
+  test("should initialize with null stats", () => {
+   expect(store.getState().stats).toBeNull();
   });
 
-  it("should have empty recentActivity array", () => {
-   const apiClient = createMockApiClient();
-   const useStore = createAdminStore(apiClient);
-
-   expect(useStore.getState().recentActivity).toEqual([]);
+  test("should initialize with empty users", () => {
+   expect(store.getState().users).toEqual([]);
   });
 
-  it("should have null systemHealth", () => {
-   const apiClient = createMockApiClient();
-   const useStore = createAdminStore(apiClient);
-
-   expect(useStore.getState().systemHealth).toBeNull();
+  test("should initialize with loading false", () => {
+   expect(store.getState().isLoading).toBe(false);
   });
 
-  it("should have empty recentUsers array", () => {
-   const apiClient = createMockApiClient();
-   const useStore = createAdminStore(apiClient);
-
-   expect(useStore.getState().recentUsers).toEqual([]);
-  });
-
-  it("should not be loading initially", () => {
-   const apiClient = createMockApiClient();
-   const useStore = createAdminStore(apiClient);
-
-   expect(useStore.getState().isLoading).toBe(false);
+  test("should initialize with null error", () => {
+   expect(store.getState().error).toBeNull();
   });
  });
 
- describe("setLoading / setError / clearError", () => {
-  it("should update loading state", () => {
-   const apiClient = createMockApiClient();
-   const useStore = createAdminStore(apiClient);
+ describe("setStats", () => {
+  test("should set dashboard stats", () => {
+   const stats = createMockStats();
 
-   useStore.getState().setLoading(true);
+   store.getState().setStats(stats);
 
-   expect(useStore.getState().isLoading).toBe(true);
+   expect(store.getState().stats).toEqual(stats);
   });
 
-  it("should set and clear error", () => {
-   const apiClient = createMockApiClient();
-   const useStore = createAdminStore(apiClient);
+  test("should replace existing stats", () => {
+   store.getState().setStats(createMockStats({ totalUsers: 100 }));
+   store.getState().setStats(createMockStats({ totalUsers: 200 }));
 
-   useStore.getState().setError("Admin error");
-   expect(useStore.getState().error).toBe("Admin error");
-
-   useStore.getState().clearError();
-   expect(useStore.getState().error).toBeNull();
+   expect(store.getState().stats?.totalUsers).toBe(200);
   });
  });
 
- describe("fetchStats", () => {
-  it("should fetch and store admin stats", async () => {
-   const apiClient = createMockApiClient();
-   const useStore = createAdminStore(apiClient);
+ describe("setUsers", () => {
+  test("should set users array", () => {
+   const users = [
+    { id: "1", email: "user1@example.com" },
+    { id: "2", email: "user2@example.com" },
+   ];
 
-   const result = await useStore.getState().fetchStats();
+   store.getState().setUsers(users as any);
 
-   expect(result.totalUsers).toBe(1000);
-   expect(result.totalResumes).toBe(5000);
-   expect(result.activeUsersToday).toBe(150);
-   expect(useStore.getState().stats).toEqual(result);
-   expect(useStore.getState().isLoading).toBe(false);
+   expect(store.getState().users).toHaveLength(2);
   });
 
-  it("should handle fetch error", async () => {
-   const apiClient = createMockApiClient({
-    getStats: mock(() => Promise.reject(new Error("Forbidden"))),
-   });
-   const useStore = createAdminStore(apiClient);
+  test("should replace existing users", () => {
+   store.getState().setUsers([{ id: "1" }] as any);
+   store.getState().setUsers([{ id: "2" }, { id: "3" }] as any);
 
-   await expect(useStore.getState().fetchStats()).rejects.toThrow("Forbidden");
-   expect(useStore.getState().error).toBe("Forbidden");
-  });
- });
-
- describe("fetchRecentActivity", () => {
-  it("should fetch recent activity with default limit", async () => {
-   const apiClient = createMockApiClient();
-   const useStore = createAdminStore(apiClient);
-
-   const result = await useStore.getState().fetchRecentActivity();
-
-   expect(result).toHaveLength(1);
-   expect(result[0].action).toBe("created");
-   expect(apiClient.admin.getRecentActivity).toHaveBeenCalledWith(10);
+   expect(store.getState().users).toHaveLength(2);
   });
 
-  it("should fetch recent activity with custom limit", async () => {
-   const apiClient = createMockApiClient();
-   const useStore = createAdminStore(apiClient);
+  test("should handle empty array", () => {
+   store.getState().setUsers([{ id: "1" }] as any);
+   store.getState().setUsers([]);
 
-   await useStore.getState().fetchRecentActivity(25);
-
-   expect(apiClient.admin.getRecentActivity).toHaveBeenCalledWith(25);
-  });
-
-  it("should handle fetch error", async () => {
-   const apiClient = createMockApiClient({
-    getRecentActivity: mock(() =>
-     Promise.reject(new Error("Service unavailable"))
-    ),
-   });
-   const useStore = createAdminStore(apiClient);
-
-   await expect(useStore.getState().fetchRecentActivity()).rejects.toThrow(
-    "Service unavailable"
-   );
-   expect(useStore.getState().error).toBe("Service unavailable");
+   expect(store.getState().users).toEqual([]);
   });
  });
 
- describe("fetchSystemHealth", () => {
-  it("should fetch system health status", async () => {
-   const apiClient = createMockApiClient();
-   const useStore = createAdminStore(apiClient);
+ describe("loading state", () => {
+  test("should set loading to true", () => {
+   store.getState().setLoading(true);
 
-   const result = await useStore.getState().fetchSystemHealth();
-
-   expect(result.status).toBe("healthy");
-   expect(result.database.status).toBe("connected");
-   expect(result.uptime).toBe(864000);
-   expect(useStore.getState().systemHealth).toEqual(result);
+   expect(store.getState().isLoading).toBe(true);
   });
 
-  it("should handle fetch error", async () => {
-   const apiClient = createMockApiClient({
-    getSystemHealth: mock(() =>
-     Promise.reject(new Error("Health check failed"))
-    ),
-   });
-   const useStore = createAdminStore(apiClient);
+  test("should set loading to false", () => {
+   store.getState().setLoading(true);
+   store.getState().setLoading(false);
 
-   await expect(useStore.getState().fetchSystemHealth()).rejects.toThrow(
-    "Health check failed"
-   );
-   expect(useStore.getState().error).toBe("Health check failed");
+   expect(store.getState().isLoading).toBe(false);
   });
  });
 
- describe("fetchRecentUsers", () => {
-  it("should fetch recent users with default limit", async () => {
-   const apiClient = createMockApiClient();
-   const useStore = createAdminStore(apiClient);
+ describe("error handling", () => {
+  test("should set error message", () => {
+   store.getState().setError("Access denied");
 
-   const result = await useStore.getState().fetchRecentUsers();
-
-   expect(result).toHaveLength(1);
-   expect(result[0].username).toBe("john");
-   expect(apiClient.admin.getRecentUsers).toHaveBeenCalledWith(5);
+   expect(store.getState().error).toBe("Access denied");
   });
 
-  it("should fetch recent users with custom limit", async () => {
-   const apiClient = createMockApiClient();
-   const useStore = createAdminStore(apiClient);
+  test("should clear error with setError null", () => {
+   store.getState().setError("Error");
+   store.getState().setError(null);
 
-   await useStore.getState().fetchRecentUsers(20);
-
-   expect(apiClient.admin.getRecentUsers).toHaveBeenCalledWith(20);
+   expect(store.getState().error).toBeNull();
   });
 
-  it("should handle fetch error", async () => {
-   const apiClient = createMockApiClient({
-    getRecentUsers: mock(() => Promise.reject(new Error("Access denied"))),
-   });
-   const useStore = createAdminStore(apiClient);
+  test("should clear error with clearError", () => {
+   store.getState().setError("Error");
+   store.getState().clearError();
 
-   await expect(useStore.getState().fetchRecentUsers()).rejects.toThrow(
-    "Access denied"
-   );
-   expect(useStore.getState().error).toBe("Access denied");
+   expect(store.getState().error).toBeNull();
   });
  });
 
- describe("fetchDashboardData", () => {
-  it("should fetch all dashboard data in parallel", async () => {
-   const apiClient = createMockApiClient();
-   const useStore = createAdminStore(apiClient);
+ describe("reset", () => {
+  test("should reset all state to initial", () => {
+   // Modify all state
+   store.getState().setStats(createMockStats());
+   store.getState().setUsers([{ id: "1" }] as any);
+   store.getState().setLoading(true);
+   store.getState().setError("Error");
 
-   await useStore.getState().fetchDashboardData();
+   // Reset
+   store.getState().reset();
 
-   expect(useStore.getState().stats).not.toBeNull();
-   expect(useStore.getState().recentActivity.length).toBeGreaterThan(0);
-   expect(useStore.getState().systemHealth).not.toBeNull();
-   expect(useStore.getState().recentUsers.length).toBeGreaterThan(0);
-   expect(useStore.getState().isLoading).toBe(false);
+   // Verify all back to initial
+   expect(store.getState().stats).toBeNull();
+   expect(store.getState().users).toEqual([]);
+   expect(store.getState().isLoading).toBe(false);
+   expect(store.getState().error).toBeNull();
   });
+ });
 
-  it("should handle partial failure gracefully", async () => {
-   const apiClient = createMockApiClient({
-    getSystemHealth: mock(() => Promise.reject(new Error("Health failed"))),
-   });
-   const useStore = createAdminStore(apiClient);
+ describe("admin dashboard flow", () => {
+  test("should handle typical load flow", () => {
+   // Start loading
+   store.getState().setLoading(true);
 
-   await expect(useStore.getState().fetchDashboardData()).rejects.toThrow();
-   expect(useStore.getState().error).toBeTruthy();
+   // Load stats and users
+   store
+    .getState()
+    .setStats(createMockStats({ totalUsers: 500, totalResumes: 300 }));
+   store.getState().setUsers([{ id: "1", email: "admin@example.com" }] as any);
+   store.getState().setLoading(false);
+
+   expect(store.getState().isLoading).toBe(false);
+   expect(store.getState().stats).not.toBeNull();
+   expect(store.getState().users).toHaveLength(1);
+  });
+ });
+
+ describe("store isolation", () => {
+  test("should create independent store instances", () => {
+   const store1 = createAdminStore();
+   const store2 = createAdminStore();
+
+   store1.getState().setStats(createMockStats({ totalUsers: 100 }));
+
+   expect(store1.getState().stats).not.toBeNull();
+   expect(store2.getState().stats).toBeNull();
   });
  });
 });

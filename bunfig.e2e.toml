@@ -1,0 +1,4 @@
+[test]
+# E2E test configuration with CORS disabled
+# These tests make real HTTP requests to the backend
+preload = ["./test.e2e.setup.ts"]

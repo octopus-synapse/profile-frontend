@@ -5,432 +5,293 @@ on:
     branches: [main, dev]
     paths-ignore:
       - "CHANGELOG.md"
-  push:
-    branches: [main, dev]
-    paths-ignore:
-      - "CHANGELOG.md"
+      - "package.json"
+      - ".release-please-manifest.json"
+      - "*.md"
+      - "docs/**"
 
 permissions:
-  contents: read
-  pull-requests: write
+  contents: write
   packages: read
+  pull-requests: write
 
 jobs:
-  unit-tests:
-    name: Unit Tests
+  # Skip CI for release-please PRs
+  should-skip:
+    runs-on: ubuntu-latest
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@v5
+        with:
+          concurrent_skipping: "same_content_newer"
+          skip_after_successful_duplicate: "true"
+          paths_ignore: '["CHANGELOG.md", "package.json", ".release-please-manifest.json", "*.md", "docs/**"]'
+          do_not_skip: '["workflow_dispatch", "schedule"]'
+
+  # Detect which parts changed
+  detect-changes:
+    needs: should-skip
+    if: needs.should-skip.outputs.should_skip != 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.filter.outputs.packages }}
+      apps: ${{ steps.filter.outputs.apps }}
+      tests: ${{ steps.filter.outputs.tests }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            packages:
+              - 'packages/**'
+            apps:
+              - 'apps/**'
+            tests:
+              - 'test/**'
+
+  # Centralized dependency setup
+  setup:
+    name: Setup Dependencies
+    needs: should-skip
+    if: needs.should-skip.outputs.should_skip != 'true'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout profile-frontend
-        uses: actions/checkout@v4
-        with:
-          path: frontend
-
-      - name: Checkout profile-contracts
-        uses: actions/checkout@v4
-        with:
-          repository: octopus-synapse/profile-contracts
-          path: profile-contracts
-          token: ${{ secrets.GH_PAT }}
-
-      - name: Checkout profile-ui
-        uses: actions/checkout@v4
-        with:
-          repository: octopus-synapse/profile-ui
-          path: profile-ui
-          token: ${{ secrets.GH_PAT }}
+      - uses: actions/checkout@v4
 
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.2.23
+          bun-version: 1.3.9
 
-      - name: Install contracts dependencies
-        working-directory: profile-contracts
-        run: bun install --frozen-lockfile
-
-      - name: Build contracts
-        working-directory: profile-contracts
-        run: bun run build
-
-      - name: Install UI dependencies
-        working-directory: profile-ui
-        run: bun install --frozen-lockfile
-
-      - name: Build UI
-        working-directory: profile-ui
-        run: bun run build
+      - name: Cache Dependencies
+        id: cache-deps
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ~/.bun/install/cache
+            apps/*/node_modules
+            packages/*/node_modules
+          key: deps-${{ runner.os }}-${{ hashFiles('bun.lockb') }}
+          restore-keys: |
+            deps-${{ runner.os }}-
 
       - name: Install dependencies
-        working-directory: frontend
+        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: bun install --frozen-lockfile
 
-      - name: Build api-client
-        working-directory: frontend
-        run: bun --filter @profile/api-client build
-
-      - name: Build stores
-        working-directory: frontend
-        run: bun --filter @profile/stores build
-
-      - name: Run unit tests
-        working-directory: frontend
-        run: bun run test:unit
-
-  smoke-tests:
-    name: Smoke Tests
+  # Type check
+  typecheck:
+    name: Type Check
+    needs: [should-skip, setup, detect-changes]
+    if: |
+      needs.should-skip.outputs.should_skip != 'true' &&
+      (needs.detect-changes.outputs.packages == 'true' || 
+       needs.detect-changes.outputs.apps == 'true')
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout profile-frontend
-        uses: actions/checkout@v4
-        with:
-          path: frontend
-
-      - name: Checkout profile-contracts
-        uses: actions/checkout@v4
-        with:
-          repository: octopus-synapse/profile-contracts
-          path: profile-contracts
-          token: ${{ secrets.GH_PAT }}
-
-      - name: Checkout profile-ui
-        uses: actions/checkout@v4
-        with:
-          repository: octopus-synapse/profile-ui
-          path: profile-ui
-          token: ${{ secrets.GH_PAT }}
-
+      - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.2.23
-
-      - name: Install contracts dependencies
-        working-directory: profile-contracts
-        run: bun install --frozen-lockfile
-
-      - name: Build contracts
-        working-directory: profile-contracts
-        run: bun run build
-
-      - name: Install UI dependencies
-        working-directory: profile-ui
-        run: bun install --frozen-lockfile
-
-      - name: Build UI
-        working-directory: profile-ui
-        run: bun run build
-
-      - name: Install dependencies
-        working-directory: frontend
-        run: bun install --frozen-lockfile
-
-      - name: Run smoke tests
-        working-directory: frontend
-        run: bun run test:smoke
-
-  hook-compliance:
-    name: Verify Pre-Commit Hooks Ran
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout profile-frontend
-        uses: actions/checkout@v4
+          bun-version: 1.3.9
+      - name: Restore Dependencies
+        uses: actions/cache/restore@v4
         with:
-          path: frontend
+          path: |
+            node_modules
+            ~/.bun/install/cache
+            apps/*/node_modules
+            packages/*/node_modules
+          key: deps-${{ runner.os }}-${{ hashFiles('bun.lockb') }}
+          fail-on-cache-miss: true
+      - name: Type Check
+        run: bun run typecheck
 
-      - name: Checkout profile-contracts
-        uses: actions/checkout@v4
-        with:
-          repository: octopus-synapse/profile-contracts
-          path: profile-contracts
-          token: ${{ secrets.GH_PAT }}
-
-      - name: Checkout profile-ui
-        uses: actions/checkout@v4
-        with:
-          repository: octopus-synapse/profile-ui
-          path: profile-ui
-          token: ${{ secrets.GH_PAT }}
-
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: 1.2.23
-
-      - name: Install contracts dependencies
-        working-directory: profile-contracts
-        run: bun install --frozen-lockfile
-
-      - name: Build contracts
-        working-directory: profile-contracts
-        run: bun run build
-
-      - name: Install UI dependencies
-        working-directory: profile-ui
-        run: bun install --frozen-lockfile
-
-      - name: Build UI
-        working-directory: profile-ui
-        run: bun run build
-
-      - name: Install dependencies
-        working-directory: frontend
-        run: bun install --frozen-lockfile
-
-      - name: Build api-client
-        working-directory: frontend
-        run: bun --filter @profile/api-client build
-
-      - name: Build stores
-        working-directory: frontend
-        run: bun --filter @profile/stores build
-
-      - name: Check if pre-commit hooks were bypassed
-        working-directory: frontend
-        run: |
-          echo "🔍 Verificando se pre-commit foi executado..."
-
-          # Type check
-          if ! bun run typecheck; then
-            echo "❌ TYPECHECK FALHOU - alguém usou --no-verify"
-            exit 1
-          fi
-
-          # Lint
-          if ! bun run lint; then
-            echo "❌ LINT FALHOU - alguém usou --no-verify"
-            echo "Pre-commit hooks devem ser executados antes do commit."
-            exit 1
-          fi
-
-          echo "✅ Pre-commit hooks foram executados corretamente"
-
+  # Lint
   lint:
-    name: ESLint (Type-Aware)
+    name: Biome Check
+    needs: [should-skip, setup, detect-changes]
+    if: |
+      needs.should-skip.outputs.should_skip != 'true' &&
+      (needs.detect-changes.outputs.packages == 'true' || 
+       needs.detect-changes.outputs.apps == 'true')
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout profile-frontend
-        uses: actions/checkout@v4
-        with:
-          path: frontend
-
-      - name: Checkout profile-contracts
-        uses: actions/checkout@v4
-        with:
-          repository: octopus-synapse/profile-contracts
-          path: profile-contracts
-          token: ${{ secrets.GH_PAT }}
-
-      - name: Checkout profile-ui
-        uses: actions/checkout@v4
-        with:
-          repository: octopus-synapse/profile-ui
-          path: profile-ui
-          token: ${{ secrets.GH_PAT }}
-
+      - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.2.23
-
-      - name: Install contracts dependencies
-        working-directory: profile-contracts
-        run: bun install --frozen-lockfile
-
-      - name: Build contracts
-        working-directory: profile-contracts
-        run: bun run build
-
-      - name: Install UI dependencies
-        working-directory: profile-ui
-        run: bun install --frozen-lockfile
-
-      - name: Build UI
-        working-directory: profile-ui
-        run: bun run build
-
-      - name: Install dependencies
-        working-directory: frontend
-        run: bun install --frozen-lockfile
-
-      - name: Build api-client
-        working-directory: frontend
-        run: bun --filter @profile/api-client build
-
-      - name: Build stores
-        working-directory: frontend
-        run: bun --filter @profile/stores build
-
-      - name: Run ESLint
-        working-directory: frontend
+          bun-version: 1.3.9
+      - name: Restore Dependencies
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            ~/.bun/install/cache
+            apps/*/node_modules
+            packages/*/node_modules
+          key: deps-${{ runner.os }}-${{ hashFiles('bun.lockb') }}
+          fail-on-cache-miss: true
+      - name: Run Biome
         run: bun run lint
 
-  contract-enforcement:
-    name: Contract Enforcement
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout profile-frontend
-        uses: actions/checkout@v4
-        with:
-          path: frontend
-
-      - name: Checkout profile-contracts
-        uses: actions/checkout@v4
-        with:
-          repository: octopus-synapse/profile-contracts
-          path: profile-contracts
-          token: ${{ secrets.GH_PAT }}
-
-      - name: Checkout profile-ui
-        uses: actions/checkout@v4
-        with:
-          repository: octopus-synapse/profile-ui
-          path: profile-ui
-          token: ${{ secrets.GH_PAT }}
-
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: 1.2.23
-
-      - name: Install contracts dependencies
-        working-directory: profile-contracts
-        run: bun install --frozen-lockfile
-
-      - name: Build contracts
-        working-directory: profile-contracts
-        run: bun run build
-
-      - name: Install UI dependencies
-        working-directory: profile-ui
-        run: bun install --frozen-lockfile
-
-      - name: Build UI
-        working-directory: profile-ui
-        run: bun run build
-
-      - name: Install frontend dependencies
-        working-directory: frontend
-        run: bun install --frozen-lockfile
-
-      - name: Build api-client
-        working-directory: frontend
-        run: bun --filter @profile/api-client build
-
-      - name: Build stores
-        working-directory: frontend
-        run: bun --filter @profile/stores build
-
-      - name: Verify contracts integration
-        working-directory: frontend
-        run: |
-          echo "🔍 Verifying contract types are properly imported..."
-
-          # Check api-client uses contracts
-          if ! grep -r "@octopus-synapse/profile-contracts" packages/api-client/src/; then
-            echo "⚠️ api-client should use profile-contracts types"
-          fi
-
-          # Type check to ensure contracts are compatible
-          bun run typecheck
-
-          echo "✅ Contract enforcement passed"
-
+  # Build packages
   build:
-    name: Build
+    name: Build Packages
+    needs: [should-skip, setup, detect-changes]
+    if: |
+      needs.should-skip.outputs.should_skip != 'true' &&
+      needs.detect-changes.outputs.packages == 'true'
     runs-on: ubuntu-latest
-    needs: [unit-tests, smoke-tests, hook-compliance, lint]
     steps:
-      - name: Checkout profile-frontend
-        uses: actions/checkout@v4
-        with:
-          path: frontend
-
-      - name: Checkout profile-contracts
-        uses: actions/checkout@v4
-        with:
-          repository: octopus-synapse/profile-contracts
-          path: profile-contracts
-          token: ${{ secrets.GH_PAT }}
-
-      - name: Checkout profile-ui
-        uses: actions/checkout@v4
-        with:
-          repository: octopus-synapse/profile-ui
-          path: profile-ui
-          token: ${{ secrets.GH_PAT }}
-
+      - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.2.23
-
-      - name: Install contracts dependencies
-        working-directory: profile-contracts
-        run: bun install --frozen-lockfile
-
-      - name: Build contracts
-        working-directory: profile-contracts
-        run: bun run build
-
-      - name: Install UI dependencies
-        working-directory: profile-ui
-        run: bun install --frozen-lockfile
-
-      - name: Build UI
-        working-directory: profile-ui
-        run: bun run build
-
-      - name: Install dependencies
-        working-directory: frontend
-        run: bun install --frozen-lockfile
-
-      - name: Build all packages
-        working-directory: frontend
-        run: bun run build
-
-      - name: Verify build output
-        working-directory: frontend
-        run: |
-          test -d apps/web/.next || (echo "❌ Web build failed" && exit 1)
-          test -d packages/api-client/dist || (echo "❌ api-client build failed" && exit 1)
-          echo "✅ Build verification passed"
-
-      - uses: actions/upload-artifact@v4
+          bun-version: 1.3.9
+      - name: Restore Dependencies
+        uses: actions/cache/restore@v4
         with:
-          name: build-artifacts
           path: |
-            frontend/apps/web/.next
-            frontend/packages/api-client/dist
-            frontend/packages/stores/dist
-          retention-days: 7
+            node_modules
+            ~/.bun/install/cache
+            apps/*/node_modules
+            packages/*/node_modules
+          key: deps-${{ runner.os }}-${{ hashFiles('bun.lockb') }}
+          fail-on-cache-miss: true
+      - name: Build
+        run: bun run build
 
-  docker-build:
-    name: Docker Build
+  # Unit tests
+  unit-tests:
+    name: Unit Tests
+    needs: [should-skip, setup, detect-changes]
+    if: |
+      needs.should-skip.outputs.should_skip != 'true' &&
+      (needs.detect-changes.outputs.packages == 'true' || 
+       needs.detect-changes.outputs.tests == 'true')
     runs-on: ubuntu-latest
-    needs: [build]
     steps:
-      - name: Checkout profile-frontend
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          path: profile-frontend
-
-      - name: Checkout profile-contracts
-        uses: actions/checkout@v4
+          bun-version: 1.3.9
+      - name: Restore Dependencies
+        uses: actions/cache/restore@v4
         with:
-          repository: octopus-synapse/profile-contracts
-          path: profile-contracts
-          token: ${{ secrets.GH_PAT }}
+          path: |
+            node_modules
+            ~/.bun/install/cache
+            apps/*/node_modules
+            packages/*/node_modules
+          key: deps-${{ runner.os }}-${{ hashFiles('bun.lockb') }}
+          fail-on-cache-miss: true
+      - name: Run Unit Tests
+        run: bun run test:unit
 
-      - name: Checkout profile-ui
-        uses: actions/checkout@v4
+  # Architecture tests
+  architecture-tests:
+    name: Architecture Tests
+    needs: [should-skip, setup, detect-changes]
+    if: |
+      needs.should-skip.outputs.should_skip != 'true' &&
+      (needs.detect-changes.outputs.packages == 'true' || 
+       needs.detect-changes.outputs.apps == 'true' ||
+       needs.detect-changes.outputs.tests == 'true')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          repository: octopus-synapse/profile-ui
-          path: profile-ui
-          token: ${{ secrets.GH_PAT }}
-
-      - uses: docker/setup-buildx-action@v3
-
-      - uses: docker/build-push-action@v5
+          bun-version: 1.3.9
+      - name: Restore Dependencies
+        uses: actions/cache/restore@v4
         with:
-          context: .
-          file: profile-frontend/Dockerfile
-          push: false
-          tags: profile-frontend:${{ github.sha }}
-          secrets: |
-            github_token=${{ secrets.GH_PAT }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          path: |
+            node_modules
+            ~/.bun/install/cache
+            apps/*/node_modules
+            packages/*/node_modules
+          key: deps-${{ runner.os }}-${{ hashFiles('bun.lockb') }}
+          fail-on-cache-miss: true
+      - name: Run Architecture Tests
+        run: bun run test:arch
+
+  # Smoke tests
+  smoke-tests:
+    name: Smoke Tests
+    needs: [should-skip, setup, detect-changes]
+    if: |
+      needs.should-skip.outputs.should_skip != 'true' &&
+      (needs.detect-changes.outputs.packages == 'true' || 
+       needs.detect-changes.outputs.apps == 'true')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.9
+      - name: Restore Dependencies
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            ~/.bun/install/cache
+            apps/*/node_modules
+            packages/*/node_modules
+          key: deps-${{ runner.os }}-${{ hashFiles('bun.lockb') }}
+          fail-on-cache-miss: true
+      - name: Run Smoke Tests
+        run: bun run test:smoke
+
+  # Integration tests
+  integration-tests:
+    name: Integration Tests
+    needs: [should-skip, setup, detect-changes]
+    if: |
+      needs.should-skip.outputs.should_skip != 'true' &&
+      (needs.detect-changes.outputs.packages == 'true' || 
+       needs.detect-changes.outputs.apps == 'true' ||
+       needs.detect-changes.outputs.tests == 'true')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.9
+      - name: Restore Dependencies
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            ~/.bun/install/cache
+            apps/*/node_modules
+            packages/*/node_modules
+          key: deps-${{ runner.os }}-${{ hashFiles('bun.lockb') }}
+          fail-on-cache-miss: true
+      - name: Run Integration Tests
+        run: bun run test:integration
+
+  # Verify pre-commit hooks
+  hook-compliance:
+    name: Verify Pre-Commit Hooks
+    needs: [should-skip, setup]
+    if: needs.should-skip.outputs.should_skip != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.9
+      - name: Restore Dependencies
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            ~/.bun/install/cache
+            apps/*/node_modules
+            packages/*/node_modules
+          key: deps-${{ runner.os }}-${{ hashFiles('bun.lockb') }}
+          fail-on-cache-miss: true
+      - name: Verify lint
+        run: bun run lint:fast

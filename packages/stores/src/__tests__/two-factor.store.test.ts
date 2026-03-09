@@ -1,291 +1,216 @@
 /**
  * Two-Factor Store Tests
  *
- * Security-critical functionality requires thorough testing.
- * Tests cover all success and failure paths.
+ * Tests the pure state management for 2FA setup.
+ * Zustand stores are pure state containers - no side effects.
  */
 
-import { describe, it, expect, mock } from "bun:test";
+import { describe, test, expect, beforeEach } from "bun:test";
 import { createTwoFactorStore } from "../two-factor.store";
-import type { ProfileApiClient } from "@profile/api-client";
 
-// Mock data
-const mockSetup = {
- secret: "JBSWY3DPEHPK3PXP",
- qrCodeUrl: "data:image/png;base64,iVBORw0KGgo...",
- backupCodes: ["12345678", "87654321", "11223344"],
-};
+describe("TwoFactorStore (Pure State)", () => {
+ let store: ReturnType<typeof createTwoFactorStore>;
 
-const mockStatus = {
- enabled: true,
- verifiedAt: new Date(),
-};
+ beforeEach(() => {
+  store = createTwoFactorStore();
+ });
 
-const createMockApiClient = (
- overrides: Partial<ProfileApiClient["twoFactor"]> = {}
-) => {
- return {
-  twoFactor: {
-   getStatus: mock(() => Promise.resolve(mockStatus)),
-   setup: mock(() => Promise.resolve(mockSetup)),
-   verifySetup: mock(() =>
-    Promise.resolve({ backupCodes: mockSetup.backupCodes })
-   ),
-   verifyLogin: mock(() => Promise.resolve({ success: true })),
-   disable: mock(() => Promise.resolve()),
-   regenerateBackupCodes: mock(() =>
-    Promise.resolve({ backupCodes: ["newcode1", "newcode2"] })
-   ),
-   ...overrides,
-  },
- } as unknown as ProfileApiClient;
-};
-
-describe("TwoFactorStore", () => {
- describe("Initial State", () => {
-  it("should have null status", () => {
-   const apiClient = createMockApiClient();
-   const useStore = createTwoFactorStore(apiClient);
-
-   expect(useStore.getState().status).toBeNull();
+ describe("initial state", () => {
+  test("should initialize with enabled false", () => {
+   expect(store.getState().isEnabled).toBe(false);
   });
 
-  it("should have null setup", () => {
-   const apiClient = createMockApiClient();
-   const useStore = createTwoFactorStore(apiClient);
-
-   expect(useStore.getState().setup).toBeNull();
+  test("should initialize with null qrCode", () => {
+   expect(store.getState().qrCode).toBeNull();
   });
 
-  it("should have empty backup codes", () => {
-   const apiClient = createMockApiClient();
-   const useStore = createTwoFactorStore(apiClient);
+  test("should initialize with empty backupCodes", () => {
+   expect(store.getState().backupCodes).toEqual([]);
+  });
 
-   expect(useStore.getState().backupCodes).toEqual([]);
+  test("should initialize with loading false", () => {
+   expect(store.getState().isLoading).toBe(false);
+  });
+
+  test("should initialize with null error", () => {
+   expect(store.getState().error).toBeNull();
   });
  });
 
- describe("fetchStatus", () => {
-  it("should fetch and store 2FA status", async () => {
-   const apiClient = createMockApiClient();
-   const useStore = createTwoFactorStore(apiClient);
+ describe("setEnabled", () => {
+  test("should set enabled to true", () => {
+   store.getState().setEnabled(true);
 
-   await useStore.getState().fetchStatus();
-
-   expect(useStore.getState().status).toBeDefined();
-   expect(useStore.getState().status?.enabled).toBe(true);
+   expect(store.getState().isEnabled).toBe(true);
   });
 
-  it("should return status", async () => {
-   const apiClient = createMockApiClient();
-   const useStore = createTwoFactorStore(apiClient);
+  test("should set enabled to false", () => {
+   store.getState().setEnabled(true);
+   store.getState().setEnabled(false);
 
-   const status = await useStore.getState().fetchStatus();
-
-   expect(status.enabled).toBe(true);
-  });
-
-  it("should set error on failure", async () => {
-   const apiClient = createMockApiClient({
-    getStatus: mock(() => Promise.reject(new Error("Unauthorized"))),
-   });
-   const useStore = createTwoFactorStore(apiClient);
-
-   await expect(useStore.getState().fetchStatus()).rejects.toThrow();
-
-   expect(useStore.getState().error).toBe("Unauthorized");
+   expect(store.getState().isEnabled).toBe(false);
   });
  });
 
- describe("startSetup", () => {
-  it("should fetch and store setup data", async () => {
-   const apiClient = createMockApiClient();
-   const useStore = createTwoFactorStore(apiClient);
+ describe("setQrCode", () => {
+  test("should set QR code string", () => {
+   const qrCode = "data:image/png;base64,iVBORw0KGgoAAAANS...";
 
-   await useStore.getState().startSetup();
+   store.getState().setQrCode(qrCode);
 
-   expect(useStore.getState().setup).toBeDefined();
-   expect(useStore.getState().setup?.secret).toBe(mockSetup.secret);
+   expect(store.getState().qrCode).toBe(qrCode);
   });
 
-  it("should return setup data with QR code", async () => {
-   const apiClient = createMockApiClient();
-   const useStore = createTwoFactorStore(apiClient);
+  test("should set QR code to null", () => {
+   store.getState().setQrCode("some-qr-code");
+   store.getState().setQrCode(null);
 
-   const setup = await useStore.getState().startSetup();
-
-   expect(setup.qrCodeUrl).toBeDefined();
-   expect(setup.secret).toBeDefined();
+   expect(store.getState().qrCode).toBeNull();
   });
  });
 
- describe("verifySetup", () => {
-  it("should verify setup and enable 2FA", async () => {
-   const apiClient = createMockApiClient();
-   const useStore = createTwoFactorStore(apiClient);
+ describe("setBackupCodes", () => {
+  test("should set backup codes array", () => {
+   const codes = ["ABC123", "DEF456", "GHI789", "JKL012"];
 
-   await useStore.getState().verifySetup("123456");
+   store.getState().setBackupCodes(codes);
 
-   expect(useStore.getState().status?.enabled).toBe(true);
+   expect(store.getState().backupCodes).toEqual(codes);
+   expect(store.getState().backupCodes).toHaveLength(4);
   });
 
-  it("should store backup codes after verification", async () => {
-   const apiClient = createMockApiClient();
-   const useStore = createTwoFactorStore(apiClient);
+  test("should replace existing backup codes", () => {
+   store.getState().setBackupCodes(["OLD1", "OLD2"]);
+   store.getState().setBackupCodes(["NEW1", "NEW2", "NEW3"]);
 
-   await useStore.getState().verifySetup("123456");
-
-   expect(useStore.getState().backupCodes).toHaveLength(3);
+   expect(store.getState().backupCodes).toHaveLength(3);
+   expect(store.getState().backupCodes[0]).toBe("NEW1");
   });
 
-  it("should clear setup data after verification", async () => {
-   const apiClient = createMockApiClient();
-   const useStore = createTwoFactorStore(apiClient);
+  test("should handle empty array", () => {
+   store.getState().setBackupCodes(["CODE1"]);
+   store.getState().setBackupCodes([]);
 
-   // Start setup first
-   await useStore.getState().startSetup();
-   expect(useStore.getState().setup).toBeDefined();
-
-   // Then verify
-   await useStore.getState().verifySetup("123456");
-
-   expect(useStore.getState().setup).toBeNull();
-  });
-
-  it("should call API with token", async () => {
-   const apiClient = createMockApiClient();
-   const useStore = createTwoFactorStore(apiClient);
-
-   await useStore.getState().verifySetup("654321");
-
-   expect(apiClient.twoFactor.verifySetup).toHaveBeenCalledWith({
-    token: "654321",
-   });
-  });
-
-  it("should set error on invalid token", async () => {
-   const apiClient = createMockApiClient({
-    verifySetup: mock(() => Promise.reject(new Error("Invalid token"))),
-   });
-   const useStore = createTwoFactorStore(apiClient);
-
-   await expect(useStore.getState().verifySetup("wrong")).rejects.toThrow();
-
-   expect(useStore.getState().error).toBe("Invalid token");
+   expect(store.getState().backupCodes).toEqual([]);
   });
  });
 
- describe("verifyLogin", () => {
-  it("should verify 2FA token for login", async () => {
-   const apiClient = createMockApiClient();
-   const useStore = createTwoFactorStore(apiClient);
+ describe("loading state", () => {
+  test("should set loading to true", () => {
+   store.getState().setLoading(true);
 
-   const success = await useStore.getState().verifyLogin("123456");
-
-   expect(success).toBe(true);
+   expect(store.getState().isLoading).toBe(true);
   });
 
-  it("should call API with token", async () => {
-   const apiClient = createMockApiClient();
-   const useStore = createTwoFactorStore(apiClient);
+  test("should set loading to false", () => {
+   store.getState().setLoading(true);
+   store.getState().setLoading(false);
 
-   await useStore.getState().verifyLogin("789012");
-
-   expect(apiClient.twoFactor.verifyLogin).toHaveBeenCalledWith({
-    token: "789012",
-   });
-  });
-
-  it("should return false on invalid token", async () => {
-   const apiClient = createMockApiClient({
-    verifyLogin: mock(() => Promise.resolve({ success: false })),
-   });
-   const useStore = createTwoFactorStore(apiClient);
-
-   const success = await useStore.getState().verifyLogin("wrong");
-
-   expect(success).toBe(false);
+   expect(store.getState().isLoading).toBe(false);
   });
  });
 
- describe("disable", () => {
-  it("should disable 2FA", async () => {
-   const apiClient = createMockApiClient();
-   const useStore = createTwoFactorStore(apiClient);
+ describe("error handling", () => {
+  test("should set error message", () => {
+   store.getState().setError("Invalid verification code");
 
-   // Set initial enabled state
-   useStore.setState({ status: { enabled: true, verifiedAt: new Date() } });
-
-   await useStore.getState().disable("123456");
-
-   expect(useStore.getState().status?.enabled).toBe(false);
+   expect(store.getState().error).toBe("Invalid verification code");
   });
 
-  it("should call API with token", async () => {
-   const apiClient = createMockApiClient();
-   const useStore = createTwoFactorStore(apiClient);
+  test("should clear error with setError null", () => {
+   store.getState().setError("Error");
+   store.getState().setError(null);
 
-   await useStore.getState().disable("654321");
-
-   expect(apiClient.twoFactor.disable).toHaveBeenCalledWith("654321");
+   expect(store.getState().error).toBeNull();
   });
 
-  it("should clear backup codes", async () => {
-   const apiClient = createMockApiClient();
-   const useStore = createTwoFactorStore(apiClient);
+  test("should clear error with clearError", () => {
+   store.getState().setError("Error");
+   store.getState().clearError();
 
-   useStore.setState({ backupCodes: ["code1", "code2"] });
-
-   await useStore.getState().disable("123456");
-
-   expect(useStore.getState().backupCodes).toEqual([]);
+   expect(store.getState().error).toBeNull();
   });
  });
 
- describe("regenerateBackupCodes", () => {
-  it("should generate new backup codes", async () => {
-   const apiClient = createMockApiClient();
-   const useStore = createTwoFactorStore(apiClient);
+ describe("reset", () => {
+  test("should reset all state to initial", () => {
+   // Modify all state
+   store.getState().setEnabled(true);
+   store.getState().setQrCode("qr-code-data");
+   store.getState().setBackupCodes(["CODE1", "CODE2"]);
+   store.getState().setLoading(true);
+   store.getState().setError("Error");
 
-   const codes = await useStore.getState().regenerateBackupCodes("123456");
+   // Reset
+   store.getState().reset();
 
-   expect(codes).toHaveLength(2);
-   expect(codes).toContain("newcode1");
-  });
-
-  it("should update stored backup codes", async () => {
-   const apiClient = createMockApiClient();
-   const useStore = createTwoFactorStore(apiClient);
-
-   await useStore.getState().regenerateBackupCodes("123456");
-
-   expect(useStore.getState().backupCodes).toEqual(["newcode1", "newcode2"]);
-  });
- });
-
- describe("clearSetup", () => {
-  it("should clear setup data", () => {
-   const apiClient = createMockApiClient();
-   const useStore = createTwoFactorStore(apiClient);
-
-   useStore.setState({ setup: mockSetup });
-
-   useStore.getState().clearSetup();
-
-   expect(useStore.getState().setup).toBeNull();
+   // Verify all back to initial
+   expect(store.getState().isEnabled).toBe(false);
+   expect(store.getState().qrCode).toBeNull();
+   expect(store.getState().backupCodes).toEqual([]);
+   expect(store.getState().isLoading).toBe(false);
+   expect(store.getState().error).toBeNull();
   });
  });
 
- describe("clearError", () => {
-  it("should clear error", () => {
-   const apiClient = createMockApiClient();
-   const useStore = createTwoFactorStore(apiClient);
+ describe("2FA setup flow", () => {
+  test("should handle typical enable flow", () => {
+   // Start setup
+   store.getState().setLoading(true);
 
-   useStore.setState({ error: "Some error" });
+   // Receive QR code and backup codes
+   store.getState().setQrCode("data:image/png;base64,...");
+   store.getState().setBackupCodes(["A1B2C3", "D4E5F6", "G7H8I9"]);
+   store.getState().setLoading(false);
 
-   useStore.getState().clearError();
+   expect(store.getState().qrCode).not.toBeNull();
+   expect(store.getState().backupCodes).toHaveLength(3);
 
-   expect(useStore.getState().error).toBeNull();
+   // User verifies and enables
+   store.getState().setEnabled(true);
+
+   expect(store.getState().isEnabled).toBe(true);
+  });
+
+  test("should handle disable flow", () => {
+   // Already enabled
+   store.getState().setEnabled(true);
+   store.getState().setBackupCodes(["CODE1"]);
+
+   // Disable
+   store.getState().setEnabled(false);
+   store.getState().setQrCode(null);
+   store.getState().setBackupCodes([]);
+
+   expect(store.getState().isEnabled).toBe(false);
+   expect(store.getState().qrCode).toBeNull();
+   expect(store.getState().backupCodes).toEqual([]);
+  });
+
+  test("should handle verification error", () => {
+   store.getState().setQrCode("qr-code");
+   store.getState().setLoading(true);
+
+   // Verification failed
+   store.getState().setError("Invalid code");
+   store.getState().setLoading(false);
+
+   expect(store.getState().error).toBe("Invalid code");
+   expect(store.getState().isEnabled).toBe(false);
+  });
+ });
+
+ describe("store isolation", () => {
+  test("should create independent store instances", () => {
+   const store1 = createTwoFactorStore();
+   const store2 = createTwoFactorStore();
+
+   store1.getState().setEnabled(true);
+   store1.getState().setBackupCodes(["CODE1"]);
+
+   expect(store1.getState().isEnabled).toBe(true);
+   expect(store2.getState().isEnabled).toBe(false);
+   expect(store2.getState().backupCodes).toEqual([]);
   });
  });
 });

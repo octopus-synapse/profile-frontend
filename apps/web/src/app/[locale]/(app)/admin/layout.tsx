@@ -4,7 +4,7 @@
  */
 
 import { ReactNode } from "react";
-import { AdminSidebar } from "@/features/admin";
+import { AdminSidebar } from "@/components/admin";
 
 interface AdminLayoutProps {
   children: ReactNode;

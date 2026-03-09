@@ -2,14 +2,16 @@
 # Standardized pre-commit hook for ProFile repositories
 # Source: octopus-workflows/scripts/husky/pre-commit
 #
-# Run: bun test, bun run lint:fast, bun run typecheck, bun run test:smoke
-# These are the minimum checks for fast feedback before committing.
+# Run order:
+# 1. Type check
+# 2. Fast lint
+# 3. Unit tests
+# 4. Smoke tests
 #
 # CI will run additional checks:
-# - Full ESLint with type-aware rules
-# - Integration tests (for profile-services)
-# - E2E tests (for profile-frontend)
-# - Docker build
+# - Full lint with biome
+# - Architecture tests
+# - Integration tests
 
 echo "Pre-commit checks (fast feedback loop)..."
 echo ""
@@ -18,8 +20,8 @@ echo ""
 echo "  -> Type checking..."
 bun run typecheck || exit 1
 
-# 2. Fast lint with oxlint
-echo "  -> Fast lint (oxlint)..."
+# 2. Fast lint with biome
+echo "  -> Fast lint (biome)..."
 bun run lint:fast || exit 1
 
 # 3. Unit tests

@@ -5,7 +5,7 @@
 
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { auth } from "@/features/auth/services/auth-config";
+import { auth } from "@/lib/auth";
 import { ROUTES } from "@/config/routes";
 import {
   i18nConfig,

@@ -1,10 +1,10 @@
 "use client";
 
-import { ForgotPasswordForm } from "@/features/auth";
+import { ForgotPasswordForm } from "@/components/auth";
 import { LocalizedLink } from "@/shared/components/localized-link";
 import { ROUTES } from "@/config/routes";
 import { ArrowLeft, Mail } from "lucide-react";
-import { useI18n } from "@/features/i18n";
+import { useI18n } from "@/lib/i18n";
 import { motion } from "framer-motion";
 
 export default function ForgotPasswordPage() {

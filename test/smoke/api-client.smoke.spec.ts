@@ -1,135 +1,94 @@
 /**
- * API Client Smoke Tests - Kent Beck Style
+ * API Client Smoke Tests
  *
- * These tests answer ONE question: "Do the API client modules load correctly?"
- *
- * Characteristics:
- * - FAST: Run in < 2 seconds
- * - ISOLATED: No network calls, no external dependencies
- * - IMMEDIATE: First line of defense
- *
- * What they verify:
- * - All repositories can be imported
- * - Factory functions exist and are callable
- * - TypeScript types are valid
- *
- * What they DON'T verify:
- * - Actual API calls
- * - Business logic
- * - Error handling behavior
+ * Validates that the generated SDK exports are correct and can be imported.
+ * These are NOT integration tests - they don't make HTTP calls.
  */
 
 import { describe, it, expect } from "bun:test";
 
-describe("Smoke Tests - API Client Package", () => {
- describe("Repository Factory Imports", () => {
-  it("should import createAuthRepository", async () => {
-   const { createAuthRepository } =
-    await import("../../packages/api-client/src/repositories/auth.repository");
-   expect(createAuthRepository).toBeDefined();
-   expect(typeof createAuthRepository).toBe("function");
+describe("Smoke: API Client SDK Exports", () => {
+ describe("Generated API Functions", () => {
+  it("should export auth functions", async () => {
+   const auth =
+    await import("../../packages/api-client/src/generated/api/auth/auth");
+
+   expect(auth.authLogin).toBeDefined();
+   expect(auth.authLogout).toBeDefined();
+   expect(auth.authRefresh).toBeDefined();
+   expect(auth.authDisable).toBeDefined();
+
+   // Hooks should also be exported
+   expect(auth.useAuthLogin).toBeDefined();
+   expect(auth.useAuthLogout).toBeDefined();
+   expect(auth.useAuthRefresh).toBeDefined();
   });
 
-  it("should import createResumeRepository", async () => {
-   const { createResumeRepository } =
-    await import("../../packages/api-client/src/repositories/resume.repository");
-   expect(createResumeRepository).toBeDefined();
-   expect(typeof createResumeRepository).toBe("function");
+  it("should export accounts functions", async () => {
+   const accounts =
+    await import("../../packages/api-client/src/generated/api/accounts/accounts");
+
+   expect(accounts.accountsSignup).toBeDefined();
+   expect(accounts.useAccountsSignup).toBeDefined();
   });
 
-  it("should import createThemeRepository", async () => {
-   const { createThemeRepository } =
-    await import("../../packages/api-client/src/repositories/theme.repository");
-   expect(createThemeRepository).toBeDefined();
-   expect(typeof createThemeRepository).toBe("function");
+  it("should export resume functions", async () => {
+   const resumes =
+    await import("../../packages/api-client/src/generated/api/resumes/resumes");
+
+   expect(resumes.resumesGetAllUserResumes).toBeDefined();
+   expect(resumes.resumesCreateResumeForUser).toBeDefined();
+   expect(resumes.resumesGetResumeDetails).toBeDefined();
+   expect(resumes.resumesDeleteResume).toBeDefined();
+   expect(resumes.resumesGetRemainingSlots).toBeDefined();
   });
 
-  it("should import createUserRepository", async () => {
-   const { createUserRepository } =
-    await import("../../packages/api-client/src/repositories/user.repository");
-   expect(createUserRepository).toBeDefined();
-   expect(typeof createUserRepository).toBe("function");
+  it("should export theme functions", async () => {
+   const themes =
+    await import("../../packages/api-client/src/generated/api/themes/themes");
+
+   expect(themes.themesFindAllThemesWithPagination).toBeDefined();
+   expect(themes.themesFindThemeById).toBeDefined();
+   expect(themes.themesFindAllSystemThemes).toBeDefined();
   });
 
-  it("should import createTwoFactorRepository", async () => {
-   const { createTwoFactorRepository } =
-    await import("../../packages/api-client/src/repositories/two-factor.repository");
-   expect(createTwoFactorRepository).toBeDefined();
-   expect(typeof createTwoFactorRepository).toBe("function");
-  });
+  it("should export platform functions", async () => {
+   const platform =
+    await import("../../packages/api-client/src/generated/api/platform/platform");
 
-  it("should import createOnboardingRepository", async () => {
-   const { createOnboardingRepository } =
-    await import("../../packages/api-client/src/repositories/onboarding.repository");
-   expect(createOnboardingRepository).toBeDefined();
-   expect(typeof createOnboardingRepository).toBe("function");
-  });
-
-  it("should import createTechSkillsRepository", async () => {
-   const { createTechSkillsRepository } =
-    await import("../../packages/api-client/src/repositories/tech-skills.repository");
-   expect(createTechSkillsRepository).toBeDefined();
-   expect(typeof createTechSkillsRepository).toBe("function");
-  });
-
-  it("should import createSocialRepository", async () => {
-   const { createSocialRepository } =
-    await import("../../packages/api-client/src/repositories/social.repository");
-   expect(createSocialRepository).toBeDefined();
-   expect(typeof createSocialRepository).toBe("function");
-  });
-
-  it("should import createExportRepository", async () => {
-   const { createExportRepository } =
-    await import("../../packages/api-client/src/repositories/export.repository");
-   expect(createExportRepository).toBeDefined();
-   expect(typeof createExportRepository).toBe("function");
-  });
-
-  it("should import createGDPRRepository", async () => {
-   const { createGDPRRepository } =
-    await import("../../packages/api-client/src/repositories/gdpr.repository");
-   expect(createGDPRRepository).toBeDefined();
-   expect(typeof createGDPRRepository).toBe("function");
+   expect(platform.platformGetStatistics).toBeDefined();
   });
  });
 
- describe("HTTP Client Imports", () => {
-  it("should import createHttpClient", async () => {
-   const { createHttpClient } =
-    await import("../../packages/api-client/src/client");
-   expect(createHttpClient).toBeDefined();
-   expect(typeof createHttpClient).toBe("function");
-  });
+ describe("Generated Models", () => {
+  it("should export auth models", async () => {
+   // Type-only imports work if the module exports them
+   const models =
+    await import("../../packages/api-client/src/generated/models");
 
-  it("should import withRetry utility", async () => {
-   const { withRetry } = await import("../../packages/api-client/src/client");
-   expect(withRetry).toBeDefined();
-   expect(typeof withRetry).toBe("function");
+   // Verify key DTOs are exported (runtime check for type existence)
+   expect(models).toBeDefined();
   });
  });
 
- describe("Error Types Imports", () => {
-  it("should import createApiError factory", async () => {
-   const errors = await import("../../packages/api-client/src/errors/index");
-   expect(errors.createApiError).toBeDefined();
-   expect(typeof errors.createApiError).toBe("function");
-  });
+ describe("Client Utilities", () => {
+  it("should export fetcher utilities", async () => {
+   const client = await import("../../packages/api-client/src/client");
 
-  it("should import isValidationError helper", async () => {
-   const errors = await import("../../packages/api-client/src/errors/index");
-   expect(errors.isValidationError).toBeDefined();
-   expect(typeof errors.isValidationError).toBe("function");
+   expect(client.setAuthToken).toBeDefined();
+   expect(client.clearAuthToken).toBeDefined();
+   expect(client.isApiError).toBeDefined();
   });
  });
 
- describe("Main Package Export", () => {
-  it("should import main index without errors", async () => {
-   const apiClient = await import("../../packages/api-client/src/index");
-   expect(apiClient).toBeDefined();
-   expect(apiClient.createHttpClient).toBeDefined();
-   expect(apiClient.createAuthRepository).toBeDefined();
-   expect(apiClient.createResumeRepository).toBeDefined();
+ describe("SDK Structure", () => {
+  it("should export everything from main index", async () => {
+   const apiClient = await import("../../packages/api-client/src");
+
+   // Check main exports exist
+   expect(apiClient.setAuthToken).toBeDefined();
+   expect(apiClient.clearAuthToken).toBeDefined();
+   expect(apiClient.isApiError).toBeDefined();
   });
  });
 });

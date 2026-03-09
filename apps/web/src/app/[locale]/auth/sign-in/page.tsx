@@ -1,10 +1,10 @@
 "use client";
 
-import { SignInForm } from "@/features/auth";
+import { SignInForm } from "@/components/auth";
 import { LocalizedLink } from "@/shared/components/localized-link";
 import { ROUTES } from "@/config/routes";
 import { Terminal, Github, ArrowLeft } from "lucide-react";
-import { useI18n } from "@/features/i18n";
+import { useI18n } from "@/lib/i18n";
 import { motion } from "framer-motion"; // Opcional: npm install framer-motion
 
 export default function SignInPage() {

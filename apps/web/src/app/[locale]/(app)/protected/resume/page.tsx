@@ -4,7 +4,7 @@
  */
 
 import { Metadata } from "next";
-import { ResumeBuilder } from "@/features/resume";
+import { ResumeBuilder } from "@/components/resume";
 
 export const metadata: Metadata = {
   title: "Resume",

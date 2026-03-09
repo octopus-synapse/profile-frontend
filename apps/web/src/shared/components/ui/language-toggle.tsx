@@ -6,7 +6,7 @@
  */
 
 import { Globe } from "lucide-react";
-import { useI18n } from "@/features/i18n/context";
+import { useI18n } from "@/lib/i18n/context";
 import { cn } from "@/shared/utils";
 import type { Locale } from "@/config/i18n.config";
 

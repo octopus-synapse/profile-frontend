@@ -5,12 +5,12 @@
  * Uses the global Navbar component with landing-specific configuration
  */
 
-import { Navbar, LANDING_NAV_ITEMS } from "@/features/navigation";
+import { Navbar, LANDING_NAV_ITEMS } from "@/components/navigation";
 import { ThemeToggleSimple } from "@/shared/components/ui/theme-toggle";
 import { LanguageSelector } from "@/components/landing/LanguageSelector";
 import { LocalizedLink } from "@/shared/components/localized-link";
 import { ROUTES } from "@/config/routes";
-import { useI18n } from "@/features/i18n";
+import { useI18n } from "@/lib/i18n";
 
 export function LandingNavbar() {
   const { t, language } = useI18n();

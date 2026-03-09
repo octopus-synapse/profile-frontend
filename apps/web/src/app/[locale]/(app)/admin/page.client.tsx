@@ -15,7 +15,7 @@ import {
   useSystemHealth,
   useRecentUsers,
   useRecentActivity,
-} from "@/features/admin";
+} from "@/components/admin";
 
 export default function AdminDashboardPage() {
   const { data: stats, isLoading: statsLoading } = useAdminStats();

@@ -4,7 +4,7 @@
  */
 
 import { Metadata } from "next";
-import { OnboardingWizard } from "@/features/onboarding";
+import { OnboardingWizard } from "@/components/onboarding";
 
 export const metadata: Metadata = {
   title: "Setup Your Profile | PATCH",

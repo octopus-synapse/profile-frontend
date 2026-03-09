@@ -1,8 +1,0 @@
-[test]
-# DOM preload disabled - hook tests require happy-dom/jsdom
-# TODO: Install happy-dom when workspace dependency issue is fixed
-# preload = ["../test-utils/src/dom/dom-mock.ts"]
-
-# Skip hook tests that require DOM (they need happy-dom)
-# Run only non-DOM tests
-testNamePattern = "^(?!.*\\b(useAuth|useResume|useTheme|useTwoFactor|useOnboarding|useSkills)\\b)"

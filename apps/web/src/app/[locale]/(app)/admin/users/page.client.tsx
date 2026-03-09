@@ -5,7 +5,7 @@
  * Clean, professional design
  */
 
-import { UsersTable } from "@/features/admin";
+import { UsersTable } from "@/components/admin";
 
 export default function AdminUsersPage() {
   return (

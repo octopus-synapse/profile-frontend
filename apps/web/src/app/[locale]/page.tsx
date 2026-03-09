@@ -23,8 +23,8 @@ import {
   BarChart3,
   ShieldCheck,
 } from "lucide-react";
-import { useI18n } from "@/features/i18n";
-import { Navbar } from "@/features/navigation";
+import { useI18n } from "@/lib/i18n";
+import { Navbar } from "@/components/navigation";
 import type { Locale } from "@/config/i18n.config";
 
 // ============================================

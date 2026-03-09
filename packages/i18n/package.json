@@ -1,0 +1,44 @@
+{
+ "name": "@profile/i18n",
+ "version": "1.0.0",
+ "private": true,
+ "description": "Internationalization package for Profile - supports en and pt-BR",
+ "main": "./dist/index.js",
+ "module": "./dist/index.mjs",
+ "types": "./dist/index.d.ts",
+ "exports": {
+  ".": {
+   "types": "./dist/index.d.ts",
+   "import": "./dist/index.mjs",
+   "require": "./dist/index.js"
+  },
+  "./locales/en": {
+   "types": "./dist/locales/en.d.ts",
+   "import": "./dist/locales/en.mjs",
+   "require": "./dist/locales/en.js"
+  },
+  "./locales/pt-BR": {
+   "types": "./dist/locales/pt-BR.d.ts",
+   "import": "./dist/locales/pt-BR.mjs",
+   "require": "./dist/locales/pt-BR.js"
+  }
+ },
+ "files": [
+  "dist"
+ ],
+ "scripts": {
+  "build": "tsup",
+  "dev": "tsup --watch",
+  "lint": "biome check src/",
+  "lint:fix": "biome check --write src/",
+  "typecheck": "tsc --noEmit",
+  "clean": "rm -rf dist node_modules",
+  "test": "bun test",
+  "precommit": "bun run typecheck && bun run lint"
+ },
+ "devDependencies": {
+  "@types/bun": "latest",
+  "tsup": "^8.0.0",
+  "typescript": "^5.0.0"
+ }
+}

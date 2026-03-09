@@ -8,8 +8,8 @@
 import type { ReactNode } from "react";
 import { QueryProvider } from "./query-provider";
 import { ThemeProvider } from "./theme-provider";
-import { I18nProvider } from "@/features/i18n";
-import { AuthProvider } from "@/features/auth";
+import { I18nProvider } from "@/lib/i18n";
+import { AuthProvider } from "@/lib/auth";
 import { Toaster } from "@/shared/components/ui/toast";
 import { TooltipProvider } from "@/shared/components/ui/tooltip";
 

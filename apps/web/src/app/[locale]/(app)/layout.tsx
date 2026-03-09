@@ -5,7 +5,7 @@
  */
 
 import { ReactNode } from "react";
-import { Navbar } from "@/features/navigation";
+import { Navbar } from "@/components/navigation";
 
 interface AppLayoutProps {
   children: ReactNode;

@@ -10,8 +10,21 @@ import React from "react";
 import { GlobalRegistrator } from "@happy-dom/global-registrator";
 import { mock, afterEach } from "bun:test";
 
+// Detect if we're running E2E tests by checking Bun.argv
+const isE2ETest = Bun.argv.some((arg) =>
+  arg.includes("e2e") || arg.includes("E2E")
+);
+
 // Register happy-dom for DOM APIs in tests
-GlobalRegistrator.register();
+// Disable CORS for E2E tests that make real HTTP requests
+GlobalRegistrator.register({
+  url: "http://localhost:3000",
+  settings: {
+    fetch: {
+      disableSameOriginPolicy: isE2ETest,
+    },
+  },
+});
 
 // Clean up after each test to prevent DOM pollution across tests
 // We manually clear the body instead of using testing-library cleanup

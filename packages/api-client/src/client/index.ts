@@ -1,14 +1,13 @@
 /**
- * HTTP Client exports
+ * Client Module
+ *
+ * Exports HTTP client utilities for API communication.
  */
 
 export {
-  createHttpClient,
-  withRetry,
-  type HttpClient,
-  type HttpClientConfig,
-  type RetryConfig,
-  type TokenGetter,
-  type TokenRefresher,
-  type OnUnauthorized,
-} from "./http-client";
+ customFetch,
+ setAuthToken,
+ clearAuthToken,
+ isApiError,
+} from "./fetcher";
+export type { ApiError } from "./fetcher";

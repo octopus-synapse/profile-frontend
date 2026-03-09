@@ -5,11 +5,11 @@
  * Ultra Premium dark theme - matching sign-in
  */
 
-import { SignUpForm } from "@/features/auth";
+import { SignUpForm } from "@/components/auth";
 import { LocalizedLink } from "@/shared/components/localized-link";
 import { ROUTES } from "@/config/routes";
 import { Terminal, Github, ArrowLeft, Check, Zap } from "lucide-react";
-import { useI18n } from "@/features/i18n";
+import { useI18n } from "@/lib/i18n";
 import { motion } from "framer-motion";
 
 export default function SignUpPage() {

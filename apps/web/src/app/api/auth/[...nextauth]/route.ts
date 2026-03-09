@@ -2,6 +2,6 @@
  * NextAuth API Route Handler
  */
 
-import { handlers } from "@/features/auth/services/auth-config";
+import { handlers } from "@/lib/auth";
 
 export const { GET, POST } = handlers;
