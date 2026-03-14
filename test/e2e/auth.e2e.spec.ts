@@ -4,7 +4,7 @@
  * Complete authentication flow tests using the generated SDK types.
  * Tests: signup → login → refresh token → logout
  *
- * Decision: Uses centralized AUTH_ROUTES and ACCOUNTS_ROUTES from routes.ts for consistency.
+ * Decision: Uses centralized AUTHENTICATION_ROUTES and ACCOUNT_LIFECYCLE_ROUTES from routes.ts for consistency.
  */
 
 import { describe, it, expect, beforeAll } from "bun:test";
@@ -18,8 +18,8 @@ import {
  E2E_CONFIG,
  e2eFetch,
  skipIfBackendUnavailable,
- AUTH_ROUTES,
- ACCOUNTS_ROUTES,
+ AUTHENTICATION_ROUTES,
+ ACCOUNT_LIFECYCLE_ROUTES,
 } from "./setup";
 
 describe("E2E: Authentication API", () => {
@@ -40,7 +40,7 @@ describe("E2E: Authentication API", () => {
  describe("User Registration", () => {
   it("should register a new user", async () => {
    const response = await e2eFetch<CreateAccountResponseDto>(
-    ACCOUNTS_ROUTES.ACCOUNTS_SIGNUP,
+    ACCOUNT_LIFECYCLE_ROUTES.ACCOUNTS_SIGNUP,
     {
      method: "POST",
      body: JSON.stringify({
@@ -62,7 +62,7 @@ describe("E2E: Authentication API", () => {
 
   it("should reject registration with invalid email", async () => {
    const response = await e2eFetch<CreateAccountResponseDto>(
-    ACCOUNTS_ROUTES.ACCOUNTS_SIGNUP,
+    ACCOUNT_LIFECYCLE_ROUTES.ACCOUNTS_SIGNUP,
     {
      method: "POST",
      body: JSON.stringify({
@@ -79,7 +79,7 @@ describe("E2E: Authentication API", () => {
 
   it("should reject registration with weak password", async () => {
    const response = await e2eFetch<CreateAccountResponseDto>(
-    ACCOUNTS_ROUTES.ACCOUNTS_SIGNUP,
+    ACCOUNT_LIFECYCLE_ROUTES.ACCOUNTS_SIGNUP,
     {
      method: "POST",
      body: JSON.stringify({
@@ -96,7 +96,7 @@ describe("E2E: Authentication API", () => {
 
  describe("User Login", () => {
   it("should login with valid credentials", async () => {
-   const response = await e2eFetch<LoginResponseDto>(AUTH_ROUTES.AUTH_LOGIN, {
+   const response = await e2eFetch<LoginResponseDto>(AUTHENTICATION_ROUTES.AUTH_LOGIN, {
     method: "POST",
     body: JSON.stringify({
      email: testUser.email,
@@ -116,7 +116,7 @@ describe("E2E: Authentication API", () => {
   });
 
   it("should reject login with wrong password", async () => {
-   const response = await e2eFetch<LoginResponseDto>(AUTH_ROUTES.AUTH_LOGIN, {
+   const response = await e2eFetch<LoginResponseDto>(AUTHENTICATION_ROUTES.AUTH_LOGIN, {
     method: "POST",
     body: JSON.stringify({
      email: testUser.email,
@@ -128,7 +128,7 @@ describe("E2E: Authentication API", () => {
   });
 
   it("should reject login with non-existent user", async () => {
-   const response = await e2eFetch<LoginResponseDto>(AUTH_ROUTES.AUTH_LOGIN, {
+   const response = await e2eFetch<LoginResponseDto>(AUTHENTICATION_ROUTES.AUTH_LOGIN, {
     method: "POST",
     body: JSON.stringify({
      email: "nonexistent@test.com",
@@ -149,7 +149,7 @@ describe("E2E: Authentication API", () => {
    }
 
    const response = await e2eFetch<RefreshTokenResponseDto>(
-    AUTH_ROUTES.AUTH_REFRESH,
+    AUTHENTICATION_ROUTES.AUTH_REFRESH,
     {
      method: "POST",
      body: JSON.stringify({
@@ -169,7 +169,7 @@ describe("E2E: Authentication API", () => {
 
   it("should reject refresh with invalid token", async () => {
    const response = await e2eFetch<RefreshTokenResponseDto>(
-    AUTH_ROUTES.AUTH_REFRESH,
+    AUTHENTICATION_ROUTES.AUTH_REFRESH,
     {
      method: "POST",
      body: JSON.stringify({
@@ -191,7 +191,7 @@ describe("E2E: Authentication API", () => {
    }
 
    const response = await e2eFetch<MessageResponseDto>(
-    AUTH_ROUTES.AUTH_LOGOUT,
+    AUTHENTICATION_ROUTES.AUTH_LOGOUT,
     {
      method: "POST",
      token: accessToken,
@@ -206,7 +206,7 @@ describe("E2E: Authentication API", () => {
 
   it("should reject logout without token", async () => {
    const response = await e2eFetch<MessageResponseDto>(
-    AUTH_ROUTES.AUTH_LOGOUT,
+    AUTHENTICATION_ROUTES.AUTH_LOGOUT,
     {
      method: "POST",
      body: JSON.stringify({

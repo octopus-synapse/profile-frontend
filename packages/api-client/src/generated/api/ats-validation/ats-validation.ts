@@ -16,6 +16,7 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  ATSValidationResponseDto,
   ValidateCVRequestDto
 } from '../../models';
 
@@ -31,7 +32,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary Validate CV for ATS compatibility
  */
 export type atsValidationValidateCVResponse201 = {
-  data: void
+  data: ATSValidationResponseDto
   status: 201
 }
 

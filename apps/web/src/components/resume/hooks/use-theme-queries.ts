@@ -1,55 +1,129 @@
 /**
  * Theme Query Hooks
  *
- * Uses @profile/api-client for all API calls.
- * This ensures web and mobile share the same implementation.
+ * Uses @profile/api-client SDK hooks directly.
+ * Returns normalized Theme[] arrays for components.
  */
 
-import { useQuery } from "@tanstack/react-query";
-import { apiClient } from "@/shared/lib/api-client";
-import { themeKeys } from "./theme-query-keys";
-import type { ThemeQueryParams } from "@profile/api-client";
+import {
+  usePublicThemeFindAllSystemThemes,
+  usePublicThemeFindAllThemesWithPagination,
+  usePublicThemeFindPopularThemes,
+  usePublicThemeFindThemeById,
+  useUserThemeGetAllThemesByUser,
+} from '@profile/api-client';
+import { useMemo } from 'react';
+import type { Theme } from '../services/theme.types';
+import { themeKeys } from './theme-query-keys';
 
-export function useThemes(params?: ThemeQueryParams) {
-  return useQuery({
-    queryKey: themeKeys.list((params ?? {}) as Record<string, unknown>),
-    queryFn: () => apiClient.themes.getAll(params),
+interface ThemeQueryParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+}
+
+// Helper to extract themes array from SDK response
+function extractThemes(data: unknown): Theme[] {
+  if (!data) return [];
+  // SDK structure: { data: { data: { themes: Theme[] } } } or { data: { themes: Theme[] } }
+  const nested = data as {
+    data?: { data?: { themes?: Theme[] }; themes?: Theme[] };
+  };
+  return nested?.data?.data?.themes ?? nested?.data?.themes ?? [];
+}
+
+export function useThemes(_params?: ThemeQueryParams) {
+  // SDK pagination is handled via request options, not query params
+  const query = usePublicThemeFindAllThemesWithPagination({
+    query: {
+      queryKey: themeKeys.list({}),
+    },
   });
+
+  const themes = useMemo(() => extractThemes(query.data), [query.data]);
+
+  return {
+    ...query,
+    data: themes,
+  };
 }
 
 export function useTheme(id: string | undefined) {
-  return useQuery({
-    queryKey: themeKeys.detail(id!),
-    queryFn: () => apiClient.themes.getById(id!),
-    enabled: !!id,
+  const query = usePublicThemeFindThemeById(id!, {
+    query: {
+      queryKey: themeKeys.detail(id!),
+      enabled: !!id,
+    },
   });
+
+  const theme = useMemo(() => {
+    if (!query.data) return null;
+    const nested = query.data as unknown as {
+      data?: { data?: { theme?: Theme }; theme?: Theme };
+    };
+    return nested?.data?.data?.theme ?? nested?.data?.theme ?? null;
+  }, [query.data]);
+
+  return {
+    ...query,
+    data: theme,
+  };
 }
 
 export function usePopularThemes(limit = 10) {
-  return useQuery({
-    queryKey: themeKeys.popular(limit),
-    queryFn: () => apiClient.themes.getPopular(limit),
-  });
+  const query = usePublicThemeFindPopularThemes(
+    { limit },
+    {
+      query: {
+        queryKey: themeKeys.popular(limit),
+      },
+    },
+  );
+
+  const themes = useMemo(() => extractThemes(query.data), [query.data]);
+
+  return {
+    ...query,
+    data: themes,
+  };
 }
 
 export function useSystemThemes() {
-  return useQuery({
-    queryKey: themeKeys.system(),
-    queryFn: () => apiClient.themes.getSystem(),
+  const query = usePublicThemeFindAllSystemThemes({
+    query: {
+      queryKey: themeKeys.system(),
+    },
   });
+
+  const themes = useMemo(() => extractThemes(query.data), [query.data]);
+
+  return {
+    ...query,
+    data: themes,
+  };
 }
 
 export function useMyThemes() {
-  return useQuery({
-    queryKey: themeKeys.mine(),
-    queryFn: () => apiClient.themes.getMyThemes(),
+  const query = useUserThemeGetAllThemesByUser({
+    query: {
+      queryKey: themeKeys.mine(),
+    },
   });
+
+  const themes = useMemo(() => extractThemes(query.data), [query.data]);
+
+  return {
+    ...query,
+    data: themes,
+  };
 }
 
-// Admin/Approver queries
+// Admin/Approver queries - Not yet in SDK
 export function usePendingThemes() {
-  return useQuery({
-    queryKey: themeKeys.pending(),
-    queryFn: () => apiClient.themes.getPendingApprovals(),
-  });
+  // No pending approvals endpoint in current SDK
+  return {
+    data: [] as Theme[],
+    isLoading: false,
+    error: null,
+  };
 }

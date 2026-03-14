@@ -37,7 +37,13 @@ import type {
   CreateTheme,
   ForkTheme,
   SubmitThemeRequestDto,
+  ThemeApplyDataDto,
   ThemeApproval,
+  ThemeEntityDataDto,
+  ThemeListDataDto,
+  ThemeNullableEntityDataDto,
+  ThemePaginatedListDataDto,
+  ThemeResolvedConfigDataDto,
   ThemesFindPopularThemesParams,
   UpdateTheme
 } from '../../models';
@@ -53,7 +59,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary List published themes
  */
 export type themesFindAllThemesWithPaginationResponse200 = {
-  data: void
+  data: ThemePaginatedListDataDto
   status: 200
 }
 
@@ -322,7 +328,7 @@ export function useThemesFindAllThemesWithPaginationSuspense<TData = Awaited<Ret
  * @summary Create theme
  */
 export type themesCreateThemeForUserResponse201 = {
-  data: void
+  data: ThemeEntityDataDto
   status: 201
 }
 
@@ -411,7 +417,7 @@ export const useThemesCreateThemeForUser = <TError = void,
  * @summary Apply theme to resume
  */
 export type themesApplyResponse201 = {
-  data: void
+  data: ThemeApplyDataDto
   status: 201
 }
 
@@ -500,7 +506,7 @@ export const useThemesApply = <TError = void,
  * @summary Get pending themes for approval
  */
 export type themesGetPendingResponse200 = {
-  data: void
+  data: ThemeListDataDto
   status: 200
 }
 
@@ -769,7 +775,7 @@ export function useThemesGetPendingSuspense<TData = Awaited<ReturnType<typeof th
  * @summary Review and approve/reject a theme
  */
 export type themesReviewResponse201 = {
-  data: void
+  data: ThemeEntityDataDto
   status: 201
 }
 
@@ -858,7 +864,7 @@ export const useThemesReview = <TError = void,
  * @summary Submit a theme for approval
  */
 export type themesSubmitResponse201 = {
-  data: void
+  data: ThemeEntityDataDto
   status: 201
 }
 
@@ -948,7 +954,7 @@ export const useThemesSubmit = <TError = void,
  * @summary Fork a theme
  */
 export type themesForkResponse201 = {
-  data: void
+  data: ThemeEntityDataDto
   status: 201
 }
 
@@ -1037,7 +1043,7 @@ export const useThemesFork = <TError = void,
  * @summary Get my themes
  */
 export type themesGetAllThemesByUserResponse200 = {
-  data: void
+  data: ThemeListDataDto
   status: 200
 }
 
@@ -1306,7 +1312,7 @@ export function useThemesGetAllThemesByUserSuspense<TData = Awaited<ReturnType<t
  * @summary Get popular themes
  */
 export type themesFindPopularThemesResponse200 = {
-  data: void
+  data: ThemeListDataDto
   status: 200
 }
 
@@ -1582,7 +1588,7 @@ export function useThemesFindPopularThemesSuspense<TData = Awaited<ReturnType<ty
  * @summary Get resolved config for resume
  */
 export type themesGetResolvedConfigResponse200 = {
-  data: void
+  data: ThemeResolvedConfigDataDto
   status: 200
 }
 
@@ -1851,7 +1857,7 @@ export function useThemesGetResolvedConfigSuspense<TData = Awaited<ReturnType<ty
  * @summary Get system themes
  */
 export type themesFindAllSystemThemesResponse200 = {
-  data: void
+  data: ThemeListDataDto
   status: 200
 }
 
@@ -2208,7 +2214,7 @@ export const useThemesDeleteThemeForUser = <TError = void,
  * @summary Get theme by ID
  */
 export type themesFindThemeByIdResponse200 = {
-  data: void
+  data: ThemeNullableEntityDataDto
   status: 200
 }
 
@@ -2477,7 +2483,7 @@ export function useThemesFindThemeByIdSuspense<TData = Awaited<ReturnType<typeof
  * @summary Update theme
  */
 export type themesUpdateThemeForUserResponse200 = {
-  data: void
+  data: ThemeEntityDataDto
   status: 200
 }
 

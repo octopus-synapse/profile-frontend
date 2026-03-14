@@ -3,8 +3,8 @@
  * Handles fetching public profile data
  */
 
-import { httpClient } from "@/shared/lib/http-client";
-import type { PublicProfile } from "./types";
+import { httpClient } from '@/shared/lib/http-client';
+import type { PublicProfile } from '../types';
 
 /**
  * Fetch a public profile by username

@@ -3,13 +3,13 @@
  * Developer-inspired design with code aesthetic
  */
 
-import { Metadata } from "next";
-import Link from "next/link";
-import { ROUTES } from "@/config/routes";
-import { ShieldX, Home, ArrowLeft } from "lucide-react";
+import { ArrowLeft, Home, ShieldX } from 'lucide-react';
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { ROUTES } from '@/config/routes';
 
 export const metadata: Metadata = {
-  title: "Unauthorized | PATCH",
+  title: 'Unauthorized | PATCH',
   description: "You don't have permission to access this resource",
 };
 
@@ -68,22 +68,22 @@ export default function UnauthorizedPage() {
           </div>
           <div className="code-block-content text-left">
             <div>
-              <span className="code-keyword">const</span>{" "}
-              <span className="code-variable">response</span> = {"{"}
+              <span className="code-keyword">const</span>{' '}
+              <span className="code-variable">response</span> = {'{'}
             </div>
             <div className="ml-4">
-              <span className="code-function">status</span>:{" "}
+              <span className="code-function">status</span>:{' '}
               <span className="code-number">403</span>,
             </div>
             <div className="ml-4">
-              <span className="code-function">error</span>:{" "}
+              <span className="code-function">error</span>:{' '}
               <span className="code-string">&quot;FORBIDDEN&quot;</span>,
             </div>
             <div className="ml-4">
-              <span className="code-function">message</span>:{" "}
+              <span className="code-function">message</span>:{' '}
               <span className="code-string">&quot;Access denied&quot;</span>
             </div>
-            <div>{"}"}</div>
+            <div>{'}'}</div>
           </div>
         </div>
       </div>

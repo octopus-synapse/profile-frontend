@@ -3,9 +3,9 @@
  * Handles locale-specific providers and validation
  */
 
-import { ReactNode } from "react";
-import { notFound } from "next/navigation";
-import { i18nConfig, type Locale } from "@/config/i18n.config";
+import { notFound } from 'next/navigation';
+import type { ReactNode } from 'react';
+import { i18nConfig, type Locale } from '@/config/i18n.config';
 
 interface LocaleLayoutProps {
   children: ReactNode;

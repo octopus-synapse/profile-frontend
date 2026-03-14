@@ -1,39 +1,39 @@
-import type { Metadata, Viewport } from "next";
-import Script from "next/script";
-import { Inter, JetBrains_Mono } from "next/font/google";
-import { headers } from "next/headers";
-import { RootProvider } from "@/shared/providers";
-import { themeScript } from "@/shared/providers/theme-provider";
-import { i18nConfig, type Locale } from "@/config/i18n.config";
-import "./globals.css";
+import type { Metadata, Viewport } from 'next';
+import { Inter, JetBrains_Mono } from 'next/font/google';
+import { headers } from 'next/headers';
+import Script from 'next/script';
+import { i18nConfig, type Locale } from '@/config/i18n.config';
+import { RootProvider } from '@/shared/providers';
+import { themeScript } from '@/shared/providers/theme-provider';
+import './globals.css';
 
 const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-inter",
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
 });
 
 const jetbrains = JetBrains_Mono({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-mono",
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-mono',
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "PATCH - Professional Developer Profiles",
-    template: "%s | PATCH",
+    default: 'PATCH - Professional Developer Profiles',
+    template: '%s | PATCH',
   },
-  description: "Create and share your professional developer profile and resume with PATCH.",
-  keywords: ["developer", "profile", "resume", "portfolio", "career", "PATCH"],
+  description: 'Create and share your professional developer profile and resume with PATCH.',
+  keywords: ['developer', 'profile', 'resume', 'portfolio', 'career', 'PATCH'],
 };
 
 export const viewport: Viewport = {
-  width: "device-width",
+  width: 'device-width',
   initialScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#faf9f7" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+    { media: '(prefers-color-scheme: light)', color: '#faf9f7' },
+    { media: '(prefers-color-scheme: dark)', color: '#0a0a0a' },
   ],
 };
 
@@ -41,7 +41,7 @@ export const viewport: Viewport = {
  * Extract locale from pathname
  */
 function getLocaleFromPath(pathname: string): Locale {
-  const segments = pathname.split("/").filter(Boolean);
+  const segments = pathname.split('/').filter(Boolean);
   const firstSegment = segments[0];
   if (firstSegment && i18nConfig.locales.includes(firstSegment as Locale)) {
     return firstSegment as Locale;
@@ -56,7 +56,7 @@ export default async function RootLayout({
 }>) {
   // Get locale from URL path via headers
   const headersList = await headers();
-  const pathname = headersList.get("x-pathname") || headersList.get("x-invoke-path") || "/";
+  const pathname = headersList.get('x-pathname') || headersList.get('x-invoke-path') || '/';
   const locale = getLocaleFromPath(pathname);
 
   return (

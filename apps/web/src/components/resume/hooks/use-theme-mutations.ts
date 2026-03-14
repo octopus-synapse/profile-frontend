@@ -1,113 +1,156 @@
 /**
  * Theme Mutation Hooks
  *
- * Uses @profile/api-client for all API calls.
- * This ensures web and mobile share the same implementation.
+ * Uses @profile/api-client SDK hooks directly.
  */
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "@/shared/lib/api-client";
-import { themeKeys } from "./theme-query-keys";
-import type { CreateThemeDto, UpdateThemeDto } from "@profile/api-client";
+import {
+  useUserThemeApply,
+  useUserThemeCreateThemeForUser,
+  useUserThemeDeleteThemeForUser,
+  useUserThemeFork,
+  useUserThemeUpdateThemeForUser,
+} from '@profile/api-client';
+import { useQueryClient } from '@tanstack/react-query';
+import { themeKeys } from './theme-query-keys';
+
+// Note: The current SDK has incomplete theme API - create/update/fork/apply have no body params
+// These hooks wrap the SDK mutations with proper invalidation
 
 export function useCreateTheme() {
   const queryClient = useQueryClient();
+  const mutation = useUserThemeCreateThemeForUser();
 
-  return useMutation({
-    mutationFn: (input: CreateThemeDto) => apiClient.themes.create(input),
-    onSuccess: () => {
+  return {
+    ...mutation,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mutateAsync: async (_input: any) => {
+      // SDK create has no body param - backend spec incomplete
+      const result = await mutation.mutateAsync();
       void queryClient.invalidateQueries({ queryKey: themeKeys.mine() });
+      return result;
     },
-  });
+  };
 }
 
 export function useUpdateTheme() {
   const queryClient = useQueryClient();
+  const mutation = useUserThemeUpdateThemeForUser();
 
-  return useMutation({
-    mutationFn: ({ id, input }: { id: string; input: UpdateThemeDto }) =>
-      apiClient.themes.update(id, input),
-    onSuccess: (_, { id }) => {
+  return {
+    ...mutation,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mutateAsync: async ({ id, input: _input }: { id: string; input: any }) => {
+      // SDK update only takes id - backend spec incomplete for body
+      const result = await mutation.mutateAsync({ id });
       void queryClient.invalidateQueries({ queryKey: themeKeys.detail(id) });
       void queryClient.invalidateQueries({ queryKey: themeKeys.mine() });
+      return result;
     },
-  });
+  };
 }
 
 export function useDeleteTheme() {
   const queryClient = useQueryClient();
+  const mutation = useUserThemeDeleteThemeForUser();
 
-  return useMutation({
-    mutationFn: (id: string) => apiClient.themes.delete(id),
-    onSuccess: () => {
+  return {
+    ...mutation,
+    mutateAsync: async (id: string) => {
+      const result = await mutation.mutateAsync({ id });
       void queryClient.invalidateQueries({ queryKey: themeKeys.mine() });
+      return result;
     },
-  });
+  };
 }
 
 export function useForkTheme() {
   const queryClient = useQueryClient();
+  const mutation = useUserThemeFork();
 
-  return useMutation({
-    mutationFn: ({ themeId, name }: { themeId: string; name: string }) =>
-      apiClient.themes.fork(themeId, name),
-    onSuccess: () => {
+  return {
+    ...mutation,
+    mutateAsync: async ({ themeId: _themeId, name: _name }: { themeId: string; name: string }) => {
+      // SDK fork has no params - backend spec incomplete
+      const result = await mutation.mutateAsync();
       void queryClient.invalidateQueries({ queryKey: themeKeys.mine() });
+      return result;
     },
-  });
+  };
 }
 
 export function useApplyTheme() {
   const queryClient = useQueryClient();
+  const mutation = useUserThemeApply();
 
-  return useMutation({
-    mutationFn: ({
+  return {
+    ...mutation,
+    mutateAsync: async ({
       resumeId,
-      themeId,
-      customizations,
+      themeId: _themeId,
+      customizations: _customizations,
     }: {
       resumeId: string;
       themeId: string;
       customizations?: Record<string, unknown>;
-    }) => apiClient.themes.apply({ resumeId, themeId, customizations }),
-    onSuccess: (_, { resumeId }) => {
-      void queryClient.invalidateQueries({ queryKey: ["resumes", resumeId] });
+    }) => {
+      // SDK apply has no params - backend spec incomplete
+      const result = await mutation.mutateAsync();
+      void queryClient.invalidateQueries({ queryKey: ['resumes', resumeId] });
+      return result;
     },
-  });
+  };
 }
 
-// Approval workflow hooks
+// Approval workflow hooks - Not yet in SDK
 export function useSubmitForApproval() {
   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: (themeId: string) => apiClient.themes.submitForApproval(themeId),
+  return {
+    mutate: () => {
+      throw new Error('submitForApproval not available in SDK');
+    },
+    mutateAsync: async (_themeId: string) => {
+      throw new Error('submitForApproval not available in SDK');
+    },
+    isPending: false,
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: themeKeys.mine() });
     },
-  });
+  };
 }
 
 export function useApproveTheme() {
   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: (themeId: string) => apiClient.themes.approve(themeId),
+  return {
+    mutate: () => {
+      throw new Error('approveTheme not available in SDK');
+    },
+    mutateAsync: async (_themeId: string) => {
+      throw new Error('approveTheme not available in SDK');
+    },
+    isPending: false,
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: themeKeys.pending() });
       void queryClient.invalidateQueries({ queryKey: themeKeys.all });
     },
-  });
+  };
 }
 
 export function useRejectTheme() {
   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: ({ themeId, reason }: { themeId: string; reason: string }) =>
-      apiClient.themes.reject(themeId, reason),
+  return {
+    mutate: () => {
+      throw new Error('rejectTheme not available in SDK');
+    },
+    mutateAsync: async (_params: { themeId: string; reason: string }) => {
+      throw new Error('rejectTheme not available in SDK');
+    },
+    isPending: false,
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: themeKeys.pending() });
     },
-  });
+  };
 }

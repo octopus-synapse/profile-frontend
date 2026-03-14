@@ -1,27 +1,35 @@
-"use client";
+'use client';
 
 /**
  * useNavigation Hook
  * Provides filtered navigation items based on auth state and role
  */
 
-import { useMemo } from "react";
-import { usePathname } from "next/navigation";
-import { useAuth } from "@/features/auth";
-import { ROUTES } from "@/config/routes";
-import { removeLocalePrefix } from "@/config/i18n.config";
+import { type SessionUserResponseDtoRole, useAuthSession } from '@profile/api-client';
+import { usePathname } from 'next/navigation';
+import { useCallback, useMemo } from 'react';
+import { removeLocalePrefix } from '@/config/i18n.config';
+import { ROUTES } from '@/config/routes';
 import {
-  PUBLIC_NAV_ITEMS,
-  PROTECTED_NAV_ITEMS,
-  ADMIN_NAV_ITEMS,
-  USER_MENU_ITEMS,
   ADMIN_MENU_ITEMS,
-} from "../config/nav-items";
-import type { NavItem } from "../types";
+  ADMIN_NAV_ITEMS,
+  PROTECTED_NAV_ITEMS,
+  PUBLIC_NAV_ITEMS,
+  USER_MENU_ITEMS,
+} from '../config/nav-items';
+import type { NavItem } from '../config/types';
 
 export function useNavigation() {
-  const { user, isAuthenticated, hasRole } = useAuth();
+  const { data } = useAuthSession();
+  const user = data?.data?.data?.user;
+  const isAuthenticated = !!user;
   const pathname = usePathname();
+
+  // Helper to check role
+  const hasRole = useCallback(
+    (role: SessionUserResponseDtoRole) => user?.role === role,
+    [user?.role],
+  );
 
   // Filter items based on auth state and role
   const filterItems = useMemo(() => {
@@ -47,8 +55,8 @@ export function useNavigation() {
     const items: NavItem[] = [];
 
     if (isAuthenticated) {
-      const normalizedPathname = pathname ? removeLocalePrefix(pathname) : "";
-      const isHomePage = normalizedPathname === ROUTES.HOME || normalizedPathname === "";
+      const normalizedPathname = pathname ? removeLocalePrefix(pathname) : '';
+      const isHomePage = normalizedPathname === ROUTES.HOME || normalizedPathname === '';
       const isOnboardingPage = normalizedPathname?.includes(ROUTES.ONBOARDING);
       const hasCompletedOnboarding = user?.hasCompletedOnboarding ?? false;
 
@@ -59,7 +67,7 @@ export function useNavigation() {
         // If on onboarding page, show only onboarding item (Home is already added above)
         // Remove Home for onboarding page to show only onboarding
         items.length = 0;
-        const onboardingItem = PROTECTED_NAV_ITEMS.find((item) => item.key === "onboarding");
+        const onboardingItem = PROTECTED_NAV_ITEMS.find((item) => item.key === 'onboarding');
         if (onboardingItem) {
           items.push(onboardingItem);
         }
@@ -67,7 +75,7 @@ export function useNavigation() {
         // If on home page: show Home + Onboarding (if not completed), or Home + other items (if completed)
         if (!hasCompletedOnboarding) {
           // Show Home + Onboarding only
-          const onboardingItem = PROTECTED_NAV_ITEMS.find((item) => item.key === "onboarding");
+          const onboardingItem = PROTECTED_NAV_ITEMS.find((item) => item.key === 'onboarding');
           if (onboardingItem) {
             items.push(onboardingItem);
           }
@@ -75,7 +83,7 @@ export function useNavigation() {
           // Show Home + other protected items (except onboarding)
           const filteredItems = filterItems(PROTECTED_NAV_ITEMS).filter((item) => {
             // Exclude onboarding item since it's completed
-            return item.key !== "onboarding";
+            return item.key !== 'onboarding';
           });
           items.push(...filteredItems);
         }
@@ -83,7 +91,7 @@ export function useNavigation() {
         // Other authenticated pages: show Home + protected items (except onboarding if completed)
         const filteredItems = filterItems(PROTECTED_NAV_ITEMS).filter((item) => {
           // Hide onboarding item if onboarding is already completed
-          if (item.key === "onboarding" && hasCompletedOnboarding) {
+          if (item.key === 'onboarding' && hasCompletedOnboarding) {
             return false;
           }
           return true;
@@ -118,8 +126,8 @@ export function useNavigation() {
 
   // Check if user can access admin section
   const canAccessAdmin = useMemo(() => {
-    return hasRole("ADMIN");
-  }, [hasRole]);
+    return user?.isAdmin ?? false;
+  }, [user?.isAdmin]);
 
   return {
     mainNavItems,

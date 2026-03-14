@@ -1,29 +1,29 @@
-"use client";
+'use client';
 
 /**
  * Reset Password Form Component
  * Ultra Premium Version - Inspired by Linear, Vercel & Cursor
  */
 
-import { Suspense, useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { apiClient } from "@/shared/lib/api-client";
-import { useT } from "@/lib/i18n";
-import { Button, Input, Spinner } from "@/shared/components/ui";
-import { Label } from "@/shared/components/ui/label";
-import { ROUTES } from "@/config/routes";
-import { VALIDATION } from "@/config/constants";
-import { AlertCircle, Lock, Eye, EyeOff, CheckCircle2, ChevronRight } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useT } from '@profile/i18n';
+import { AnimatePresence, motion } from 'framer-motion';
+import { AlertCircle, CheckCircle2, ChevronRight, Eye, EyeOff, Lock } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useEffect, useState } from 'react';
+import { VALIDATION } from '@/config/constants';
+import { ROUTES } from '@/config/routes';
+import { Button, Input, Spinner } from '@/shared/components/ui';
+import { Label } from '@/shared/components/ui/label';
+import { apiClient } from '@/shared/lib/api-client';
 
 function ResetPasswordFormContent() {
   const t = useT();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const token = searchParams.get("token");
+  const token = searchParams.get('token');
 
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +32,7 @@ function ResetPasswordFormContent() {
 
   useEffect(() => {
     if (!token) {
-      setError(t("auth.error.invalidToken"));
+      setError(t('auth.error.invalidToken'));
     }
   }, [token, t]);
 
@@ -41,24 +41,24 @@ function ResetPasswordFormContent() {
     setError(null);
 
     if (!token) {
-      setError(t("auth.error.invalidToken"));
+      setError(t('auth.error.invalidToken'));
       return;
     }
 
     // Validate passwords match
     if (password !== confirmPassword) {
-      setError(t("auth.error.passwordMismatch"));
+      setError(t('auth.error.passwordMismatch'));
       return;
     }
 
     // Validate password strength - align with backend requirements
     if (password.length < VALIDATION.PASSWORD.MIN_LENGTH) {
-      setError(t("auth.error.weakPassword"));
+      setError(t('auth.error.weakPassword'));
       return;
     }
 
     if (!VALIDATION.PASSWORD.PATTERN.test(password)) {
-      setError(t("auth.error.passwordRequirements"));
+      setError(t('auth.error.passwordRequirements'));
       return;
     }
 
@@ -66,7 +66,7 @@ function ResetPasswordFormContent() {
 
     try {
       // Use shared api-client
-      await apiClient.auth.resetPassword({ token, password });
+      await apiClient.auth.resetPassword({ token, newPassword: password });
       setSuccess(true);
       // Redirect to sign in after 2 seconds
       setTimeout(() => {
@@ -74,11 +74,15 @@ function ResetPasswordFormContent() {
       }, 2000);
     } catch (err) {
       // Check for invalid token error
-      const errorMessage = err instanceof Error ? err.message : "";
-      if (errorMessage.includes("401") || errorMessage.includes("invalid") || errorMessage.includes("expired")) {
-        setError(t("auth.error.invalidToken"));
+      const errorMessage = err instanceof Error ? err.message : '';
+      if (
+        errorMessage.includes('401') ||
+        errorMessage.includes('invalid') ||
+        errorMessage.includes('expired')
+      ) {
+        setError(t('auth.error.invalidToken'));
       } else {
-        setError(t("auth.error.resetFailed"));
+        setError(t('auth.error.resetFailed'));
       }
     } finally {
       setIsLoading(false);
@@ -89,7 +93,7 @@ function ResetPasswordFormContent() {
     return (
       <div className="flex items-center gap-3 rounded-lg border border-red-500/20 bg-red-500/10 p-3 font-mono text-xs text-red-400">
         <AlertCircle className="h-4 w-4 shrink-0" />
-        <span>{t("auth.error.invalidToken")}</span>
+        <span>{t('auth.error.invalidToken')}</span>
       </div>
     );
   }
@@ -110,13 +114,13 @@ function ResetPasswordFormContent() {
           {success && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
+              animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               className="overflow-hidden"
             >
               <div className="flex items-center gap-3 rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-3 font-mono text-xs text-emerald-400">
                 <CheckCircle2 className="h-4 w-4 shrink-0" />
-                <span>{t("auth.resetPassword.success")}</span>
+                <span>{t('auth.resetPassword.success')}</span>
               </div>
             </motion.div>
           )}
@@ -127,7 +131,7 @@ function ResetPasswordFormContent() {
           {error && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
+              animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               className="overflow-hidden"
             >
@@ -145,7 +149,7 @@ function ResetPasswordFormContent() {
             htmlFor="password"
             className="ml-1 font-mono text-[10px] tracking-[0.15em] text-zinc-500 uppercase"
           >
-            {t("auth.resetPassword.password")}
+            {t('auth.resetPassword.password')}
           </Label>
           <div className="group relative">
             <div className="absolute inset-y-0 left-3 flex items-center">
@@ -153,9 +157,9 @@ function ResetPasswordFormContent() {
             </div>
             <Input
               id="password"
-              type={showPassword ? "text" : "password"}
+              type={showPassword ? 'text' : 'password'}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
               disabled={success || isLoading}
@@ -178,7 +182,7 @@ function ResetPasswordFormContent() {
             htmlFor="confirmPassword"
             className="ml-1 font-mono text-[10px] tracking-[0.15em] text-zinc-500 uppercase"
           >
-            {t("auth.resetPassword.confirmPassword")}
+            {t('auth.resetPassword.confirmPassword')}
           </Label>
           <div className="group relative">
             <div className="absolute inset-y-0 left-3 flex items-center">
@@ -186,9 +190,11 @@ function ResetPasswordFormContent() {
             </div>
             <Input
               id="confirmPassword"
-              type={showConfirmPassword ? "text" : "password"}
+              type={showConfirmPassword ? 'text' : 'password'}
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setConfirmPassword(e.target.value)
+              }
               placeholder="••••••••"
               required
               disabled={success || isLoading}
@@ -215,7 +221,7 @@ function ResetPasswordFormContent() {
             <Spinner size="sm" className="border-black/20 border-t-black" />
           ) : (
             <span className="relative z-10 flex items-center justify-center gap-2">
-              {t("auth.resetPassword.submit")}
+              {t('auth.resetPassword.submit')}
               <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </span>
           )}
@@ -256,4 +262,3 @@ export function ResetPasswordForm() {
     </Suspense>
   );
 }
-

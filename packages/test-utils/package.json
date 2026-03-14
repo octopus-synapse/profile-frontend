@@ -1,35 +1,35 @@
 {
- "name": "@profile/test-utils",
- "version": "1.0.0",
- "private": true,
- "description": "Profile test utilities - factories, mocks, and helpers",
- "main": "./src/index.ts",
- "types": "./src/index.ts",
- "exports": {
-  ".": {
-   "types": "./src/index.ts",
-   "import": "./src/index.ts",
-   "require": "./src/index.ts"
+  "name": "@profile/test-utils",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Profile test utilities - factories, mocks, and helpers",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "require": "./src/index.ts"
+    },
+    "./factories": {
+      "types": "./src/factories/index.ts",
+      "import": "./src/factories/index.ts"
+    },
+    "./mocks": {
+      "types": "./src/mocks/index.ts",
+      "import": "./src/mocks/index.ts"
+    },
+    "./dom": {
+      "types": "./src/dom/index.ts",
+      "import": "./src/dom/index.ts"
+    }
   },
-  "./factories": {
-   "types": "./src/factories/index.ts",
-   "import": "./src/factories/index.ts"
+  "scripts": {
+    "lint": "eslint src --ext .ts",
+    "type-check": "tsc --noEmit"
   },
-  "./mocks": {
-   "types": "./src/mocks/index.ts",
-   "import": "./src/mocks/index.ts"
-  },
-  "./dom": {
-   "types": "./src/dom/index.ts",
-   "import": "./src/dom/index.ts"
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.7.2"
   }
- },
- "scripts": {
-  "lint": "eslint src --ext .ts",
-  "type-check": "tsc --noEmit"
- },
- "devDependencies": {
-  "@types/bun": "latest",
-  "typescript": "^5.7.2"
- }
 }

@@ -11,12 +11,12 @@ describe("Smoke: API Client SDK Exports", () => {
  describe("Generated API Functions", () => {
   it("should export auth functions", async () => {
    const auth =
-    await import("../../packages/api-client/src/generated/api/auth/auth");
+    await import("../../packages/api-client/src/generated/api/authentication/authentication");
 
    expect(auth.authLogin).toBeDefined();
    expect(auth.authLogout).toBeDefined();
    expect(auth.authRefresh).toBeDefined();
-   expect(auth.authDisable).toBeDefined();
+   expect(auth.authSession).toBeDefined();
 
    // Hooks should also be exported
    expect(auth.useAuthLogin).toBeDefined();
@@ -26,7 +26,7 @@ describe("Smoke: API Client SDK Exports", () => {
 
   it("should export accounts functions", async () => {
    const accounts =
-    await import("../../packages/api-client/src/generated/api/accounts/accounts");
+    await import("../../packages/api-client/src/generated/api/account-lifecycle/account-lifecycle");
 
    expect(accounts.accountsSignup).toBeDefined();
    expect(accounts.useAccountsSignup).toBeDefined();
@@ -38,8 +38,8 @@ describe("Smoke: API Client SDK Exports", () => {
 
    expect(resumes.resumesGetAllUserResumes).toBeDefined();
    expect(resumes.resumesCreateResumeForUser).toBeDefined();
-   expect(resumes.resumesGetResumeDetails).toBeDefined();
-   expect(resumes.resumesDeleteResume).toBeDefined();
+   expect(resumes.resumesGetResumeByIdForUser).toBeDefined();
+   expect(resumes.resumesDeleteResumeForUser).toBeDefined();
    expect(resumes.resumesGetRemainingSlots).toBeDefined();
   });
 
@@ -47,16 +47,16 @@ describe("Smoke: API Client SDK Exports", () => {
    const themes =
     await import("../../packages/api-client/src/generated/api/themes/themes");
 
-   expect(themes.themesFindAllThemesWithPagination).toBeDefined();
-   expect(themes.themesFindThemeById).toBeDefined();
-   expect(themes.themesFindAllSystemThemes).toBeDefined();
+   expect(themes.publicThemeFindAllThemesWithPagination).toBeDefined();
+   expect(themes.publicThemeFindThemeById).toBeDefined();
+   expect(themes.publicThemeFindAllSystemThemes).toBeDefined();
   });
 
   it("should export platform functions", async () => {
    const platform =
     await import("../../packages/api-client/src/generated/api/platform/platform");
 
-   expect(platform.platformGetStatistics).toBeDefined();
+   expect(platform.platformStatsGetStatistics).toBeDefined();
   });
  });
 

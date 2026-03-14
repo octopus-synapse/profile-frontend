@@ -1,16 +1,15 @@
-"use client";
+'use client';
 
 /**
  * Recent Activity Widget
  * Clean, professional design
  */
 
-import { Card, CardContent, CardHeader, CardTitle, Skeleton } from "@/shared/components/ui";
-import { EmptyState } from "@/shared/components/ui/empty-state";
-import { Activity, UserPlus, LogIn, FileText, User } from "lucide-react";
-import { formatDistanceToNow } from "@/shared/utils";
-import { cn } from "@/shared/utils";
-import type { RecentActivity } from "./types";
+import { Activity, FileText, LogIn, User, UserPlus } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, Skeleton } from '@/shared/components/ui';
+import { EmptyState } from '@/shared/components/ui/empty-state';
+import { cn, formatDistanceToNow } from '@/shared/utils';
+import type { RecentActivity } from './types';
 
 interface RecentActivityWidgetProps {
   activities?: RecentActivity[];
@@ -20,27 +19,27 @@ interface RecentActivityWidgetProps {
 const activityConfig = {
   USER_REGISTERED: {
     icon: UserPlus,
-    color: "text-pf-success-fg",
-    bgColor: "bg-pf-success-subtle",
-    label: "signed up",
+    color: 'text-pf-success-fg',
+    bgColor: 'bg-pf-success-subtle',
+    label: 'signed up',
   },
   USER_LOGIN: {
     icon: LogIn,
-    color: "text-pf-accent-fg",
-    bgColor: "bg-pf-accent-subtle",
-    label: "logged in",
+    color: 'text-pf-accent-fg',
+    bgColor: 'bg-pf-accent-subtle',
+    label: 'logged in',
   },
   RESUME_CREATED: {
     icon: FileText,
-    color: "text-pf-done-fg",
-    bgColor: "bg-pf-done-subtle",
-    label: "created a resume",
+    color: 'text-pf-done-fg',
+    bgColor: 'bg-pf-done-subtle',
+    label: 'created a resume',
   },
   PROFILE_UPDATED: {
     icon: User,
-    color: "text-pf-attention-fg",
-    bgColor: "bg-pf-attention-subtle",
-    label: "updated profile",
+    color: 'text-pf-attention-fg',
+    bgColor: 'bg-pf-attention-subtle',
+    label: 'updated profile',
   },
 };
 
@@ -95,15 +94,15 @@ export function RecentActivityWidget({ activities, loading }: RecentActivityWidg
                 <div key={activity.id} className="flex items-start gap-3">
                   <div
                     className={cn(
-                      "mt-0.5 flex h-9 w-9 items-center justify-center rounded-lg",
-                      config.bgColor
+                      'mt-0.5 flex h-9 w-9 items-center justify-center rounded-lg',
+                      config.bgColor,
                     )}
                   >
-                    <Icon className={cn("h-4 w-4", config.color)} strokeWidth={1.5} />
+                    <Icon className={cn('h-4 w-4', config.color)} strokeWidth={1.5} />
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="text-pf-fg-default text-sm">
-                      <span className="font-medium">{activity.userName}</span>{" "}
+                      <span className="font-medium">{activity.userName}</span>{' '}
                       <span className="text-pf-fg-muted">{config.label}</span>
                     </p>
                     <p className="text-pf-fg-subtle mt-0.5 text-xs">

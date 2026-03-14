@@ -3,38 +3,38 @@
  * Edit user profile information
  */
 
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
 import {
-  User,
-  MapPin,
-  Phone,
+  AlertCircle,
+  Check,
+  Github,
   Globe,
   Linkedin,
-  Github,
-  Save,
   Loader2,
-  Check,
-  AlertCircle,
-} from "lucide-react";
-import { useProfile, useUpdateProfile } from "./hooks";
-import { PhoneInput, HelpTooltip } from "@/shared/components/ui";
-import { UsernameField } from "./username-field";
-import type { UpdateProfilePayload } from "./types";
+  MapPin,
+  Phone,
+  Save,
+  User,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { HelpTooltip, PhoneInput } from '@/shared/components/ui';
+import { useProfile, useUpdateProfile } from './hooks';
+import type { UpdateProfilePayload } from './types';
+import { UsernameField } from './username-field';
 
 export function ProfileSection() {
   const { data: profile, isLoading } = useProfile();
   const updateProfile = useUpdateProfile();
 
   const [formData, setFormData] = useState<UpdateProfilePayload>({
-    displayName: "",
-    bio: "",
-    location: "",
-    phone: "",
-    website: "",
-    linkedin: "",
-    github: "",
+    displayName: '',
+    bio: '',
+    location: '',
+    phone: '',
+    website: '',
+    linkedin: '',
+    github: '',
   });
 
   const [isDirty, setIsDirty] = useState(false);
@@ -43,13 +43,13 @@ export function ProfileSection() {
     if (profile) {
       queueMicrotask(() => {
         setFormData({
-          displayName: profile.displayName || profile.name || "",
-          bio: profile.bio || "",
-          location: profile.location || "",
-          phone: profile.phone || "",
-          website: profile.website || "",
-          linkedin: profile.linkedin || "",
-          github: profile.github || "",
+          displayName: profile.displayName || profile.name || '',
+          bio: profile.bio || '',
+          location: profile.location || '',
+          phone: profile.phone || '',
+          website: profile.website || '',
+          linkedin: profile.linkedin || '',
+          github: profile.github || '',
         });
       });
     }
@@ -65,7 +65,7 @@ export function ProfileSection() {
       await updateProfile.mutateAsync(formData);
       setIsDirty(false);
     } catch (error) {
-      console.error("Failed to update profile:", error);
+      console.error('Failed to update profile:', error);
     }
   };
 
@@ -87,6 +87,7 @@ export function ProfileSection() {
         </div>
         {isDirty && (
           <button
+            type="button"
             onClick={() => void handleSave()}
             disabled={updateProfile.isPending}
             className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition-opacity hover:opacity-90 disabled:opacity-50"
@@ -117,7 +118,7 @@ export function ProfileSection() {
           <input
             type="text"
             value={formData.displayName}
-            onChange={(e) => handleChange("displayName", e.target.value)}
+            onChange={(e) => handleChange('displayName', e.target.value)}
             placeholder="John Doe"
             className="w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
           />
@@ -131,7 +132,7 @@ export function ProfileSection() {
           </label>
           <textarea
             value={formData.bio}
-            onChange={(e) => handleChange("bio", e.target.value)}
+            onChange={(e) => handleChange('bio', e.target.value)}
             placeholder="A brief description about yourself..."
             rows={3}
             className="w-full resize-none rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
@@ -148,7 +149,7 @@ export function ProfileSection() {
             <input
               type="text"
               value={formData.location}
-              onChange={(e) => handleChange("location", e.target.value)}
+              onChange={(e) => handleChange('location', e.target.value)}
               placeholder="San Francisco, CA"
               className="w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
             />
@@ -161,7 +162,7 @@ export function ProfileSection() {
             </label>
             <PhoneInput
               value={formData.phone}
-              onChange={(value) => handleChange("phone", value)}
+              onChange={(value) => handleChange('phone', value)}
               countryFormat="BR"
             />
           </div>
@@ -176,7 +177,7 @@ export function ProfileSection() {
           <input
             type="url"
             value={formData.website}
-            onChange={(e) => handleChange("website", e.target.value)}
+            onChange={(e) => handleChange('website', e.target.value)}
             placeholder="https://yoursite.com"
             className="w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
           />
@@ -193,7 +194,7 @@ export function ProfileSection() {
             <input
               type="url"
               value={formData.linkedin}
-              onChange={(e) => handleChange("linkedin", e.target.value)}
+              onChange={(e) => handleChange('linkedin', e.target.value)}
               placeholder="https://linkedin.com/in/username"
               className="w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
             />
@@ -208,7 +209,7 @@ export function ProfileSection() {
             <input
               type="url"
               value={formData.github}
-              onChange={(e) => handleChange("github", e.target.value)}
+              onChange={(e) => handleChange('github', e.target.value)}
               placeholder="https://github.com/username"
               className="w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
             />

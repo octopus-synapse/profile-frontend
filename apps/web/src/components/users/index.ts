@@ -2,32 +2,31 @@
  * Users Feature
  */
 
-// Types
-export type {
-  User,
-  UserProfile,
-  UpdateUserDto,
-  UserStats,
-  UserRole,
-  AdminUserListItem,
-  AdminUserFilters,
-  PaginatedUsers,
-} from "./types";
-
-// Repository
-export { userRepository } from "./services/user-repository";
-
 // Hooks
 export {
-  userKeys,
+  useAdminDeleteUser,
+  useAdminUpdateUserRole,
+  useAdminUser,
+  useAdminUsers,
+  useCheckUsername,
   useMe,
   useMyStats,
   usePublicProfile,
-  useCheckUsername,
-  useAdminUsers,
-  useAdminUser,
+  userKeys,
   useUpdateMe,
   useUploadProfileImage,
-  useAdminUpdateUserRole,
-  useAdminDeleteUser,
-} from "./hooks";
+} from './hooks';
+
+// Repository
+export { userRepository } from './services/user-repository';
+// Types
+export type {
+  AdminUserFilters,
+  AdminUserListItem,
+  PaginatedUsers,
+  UpdateUserDto,
+  User,
+  UserProfile,
+  UserRole,
+  UserStats,
+} from './types';

@@ -4,46 +4,44 @@
  * Nielsen: Match between system and real world (familiar labels)
  */
 
-"use client";
+'use client';
 
-import { useState, useMemo } from "react";
-import { useOnboardingStore } from "../stores";
-import { StepNavigation } from "../step-navigation";
-import { useGitHubUser } from "../hooks/use-github-user";
 import {
-  Briefcase,
-  FileText,
-  Linkedin,
-  Github,
-  Globe,
   AlertCircle,
-  Loader2,
+  Briefcase,
   Check,
   ExternalLink,
-} from "lucide-react";
+  FileText,
+  Github,
+  Globe,
+  Linkedin,
+  Loader2,
+} from 'lucide-react';
+import { useCallback, useMemo, useState } from 'react';
+import { type ProfessionalProfile, useGitHubUser, useOnboarding } from '../hooks';
+import { StepNavigation } from '../step-navigation';
 
 export function ProfessionalProfileStep() {
-  const { professionalProfile, setProfessionalProfile, goToNextStep, markStepComplete } =
-    useOnboardingStore();
+  const { professionalProfile, goToNextStep } = useOnboarding();
 
   // Extract GitHub username from URL if it's a full URL
   const extractGitHubUsername = (url: string | undefined): string => {
-    if (!url) return "";
+    if (!url) return '';
     // If it's already just a username, return it
-    if (!url.includes("github.com")) return url.trim();
+    if (!url.includes('github.com')) return url.trim();
     // Extract username from URL
     const match = url.match(/github\.com\/([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)/);
-    return match?.[1] ?? url.replace(/^https?:\/\/(www\.)?github\.com\//, "").trim();
+    return match?.[1] ?? url.replace(/^https?:\/\/(www\.)?github\.com\//, '').trim();
   };
 
-  const initialGithub: string = extractGitHubUsername(professionalProfile?.github ?? "");
+  const initialGithub: string = extractGitHubUsername(professionalProfile?.github ?? '');
 
   const [formData, setFormData] = useState({
-    jobTitle: professionalProfile?.jobTitle || "",
-    summary: professionalProfile?.summary || "",
-    linkedin: professionalProfile?.linkedin || "",
+    jobTitle: professionalProfile?.jobTitle || '',
+    summary: professionalProfile?.summary || '',
+    linkedin: professionalProfile?.linkedin || '',
     github: initialGithub,
-    website: professionalProfile?.website || "",
+    website: professionalProfile?.website || '',
   });
 
   // Fetch GitHub user data
@@ -65,7 +63,7 @@ export function ProfessionalProfileStep() {
     const newErrors: Record<string, string> = {};
 
     if (touched.jobTitle && formData.jobTitle.length < 2) {
-      newErrors.jobTitle = "Job title must be at least 2 characters";
+      newErrors.jobTitle = 'Job title must be at least 2 characters';
     }
 
     if (touched.summary) {
@@ -77,13 +75,13 @@ export function ProfessionalProfileStep() {
     }
 
     // URL validations (only for linkedin and website, github is validated via API)
-    const urlFields = ["linkedin", "website"] as const;
+    const urlFields = ['linkedin', 'website'] as const;
     urlFields.forEach((field) => {
       if (touched[field] && formData[field]) {
         try {
           new URL(formData[field]);
         } catch {
-          newErrors[field] = "Invalid URL format";
+          newErrors[field] = 'Invalid URL format';
         }
       }
     });
@@ -104,50 +102,55 @@ export function ProfessionalProfileStep() {
     setTouched((prev) => ({ ...prev, [field]: true }));
   };
 
-  const handleNext = () => {
-    setTouched({ jobTitle: true, summary: true, linkedin: true, github: true, website: true });
+  const handleNext = useCallback(async () => {
+    setTouched({
+      jobTitle: true,
+      summary: true,
+      linkedin: true,
+      github: true,
+      website: true,
+    });
 
     if (formData.jobTitle.length < 2 || summaryLength < minSummary || summaryLength > maxSummary) {
       return;
     }
 
     // Validate URLs even if not touched (only linkedin and website)
-    const urlFields = ["linkedin", "website"] as const;
+    const urlFields = ['linkedin', 'website'] as const;
     const urlErrors: Record<string, string> = {};
     urlFields.forEach((field) => {
       if (formData[field]) {
         try {
           new URL(formData[field]);
         } catch {
-          urlErrors[field] = "Invalid URL format";
+          urlErrors[field] = 'Invalid URL format';
         }
       }
     });
 
     if (Object.keys(urlErrors).length > 0) {
       // Show errors but don't prevent proceeding if URLs are optional
-      console.warn("URL validation errors:", urlErrors);
+      console.warn('URL validation errors:', urlErrors);
     }
 
     // Normalize empty URLs to undefined
     const normalizeUrl = (url: string | undefined): string | undefined => {
-      if (!url || url.trim() === "") return undefined;
+      if (!url || url.trim() === '') return undefined;
       return url;
     };
 
     // Build GitHub URL from username if provided
     const githubUrl = formData.github ? `https://github.com/${formData.github.trim()}` : undefined;
 
-    setProfessionalProfile({
-      jobTitle: formData.jobTitle,
+    const profile: ProfessionalProfile = {
+      title: formData.jobTitle,
       summary: formData.summary,
       linkedin: normalizeUrl(formData.linkedin),
       github: normalizeUrl(githubUrl),
       website: normalizeUrl(formData.website),
-    });
-    markStepComplete("professional-profile");
-    goToNextStep();
-  };
+    };
+    await goToNextStep({ professionalProfile: profile });
+  }, [formData, summaryLength, goToNextStep]);
 
   const canProceed =
     formData.jobTitle.length >= 2 && summaryLength >= minSummary && summaryLength <= maxSummary;
@@ -176,10 +179,10 @@ export function ProfessionalProfileStep() {
           <input
             type="text"
             value={formData.jobTitle}
-            onChange={(e) => handleChange("jobTitle", e.target.value)}
-            onBlur={() => handleBlur("jobTitle")}
+            onChange={(e) => handleChange('jobTitle', e.target.value)}
+            onBlur={() => handleBlur('jobTitle')}
             placeholder="Senior Software Engineer"
-            className={`w-full border border-white/10 bg-white/5 px-3 py-2 font-mono text-sm text-white placeholder:text-zinc-500 focus:border-cyan-500 focus:outline-none ${errors.jobTitle ? "border-red-500" : ""} `}
+            className={`w-full border border-white/10 bg-white/5 px-3 py-2 font-mono text-sm text-white placeholder:text-zinc-500 focus:border-cyan-500 focus:outline-none ${errors.jobTitle ? 'border-red-500' : ''} `}
           />
           {errors.jobTitle && (
             <p className="mt-1 flex items-center gap-1 font-mono text-xs text-red-500">
@@ -197,11 +200,11 @@ export function ProfessionalProfileStep() {
           </label>
           <textarea
             value={formData.summary}
-            onChange={(e) => handleChange("summary", e.target.value)}
-            onBlur={() => handleBlur("summary")}
+            onChange={(e) => handleChange('summary', e.target.value)}
+            onBlur={() => handleBlur('summary')}
             placeholder="Passionate full-stack developer with 5+ years of experience building scalable web applications. Specialized in React, Node.js, and cloud infrastructure..."
             rows={4}
-            className={`w-full resize-none border border-white/10 bg-white/5 px-3 py-2 font-mono text-sm text-white placeholder:text-zinc-500 focus:border-cyan-500 focus:outline-none ${errors.summary ? "border-red-500" : ""} `}
+            className={`w-full resize-none border border-white/10 bg-white/5 px-3 py-2 font-mono text-sm text-white placeholder:text-zinc-500 focus:border-cyan-500 focus:outline-none ${errors.summary ? 'border-red-500' : ''} `}
           />
           <div className="mt-1 flex items-center justify-between">
             {errors.summary ? (
@@ -215,10 +218,10 @@ export function ProfessionalProfileStep() {
             <span
               className={`font-mono text-xs ${
                 summaryLength < minSummary
-                  ? "text-amber-500"
+                  ? 'text-amber-500'
                   : summaryLength > maxSummary
-                    ? "text-red-500"
-                    : "text-emerald-500"
+                    ? 'text-red-500'
+                    : 'text-emerald-500'
               }`}
             >
               {summaryLength}/{maxSummary}
@@ -229,7 +232,7 @@ export function ProfessionalProfileStep() {
         {/* Divider */}
         <div className="flex items-center gap-3 border-t border-white/10 pt-4">
           <span className="font-mono text-xs text-zinc-500">
-            <span className="opacity-60">{"//"}</span> Social links (optional)
+            <span className="opacity-60">{'//'}</span> Social links (optional)
           </span>
         </div>
 
@@ -242,10 +245,10 @@ export function ProfessionalProfileStep() {
           <input
             type="url"
             value={formData.linkedin}
-            onChange={(e) => handleChange("linkedin", e.target.value)}
-            onBlur={() => handleBlur("linkedin")}
+            onChange={(e) => handleChange('linkedin', e.target.value)}
+            onBlur={() => handleBlur('linkedin')}
             placeholder="https://linkedin.com/in/username"
-            className={`w-full border border-white/10 bg-white/5 px-3 py-2 font-mono text-sm text-white placeholder:text-zinc-500 focus:border-cyan-500 focus:outline-none ${errors.linkedin ? "border-red-500" : ""} `}
+            className={`w-full border border-white/10 bg-white/5 px-3 py-2 font-mono text-sm text-white placeholder:text-zinc-500 focus:border-cyan-500 focus:outline-none ${errors.linkedin ? 'border-red-500' : ''} `}
           />
           {errors.linkedin && (
             <p className="mt-1 flex items-center gap-1 font-mono text-xs text-red-500">
@@ -267,13 +270,13 @@ export function ProfessionalProfileStep() {
               value={formData.github}
               onChange={(e) => {
                 // Only allow alphanumeric, hyphens, and underscores
-                const value = e.target.value.replace(/[^a-zA-Z0-9_-]/g, "");
-                handleChange("github", value);
+                const value = e.target.value.replace(/[^a-zA-Z0-9_-]/g, '');
+                handleChange('github', value);
               }}
-              onBlur={() => handleBlur("github")}
+              onBlur={() => handleBlur('github')}
               placeholder="username"
               className={`w-full border border-white/10 bg-white/5 px-3 py-2 pr-10 font-mono text-sm text-white placeholder:text-zinc-500 focus:border-cyan-500 focus:outline-none ${
-                errors.github ? "border-red-500" : githubUser ? "border-emerald-500" : ""
+                errors.github ? 'border-red-500' : githubUser ? 'border-emerald-500' : ''
               }`}
             />
             <div className="absolute top-1/2 right-3 -translate-y-1/2">
@@ -345,10 +348,10 @@ export function ProfessionalProfileStep() {
           <input
             type="url"
             value={formData.website}
-            onChange={(e) => handleChange("website", e.target.value)}
-            onBlur={() => handleBlur("website")}
+            onChange={(e) => handleChange('website', e.target.value)}
+            onBlur={() => handleBlur('website')}
             placeholder="https://yoursite.dev"
-            className={`w-full border border-white/10 bg-white/5 px-3 py-2 font-mono text-sm text-white placeholder:text-zinc-500 focus:border-cyan-500 focus:outline-none ${errors.website ? "border-red-500" : ""} `}
+            className={`w-full border border-white/10 bg-white/5 px-3 py-2 font-mono text-sm text-white placeholder:text-zinc-500 focus:border-cyan-500 focus:outline-none ${errors.website ? 'border-red-500' : ''} `}
           />
           {errors.website && (
             <p className="mt-1 flex items-center gap-1 font-mono text-xs text-red-500">

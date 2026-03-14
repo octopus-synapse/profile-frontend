@@ -6,123 +6,120 @@
  * for all API routes used in tests and application code.
  */
 
-import * as fs from "fs";
-import * as path from "path";
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 
-const API_DIR = path.resolve(__dirname, "../src/generated/api");
-const ROUTES_OUTPUT = path.resolve(__dirname, "../src/constants/routes.ts");
+const API_DIR = path.resolve(__dirname, '../src/generated/api');
+const ROUTES_OUTPUT = path.resolve(__dirname, '../src/constants/routes.ts');
 
 interface Route {
- name: string;
- path: string;
- category: string;
+  name: string;
+  path: string;
+  category: string;
 }
 
 interface UrlFunction {
- name: string;
- hasParams: boolean;
- category: string;
+  name: string;
+  hasParams: boolean;
+  category: string;
 }
 
-function extractUrlFunctionsFromFile(
- filePath: string,
- category: string,
-): UrlFunction[] {
- const content = fs.readFileSync(filePath, "utf-8");
- const functions: UrlFunction[] = [];
+function extractUrlFunctionsFromFile(filePath: string, category: string): UrlFunction[] {
+  const content = fs.readFileSync(filePath, 'utf-8');
+  const functions: UrlFunction[] = [];
 
- // Match: export const getSomethingUrl = (params?) => { ... }
- const urlFunctionRegex = /export const (get\w+Url) = \(([^)]*)\) =>/g;
+  // Match: export const getSomethingUrl = (params?) => { ... }
+  const urlFunctionRegex = /export const (get\w+Url) = \(([^)]*)\) =>/g;
 
- let match;
- while ((match = urlFunctionRegex.exec(content)) !== null) {
-  const [, functionName, params] = match;
-  const hasParams = params.trim().length > 0;
+  let match;
+  while ((match = urlFunctionRegex.exec(content)) !== null) {
+    const [, functionName, params] = match;
+    const hasParams = params.trim().length > 0;
 
-  functions.push({
-   name: functionName,
-   hasParams,
-   category,
-  });
- }
+    functions.push({
+      name: functionName,
+      hasParams,
+      category,
+    });
+  }
 
- return functions;
+  return functions;
 }
 
 function extractRoutesFromFile(filePath: string, category: string): Route[] {
- const content = fs.readFileSync(filePath, "utf-8");
- const routes: Route[] = [];
+  const content = fs.readFileSync(filePath, 'utf-8');
+  const routes: Route[] = [];
 
- // Match: export const getSomethingUrl = () => { ... return "/api/..."; }
- // Allow whitespace between function declaration and return statement (non-greedy)
- const urlFunctionRegex =
-  /export const (get\w+Url) = \(\) => \{[\s\S]*?return [`'"]([^`'"]+)[`'"][\s\S]*?\}/g;
+  // Match: export const getSomethingUrl = () => { ... return "/api/..."; }
+  // Allow whitespace between function declaration and return statement (non-greedy)
+  const urlFunctionRegex =
+    /export const (get\w+Url) = \(\) => \{[\s\S]*?return [`'"]([^`'"]+)[`'"][\s\S]*?\}/g;
 
- let match;
- while ((match = urlFunctionRegex.exec(content)) !== null) {
-  const [, functionName, routePath] = match;
-  // Include routes that start with /api/ (v1, auth, accounts, etc.)
-  if (routePath.startsWith("/api/")) {
-   routes.push({
-    name: functionName,
-    path: routePath,
-    category,
-   });
+  let match;
+  while ((match = urlFunctionRegex.exec(content)) !== null) {
+    const [, functionName, routePath] = match;
+    // Include routes that start with /api/ (v1, auth, accounts, etc.)
+    if (routePath.startsWith('/api/')) {
+      routes.push({
+        name: functionName,
+        path: routePath,
+        category,
+      });
+    }
   }
- }
 
- return routes;
+  return routes;
 }
 
 function generateRoutesFile(): void {
- if (!fs.existsSync(API_DIR)) {
-  console.error(`API directory not found: ${API_DIR}`);
-  process.exit(1);
- }
-
- const entries = fs.readdirSync(API_DIR, { withFileTypes: true });
- const folders = entries.filter((e) => e.isDirectory()).map((e) => e.name);
-
- let allRoutes: Route[] = [];
- let allUrlFunctions: UrlFunction[] = [];
-
- // Extract routes and URL functions from all API files
- for (const folder of folders) {
-  const filePath = path.join(API_DIR, folder, `${folder}.ts`);
-  if (fs.existsSync(filePath)) {
-   const routes = extractRoutesFromFile(filePath, folder);
-   const urlFunctions = extractUrlFunctionsFromFile(filePath, folder);
-   allRoutes = allRoutes.concat(routes);
-   allUrlFunctions = allUrlFunctions.concat(urlFunctions);
+  if (!fs.existsSync(API_DIR)) {
+    console.error(`API directory not found: ${API_DIR}`);
+    process.exit(1);
   }
- }
 
- // Group routes by category
- const routesByCategory = allRoutes.reduce(
-  (acc, route) => {
-   if (!acc[route.category]) {
-    acc[route.category] = [];
-   }
-   acc[route.category].push(route);
-   return acc;
-  },
-  {} as Record<string, Route[]>,
- );
+  const entries = fs.readdirSync(API_DIR, { withFileTypes: true });
+  const folders = entries.filter((e) => e.isDirectory()).map((e) => e.name);
 
- // Group URL functions by category
- const functionsByCategory = allUrlFunctions.reduce(
-  (acc, func) => {
-   if (!acc[func.category]) {
-    acc[func.category] = [];
-   }
-   acc[func.category].push(func);
-   return acc;
-  },
-  {} as Record<string, UrlFunction[]>,
- );
+  let allRoutes: Route[] = [];
+  let allUrlFunctions: UrlFunction[] = [];
 
- // Generate TypeScript file content
- const imports = `/**
+  // Extract routes and URL functions from all API files
+  for (const folder of folders) {
+    const filePath = path.join(API_DIR, folder, `${folder}.ts`);
+    if (fs.existsSync(filePath)) {
+      const routes = extractRoutesFromFile(filePath, folder);
+      const urlFunctions = extractUrlFunctionsFromFile(filePath, folder);
+      allRoutes = allRoutes.concat(routes);
+      allUrlFunctions = allUrlFunctions.concat(urlFunctions);
+    }
+  }
+
+  // Group routes by category
+  const routesByCategory = allRoutes.reduce(
+    (acc, route) => {
+      if (!acc[route.category]) {
+        acc[route.category] = [];
+      }
+      acc[route.category].push(route);
+      return acc;
+    },
+    {} as Record<string, Route[]>,
+  );
+
+  // Group URL functions by category
+  const functionsByCategory = allUrlFunctions.reduce(
+    (acc, func) => {
+      if (!acc[func.category]) {
+        acc[func.category] = [];
+      }
+      acc[func.category].push(func);
+      return acc;
+    },
+    {} as Record<string, UrlFunction[]>,
+  );
+
+  // Generate TypeScript file content
+  const imports = `/**
  * API Routes - Generated from OpenAPI specification
  *
  * DO NOT EDIT MANUALLY
@@ -156,57 +153,56 @@ export function getBackendHost(): string {
 // ============================================================================
 `;
 
- const categorySections = Object.entries(routesByCategory)
-  .sort(([a], [b]) => a.localeCompare(b))
-  .map(([category, routes]) => {
-   const categoryName = category.toUpperCase().replace(/-/g, "_");
-   const routeExports = routes
-    .map((route) => {
-     // Extract constant name from function (e.g., getAuthSignupUrl -> SIGNUP)
-     const constName = route.name
-      .replace(/^get/, "")
-      .replace(/Url$/, "")
-      .replace(/([A-Z])/g, "_$1")
-      .toUpperCase()
-      .replace(/^_/, "");
+  const categorySections = Object.entries(routesByCategory)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([category, routes]) => {
+      const categoryName = category.toUpperCase().replace(/-/g, '_');
+      const routeExports = routes
+        .map((route) => {
+          // Extract constant name from function (e.g., getAuthSignupUrl -> SIGNUP)
+          const constName = route.name
+            .replace(/^get/, '')
+            .replace(/Url$/, '')
+            .replace(/([A-Z])/g, '_$1')
+            .toUpperCase()
+            .replace(/^_/, '');
 
-     return `  ${constName}: "${route.path}",`;
-    })
-    .join("\n");
+          return `  ${constName}: "${route.path}",`;
+        })
+        .join('\n');
 
-   return `export const ${categoryName}_ROUTES = {
+      return `export const ${categoryName}_ROUTES = {
 ${routeExports}
 } as const;`;
-  })
-  .join("\n\n");
+    })
+    .join('\n\n');
 
- // Generate re-exports for URL functions
- const urlFunctionExports = `
+  // Generate re-exports for URL functions
+  const urlFunctionExports = `
 
 // ============================================================================
 // URL Functions (with parameters) - Re-exported from SDK
 // ============================================================================
 
 ${Object.entries(functionsByCategory)
- .sort(([a], [b]) => a.localeCompare(b))
- .map(([category, functions]) => {
-  const exports = functions.map((func) => func.name).join(",\n  ");
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([category, functions]) => {
+    const exports = functions.map((func) => func.name).join(',\n  ');
 
-  return `// ${category}
+    return `// ${category}
 export {
   ${exports}
 } from "../generated/api/${category}/${category}";`;
- })
- .join("\n\n")}
+  })
+  .join('\n\n')}
 `;
 
- const content =
-  imports + "\n" + categorySections + "\n" + urlFunctionExports + "\n";
+  const content = `${imports}\n${categorySections}\n${urlFunctionExports}\n`;
 
- fs.writeFileSync(ROUTES_OUTPUT, content);
- console.log(
-  `✓ Generated routes file with ${allRoutes.length} static routes and ${allUrlFunctions.length} URL functions across ${Object.keys(routesByCategory).length} categories`,
- );
+  fs.writeFileSync(ROUTES_OUTPUT, content);
+  console.log(
+    `✓ Generated routes file with ${allRoutes.length} static routes and ${allUrlFunctions.length} URL functions across ${Object.keys(routesByCategory).length} categories`,
+  );
 }
 
 generateRoutesFile();

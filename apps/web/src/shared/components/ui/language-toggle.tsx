@@ -1,39 +1,40 @@
-"use client";
+'use client';
 
 /**
  * Language Toggle Component
  * Switch between supported languages
  */
 
-import { Globe } from "lucide-react";
-import { useI18n } from "@/lib/i18n/context";
-import { cn } from "@/shared/utils";
-import type { Locale } from "@/config/i18n.config";
+import { useI18n } from '@profile/i18n';
+import { Globe } from 'lucide-react';
+import type { Locale } from '@/config/i18n.config';
+import { cn } from '@/shared/utils';
 
 interface LanguageToggleProps {
   className?: string;
-  variant?: "buttons" | "dropdown";
+  variant?: 'buttons' | 'dropdown';
 }
 
-export function LanguageToggle({ className, variant = "buttons" }: LanguageToggleProps) {
+export function LanguageToggle({ className, variant = 'buttons' }: LanguageToggleProps) {
   const { language, setLanguage, locales } = useI18n();
 
-  if (variant === "buttons") {
+  if (variant === 'buttons') {
     return (
-      <div className={cn("flex items-center gap-1", className)}>
+      <div className={cn('flex items-center gap-1', className)}>
         {locales.map((locale) => (
           <button
+            type="button"
             key={locale.code}
             onClick={() => setLanguage(locale.code)}
             className={cn(
-              "px-2 py-1 font-mono text-xs transition-colors",
+              'px-2 py-1 font-mono text-xs transition-colors',
               language === locale.code
-                ? "bg-white text-black"
-                : "text-zinc-400 hover:bg-white/5 hover:text-white"
+                ? 'bg-white text-black'
+                : 'text-zinc-400 hover:bg-white/5 hover:text-white',
             )}
             title={locale.label}
           >
-            {locale.code === "pt-BR" ? "PT" : locale.code.toUpperCase()}
+            {locale.code === 'pt-BR' ? 'PT' : locale.code.toUpperCase()}
           </button>
         ))}
       </div>
@@ -41,15 +42,15 @@ export function LanguageToggle({ className, variant = "buttons" }: LanguageToggl
   }
 
   return (
-    <div className={cn("flex items-center gap-2", className)}>
+    <div className={cn('flex items-center gap-2', className)}>
       <Globe className="h-3.5 w-3.5 text-zinc-400" strokeWidth={1.5} />
       <select
         value={language}
         onChange={(e) => setLanguage(e.target.value as Locale)}
         className={cn(
-          "bg-transparent font-mono text-xs",
-          "text-zinc-400 hover:text-white",
-          "cursor-pointer focus:outline-none"
+          'bg-transparent font-mono text-xs',
+          'text-zinc-400 hover:text-white',
+          'cursor-pointer focus:outline-none',
         )}
       >
         {locales.map((locale) => (
@@ -76,15 +77,16 @@ export function LanguageToggleSimple({ className }: { className?: string }) {
   };
 
   const currentLocale = locales.find((l) => l.code === language);
-  const displayCode = language === "pt-BR" ? "PT" : language.toUpperCase();
+  const displayCode = language === 'pt-BR' ? 'PT' : language.toUpperCase();
 
   return (
     <button
+      type="button"
       onClick={cycleLanguage}
       className={cn(
-        "flex h-9 items-center gap-1.5 px-2 transition-colors",
-        "text-zinc-400 hover:bg-white/5 hover:text-white",
-        className
+        'flex h-9 items-center gap-1.5 px-2 transition-colors',
+        'text-zinc-400 hover:bg-white/5 hover:text-white',
+        className,
       )}
       title={`Language: ${currentLocale?.label || language}`}
     >

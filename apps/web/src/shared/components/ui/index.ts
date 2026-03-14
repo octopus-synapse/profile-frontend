@@ -9,64 +9,53 @@
 // ============================================
 // FROM @octopus-synapse/profile-ui
 // Core components from shared design system
+// Note: Types (except ButtonProps) are not exported by the design system
 // ============================================
 export {
+  Avatar,
+  Badge,
   // Components
   Button,
   type ButtonProps,
   Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-  type CardProps,
-  Badge,
-  type BadgeProps,
-  Input,
-  type InputProps,
-  Avatar,
-  type AvatarProps,
-  Spinner,
-  type SpinnerProps,
-  Separator,
-  type SeparatorProps,
-  Skeleton,
-  type SkeletonProps,
-  LoadingState,
-  type LoadingStateProps,
-  EmptyState as DesignSystemEmptyState,
-  type EmptyStateProps as DesignSystemEmptyStateProps,
   // Utils
   cn,
-} from "@octopus-synapse/profile-ui";
+  EmptyState as DesignSystemEmptyState,
+  Input,
+  LoadingState,
+  Separator,
+  Skeleton,
+  Spinner,
+} from '@octopus-synapse/profile-ui';
 
 // ============================================
 // LOCAL COMPONENTS
 // Specific to profile-frontend, use Radix UI
 // ============================================
 
-// Form elements
-export * from "./textarea";
-export * from "./label";
-export * from "./checkbox";
-export * from "./switch";
-export * from "./select";
-export * from "./autocomplete";
-export * from "./phone-input";
-export * from "./language-toggle";
-
-// Layout
-export * from "./scroll-area";
-export * from "./tabs";
-
-// Feedback
-export * from "./progress";
-export * from "./alert";
-export * from "./toast";
-export * from "./empty-state";
-
+export * from './alert';
+export * from './autocomplete';
+export * from './checkbox';
 // Overlays
-export * from "./dialog";
-export * from "./dropdown-menu";
-export * from "./tooltip";
+export * from './dialog';
+export * from './dropdown-menu';
+export * from './empty-state';
+export * from './label';
+export * from './language-toggle';
+export * from './phone-input';
+// Feedback
+export * from './progress';
+// Layout
+export * from './scroll-area';
+export * from './select';
+export * from './switch';
+export * from './tabs';
+// Form elements
+export * from './textarea';
+export * from './toast';
+export * from './tooltip';

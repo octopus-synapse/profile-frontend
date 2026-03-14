@@ -1,59 +1,44 @@
-export { resumeKeys } from "./query-keys";
-export { useResumes, useResume, usePublicResume } from "./use-resume-queries";
+// AST hooks
+export { astKeys } from './ast-query-keys';
+export { resumeKeys } from './query-keys';
+// Theme hooks
+export { themeKeys } from './theme-query-keys';
+export { usePreviewDsl, usePublicResumeAst, useResumeAst } from './use-ast-queries';
+export { genericSectionKeys, useGenericSectionCRUD } from './use-generic-section-crud';
 export {
   useCreateResume,
-  useUpdateResume,
   useDeleteResume,
   useDuplicateResume,
-  useAddExperience,
-  useUpdateExperience,
-  useDeleteExperience,
-  useAddEducation,
-  useUpdateEducation,
-  useDeleteEducation,
-  useAddSkill,
-  useBulkAddSkills,
-  useDeleteSkill,
-  useAddLanguage,
-  useDeleteLanguage,
-  useAddCertification,
-  useDeleteCertification,
-  useAddProject,
-  useDeleteProject,
-  useExportResumePDF,
   useExportResumeDOCX,
-} from "./use-resume-mutations";
-
-// AST hooks
-export { astKeys } from "./ast-query-keys";
-export { useResumeAst, usePublicResumeAst, usePreviewDsl } from "./use-ast-queries";
-
-// Theme hooks
-export { themeKeys } from "./theme-query-keys";
-export {
-  useThemes,
-  useTheme,
-  usePopularThemes,
-  useSystemThemes,
-  useMyThemes,
-  usePendingThemes,
-} from "./use-theme-queries";
-export {
-  useCreateTheme,
-  useUpdateTheme,
-  useDeleteTheme,
-  useForkTheme,
-  useApplyTheme,
-  useSubmitForApproval,
-  useApproveTheme,
-  useRejectTheme,
-} from "./use-theme-mutations";
-
+  useExportResumePDF,
+  useUpdateResume,
+} from './use-resume-mutations';
+export { usePublicResume, useResume, useResumes } from './use-resume-queries';
 // Section config hooks
 export {
-  useToggleSection,
+  useBatchUpdateSections,
+  useReorderItem,
   useReorderSection,
   useToggleItem,
-  useReorderItem,
-  useBatchUpdateSections,
-} from "./use-section-config";
+  useToggleSection,
+} from './use-section-config';
+// Generic sections
+export { useSectionTypes } from './use-section-types';
+export {
+  useApplyTheme,
+  useApproveTheme,
+  useCreateTheme,
+  useDeleteTheme,
+  useForkTheme,
+  useRejectTheme,
+  useSubmitForApproval,
+  useUpdateTheme,
+} from './use-theme-mutations';
+export {
+  useMyThemes,
+  usePendingThemes,
+  usePopularThemes,
+  useSystemThemes,
+  useTheme,
+  useThemes,
+} from './use-theme-queries';

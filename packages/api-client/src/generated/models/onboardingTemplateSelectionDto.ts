@@ -7,6 +7,8 @@
  */
 
 export interface OnboardingTemplateSelectionDto {
+  /** Template ID */
   templateId?: string;
+  /** Color scheme/palette */
   colorScheme?: string;
 }

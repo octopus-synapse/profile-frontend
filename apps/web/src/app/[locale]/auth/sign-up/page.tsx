@@ -1,25 +1,25 @@
-"use client";
+'use client';
 
 /**
  * Sign Up Page
  * Ultra Premium dark theme - matching sign-in
  */
 
-import { SignUpForm } from "@/components/auth";
-import { LocalizedLink } from "@/shared/components/localized-link";
-import { ROUTES } from "@/config/routes";
-import { Terminal, Github, ArrowLeft, Check, Zap } from "lucide-react";
-import { useI18n } from "@/lib/i18n";
-import { motion } from "framer-motion";
+import { useI18n } from '@profile/i18n';
+import { motion } from 'framer-motion';
+import { ArrowLeft, Check, Github, Terminal, Zap } from 'lucide-react';
+import { SignUpForm } from '@/components/auth';
+import { ROUTES } from '@/config/routes';
+import { LocalizedLink } from '@/shared/components/localized-link';
 
 export default function SignUpPage() {
   const { t } = useI18n();
 
   const features = [
-    { textKey: "auth.signUp.features.profiles", done: true },
-    { textKey: "auth.signUp.features.export", done: true },
-    { textKey: "auth.signUp.features.analytics", done: true },
-    { textKey: "auth.signUp.features.github", done: true },
+    { textKey: 'auth.signUp.features.profiles', done: true },
+    { textKey: 'auth.signUp.features.export', done: true },
+    { textKey: 'auth.signUp.features.analytics', done: true },
+    { textKey: 'auth.signUp.features.github', done: true },
   ];
 
   return (
@@ -57,23 +57,23 @@ export default function SignUpPage() {
             </div>
             <div className="p-5 font-mono text-[11px] leading-relaxed text-zinc-400">
               <div>
-                <span className="text-pink-400">const</span>{" "}
-                <span className="text-cyan-300">createProfile</span> ={" "}
-                <span className="text-pink-400">async</span> () =&gt; {"{"}
+                <span className="text-pink-400">const</span>{' '}
+                <span className="text-cyan-300">createProfile</span> ={' '}
+                <span className="text-pink-400">async</span> () =&gt; {'{'}
               </div>
               <div className="ml-4">
-                <span className="text-pink-400">return</span> {"{"}
+                <span className="text-pink-400">return</span> {'{'}
               </div>
               <div className="ml-8">
-                <span className="text-blue-400">status</span>:{" "}
+                <span className="text-blue-400">status</span>:{' '}
                 <span className="text-emerald-400">&quot;success&quot;</span>,
               </div>
               <div className="ml-8">
-                <span className="text-blue-400">message</span>:{" "}
+                <span className="text-blue-400">message</span>:{' '}
                 <span className="text-emerald-400">&quot;Profile created!&quot;</span>
               </div>
-              <div className="ml-4">{"}"}</div>
-              <div>{"}"}</div>
+              <div className="ml-4">{'}'}</div>
+              <div>{'}'}</div>
             </div>
           </div>
 
@@ -114,7 +114,7 @@ export default function SignUpPage() {
                 className="h-4 w-4 transition-transform group-hover:-translate-x-1"
                 strokeWidth={2}
               />
-              <span className="font-mono text-xs uppercase tracking-widest">{t("auth.back")}</span>
+              <span className="font-mono text-xs uppercase tracking-widest">{t('auth.back')}</span>
             </LocalizedLink>
             <LocalizedLink href={ROUTES.HOME} className="flex items-center gap-2 lg:hidden">
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-cyan-500">
@@ -145,7 +145,7 @@ export default function SignUpPage() {
                 <Terminal className="h-6 w-6 text-white" strokeWidth={1.5} />
               </div>
               <h1 className="mb-2 text-3xl font-bold tracking-tight text-white">
-                {t("auth.signUp.title")}
+                {t('auth.signUp.title')}
               </h1>
               <div className="flex items-center justify-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-500">
                 <span className="text-amber-400">●</span>
@@ -159,9 +159,12 @@ export default function SignUpPage() {
 
               <div className="relative rounded-xl border border-white/10 bg-[#0A0A0A]/80 p-8 shadow-2xl backdrop-blur-2xl">
                 {/* GitHub OAuth */}
-                <button className="mb-6 flex w-full items-center justify-center gap-3 rounded-lg border border-white/10 bg-white/5 py-3 font-mono text-sm font-medium text-white transition-all hover:border-white/20 hover:bg-white/10 active:scale-[0.98]">
+                <button
+                  type="button"
+                  className="mb-6 flex w-full items-center justify-center gap-3 rounded-lg border border-white/10 bg-white/5 py-3 font-mono text-sm font-medium text-white transition-all hover:border-white/20 hover:bg-white/10 active:scale-[0.98]"
+                >
                   <Github className="h-4 w-4" strokeWidth={1.5} />
-                  {t("auth.continueWithGithub")}
+                  {t('auth.continueWithGithub')}
                 </button>
 
                 {/* Divider */}
@@ -171,7 +174,7 @@ export default function SignUpPage() {
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
                     <span className="bg-[#0A0A0A] px-2 font-mono tracking-widest text-zinc-600">
-                      {t("auth.or")}
+                      {t('auth.or')}
                     </span>
                   </div>
                 </div>
@@ -183,24 +186,24 @@ export default function SignUpPage() {
 
             {/* Footer */}
             <p className="mt-8 text-center font-mono text-xs text-zinc-500">
-              {t("auth.signUp.hasAccount")}{" "}
+              {t('auth.signUp.hasAccount')}{' '}
               <LocalizedLink
                 href={ROUTES.AUTH.SIGN_IN}
                 className="font-bold text-white underline-offset-4 hover:underline"
               >
-                {t("auth.signUp.signIn")}
+                {t('auth.signUp.signIn')}
               </LocalizedLink>
             </p>
 
             {/* Terms */}
             <p className="mt-4 text-center font-mono text-[10px] text-zinc-600">
-              By signing up, you agree to our{" "}
+              By signing up, you agree to our{' '}
               <LocalizedLink href="/terms" className="underline hover:text-white">
-                {t("auth.terms")}
-              </LocalizedLink>{" "}
-              and{" "}
+                {t('auth.terms')}
+              </LocalizedLink>{' '}
+              and{' '}
               <LocalizedLink href="/privacy" className="underline hover:text-white">
-                {t("auth.privacy")}
+                {t('auth.privacy')}
               </LocalizedLink>
             </p>
           </motion.div>

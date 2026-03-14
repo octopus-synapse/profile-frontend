@@ -34,7 +34,10 @@ import type {
 
 import type {
   AutoSyncGitHubRequestDto,
-  GithubSyncGitHubBody
+  GitHubSummaryDto,
+  GitHubSyncResponseDto,
+  GithubSyncGitHubBody,
+  MecSyncStatusResponseDto
 } from '../../models';
 
 import { customFetch } from '../../../client/fetcher';
@@ -48,7 +51,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary Get GitHub profile summary for a username
  */
 export type githubGetGitHubSummaryResponse200 = {
-  data: void
+  data: GitHubSummaryDto
   status: 200
 }
 
@@ -317,7 +320,7 @@ export function useGithubGetGitHubSummarySuspense<TData = Awaited<ReturnType<typ
  * @summary Sync GitHub data to user resume
  */
 export type githubSyncGitHubResponse201 = {
-  data: void
+  data: GitHubSyncResponseDto
   status: 201
 }
 
@@ -406,7 +409,7 @@ export const useGithubSyncGitHub = <TError = void,
  * @summary Get GitHub sync status for a resume
  */
 export type githubGetSyncStatusResponse200 = {
-  data: void
+  data: MecSyncStatusResponseDto
   status: 200
 }
 
@@ -675,7 +678,7 @@ export function useGithubGetSyncStatusSuspense<TData = Awaited<ReturnType<typeof
  * @summary Auto-sync GitHub from resume GitHub link
  */
 export type githubAutoSyncGitHubResponse201 = {
-  data: void
+  data: GitHubSyncResponseDto
   status: 201
 }
 

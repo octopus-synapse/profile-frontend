@@ -3,16 +3,16 @@
  * React Query hooks for user profile management
  */
 
-"use client";
+'use client';
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { profileRepository } from "../services/settings-repository";
-import type { UpdateProfilePayload } from "./types";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { profileRepository } from '../services/settings-repository';
+import type { UpdateProfilePayload } from '../types';
 
 export const profileKeys = {
-  all: ["profile"] as const,
-  detail: () => [...profileKeys.all, "detail"] as const,
-  usernameCheck: (username: string) => [...profileKeys.all, "username-check", username] as const,
+  all: ['profile'] as const,
+  detail: () => [...profileKeys.all, 'detail'] as const,
+  usernameCheck: (username: string) => [...profileKeys.all, 'username-check', username] as const,
 };
 
 export function useProfile() {

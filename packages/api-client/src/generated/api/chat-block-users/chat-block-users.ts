@@ -33,7 +33,10 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
-  BlockUserRequestDto
+  BlockUserDataDto,
+  BlockUserRequestDto,
+  BlockedUsersListDataDto,
+  IsBlockedDataDto
 } from '../../models';
 
 import { customFetch } from '../../../client/fetcher';
@@ -47,7 +50,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary Get all blocked users
  */
 export type chatBlockUsersGetBlockedUsersResponse200 = {
-  data: void
+  data: BlockedUsersListDataDto
   status: 200
 }
 
@@ -316,7 +319,7 @@ export function useChatBlockUsersGetBlockedUsersSuspense<TData = Awaited<ReturnT
  * @summary Block a user
  */
 export type chatBlockUsersBlockUserResponse201 = {
-  data: void
+  data: BlockUserDataDto
   status: 201
 }
 
@@ -493,7 +496,7 @@ export const useChatBlockUsersUnblockUser = <TError = void,
  * @summary Check if a user is blocked
  */
 export type chatBlockUsersIsBlockedResponse200 = {
-  data: void
+  data: IsBlockedDataDto
   status: 200
 }
 

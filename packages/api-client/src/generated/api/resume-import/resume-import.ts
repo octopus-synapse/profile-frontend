@@ -33,7 +33,10 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  ImportJobDto,
   ImportJsonDto,
+  ImportResultDto,
+  ParsedResumeDataDto,
   RetryImportRequestDto
 } from '../../models';
 
@@ -49,7 +52,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary Get import history
  */
 export type resumeImportGetHistoryResponse200 = {
-  data: void
+  data: ImportJobDto
   status: 200
 }
 
@@ -319,7 +322,7 @@ export function useResumeImportGetHistorySuspense<TData = Awaited<ReturnType<typ
  * @summary Import resume from JSON Resume format
  */
 export type resumeImportImportJsonResponse201 = {
-  data: void
+  data: ImportResultDto
   status: 201
 }
 
@@ -409,7 +412,7 @@ export const useResumeImportImportJson = <TError = void,
  * @summary Parse JSON Resume without importing
  */
 export type resumeImportParseJsonResponse201 = {
-  data: void
+  data: ParsedResumeDataDto
   status: 201
 }
 
@@ -588,7 +591,7 @@ export const useResumeImportCancel = <TError = void,
  * @summary Get import job status
  */
 export type resumeImportGetStatusResponse200 = {
-  data: void
+  data: ImportJobDto
   status: 200
 }
 
@@ -858,7 +861,7 @@ export function useResumeImportGetStatusSuspense<TData = Awaited<ReturnType<type
  * @summary Retry failed import
  */
 export type resumeImportRetryResponse201 = {
-  data: void
+  data: ImportResultDto
   status: 201
 }
 

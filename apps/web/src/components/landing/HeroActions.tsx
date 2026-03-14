@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useCallback } from "react";
-import { useRouter } from "next/navigation";
-import { ConsentModal, useConsentModal } from "./ConsentModal";
-import type { TranslationKeys } from "@/locales";
-import { ROUTES } from "@/config/routes";
-import { trackEvent, AnalyticsEvent } from "@/lib/analytics";
+import { useRouter } from 'next/navigation';
+import { useCallback } from 'react';
+import { ROUTES } from '@/config/routes';
+import { AnalyticsEvent, trackEvent } from '@/lib/analytics';
+import type { TranslationKeys } from '@/locales';
+import { ConsentModal, useConsentModal } from './ConsentModal';
 
 interface HeroActionsProps {
   t: TranslationKeys;
@@ -15,13 +15,13 @@ export function HeroActions({ t }: HeroActionsProps) {
   const router = useRouter();
   const { isOpen, openModal, closeModal, checkExistingConsent } = useConsentModal();
 
-  const handlePrimaryCTA = useCallback(async () => {
+  const handlePrimaryCTA = useCallback(() => {
     trackEvent(AnalyticsEvent.HERO_CTA_CLICK, {
       text: t.hero.cta,
     });
 
-    // Check if user already has consent
-    if (await checkExistingConsent()) {
+    // Check if user already has consent (localStorage)
+    if (checkExistingConsent()) {
       router.push(ROUTES.AUTH.SIGN_UP);
     } else {
       openModal();
@@ -34,9 +34,9 @@ export function HeroActions({ t }: HeroActionsProps) {
     });
 
     // Smooth scroll to features section
-    const featuresSection = document.getElementById("features");
+    const featuresSection = document.getElementById('features');
     if (featuresSection) {
-      featuresSection.scrollIntoView({ behavior: "smooth" });
+      featuresSection.scrollIntoView({ behavior: 'smooth' });
     }
   }, [t.hero.ctaSecondary]);
 
@@ -49,7 +49,8 @@ export function HeroActions({ t }: HeroActionsProps) {
     <>
       <div className="flex flex-col justify-center gap-4 sm:flex-row">
         <button
-          onClick={() => void handlePrimaryCTA()}
+          type="button"
+          onClick={handlePrimaryCTA}
           className="group relative inline-flex items-center justify-center gap-2 rounded-xl bg-white px-8 py-4 font-semibold text-black shadow-lg transition-all duration-200 hover:bg-white/90 hover:shadow-xl"
           aria-label={t.hero.cta}
         >
@@ -71,6 +72,7 @@ export function HeroActions({ t }: HeroActionsProps) {
         </button>
 
         <button
+          type="button"
           onClick={handleSecondaryCTA}
           className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-8 py-4 font-semibold text-white transition-all duration-200 hover:bg-white/10"
           aria-label={t.hero.ctaSecondary}

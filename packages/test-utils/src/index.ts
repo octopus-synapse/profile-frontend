@@ -3,17 +3,14 @@
  * Test utilities, factories, mocks, and helpers for Profile frontend testing
  */
 
-// Factories
-export * from "./factories";
-
-// Mocks
-export * from "./mocks";
-
 // DOM utilities
-export * from "./dom";
+export * from './dom';
+// Factories
+export * from './factories';
+// Re-export convenience functions
+export { resetAllFactories } from './factories';
 
 // Helpers
-export * from "./helpers";
-
-// Re-export convenience functions
-export { resetAllFactories } from "./factories";
+export * from './helpers';
+// Mocks
+export * from './mocks';

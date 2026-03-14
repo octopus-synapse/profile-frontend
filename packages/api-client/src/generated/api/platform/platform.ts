@@ -28,6 +28,11 @@ import type {
   UseSuspenseQueryResult
 } from '@tanstack/react-query';
 
+import type {
+  HealthCheckResultDto,
+  PlatformStatsResponseDto
+} from '../../models';
+
 import { customFetch } from '../../../client/fetcher';
 
 
@@ -39,7 +44,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary Run all health checks
  */
 export type platformCheckResponse200 = {
-  data: void
+  data: HealthCheckResultDto
   status: 200
 }
     
@@ -301,7 +306,7 @@ export function usePlatformCheckSuspense<TData = Awaited<ReturnType<typeof platf
  * @summary Run database health check
  */
 export type platformCheckDatabaseResponse200 = {
-  data: void
+  data: HealthCheckResultDto
   status: 200
 }
     
@@ -563,7 +568,7 @@ export function usePlatformCheckDatabaseSuspense<TData = Awaited<ReturnType<type
  * @summary Run redis health check
  */
 export type platformCheckRedisResponse200 = {
-  data: void
+  data: HealthCheckResultDto
   status: 200
 }
     
@@ -825,7 +830,7 @@ export function usePlatformCheckRedisSuspense<TData = Awaited<ReturnType<typeof 
  * @summary Run storage health check
  */
 export type platformCheckStorageResponse200 = {
-  data: void
+  data: HealthCheckResultDto
   status: 200
 }
     
@@ -1087,7 +1092,7 @@ export function usePlatformCheckStorageSuspense<TData = Awaited<ReturnType<typeo
  * @summary Run translation service health check
  */
 export type platformCheckTranslateResponse200 = {
-  data: void
+  data: HealthCheckResultDto
   status: 200
 }
     
@@ -1349,7 +1354,7 @@ export function usePlatformCheckTranslateSuspense<TData = Awaited<ReturnType<typ
  * @summary Get platform statistics
  */
 export type platformGetStatisticsResponse200 = {
-  data: void
+  data: PlatformStatsResponseDto
   status: 200
 }
 

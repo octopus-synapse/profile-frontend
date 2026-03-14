@@ -3,31 +3,35 @@
  * AST-powered resume editor - backend decides, frontend renders
  */
 
-"use client";
+'use client';
 
-import { useState, useCallback } from "react";
+import { Check, Download, FileText, Link2, Loader2, Settings, Share2 } from 'lucide-react';
+import Link from 'next/link';
+import { useCallback, useState } from 'react';
+import { LoadingState } from '@/shared/components/ui';
+import { ASTRenderer } from './ast-renderer';
+import { BuilderSidebar } from './builder/builder-sidebar';
 import {
-  useResumes,
+  useExportResumeDOCX,
+  useExportResumePDF,
   useResume,
   useResumeAst,
-  useExportResumePDF,
-  useExportResumeDOCX,
-} from "./hooks";
-import { ASTRenderer } from "./ast-renderer";
-import { BuilderSidebar } from "./builder/builder-sidebar";
-import { Download, FileText, Share2, Link2, Check, Settings, Loader2 } from "lucide-react";
-import Link from "next/link";
-import { LoadingState } from "@/shared/components/ui";
+  useResumes,
+} from './hooks';
 
 export function ResumeBuilder() {
   const [copied, setCopied] = useState(false);
 
   // Fetch user's resumes list
-  const { data: resumesList, isLoading: resumesListLoading } = useResumes();
+  const { data: resumesResponse, isLoading: resumesListLoading } = useResumes();
+  // SDK response: { data: { data: { items: Resume[] } } } - access the nested structure
+  const resumesList = (resumesResponse?.data?.data as { items?: Array<{ id: string }> })?.items;
   const resumeId = resumesList?.[0]?.id;
 
   // Fetch full resume data
-  const { data: resume, isLoading: resumeLoading } = useResume(resumeId ?? "");
+  const { data: resumeResponse, isLoading: resumeLoading } = useResume(resumeId ?? '');
+  // Extract the actual resume data from nested response
+  const resume = resumeResponse?.data?.data;
 
   // Fetch compiled AST from backend
   const { data: ast, isLoading: astLoading, refetch: refetchAst } = useResumeAst(resumeId);
@@ -48,13 +52,13 @@ export function ResumeBuilder() {
     try {
       const blob = await exportPDF.mutateAsync(resume.id);
       const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
+      const a = document.createElement('a');
       a.href = url;
-      a.download = `${resume.fullName ?? "resume"}.pdf`;
+      a.download = `${resume.fullName ?? 'resume'}.pdf`;
       a.click();
       URL.revokeObjectURL(url);
     } catch (error) {
-      console.error("Failed to export PDF:", error);
+      console.error('Failed to export PDF:', error);
     }
   };
 
@@ -63,13 +67,13 @@ export function ResumeBuilder() {
     try {
       const blob = await exportDOCX.mutateAsync(resume.id);
       const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
+      const a = document.createElement('a');
       a.href = url;
-      a.download = `${resume.fullName ?? "resume"}.docx`;
+      a.download = `${resume.fullName ?? 'resume'}.docx`;
       a.click();
       URL.revokeObjectURL(url);
     } catch (error) {
-      console.error("Failed to export DOCX:", error);
+      console.error('Failed to export DOCX:', error);
     }
   };
 
@@ -103,7 +107,7 @@ export function ResumeBuilder() {
         </p>
         <div className="mt-8 flex items-center gap-3">
           <Link
-            href="/onboarding"
+            href="/protected/onboarding"
             className="inline-flex h-10 items-center rounded-lg bg-white px-5 text-sm font-medium text-black transition-opacity hover:opacity-90"
           >
             Get Started
@@ -140,7 +144,7 @@ export function ResumeBuilder() {
             </div>
             <div>
               <h1 className="text-sm font-semibold text-white">
-                {resume.fullName ?? "Untitled Resume"}
+                {resume.fullName ?? 'Untitled Resume'}
               </h1>
               <p className="text-xs text-zinc-500">Preview</p>
             </div>
@@ -149,6 +153,7 @@ export function ResumeBuilder() {
           <div className="flex items-center gap-2">
             {/* Export PDF */}
             <button
+              type="button"
               onClick={() => void handleExportPDF()}
               disabled={exportPDF.isPending}
               className="inline-flex h-9 items-center gap-2 rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-3.5 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50"
@@ -163,6 +168,7 @@ export function ResumeBuilder() {
 
             {/* Export DOCX */}
             <button
+              type="button"
               onClick={() => void handleExportDOCX()}
               disabled={exportDOCX.isPending}
               className="inline-flex h-9 items-center gap-2 rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-3.5 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50"
@@ -181,6 +187,7 @@ export function ResumeBuilder() {
             {/* Share */}
             {resume.isPublic && resume.slug ? (
               <button
+                type="button"
                 onClick={() => void handleCopyLink()}
                 className="inline-flex h-9 items-center gap-2 rounded-lg bg-white px-4 text-sm font-medium text-black transition-opacity hover:opacity-90"
               >

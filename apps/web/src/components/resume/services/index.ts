@@ -6,4 +6,4 @@
  * This ensures web and mobile share the same implementation via @profile/api-client.
  */
 
-export * from "./theme.types";
+export * from './theme.types';

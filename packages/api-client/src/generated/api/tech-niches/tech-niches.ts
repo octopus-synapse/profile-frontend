@@ -28,6 +28,11 @@ import type {
   UseSuspenseQueryResult
 } from '@tanstack/react-query';
 
+import type {
+  TechNicheListDataDto,
+  TechSkillListDataDto
+} from '../../models';
+
 import { customFetch } from '../../../client/fetcher';
 
 
@@ -39,7 +44,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary Get all tech niches
  */
 export type techNichesGetNichesResponse200 = {
-  data: void
+  data: TechNicheListDataDto
   status: 200
 }
     
@@ -301,7 +306,7 @@ export function useTechNichesGetNichesSuspense<TData = Awaited<ReturnType<typeof
  * @summary Get skills by niche slug
  */
 export type techNichesGetSkillsByNicheResponse200 = {
-  data: void
+  data: TechSkillListDataDto
   status: 200
 }
     

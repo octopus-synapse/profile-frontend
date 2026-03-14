@@ -9,4 +9,6 @@
 export interface OnboardingPersonalInfoDto {
   fullName: string;
   email: string;
+  phone?: string;
+  location?: string;
 }

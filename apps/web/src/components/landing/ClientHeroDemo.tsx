@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState, useCallback, useSyncExternalStore } from "react";
-import { CheckCircle2, X, Heart, Flame } from "lucide-react";
-import type { TranslationKeys } from "@/locales";
-import { trackEvent, AnalyticsEvent } from "@/lib/analytics";
+import { CheckCircle2, Flame, Heart, X } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { AnalyticsEvent, trackEvent } from '@/lib/analytics';
+import type { TranslationKeys } from '@/locales';
 
 // SSR-safe hook for reduced motion preference
 function useReducedMotion(): boolean {
   const getSnapshot = () =>
-    typeof window !== "undefined"
-      ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    typeof window !== 'undefined'
+      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
       : false;
   const getServerSnapshot = () => false;
   const subscribe = (callback: () => void) => {
-    if (typeof window === "undefined") return () => {};
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    mediaQuery.addEventListener("change", callback);
-    return () => mediaQuery.removeEventListener("change", callback);
+    if (typeof window === 'undefined') return () => {};
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    mediaQuery.addEventListener('change', callback);
+    return () => mediaQuery.removeEventListener('change', callback);
   };
   return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }
@@ -27,28 +27,46 @@ interface ClientHeroDemoProps {
 
 interface FloatingNotification {
   id: number;
-  type: "applied" | "match" | "interview";
+  type: 'applied' | 'match' | 'interview';
   company: string;
 }
 
 // Job card data for swipe demo
 const DEMO_JOBS = [
-  { id: 1, title: "Senior Designer", company: "Spotify", location: "Remote", match: 94 },
-  { id: 2, title: "Product Manager", company: "Airbnb", location: "San Francisco", match: 88 },
-  { id: 3, title: "Data Scientist", company: "Netflix", location: "Los Angeles", match: 91 },
+  {
+    id: 1,
+    title: 'Senior Designer',
+    company: 'Spotify',
+    location: 'Remote',
+    match: 94,
+  },
+  {
+    id: 2,
+    title: 'Product Manager',
+    company: 'Airbnb',
+    location: 'San Francisco',
+    match: 88,
+  },
+  {
+    id: 3,
+    title: 'Data Scientist',
+    company: 'Netflix',
+    location: 'Los Angeles',
+    match: 91,
+  },
 ];
 
 export function ClientHeroDemo({ t }: ClientHeroDemoProps) {
   // ATS Score Animation
   const [atsScore, setAtsScore] = useState(0);
   const [atsAnimationComplete, setAtsAnimationComplete] = useState(false);
-  const atsIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const atsIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const atsObserverRef = useRef<IntersectionObserver | null>(null);
   const atsContainerRef = useRef<HTMLDivElement>(null);
 
   // Swipe Demo
   const [currentJobIndex, setCurrentJobIndex] = useState(0);
-  const [swipeDirection, setSwipeDirection] = useState<"left" | "right" | null>(null);
+  const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
 
   // Floating Notifications
   const [notifications, setNotifications] = useState<FloatingNotification[]>([]);
@@ -95,7 +113,7 @@ export function ClientHeroDemo({ t }: ClientHeroDemoProps) {
           }
         });
       },
-      { threshold: 0.5 }
+      { threshold: 0.5 },
     );
 
     atsObserverRef.current.observe(container);
@@ -118,11 +136,11 @@ export function ClientHeroDemo({ t }: ClientHeroDemoProps) {
     if (prefersReducedMotion) return;
 
     const showNotification = () => {
-      const types: FloatingNotification["type"][] = ["applied", "match", "interview"];
-      const companies = ["Google", "Meta", "Apple", "Amazon", "Microsoft", "Netflix"];
+      const types: FloatingNotification['type'][] = ['applied', 'match', 'interview'];
+      const companies = ['Google', 'Meta', 'Apple', 'Amazon', 'Microsoft', 'Netflix'];
 
-      const randomType = types[Math.floor(Math.random() * types.length)] ?? "applied";
-      const randomCompany = companies[Math.floor(Math.random() * companies.length)] ?? "Google";
+      const randomType = types[Math.floor(Math.random() * types.length)] ?? 'applied';
+      const randomCompany = companies[Math.floor(Math.random() * companies.length)] ?? 'Google';
 
       const newNotification: FloatingNotification = {
         id: notificationIdRef.current++,
@@ -152,7 +170,7 @@ export function ClientHeroDemo({ t }: ClientHeroDemoProps) {
 
   // Swipe handlers
   const handleSwipe = useCallback(
-    (direction: "left" | "right") => {
+    (direction: 'left' | 'right') => {
       if (prefersReducedMotion) {
         // Instant transition without animation
         setCurrentJobIndex((prev) => (prev + 1) % DEMO_JOBS.length);
@@ -164,8 +182,8 @@ export function ClientHeroDemo({ t }: ClientHeroDemoProps) {
       // Track analytics
       const job = DEMO_JOBS[currentJobIndex]!;
       trackEvent(
-        direction === "right" ? AnalyticsEvent.DEMO_SWIPE_RIGHT : AnalyticsEvent.DEMO_SWIPE_LEFT,
-        { jobId: job.id, jobTitle: job.title }
+        direction === 'right' ? AnalyticsEvent.DEMO_SWIPE_RIGHT : AnalyticsEvent.DEMO_SWIPE_LEFT,
+        { jobId: job.id, jobTitle: job.title },
       );
 
       // Reset after animation
@@ -174,19 +192,19 @@ export function ClientHeroDemo({ t }: ClientHeroDemoProps) {
         setCurrentJobIndex((prev) => (prev + 1) % DEMO_JOBS.length);
       }, 300);
     },
-    [currentJobIndex, prefersReducedMotion]
+    [currentJobIndex, prefersReducedMotion],
   );
 
   // Keyboard navigation for swipe
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
-      if (e.key === "ArrowLeft") {
-        handleSwipe("left");
-      } else if (e.key === "ArrowRight") {
-        handleSwipe("right");
+      if (e.key === 'ArrowLeft') {
+        handleSwipe('left');
+      } else if (e.key === 'ArrowRight') {
+        handleSwipe('right');
       }
     },
-    [handleSwipe]
+    [handleSwipe],
   );
 
   const currentJob = DEMO_JOBS[currentJobIndex]!;
@@ -202,14 +220,14 @@ export function ClientHeroDemo({ t }: ClientHeroDemoProps) {
         {notifications.map((notification, index) => (
           <div
             key={notification.id}
-            className={`flex items-center gap-2 rounded-lg border border-white/10 bg-[#0A0A0A]/90 p-3 text-sm shadow-lg ${prefersReducedMotion ? "" : "animate-slide-in-right"} `}
+            className={`flex items-center gap-2 rounded-lg border border-white/10 bg-[#0A0A0A]/90 p-3 text-sm shadow-lg ${prefersReducedMotion ? '' : 'animate-slide-in-right'} `}
             style={{
-              animationDelay: prefersReducedMotion ? "0ms" : `${index * 100}ms`,
+              animationDelay: prefersReducedMotion ? '0ms' : `${index * 100}ms`,
               opacity: prefersReducedMotion ? 1 : undefined,
             }}
             role="status"
           >
-            {notification.type === "applied" && (
+            {notification.type === 'applied' && (
               <>
                 <CheckCircle2 className="h-4 w-4 text-emerald-500" aria-hidden="true" />
                 <span>
@@ -217,7 +235,7 @@ export function ClientHeroDemo({ t }: ClientHeroDemoProps) {
                 </span>
               </>
             )}
-            {notification.type === "match" && (
+            {notification.type === 'match' && (
               <>
                 <Heart className="h-4 w-4 text-red-500" aria-hidden="true" />
                 <span>
@@ -225,7 +243,7 @@ export function ClientHeroDemo({ t }: ClientHeroDemoProps) {
                 </span>
               </>
             )}
-            {notification.type === "interview" && (
+            {notification.type === 'interview' && (
               <>
                 <Flame className="h-4 w-4 text-amber-500" aria-hidden="true" />
                 <span>
@@ -254,10 +272,10 @@ export function ClientHeroDemo({ t }: ClientHeroDemoProps) {
             <span
               className={`text-2xl font-bold transition-colors duration-300 ${
                 atsScore >= 90
-                  ? "text-emerald-500"
+                  ? 'text-emerald-500'
                   : atsScore >= 70
-                    ? "text-amber-500"
-                    : "text-red-500"
+                    ? 'text-amber-500'
+                    : 'text-red-500'
               }`}
               aria-live="polite"
             >
@@ -273,13 +291,13 @@ export function ClientHeroDemo({ t }: ClientHeroDemoProps) {
           >
             <div
               className={`h-full rounded-full transition-all duration-300 ${
-                atsScore >= 90 ? "bg-emerald-500" : atsScore >= 70 ? "bg-amber-500" : "bg-red-500"
+                atsScore >= 90 ? 'bg-emerald-500' : atsScore >= 70 ? 'bg-amber-500' : 'bg-red-500'
               }`}
               style={{ width: `${atsScore}%` }}
             />
           </div>
           <p className="mt-2 text-xs text-zinc-500">
-            {atsScore >= 90 ? "✓ Your resume passes ATS screening!" : "Optimizing..."}
+            {atsScore >= 90 ? '✓ Your resume passes ATS screening!' : 'Optimizing...'}
           </p>
         </div>
 
@@ -287,7 +305,6 @@ export function ClientHeroDemo({ t }: ClientHeroDemoProps) {
         <div
           className="p-6"
           onKeyDown={handleKeyDown}
-          tabIndex={0}
           role="application"
           aria-label="Job card. Use left and right arrow keys to swipe"
         >
@@ -300,7 +317,7 @@ export function ClientHeroDemo({ t }: ClientHeroDemoProps) {
 
           {/* Job Card */}
           <div
-            className={`relative mb-4 rounded-xl bg-gradient-to-br from-white/5 to-white/10 p-4 ${!prefersReducedMotion ? "transition-transform duration-300" : ""} ${swipeDirection === "left" ? "-translate-x-full opacity-0" : ""} ${swipeDirection === "right" ? "translate-x-full opacity-0" : ""} `}
+            className={`relative mb-4 rounded-xl bg-gradient-to-br from-white/5 to-white/10 p-4 ${!prefersReducedMotion ? 'transition-transform duration-300' : ''} ${swipeDirection === 'left' ? '-translate-x-full opacity-0' : ''} ${swipeDirection === 'right' ? 'translate-x-full opacity-0' : ''} `}
           >
             {/* Match Badge */}
             <div className="absolute -top-2 -right-2 rounded-full bg-emerald-500 px-2 py-1 text-xs font-bold text-white">
@@ -315,7 +332,8 @@ export function ClientHeroDemo({ t }: ClientHeroDemoProps) {
           {/* Swipe Buttons */}
           <div className="flex justify-center gap-4">
             <button
-              onClick={() => handleSwipe("left")}
+              type="button"
+              onClick={() => handleSwipe('left')}
               className="rounded-full bg-red-500/10 p-4 text-red-500 transition-colors hover:bg-red-500/20"
               aria-label={t.swipe.swipeLeft}
             >
@@ -323,7 +341,8 @@ export function ClientHeroDemo({ t }: ClientHeroDemoProps) {
             </button>
 
             <button
-              onClick={() => handleSwipe("right")}
+              type="button"
+              onClick={() => handleSwipe('right')}
               className="rounded-full bg-emerald-500/10 p-4 text-emerald-500 transition-colors hover:bg-emerald-500/20"
               aria-label={t.swipe.swipeRight}
             >
@@ -333,7 +352,7 @@ export function ClientHeroDemo({ t }: ClientHeroDemoProps) {
 
           {/* Keyboard hint */}
           <p className="mt-3 text-center text-xs text-zinc-500">
-            <kbd className="rounded bg-white/5 px-1 py-0.5 text-xs">←</kbd> {t.swipe.swipeLeft} ·{" "}
+            <kbd className="rounded bg-white/5 px-1 py-0.5 text-xs">←</kbd> {t.swipe.swipeLeft} ·{' '}
             <kbd className="rounded bg-white/5 px-1 py-0.5 text-xs">→</kbd> {t.swipe.swipeRight}
           </p>
         </div>

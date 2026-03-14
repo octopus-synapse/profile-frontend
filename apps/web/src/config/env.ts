@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 /**
  * Environment configuration with Zod validation
@@ -6,57 +6,50 @@ import { z } from "zod";
  */
 
 const serverEnvSchema = z.object({
- NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
- NEXTAUTH_SECRET: z
-  .string()
-  .min(32, "NEXTAUTH_SECRET must be at least 32 characters"),
- NEXTAUTH_URL: z.string().url().optional(),
+  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
 });
 
 const clientEnvSchema = z.object({
- NEXT_PUBLIC_API_URL: z.string().url().default("http://localhost:3001/api"),
- NEXT_PUBLIC_APP_URL: z.string().url().default("http://localhost:3000"),
- NEXT_PUBLIC_APP_NAME: z.string().default("ProFile"),
+  NEXT_PUBLIC_API_URL: z.string().url().default('http://localhost:3001/api'),
+  NEXT_PUBLIC_APP_URL: z.string().url().default('http://localhost:3000'),
+  NEXT_PUBLIC_APP_NAME: z.string().default('ProFile'),
 });
 
 // Validate server environment (only runs on server)
 function getServerEnv() {
- if (typeof window !== "undefined") {
-  throw new Error("Server env accessed on client");
- }
+  if (typeof window !== 'undefined') {
+    throw new Error('Server env accessed on client');
+  }
 
- const parsed = serverEnvSchema.safeParse(process.env);
+  const parsed = serverEnvSchema.safeParse(process.env);
 
- if (!parsed.success) {
-  console.error(
-   "❌ Invalid server environment variables:",
-   parsed.error.flatten().fieldErrors
-  );
-  throw new Error("Invalid server environment variables");
- }
+  if (!parsed.success) {
+    console.error('❌ Invalid server environment variables:', parsed.error.flatten().fieldErrors);
+    throw new Error('Invalid server environment variables');
+  }
 
- return parsed.data;
+  return parsed.data;
 }
 
 // Validate client environment
 function getClientEnv() {
- // Filter out undefined values so Zod defaults can apply
- const envInput: Record<string, string> = {};
- if (process.env.NEXT_PUBLIC_API_URL) envInput.NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL;
- if (process.env.NEXT_PUBLIC_APP_URL) envInput.NEXT_PUBLIC_APP_URL = process.env.NEXT_PUBLIC_APP_URL;
- if (process.env.NEXT_PUBLIC_APP_NAME) envInput.NEXT_PUBLIC_APP_NAME = process.env.NEXT_PUBLIC_APP_NAME;
+  // Filter out undefined values so Zod defaults can apply
+  const envInput: Record<string, string> = {};
+  if (process.env.NEXT_PUBLIC_API_URL)
+    envInput.NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL;
+  if (process.env.NEXT_PUBLIC_APP_URL)
+    envInput.NEXT_PUBLIC_APP_URL = process.env.NEXT_PUBLIC_APP_URL;
+  if (process.env.NEXT_PUBLIC_APP_NAME)
+    envInput.NEXT_PUBLIC_APP_NAME = process.env.NEXT_PUBLIC_APP_NAME;
 
- const parsed = clientEnvSchema.safeParse(envInput);
+  const parsed = clientEnvSchema.safeParse(envInput);
 
- if (!parsed.success) {
-  console.error(
-   "❌ Invalid client environment variables:",
-   parsed.error.flatten().fieldErrors
-  );
-  throw new Error("Invalid client environment variables");
- }
+  if (!parsed.success) {
+    console.error('❌ Invalid client environment variables:', parsed.error.flatten().fieldErrors);
+    throw new Error('Invalid client environment variables');
+  }
 
- return parsed.data;
+  return parsed.data;
 }
 
 // Export typed env objects
@@ -64,7 +57,7 @@ export const clientEnv = getClientEnv();
 
 // Lazy server env to avoid errors on client
 export function getServerConfig() {
- return getServerEnv();
+  return getServerEnv();
 }
 
 // Convenience exports

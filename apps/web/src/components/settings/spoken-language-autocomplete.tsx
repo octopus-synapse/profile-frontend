@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
 /**
  * Spoken Language Autocomplete Component
  * Search and select spoken languages with dynamic "Other" option
  */
 
-import * as React from "react";
-import { Check, ChevronDown, Loader2, Search, X } from "lucide-react";
-import { cn } from "@/shared/utils/cn";
-import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
-import { useSearchSpokenLanguages } from "./hooks";
-import { useI18n } from "@/lib/i18n/context";
-import type { SpokenLanguageCatalog } from "./types";
+import { useI18n } from '@profile/i18n';
+import { Popover, PopoverContent, PopoverTrigger } from '@radix-ui/react-popover';
+import { Check, ChevronDown, Loader2, Search, X } from 'lucide-react';
+import * as React from 'react';
+import { cn } from '@/shared/utils/cn';
+import { useSearchSpokenLanguages } from './hooks';
+import type { SpokenLanguageCatalog } from './types';
 
 export interface SpokenLanguageAutocompleteProps {
   /** Selected language name */
@@ -30,9 +30,9 @@ export interface SpokenLanguageAutocompleteProps {
 
 function getLanguageName(lang: SpokenLanguageCatalog, locale: string): string {
   switch (locale) {
-    case "pt-BR":
+    case 'pt-BR':
       return lang.namePtBr;
-    case "es":
+    case 'es':
       return lang.nameEs;
     default:
       return lang.nameEn;
@@ -49,7 +49,7 @@ export function SpokenLanguageAutocomplete({
 }: SpokenLanguageAutocompleteProps) {
   const { language: locale } = useI18n();
   const [open, setOpen] = React.useState(false);
-  const [search, setSearch] = React.useState("");
+  const [search, setSearch] = React.useState('');
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   const { data: languages = [], isLoading } = useSearchSpokenLanguages(search);
@@ -58,19 +58,19 @@ export function SpokenLanguageAutocomplete({
   const labels = React.useMemo(
     () => ({
       placeholder:
-        placeholder || (locale === "pt-BR" ? "Selecione um idioma..." : "Select a language..."),
-      searchPlaceholder: locale === "pt-BR" ? "Buscar idioma..." : "Search language...",
-      noResults: locale === "pt-BR" ? "Nenhum idioma encontrado" : "No language found",
-      addCustom: locale === "pt-BR" ? "Adicionar" : "Add",
-      searching: locale === "pt-BR" ? "Buscando..." : "Searching...",
+        placeholder || (locale === 'pt-BR' ? 'Selecione um idioma...' : 'Select a language...'),
+      searchPlaceholder: locale === 'pt-BR' ? 'Buscar idioma...' : 'Search language...',
+      noResults: locale === 'pt-BR' ? 'Nenhum idioma encontrado' : 'No language found',
+      addCustom: locale === 'pt-BR' ? 'Adicionar' : 'Add',
+      searching: locale === 'pt-BR' ? 'Buscando...' : 'Searching...',
     }),
-    [locale, placeholder]
+    [locale, placeholder],
   );
 
   // Transform languages to options with localized names
   const options = React.useMemo(() => {
     return languages
-      .filter((lang) => lang.code !== "other") // Filter out "Other" - we handle it dynamically
+      .filter((lang) => lang.code !== 'other') // Filter out "Other" - we handle it dynamically
       .map((lang) => ({
         value: getLanguageName(lang, locale),
         label: getLanguageName(lang, locale),
@@ -86,7 +86,7 @@ export function SpokenLanguageAutocomplete({
     return options.some(
       (opt) =>
         opt.label.toLowerCase().includes(search.toLowerCase()) ||
-        opt.nativeName?.toLowerCase().includes(search.toLowerCase())
+        opt.nativeName?.toLowerCase().includes(search.toLowerCase()),
     );
   }, [options, search]);
 
@@ -100,20 +100,20 @@ export function SpokenLanguageAutocomplete({
   const handleSelect = (name: string, language?: SpokenLanguageCatalog) => {
     onValueChange?.(name, language);
     setOpen(false);
-    setSearch("");
+    setSearch('');
   };
 
   const handleClear = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onValueChange?.("", undefined);
-    setSearch("");
+    onValueChange?.('', undefined);
+    setSearch('');
   };
 
   const handleAddCustom = () => {
     if (search.trim()) {
       onValueChange?.(search.trim(), undefined);
       setOpen(false);
-      setSearch("");
+      setSearch('');
     }
   };
 
@@ -126,7 +126,7 @@ export function SpokenLanguageAutocomplete({
     return options.filter(
       (opt) =>
         opt.label.toLowerCase().includes(searchLower) ||
-        opt.nativeName?.toLowerCase().includes(searchLower)
+        opt.nativeName?.toLowerCase().includes(searchLower),
     );
   }, [options, search]);
 
@@ -140,16 +140,16 @@ export function SpokenLanguageAutocomplete({
           aria-haspopup="listbox"
           aria-controls={listboxId}
           className={cn(
-            "flex h-10 w-full items-center justify-between px-3 py-2 text-left text-sm",
-            "border border-white/10 bg-[#0A0A0A]/95",
-            "font-mono text-white",
-            "focus:border-cyan-500 focus:outline-none",
-            "disabled:cursor-not-allowed disabled:opacity-50",
-            error && "border-red-500",
-            className
+            'flex h-10 w-full items-center justify-between px-3 py-2 text-left text-sm',
+            'border border-white/10 bg-[#0A0A0A]/95',
+            'font-mono text-white',
+            'focus:border-cyan-500 focus:outline-none',
+            'disabled:cursor-not-allowed disabled:opacity-50',
+            error && 'border-red-500',
+            className,
           )}
         >
-          <span className={cn("flex-1 truncate", !value && "text-zinc-500")}>
+          <span className={cn('flex-1 truncate', !value && 'text-zinc-500')}>
             {value || labels.placeholder}
           </span>
           <div className="ml-2 flex items-center gap-1">
@@ -165,9 +165,9 @@ export function SpokenLanguageAutocomplete({
       </PopoverTrigger>
       <PopoverContent
         className={cn(
-          "z-50 w-[--radix-popover-trigger-width] overflow-hidden p-0",
-          "border border-white/10 bg-[#0A0A0A]/95 shadow-lg",
-          "animate-in fade-in-0 zoom-in-95"
+          'z-50 w-[--radix-popover-trigger-width] overflow-hidden p-0',
+          'border border-white/10 bg-[#0A0A0A]/95 shadow-lg',
+          'animate-in fade-in-0 zoom-in-95',
         )}
         align="start"
         sideOffset={4}
@@ -179,8 +179,8 @@ export function SpokenLanguageAutocomplete({
             ref={inputRef}
             type="text"
             className={cn(
-              "flex h-10 w-full bg-transparent py-3 font-mono text-sm outline-none",
-              "text-white placeholder:text-zinc-600"
+              'flex h-10 w-full bg-transparent py-3 font-mono text-sm outline-none',
+              'text-white placeholder:text-zinc-600',
             )}
             placeholder={labels.searchPlaceholder}
             value={search}
@@ -200,19 +200,19 @@ export function SpokenLanguageAutocomplete({
               {/* Filtered language options */}
               {filteredOptions.map((option) => (
                 <button
-                  key={option.code}
                   type="button"
+                  key={option.code}
                   className={cn(
-                    "relative flex w-full cursor-pointer items-center px-2 py-2 text-sm outline-none select-none",
-                    "font-mono hover:bg-white/5",
-                    value === option.label && "bg-cyan-500/10"
+                    'relative flex w-full cursor-pointer items-center px-2 py-2 text-sm outline-none select-none',
+                    'font-mono hover:bg-white/5',
+                    value === option.label && 'bg-cyan-500/10',
                   )}
                   onClick={() => handleSelect(option.label, option.language)}
                 >
                   <Check
                     className={cn(
-                      "mr-2 h-4 w-4 flex-shrink-0",
-                      value === option.label ? "opacity-100" : "opacity-0"
+                      'mr-2 h-4 w-4 flex-shrink-0',
+                      value === option.label ? 'opacity-100' : 'opacity-0',
                     )}
                   />
                   <div className="flex flex-1 items-center justify-between overflow-hidden">
@@ -229,9 +229,9 @@ export function SpokenLanguageAutocomplete({
                 <button
                   type="button"
                   className={cn(
-                    "relative flex w-full cursor-pointer items-center px-2 py-2 text-sm outline-none select-none",
-                    "border-t border-white/10 font-mono hover:bg-cyan-500/10",
-                    "text-cyan-400"
+                    'relative flex w-full cursor-pointer items-center px-2 py-2 text-sm outline-none select-none',
+                    'border-t border-white/10 font-mono hover:bg-cyan-500/10',
+                    'text-cyan-400',
                   )}
                   onClick={handleAddCustom}
                 >
@@ -256,4 +256,4 @@ export function SpokenLanguageAutocomplete({
   );
 }
 
-SpokenLanguageAutocomplete.displayName = "SpokenLanguageAutocomplete";
+SpokenLanguageAutocomplete.displayName = 'SpokenLanguageAutocomplete';

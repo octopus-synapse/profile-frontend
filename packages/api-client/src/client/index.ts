@@ -4,10 +4,14 @@
  * Exports HTTP client utilities for API communication.
  */
 
+// Server-side session validation (with cookie forwarding)
+export { authSessionServer } from './auth-session-server';
+export type { ApiError } from './fetcher';
 export {
- customFetch,
- setAuthToken,
- clearAuthToken,
- isApiError,
-} from "./fetcher";
-export type { ApiError } from "./fetcher";
+  clearAuthToken,
+  customFetch,
+  getApiLocale,
+  isApiError,
+  setApiLocale,
+  setAuthToken,
+} from './fetcher';

@@ -1,29 +1,144 @@
 /**
  * User Repository
- * Re-exports from @profile/api-client for consistency
- * 
- * @deprecated Use `apiClient.users` from "@/shared/lib/api-client" directly
+ * Re-exports from local types and provides API methods
  */
 
-import { apiClient } from "@/shared/lib/api-client";
-
-// Re-export types from api-client for backward compatibility
+// Re-export types from local types
 export type {
+  AdminUserFilters,
+  AdminUserListItem,
+  PaginatedUsers,
+  UpdateUserDto,
   User,
   UserProfile,
-  UpdateUserDto,
+  UserRole,
   UserStats,
-  AdminUserListItem,
+} from '../types';
+
+import {
+  uploadUploadProfileImage,
+  usersProfileCheckUsernameAvailability,
+  usersProfileGetProfile,
+  usersProfileGetPublicProfileByUsername,
+  usersProfileUpdateProfile,
+} from '@profile/api-client';
+import type {
   AdminUserFilters,
   PaginatedUsers,
-} from "@profile/api-client";
+  UpdateUserDto,
+  User,
+  UserProfile,
+  UserRole,
+  UserStats,
+} from '../types';
+
+// Helper to extract data from SDK response
+function extractData<T>(response: { data?: { data?: T } }): T | undefined {
+  return response?.data?.data;
+}
 
 /**
- * @deprecated Use `apiClient.users` directly instead
- * @example
- * ```ts
- * import { apiClient } from "@/shared/lib/api-client";
- * const user = await apiClient.users.getMe();
- * ```
+ * User Repository with methods wrapping SDK functions
  */
-export const userRepository = apiClient.users;
+export const userRepository = {
+  async getMe(): Promise<User | null> {
+    try {
+      const response = await usersProfileGetProfile();
+      return (extractData(response) as unknown as User) ?? null;
+    } catch {
+      return null;
+    }
+  },
+
+  async updateMe(_data: UpdateUserDto): Promise<User | null> {
+    try {
+      const response = await usersProfileUpdateProfile();
+      return (extractData(response) as unknown as User) ?? null;
+    } catch {
+      return null;
+    }
+  },
+
+  async uploadImage(file: File): Promise<{ url: string } | null> {
+    try {
+      // SDK expects string but actually passes to FormData which handles File
+      const response = await uploadUploadProfileImage({
+        file: file as unknown as string,
+      });
+      return (extractData(response) as { url: string }) ?? null;
+    } catch {
+      return null;
+    }
+  },
+
+  async getUsers(_filters?: AdminUserFilters): Promise<PaginatedUsers> {
+    // TODO: Implement when SDK has admin users endpoint
+    console.warn('getUsers not yet implemented - SDK lacks admin users endpoint');
+    return {
+      users: [],
+      total: 0,
+      page: 1,
+      limit: 10,
+      totalPages: 0,
+    };
+  },
+
+  // Admin methods - stubs for now (SDK endpoints may not exist)
+  async adminUpdateUserRole(_userId: string, _role: UserRole): Promise<void> {
+    // TODO: Implement when SDK has endpoint
+    console.warn('adminUpdateUserRole not yet implemented in SDK');
+  },
+
+  async adminDeleteUser(_userId: string): Promise<void> {
+    // TODO: Implement when SDK has endpoint
+    console.warn('adminDeleteUser not yet implemented in SDK');
+  },
+
+  async getUserById(_userId: string): Promise<User | null> {
+    // TODO: Implement when SDK has endpoint
+    console.warn('getUserById not yet implemented in SDK');
+    return null;
+  },
+
+  async getMyStats(): Promise<UserStats | null> {
+    // TODO: Implement when SDK has endpoint
+    console.warn('getMyStats not yet implemented in SDK');
+    return { totalResumes: 0, publicProfiles: 0, lastActive: null };
+  },
+
+  async getByUsername(username: string): Promise<UserProfile | null> {
+    try {
+      const response = await usersProfileGetPublicProfileByUsername(username);
+      return (extractData(response) as unknown as UserProfile) ?? null;
+    } catch {
+      return null;
+    }
+  },
+
+  async checkUsername(username: string): Promise<{ available: boolean } | null> {
+    try {
+      const response = await usersProfileCheckUsernameAvailability({ username });
+      return (extractData(response) as unknown as { available: boolean }) ?? null;
+    } catch {
+      return null;
+    }
+  },
+
+  async adminGetUsers(_filters?: AdminUserFilters): Promise<PaginatedUsers> {
+    // TODO: Implement when SDK has admin users endpoint
+    console.warn('adminGetUsers not yet implemented - SDK lacks admin users endpoint');
+    return {
+      users: [],
+      total: 0,
+      page: 1,
+      limit: 10,
+      totalPages: 0,
+    };
+  },
+
+  async adminGetUser(userId: string): Promise<User | null> {
+    // TODO: Implement when SDK has endpoint
+    console.warn('adminGetUser not yet implemented in SDK', userId);
+    return null;
+  },
+};

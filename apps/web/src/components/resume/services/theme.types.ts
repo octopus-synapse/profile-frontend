@@ -2,16 +2,16 @@
  * Theme Types for API
  */
 
-export type ThemeStatus = "DRAFT" | "PRIVATE" | "PENDING_APPROVAL" | "PUBLISHED" | "REJECTED";
+export type ThemeStatus = 'DRAFT' | 'PRIVATE' | 'PENDING_APPROVAL' | 'PUBLISHED' | 'REJECTED';
 export type ThemeCategory =
-  | "PROFESSIONAL"
-  | "CREATIVE"
-  | "TECHNICAL"
-  | "ACADEMIC"
-  | "MINIMAL"
-  | "MODERN"
-  | "CLASSIC"
-  | "EXECUTIVE";
+  | 'PROFESSIONAL'
+  | 'CREATIVE'
+  | 'TECHNICAL'
+  | 'ACADEMIC'
+  | 'MINIMAL'
+  | 'MODERN'
+  | 'CLASSIC'
+  | 'EXECUTIVE';
 
 export interface Theme {
   id: string;
@@ -61,8 +61,8 @@ export interface ThemeQueryParams {
   search?: string;
   authorId?: string;
   systemOnly?: boolean;
-  sortBy?: "createdAt" | "updatedAt" | "usageCount" | "rating" | "name";
-  sortOrder?: "asc" | "desc";
+  sortBy?: 'createdAt' | 'updatedAt' | 'usageCount' | 'rating' | 'name';
+  sortOrder?: 'asc' | 'desc';
   page?: number;
   limit?: number;
 }

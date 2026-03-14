@@ -1,6 +1,7 @@
 /**
  * Shared types barrel export
+ *
+ * Note: Auth types are now handled by SDK (@profile/api-client)
  */
 
-export * from "./auth";
-export * from "./errors";
+export * from './errors';

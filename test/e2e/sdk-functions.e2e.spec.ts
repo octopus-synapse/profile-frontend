@@ -9,9 +9,9 @@
  */
 
 import { describe, it, expect, beforeAll } from "bun:test";
-import { platformGetStatistics } from "../../packages/api-client/src/generated/api/platform/platform";
-import { techSkillsGetSkills } from "../../packages/api-client/src/generated/api/tech-skills/tech-skills";
-import { techAreasGetAreas } from "../../packages/api-client/src/generated/api/tech-areas/tech-areas";
+import { platformStatsGetStatistics } from "../../packages/api-client/src/generated/api/platform/platform";
+import { techSkillGetSkills } from "../../packages/api-client/src/generated/api/tech-skills/tech-skills";
+import { techAreaGetAreas } from "../../packages/api-client/src/generated/api/tech-areas/tech-areas";
 import { mecMetadataGetMecStatistics } from "../../packages/api-client/src/generated/api/mec-metadata/mec-metadata";
 import type {
  PlatformStatsResponseDto,
@@ -93,7 +93,7 @@ describe("E2E: SDK Generated Functions", () => {
  describe("Platform Statistics (SDK)", () => {
   it("should call platformGetStatistics and handle response", async () => {
    try {
-    const response = await platformGetStatistics();
+    const response = await platformStatsGetStatistics();
     // Success case
     expect(response.status).toBe(200);
     if (response.data !== undefined && response.data !== null) {
@@ -116,7 +116,7 @@ describe("E2E: SDK Generated Functions", () => {
  describe("Tech Skills (SDK)", () => {
   it("should get skills and handle response", async () => {
    try {
-    const response = await techSkillsGetSkills();
+    const response = await techSkillGetSkills();
     expect(response.status).toBe(200);
     if (response.data !== undefined && response.data !== null) {
      expect(isTechSkillArray(response.data)).toBe(true);
@@ -137,7 +137,7 @@ describe("E2E: SDK Generated Functions", () => {
  describe("Tech Areas (SDK)", () => {
   it("should list all tech areas and handle response", async () => {
    try {
-    const response = await techAreasGetAreas();
+    const response = await techAreaGetAreas();
     expect(response.status).toBe(200);
     if (response.data !== undefined && response.data !== null) {
      expect(isTechAreaArray(response.data)).toBe(true);

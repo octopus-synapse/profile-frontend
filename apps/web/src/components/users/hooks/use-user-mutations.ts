@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
 /**
  * User Mutations
  * TanStack Query hooks for user data mutations
  */
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { userRepository } from "../services/user-repository";
-import { userKeys } from "./query-keys";
-import type { UpdateUserDto, UserRole } from "./types";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { userRepository } from '../services/user-repository';
+import type { UpdateUserDto, UserRole } from '../types';
+import { userKeys } from './query-keys';
 
 /**
  * Update current user profile

@@ -3,16 +3,23 @@
  * Elegant theme selection with tabs
  */
 
-"use client";
+'use client';
 
-import { useState } from "react";
-import { ThemeCard } from "./theme-card";
-import { JsonImportModal } from "./json-import-modal";
-import { useSystemThemes, useMyThemes, usePopularThemes } from "../hooks";
-import { useApplyTheme, useForkTheme, useDeleteTheme, useSubmitForApproval } from "../hooks";
-import type { Theme } from "../../services/theme.types";
-import { Upload, Sparkles, Users, Palette, Plus } from "lucide-react";
-import { cn } from "@/shared/utils";
+import { Palette, Plus, Sparkles, Upload, Users } from 'lucide-react';
+import { useState } from 'react';
+import { cn } from '@/shared/utils';
+import {
+  useApplyTheme,
+  useDeleteTheme,
+  useForkTheme,
+  useMyThemes,
+  usePopularThemes,
+  useSubmitForApproval,
+  useSystemThemes,
+} from '../hooks';
+import type { Theme } from '../services/theme.types';
+import { JsonImportModal } from './json-import-modal';
+import { ThemeCard } from './theme-card';
 
 interface Props {
   resumeId: string;
@@ -21,16 +28,16 @@ interface Props {
   onEditTheme?: (theme: Theme) => void;
 }
 
-type TabId = "system" | "popular" | "mine";
+type TabId = 'system' | 'popular' | 'mine';
 
 const tabs: { id: TabId; label: string; icon: typeof Sparkles }[] = [
-  { id: "system", label: "System", icon: Sparkles },
-  { id: "popular", label: "Popular", icon: Users },
-  { id: "mine", label: "My Themes", icon: Palette },
+  { id: 'system', label: 'System', icon: Sparkles },
+  { id: 'popular', label: 'Popular', icon: Users },
+  { id: 'mine', label: 'My Themes', icon: Palette },
 ];
 
 export function ThemePicker({ resumeId, activeThemeId, onThemeApplied, onEditTheme }: Props) {
-  const [tab, setTab] = useState<TabId>("system");
+  const [tab, setTab] = useState<TabId>('system');
   const [showImport, setShowImport] = useState(false);
 
   const { data: systemThemes = [], isLoading: loadingSystem } = useSystemThemes();
@@ -42,9 +49,9 @@ export function ThemePicker({ resumeId, activeThemeId, onThemeApplied, onEditThe
   const deleteTheme = useDeleteTheme();
   const submitForApproval = useSubmitForApproval();
 
-  const themes = tab === "system" ? systemThemes : tab === "popular" ? popularThemes : myThemes;
+  const themes = tab === 'system' ? systemThemes : tab === 'popular' ? popularThemes : myThemes;
   const isLoading =
-    tab === "system" ? loadingSystem : tab === "popular" ? loadingPopular : loadingMine;
+    tab === 'system' ? loadingSystem : tab === 'popular' ? loadingPopular : loadingMine;
 
   const handleSelect = async (theme: Theme) => {
     await applyTheme.mutateAsync({ resumeId, themeId: theme.id });
@@ -52,10 +59,12 @@ export function ThemePicker({ resumeId, activeThemeId, onThemeApplied, onEditThe
   };
 
   const handleFork = async (theme: Theme) => {
-    const forked = await forkTheme.mutateAsync({
+    const response = await forkTheme.mutateAsync({
       themeId: theme.id,
       name: `${theme.name} (Custom)`,
     });
+    // SDK response: { data: { theme: Theme } }
+    const forked = (response?.data as unknown as { theme: Theme })?.theme;
     onEditTheme?.(forked);
   };
 
@@ -74,7 +83,7 @@ export function ThemePicker({ resumeId, activeThemeId, onThemeApplied, onEditThe
   };
 
   const handleImported = () => {
-    setTab("mine");
+    setTab('mine');
     setShowImport(false);
   };
 
@@ -84,13 +93,14 @@ export function ThemePicker({ resumeId, activeThemeId, onThemeApplied, onEditThe
       <div className="bg-pf-canvas-subtle flex gap-1 rounded-lg p-1">
         {tabs.map(({ id, label, icon: Icon }) => (
           <button
+            type="button"
             key={id}
             onClick={() => setTab(id)}
             className={cn(
-              "flex flex-1 items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-all",
+              'flex flex-1 items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-all',
               tab === id
-                ? "bg-pf-canvas-overlay text-pf-fg-default shadow-sm"
-                : "text-pf-fg-muted hover:text-pf-fg-default"
+                ? 'bg-pf-canvas-overlay text-pf-fg-default shadow-sm'
+                : 'text-pf-fg-muted hover:text-pf-fg-default',
             )}
           >
             <Icon className="h-3 w-3" strokeWidth={1.5} />
@@ -101,6 +111,7 @@ export function ThemePicker({ resumeId, activeThemeId, onThemeApplied, onEditThe
 
       {/* Import Button */}
       <button
+        type="button"
         onClick={() => setShowImport(true)}
         className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors hover:opacity-90"
       >
@@ -134,8 +145,9 @@ export function ThemePicker({ resumeId, activeThemeId, onThemeApplied, onEditThe
           ))}
 
           {/* Create New (My Themes only) */}
-          {tab === "mine" && (
+          {tab === 'mine' && (
             <button
+              type="button"
               onClick={() => setShowImport(true)}
               className="group border-pf-border-default hover:border-pf-border-emphasis hover:bg-pf-canvas-subtle flex h-16 w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed transition-colors"
             >
@@ -152,13 +164,13 @@ export function ThemePicker({ resumeId, activeThemeId, onThemeApplied, onEditThe
       )}
 
       {/* Empty State */}
-      {!isLoading && themes.length === 0 && tab !== "mine" && (
+      {!isLoading && themes.length === 0 && tab !== 'mine' && (
         <div className="flex flex-col items-center justify-center py-10 text-center">
           <div className="bg-pf-canvas-subtle flex h-12 w-12 items-center justify-center rounded-xl">
             <Palette className="text-pf-fg-subtle h-5 w-5" strokeWidth={1.5} />
           </div>
           <p className="text-pf-fg-muted mt-3 text-sm">
-            {tab === "popular" ? "No popular themes yet" : "No themes available"}
+            {tab === 'popular' ? 'No popular themes yet' : 'No themes available'}
           </p>
         </div>
       )}

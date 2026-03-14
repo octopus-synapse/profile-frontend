@@ -3,12 +3,13 @@
  * Tests behavior, validation, API interactions, and edge cases
  *
  * Note: UI component mocks are provided globally in test.setup.ts
+ * Updated to use useOnboarding hook (100% SDK hooks)
  */
 
 import { describe, it, expect, beforeEach, mock, type Mock } from "bun:test";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { UsernameStep } from "../username-step";
-import { useOnboardingStore } from "../../../stores";
+import { useOnboarding } from "../../hooks";
 
 // Mock StepNavigation component (internal component, not in global setup)
 import React from "react";
@@ -22,38 +23,75 @@ void mock.module("../step-navigation", () => ({
   ),
 }));
 
-// Mock dependencies
-void mock.module("next-auth/react", () => ({
- useSession: mock(() => ({
-  data: { accessToken: "mock-token" },
-  status: "authenticated",
+// Mock @profile/api-client SDK
+void mock.module("@profile/api-client", () => ({
+ useAuthGetSession: mock(() => ({
+  data: {
+   data: {
+    user: {
+     id: "mock-user-id",
+     email: "test@example.com",
+     name: "Test User",
+     role: "USER",
+     isAdmin: false,
+     isApprover: false,
+     hasCompletedOnboarding: false,
+     emailVerified: true,
+     needsOnboarding: true,
+     needsEmailVerification: false,
+    },
+   },
+  },
+  isLoading: false,
  })),
 }));
 
-void mock.module("../../../stores", () => ({
- useOnboardingStore: mock(() => ({
+void mock.module("../../hooks", () => ({
+ useOnboarding: mock(() => ({
   username: null,
-  setUsername: mock(() => {}),
-  goToNextStep: mock(() => {}),
-  markStepComplete: mock(() => {}),
+  goToNextStep: mock(() => Promise.resolve()),
+  isSaving: false,
+  isLoading: false,
+  isError: false,
+  error: null,
+  isCompleting: false,
+  allSteps: [],
+  currentStep: "username",
+  currentStepMeta: undefined,
+  currentStepIndex: 2,
+  completedSteps: ["welcome", "personal-info"],
+  progress: 0.2,
+  canProceed: true,
+  personalInfo: null,
+  professionalProfile: null,
+  templateSelection: null,
+  sections: new Map(),
+  getSection: () => null,
+  goToPreviousStep: mock(() => Promise.resolve()),
+  goToStep: mock(() => Promise.resolve()),
+  saveStepData: mock(() => Promise.resolve()),
+  complete: mock(() => Promise.resolve()),
+  refetch: mock(() => Promise.resolve()),
  })),
 }));
 
-// Mock fetch
-global.fetch = mock(() =>
+// Mock fetch with proper typing
+const mockFetch = mock(() =>
  Promise.resolve({
   ok: true,
   json: () => Promise.resolve({ available: true }),
- }),
-) as typeof fetch;
+ } as Response),
+);
+global.fetch = mockFetch as unknown as typeof fetch;
 
 /** Helper to get the username input field */
-const getUsernameInput = () => screen.getByPlaceholderText("johndoe");
+const getUsernameInput = () =>
+ screen.getByPlaceholderText("johndoe") as HTMLInputElement;
 
 describe("UsernameStep", () => {
  beforeEach(() => {
-  (global.fetch as ReturnType<typeof mock>).mockClear();
-  (useOnboardingStore as ReturnType<typeof mock>).mockClear();
+  mockFetch.mockClear();
+  (useOnboarding as Mock<typeof useOnboarding>).mockClear();
  });
 
  it("renders username input", () => {
@@ -87,7 +125,7 @@ describe("UsernameStep", () => {
    resolveFetch = resolve;
   });
 
-  (global.fetch as ReturnType<typeof mock>).mockReturnValue(fetchPromise);
+  mockFetch.mockReturnValue(fetchPromise as Promise<Response>);
 
   render(<UsernameStep />);
   const input = getUsernameInput();
@@ -107,7 +145,7 @@ describe("UsernameStep", () => {
  });
 
  it("shows available state when username is available", async () => {
-  (global.fetch as ReturnType<typeof mock>).mockResolvedValue({
+  mockFetch.mockResolvedValue({
    ok: true,
    json: () => Promise.resolve({ available: true }),
   } as Response);
@@ -125,7 +163,7 @@ describe("UsernameStep", () => {
  });
 
  it("shows unavailable state when username is taken", async () => {
-  (global.fetch as ReturnType<typeof mock>).mockResolvedValue({
+  mockFetch.mockResolvedValue({
    ok: true,
    json: () => Promise.resolve({ available: false }),
   } as Response);
@@ -142,7 +180,7 @@ describe("UsernameStep", () => {
  });
 
  it("handles API error 401 (unauthorized)", async () => {
-  (global.fetch as ReturnType<typeof mock>).mockResolvedValue({
+  mockFetch.mockResolvedValue({
    ok: false,
    status: 401,
   } as Response);
@@ -159,7 +197,7 @@ describe("UsernameStep", () => {
  });
 
  it("handles API error 429 (rate limit)", async () => {
-  (global.fetch as ReturnType<typeof mock>).mockResolvedValue({
+  mockFetch.mockResolvedValue({
    ok: false,
    status: 429,
   } as Response);
@@ -176,9 +214,7 @@ describe("UsernameStep", () => {
  });
 
  it("handles network error", async () => {
-  (global.fetch as ReturnType<typeof mock>).mockRejectedValue(
-   new Error("Network error"),
-  );
+  mockFetch.mockRejectedValue(new Error("Network error"));
 
   render(<UsernameStep />);
   const input = getUsernameInput();
@@ -192,8 +228,7 @@ describe("UsernameStep", () => {
  });
 
  it("debounces API calls", async () => {
-  const fetchMock = global.fetch as ReturnType<typeof mock>;
-  fetchMock.mockResolvedValue({
+  mockFetch.mockResolvedValue({
    ok: true,
    json: () => Promise.resolve({ available: true }),
   } as Response);
@@ -208,25 +243,25 @@ describe("UsernameStep", () => {
   fireEvent.change(input, { target: { value: "user" } });
 
   // Should NOT call API immediately during typing
-  expect(fetchMock).toHaveBeenCalledTimes(0);
+  expect(mockFetch).toHaveBeenCalledTimes(0);
 
   // Wait for debounce (500ms) + small buffer
   await waitFor(
    () => {
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(mockFetch).toHaveBeenCalledTimes(1);
    },
    { timeout: 1000 },
   );
  });
 
  it("skips API check if username matches saved username", async () => {
-  const mockSetUsername = mock(() => {});
-  (useOnboardingStore as ReturnType<typeof mock>).mockReturnValue({
+  const mockGoToNextStep = mock(() => Promise.resolve());
+  (useOnboarding as Mock<typeof useOnboarding>).mockReturnValue({
+   ...((useOnboarding as Mock<typeof useOnboarding>)() as object),
    username: "saveduser",
-   setUsername: mockSetUsername,
-   goToNextStep: mock(() => {}),
-   markStepComplete: mock(() => {}),
-  });
+   goToNextStep: mockGoToNextStep,
+   isSaving: false,
+  } as unknown as ReturnType<typeof useOnboarding>);
 
   render(<UsernameStep />);
   const input = getUsernameInput();
@@ -237,7 +272,7 @@ describe("UsernameStep", () => {
   await new Promise((resolve) => setTimeout(resolve, 600));
 
   // Should not call API for same username
-  expect(global.fetch).not.toHaveBeenCalled();
+  expect(mockFetch).not.toHaveBeenCalled();
  });
 
  it("disables next button when username is invalid", () => {
@@ -254,9 +289,7 @@ describe("UsernameStep", () => {
  });
 
  it("disables next button when username is not available", async () => {
-  (
-   global.fetch as Mock<(...args: unknown[]) => Promise<unknown>>
-  ).mockResolvedValue({
+  mockFetch.mockResolvedValue({
    ok: true,
    json: () => Promise.resolve({ available: false }),
   } as Response);
@@ -273,22 +306,18 @@ describe("UsernameStep", () => {
  });
 
  it("enables next button when username is valid and available", async () => {
-  (
-   global.fetch as Mock<(...args: unknown[]) => Promise<unknown>>
-  ).mockResolvedValue({
+  mockFetch.mockResolvedValue({
    ok: true,
    json: () => Promise.resolve({ available: true }),
   } as Response);
 
-  const mockGoToNextStep = mock(() => {});
-  const mockSetUsername = mock(() => {});
-  const mockMarkStepComplete = mock(() => {});
-  (useOnboardingStore as ReturnType<typeof mock>).mockReturnValue({
+  const mockGoToNextStep = mock(() => Promise.resolve());
+  (useOnboarding as Mock<typeof useOnboarding>).mockReturnValue({
+   ...((useOnboarding as Mock<typeof useOnboarding>)() as object),
    username: null,
-   setUsername: mockSetUsername,
    goToNextStep: mockGoToNextStep,
-   markStepComplete: mockMarkStepComplete,
-  });
+   isSaving: false,
+  } as unknown as ReturnType<typeof useOnboarding>);
 
   render(<UsernameStep />);
   const input = getUsernameInput();
@@ -302,7 +331,7 @@ describe("UsernameStep", () => {
  });
 
  it("shows retry button on error and retries when clicked", async () => {
-  (global.fetch as Mock<(...args: unknown[]) => Promise<unknown>>)
+  mockFetch
    .mockRejectedValueOnce(new Error("Network error"))
    .mockResolvedValueOnce({
     ok: true,
@@ -323,7 +352,7 @@ describe("UsernameStep", () => {
   fireEvent.click(retryButton);
 
   await waitFor(() => {
-   expect(global.fetch).toHaveBeenCalledTimes(2);
+   expect(mockFetch).toHaveBeenCalledTimes(2);
   });
  });
 
@@ -339,7 +368,7 @@ describe("UsernameStep", () => {
  });
 
  it("validates username length (min 3, max 30)", async () => {
-  (global.fetch as ReturnType<typeof mock>).mockResolvedValue({
+  mockFetch.mockResolvedValue({
    ok: true,
    json: () => Promise.resolve({ available: true }),
   } as Response);

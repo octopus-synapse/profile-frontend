@@ -1,1 +1,1 @@
-export * from "./use-tech-skills";
+export * from './use-tech-skills';

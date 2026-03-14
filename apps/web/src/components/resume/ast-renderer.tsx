@@ -4,101 +4,101 @@
  * No decision logic, no style resolution, no config
  */
 
-"use client";
+'use client';
 
-import type { ResumeAst, PlacedSection } from "@profile/api-client";
-import { ASTSection } from "./ast-section";
-import { mmToPx } from "./utils/ast-dimensions";
+import type { PlacedSectionDto, ResumeAstDto } from '@profile/api-client';
+import { ASTSection } from './ast-section';
+import { mmToPx } from './utils/ast-dimensions';
 
 interface Props {
- ast: ResumeAst;
- className?: string;
+  ast: ResumeAstDto;
+  className?: string;
 }
 
 export function ASTRenderer({ ast, className }: Props) {
- const { page, sections, globalStyles } = ast;
+  const { page, sections, globalStyles } = ast;
 
- // Apply global styles
- const containerStyle = {
-  backgroundColor: globalStyles.background,
-  color: globalStyles.textPrimary,
-  width: `${mmToPx(page.widthMm)}px`,
-  minHeight: `${mmToPx(page.heightMm)}px`,
- };
+  // Apply global styles
+  const containerStyle = {
+    backgroundColor: globalStyles.background,
+    color: globalStyles.textPrimary,
+    width: `${mmToPx(page.widthMm)}px`,
+    minHeight: `${mmToPx(page.heightMm)}px`,
+  };
 
- return (
-  <div style={containerStyle} className={className}>
-   {/* Render columns */}
-   {page.columns.length === 1 && page.columns[0] ? (
-    <SingleColumnLayout column={page.columns[0]} sections={sections} />
-   ) : page.columns.length > 1 ? (
-    <TwoColumnLayout columns={page.columns} sections={sections} />
-   ) : null}
-  </div>
- );
+  return (
+    <div style={containerStyle} className={className}>
+      {/* Render columns */}
+      {page.columns.length === 1 && page.columns[0] ? (
+        <SingleColumnLayout column={page.columns[0]} sections={sections} />
+      ) : page.columns.length > 1 ? (
+        <TwoColumnLayout columns={page.columns} sections={sections} />
+      ) : null}
+    </div>
+  );
 }
 
 /**
  * Single column layout
  */
 function SingleColumnLayout({
- column,
- sections,
+  column,
+  sections,
 }: {
- column: ResumeAst["page"]["columns"][0];
- sections: PlacedSection[];
+  column: ResumeAstDto['page']['columns'][0];
+  sections: PlacedSectionDto[];
 }) {
- const columnStyle = {
-  width: "100%",
- };
+  const columnStyle = {
+    width: '100%',
+  };
 
- const columnSections = sections.filter((s) => s.columnId === column.id);
+  const columnSections = sections.filter((s) => s.columnId === column.id);
 
- return (
-  <div style={columnStyle}>
-   {columnSections
-    .sort((a, b) => a.order - b.order)
-    .map((section) => (
-     <ASTSection key={section.sectionId} section={section} />
-    ))}
-  </div>
- );
+  return (
+    <div style={columnStyle}>
+      {columnSections
+        .sort((a, b) => a.order - b.order)
+        .map((section) => (
+          <ASTSection key={section.sectionId} section={section} />
+        ))}
+    </div>
+  );
 }
 
 /**
  * Two column layout
  */
 function TwoColumnLayout({
- columns,
- sections,
+  columns,
+  sections,
 }: {
- columns: ResumeAst["page"]["columns"];
- sections: PlacedSection[];
+  columns: ResumeAstDto['page']['columns'];
+  sections: PlacedSectionDto[];
 }) {
- const containerStyle = {
-  display: "flex",
-  gap: "0px",
- };
+  const containerStyle = {
+    display: 'flex',
+    gap: '0px',
+  };
 
- return (
-  <div style={containerStyle}>
-   {columns.map((column: ResumeAst["page"]["columns"][number]) => {
-    const columnStyle = {
-     width: `${column.widthPercentage}%`,
-    };
+  return (
+    <div style={containerStyle}>
+      {columns.map((column: ResumeAstDto['page']['columns'][number]) => {
+        const columnStyle = {
+          width: `${column.widthPercentage}%`,
+        };
 
-    const columnSections = sections.filter((s) => s.columnId === column.id);
+        const columnSections = sections.filter((s) => s.columnId === column.id);
 
-    return (
-     <div key={column.id} style={columnStyle}>
-      {columnSections
-       .sort((a, b) => a.order - b.order)
-       .map((section) => (
-        <ASTSection key={section.sectionId} section={section} />
-       ))}
-     </div>
-    );
-   })}
-  </div>
- );
+        return (
+          <div key={column.id} style={columnStyle}>
+            {columnSections
+              .sort((a, b) => a.order - b.order)
+              .map((section) => (
+                <ASTSection key={section.sectionId} section={section} />
+              ))}
+          </div>
+        );
+      })}
+    </div>
+  );
 }

@@ -2,14 +2,15 @@
  * Step Navigation Component
  *
  * Nielsen: User control and freedom (back/next navigation)
+ * Pure prop-driven — no store dependency.
  */
 
-"use client";
+'use client';
 
-import { useOnboardingStore, ONBOARDING_STEPS } from "./stores";
-import { ArrowLeft, ArrowRight, SkipForward } from "lucide-react";
-import { useI18n } from "@/lib/i18n";
-import { Button } from "@/shared/components/ui";
+import { useI18n } from '@profile/i18n';
+import { ArrowLeft, ArrowRight, SkipForward } from 'lucide-react';
+import { Button } from '@/shared/components/ui';
+import { useOnboarding } from './hooks';
 
 interface StepNavigationProps {
   onNext?: () => void | Promise<void>;
@@ -33,16 +34,18 @@ export function StepNavigation({
   const { t } = useI18n();
   const {
     currentStep,
+    currentStepIndex,
+    allSteps,
+    canProceed: sessionCanProceed,
     goToNextStep,
     goToPreviousStep,
-    canProceed: storeCanProceed,
-  } = useOnboardingStore();
-  const currentIndex = ONBOARDING_STEPS.findIndex((s) => s.id === currentStep);
-  const isFirstStep = currentIndex === 0;
-  const isLastStep = currentIndex === ONBOARDING_STEPS.length - 2; // Before 'complete'
-  const isComplete = currentStep === "complete";
+  } = useOnboarding();
 
-  const canProceed = canProceedProp ?? storeCanProceed();
+  const isFirstStep = currentStepIndex === 0;
+  const isLastStep = currentStepIndex === allSteps.length - 2; // Before 'complete'
+  const isComplete = currentStep === 'complete';
+
+  const canProceed = canProceedProp ?? sessionCanProceed;
 
   const handleNext = async () => {
     if (onNext) {
@@ -85,7 +88,7 @@ export function StepNavigation({
             leftIcon={<ArrowLeft className="h-4 w-4" strokeWidth={1.5} />}
             className="font-mono"
           >
-            {t("app.onboarding.step.back")}
+            {t('app.onboarding.step.back')}
           </Button>
         )}
       </div>
@@ -102,7 +105,7 @@ export function StepNavigation({
             rightIcon={<SkipForward className="h-4 w-4" strokeWidth={1.5} />}
             className="font-mono text-zinc-500 hover:text-zinc-400"
           >
-            {t("app.onboarding.step.skip")}
+            {t('app.onboarding.step.skip')}
           </Button>
         )}
 
@@ -117,9 +120,9 @@ export function StepNavigation({
           className="font-mono"
         >
           {isLoading
-            ? t("app.onboarding.step.processing")
+            ? t('app.onboarding.step.processing')
             : nextLabel ||
-              (isLastStep ? t("app.onboarding.step.submit") : t("app.onboarding.step.continue"))}
+              (isLastStep ? t('app.onboarding.step.submit') : t('app.onboarding.step.continue'))}
         </Button>
       </div>
     </div>

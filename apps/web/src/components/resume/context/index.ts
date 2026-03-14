@@ -7,8 +7,8 @@
 // RenderProvider (receives pre-compiled AST from backend)
 export {
   RenderProvider,
+  useGlobalStyles,
+  usePageLayout,
   useRenderContext,
   useSectionStyles,
-  usePageLayout,
-  useGlobalStyles,
-} from "./render-context";
+} from './render-context';

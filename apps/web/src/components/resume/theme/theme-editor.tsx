@@ -3,14 +3,14 @@
  * Edit theme with live preview
  */
 
-"use client";
+'use client';
 
-import { useState, useCallback } from "react";
-import { useCreateTheme, useUpdateTheme, useForkTheme } from "../hooks";
-import type { Theme } from "../../services/theme.types";
-import type { ResumeStyleConfig } from "../../types/config";
-import { ColorEditor, TypographyEditor, LayoutEditor, SpacingEditor } from "./editors";
-import { cn } from "@/shared/utils";
+import { useCallback, useState } from 'react';
+import { cn } from '@/shared/utils';
+import { useCreateTheme, useForkTheme, useUpdateTheme } from '../hooks';
+import type { Theme } from '../services/theme.types';
+import type { ResumeStyleConfig } from '../types/config';
+import { ColorEditor, LayoutEditor, SpacingEditor, TypographyEditor } from './editors';
 
 interface Props {
   theme?: Theme | null;
@@ -18,17 +18,17 @@ interface Props {
   onCancel?: () => void;
 }
 
-type EditorTab = "layout" | "colors" | "typography" | "spacing" | "json";
+type EditorTab = 'layout' | 'colors' | 'typography' | 'spacing' | 'json';
 
 export function ThemeEditor({ theme, onSave, onCancel }: Props) {
   const isNew = !theme;
-  const isPublicOrSystem = theme?.status === "PUBLISHED" || theme?.isSystemTheme;
+  const isPublicOrSystem = theme?.status === 'PUBLISHED' || theme?.isSystemTheme;
 
-  const [name, setName] = useState(theme?.name || "My Custom Theme");
+  const [name, setName] = useState(theme?.name || 'My Custom Theme');
   const [config, setConfig] = useState<Partial<ResumeStyleConfig>>(
-    (theme?.styleConfig as Partial<ResumeStyleConfig>) || {}
+    (theme?.styleConfig as Partial<ResumeStyleConfig>) || {},
   );
-  const [tab, setTab] = useState<EditorTab>("layout");
+  const [tab, setTab] = useState<EditorTab>('layout');
 
   const createTheme = useCreateTheme();
   const updateTheme = useUpdateTheme();
@@ -36,7 +36,7 @@ export function ThemeEditor({ theme, onSave, onCancel }: Props) {
 
   const updateConfig = useCallback((path: string, value: unknown) => {
     setConfig((prev) => {
-      const keys = path.split(".");
+      const keys = path.split('.');
       if (keys.length === 0) return prev;
 
       const result = { ...prev };
@@ -59,27 +59,35 @@ export function ThemeEditor({ theme, onSave, onCancel }: Props) {
       let saved: Theme;
 
       if (isNew) {
-        saved = await createTheme.mutateAsync({
+        const response = await createTheme.mutateAsync({
           name,
-          category: "MODERN",
+          category: 'MODERN',
           styleConfig: config,
         });
+        // SDK response: { data: { theme: Theme } }
+        saved = (response?.data as unknown as { theme: Theme })?.theme;
       } else if (isPublicOrSystem) {
-        saved = await forkTheme.mutateAsync({ themeId: theme.id, name: `${name} (Custom)` });
-        saved = await updateTheme.mutateAsync({
+        const forkResponse = await forkTheme.mutateAsync({
+          themeId: theme.id,
+          name: `${name} (Custom)`,
+        });
+        saved = (forkResponse?.data as unknown as { theme: Theme })?.theme;
+        const updateResponse = await updateTheme.mutateAsync({
           id: saved.id,
           input: { styleConfig: config },
         });
+        saved = (updateResponse?.data as unknown as { theme: Theme })?.theme;
       } else {
-        saved = await updateTheme.mutateAsync({
+        const response = await updateTheme.mutateAsync({
           id: theme.id,
           input: { name, styleConfig: config },
         });
+        saved = (response?.data as unknown as { theme: Theme })?.theme;
       }
 
       onSave?.(saved);
     } catch (error) {
-      console.error("Failed to save theme:", error);
+      console.error('Failed to save theme:', error);
     }
   };
 
@@ -101,32 +109,35 @@ export function ThemeEditor({ theme, onSave, onCancel }: Props) {
         </div>
         <div className="flex gap-2">
           <button
+            type="button"
             onClick={onCancel}
             className="border-pf-border-default text-pf-fg-default hover:bg-pf-canvas-subtle rounded-lg border px-4 py-2 text-sm font-medium transition-colors"
           >
             Cancel
           </button>
           <button
+            type="button"
             onClick={() => void handleSave()}
             disabled={createTheme.isPending || updateTheme.isPending || forkTheme.isPending}
             className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis rounded-lg px-4 py-2 text-sm font-medium transition-colors hover:opacity-90 disabled:opacity-50"
           >
-            {isPublicOrSystem ? "Save as Copy" : "Save"}
+            {isPublicOrSystem ? 'Save as Copy' : 'Save'}
           </button>
         </div>
       </div>
 
       {/* Tabs */}
       <div className="border-pf-border-default flex border-b">
-        {(["layout", "colors", "typography", "spacing", "json"] as const).map((t) => (
+        {(['layout', 'colors', 'typography', 'spacing', 'json'] as const).map((t) => (
           <button
+            type="button"
             key={t}
             onClick={() => setTab(t)}
             className={cn(
-              "border-b-2 px-4 py-2.5 text-sm font-medium capitalize transition-colors",
+              'border-b-2 px-4 py-2.5 text-sm font-medium capitalize transition-colors',
               tab === t
-                ? "border-pf-border-emphasis text-pf-fg-default"
-                : "text-pf-fg-muted hover:text-pf-fg-default border-transparent"
+                ? 'border-pf-border-emphasis text-pf-fg-default'
+                : 'text-pf-fg-muted hover:text-pf-fg-default border-transparent',
             )}
           >
             {t}
@@ -136,11 +147,11 @@ export function ThemeEditor({ theme, onSave, onCancel }: Props) {
 
       {/* Editor Content */}
       <div className="flex-1 overflow-auto p-4">
-        {tab === "layout" && <LayoutEditor config={config} onChange={updateConfig} />}
-        {tab === "colors" && <ColorEditor config={config} onChange={updateConfig} />}
-        {tab === "typography" && <TypographyEditor config={config} onChange={updateConfig} />}
-        {tab === "spacing" && <SpacingEditor config={config} onChange={updateConfig} />}
-        {tab === "json" && <JsonEditor config={config} onChange={setConfig} />}
+        {tab === 'layout' && <LayoutEditor config={config} onChange={updateConfig} />}
+        {tab === 'colors' && <ColorEditor config={config} onChange={updateConfig} />}
+        {tab === 'typography' && <TypographyEditor config={config} onChange={updateConfig} />}
+        {tab === 'spacing' && <SpacingEditor config={config} onChange={updateConfig} />}
+        {tab === 'json' && <JsonEditor config={config} onChange={setConfig} />}
       </div>
     </div>
   );
@@ -163,7 +174,7 @@ function JsonEditor({
       onChange(parsed);
       setError(null);
     } catch {
-      setError("Invalid JSON");
+      setError('Invalid JSON');
     }
   };
 

@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
 /**
  * Recent Users Widget
  * Clean, professional design
  */
 
-import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle, Avatar, Skeleton } from "@/shared/components/ui";
-import { EmptyState } from "@/shared/components/ui/empty-state";
-import { Users, ChevronRight } from "lucide-react";
-import { formatDistanceToNow } from "@/shared/utils";
-import type { AdminUser } from "./types";
+import { ChevronRight, Users } from 'lucide-react';
+import Link from 'next/link';
+import { Avatar, Card, CardContent, CardHeader, CardTitle, Skeleton } from '@/shared/components/ui';
+import { EmptyState } from '@/shared/components/ui/empty-state';
+import { formatDistanceToNow } from '@/shared/utils';
+import type { AdminUser } from './types';
 
 interface RecentUsersWidgetProps {
   users?: AdminUser[];
@@ -71,7 +71,7 @@ export function RecentUsersWidget({ users, loading }: RecentUsersWidgetProps) {
               <div key={user.id} className="flex items-center gap-3">
                 <Avatar
                   src={user.image}
-                  alt={user.name ?? "User"}
+                  alt={user.name ?? 'User'}
                   fallback={getInitials(user.name ?? user.email)}
                   size="md"
                   className="rounded-full"
@@ -79,9 +79,9 @@ export function RecentUsersWidget({ users, loading }: RecentUsersWidgetProps) {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <p className="text-pf-fg-default truncate text-sm font-medium">
-                      {user.name ?? "Unnamed User"}
+                      {user.name ?? 'Unnamed User'}
                     </p>
-                    {user.role === "ADMIN" && (
+                    {user.role === 'ADMIN' && (
                       <span className="bg-pf-accent-subtle text-pf-accent-fg rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase">
                         Admin
                       </span>
@@ -103,9 +103,9 @@ export function RecentUsersWidget({ users, loading }: RecentUsersWidgetProps) {
 
 function getInitials(name: string): string {
   return name
-    .split(" ")
+    .split(' ')
     .map((n) => n[0])
-    .join("")
+    .join('')
     .toUpperCase()
     .slice(0, 2);
 }

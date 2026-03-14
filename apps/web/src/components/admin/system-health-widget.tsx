@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
 /**
  * System Health Widget
  * Clean, professional design
  */
 
-import { Card, CardContent, CardHeader, CardTitle, Skeleton } from "@/shared/components/ui";
-import { cn } from "@/shared/utils/cn";
 import {
-  Database,
-  Server,
-  HardDrive,
-  CheckCircle2,
-  AlertTriangle,
-  XCircle,
   Activity,
-} from "lucide-react";
-import type { SystemHealth } from "./types";
+  AlertTriangle,
+  CheckCircle2,
+  Database,
+  HardDrive,
+  Server,
+  XCircle,
+} from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, Skeleton } from '@/shared/components/ui';
+import { cn } from '@/shared/utils/cn';
+import type { SystemHealth } from './types';
 
 interface SystemHealthWidgetProps {
   health?: SystemHealth;
@@ -26,28 +26,28 @@ interface SystemHealthWidgetProps {
 const statusConfig = {
   healthy: {
     icon: CheckCircle2,
-    color: "text-pf-success-fg",
-    bgColor: "bg-pf-success-subtle",
-    label: "Healthy",
+    color: 'text-pf-success-fg',
+    bgColor: 'bg-pf-success-subtle',
+    label: 'Healthy',
   },
   degraded: {
     icon: AlertTriangle,
-    color: "text-pf-attention-fg",
-    bgColor: "bg-pf-attention-subtle",
-    label: "Degraded",
+    color: 'text-pf-attention-fg',
+    bgColor: 'bg-pf-attention-subtle',
+    label: 'Degraded',
   },
   down: {
     icon: XCircle,
-    color: "text-pf-danger-fg",
-    bgColor: "bg-pf-danger-subtle",
-    label: "Down",
+    color: 'text-pf-danger-fg',
+    bgColor: 'bg-pf-danger-subtle',
+    label: 'Down',
   },
 };
 
 const services = [
-  { key: "database" as const, label: "Database", icon: Database },
-  { key: "api" as const, label: "API Server", icon: Server },
-  { key: "storage" as const, label: "Storage", icon: HardDrive },
+  { key: 'database' as const, label: 'Database', icon: Database },
+  { key: 'api' as const, label: 'API Server', icon: Server },
+  { key: 'storage' as const, label: 'Storage', icon: HardDrive },
 ];
 
 export function SystemHealthWidget({ health, loading }: SystemHealthWidgetProps) {
@@ -90,7 +90,7 @@ export function SystemHealthWidget({ health, loading }: SystemHealthWidgetProps)
       </CardHeader>
       <CardContent className="space-y-4">
         {services.map((service) => {
-          const status = health?.[service.key] ?? "healthy";
+          const status = health?.[service.key] ?? 'healthy';
           const config = statusConfig[status];
           const StatusIcon = config.icon;
 
@@ -104,9 +104,9 @@ export function SystemHealthWidget({ health, loading }: SystemHealthWidgetProps)
               </div>
               <div
                 className={cn(
-                  "flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium",
+                  'flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium',
                   config.bgColor,
-                  config.color
+                  config.color,
                 )}
               >
                 <StatusIcon className="h-3.5 w-3.5" strokeWidth={2} />

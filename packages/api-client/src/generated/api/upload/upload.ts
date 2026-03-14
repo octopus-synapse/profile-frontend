@@ -16,8 +16,10 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  DeleteResponseDto,
   UploadCompanyLogoRequestDto,
-  UploadProfileImageRequestDto
+  UploadProfileImageRequestDto,
+  UploadResponseDto
 } from '../../models';
 
 import { customFetch } from '../../../client/fetcher';
@@ -31,7 +33,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary Upload company logo for resume
  */
 export type uploadUploadCompanyLogoResponse201 = {
-  data: void
+  data: UploadResponseDto
   status: 201
 }
 
@@ -121,7 +123,7 @@ export const useUploadUploadCompanyLogo = <TError = void,
  * @summary Delete uploaded file
  */
 export type uploadDeleteFileResponse204 = {
-  data: void
+  data: DeleteResponseDto
   status: 204
 }
 
@@ -209,7 +211,7 @@ export const useUploadDeleteFile = <TError = void,
  * @summary Upload user profile image
  */
 export type uploadUploadProfileImageResponse201 = {
-  data: void
+  data: UploadResponseDto
   status: 201
 }
 

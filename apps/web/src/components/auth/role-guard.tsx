@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 /**
  * Role Guard Component
@@ -6,16 +6,18 @@
  * Uses Strategy Pattern for role checking
  */
 
-import type { ReactNode } from "react";
-import { useAuth } from "@/lib/auth";
-import type { UserRole } from "@/shared/types/auth";
-import { Spinner } from "@/shared/components/ui";
+import { type SessionUserResponseDtoRole, useAuthSession } from '@profile/api-client';
+import type { ReactNode } from 'react';
+import { Spinner } from '@/shared/components/ui';
 
 // ============================================================================
 // Strategy Pattern: Role Check Strategies
 // ============================================================================
 
-type RoleCheckStrategy = (userRole: UserRole | undefined, requiredRoles: UserRole[]) => boolean;
+type RoleCheckStrategy = (
+  userRole: SessionUserResponseDtoRole | undefined,
+  requiredRoles: SessionUserResponseDtoRole[],
+) => boolean;
 
 const roleStrategies: Record<string, RoleCheckStrategy> = {
   // User has exact role
@@ -40,8 +42,8 @@ const roleStrategies: Record<string, RoleCheckStrategy> = {
 
 interface RoleGuardProps {
   children: ReactNode;
-  roles: UserRole[];
-  strategy?: "exact" | "any" | "all";
+  roles: SessionUserResponseDtoRole[];
+  strategy?: 'exact' | 'any' | 'all';
   fallback?: ReactNode;
   loading?: ReactNode;
 }
@@ -53,11 +55,12 @@ interface RoleGuardProps {
 export function RoleGuard({
   children,
   roles,
-  strategy = "any",
+  strategy = 'any',
   fallback = null,
   loading,
 }: RoleGuardProps) {
-  const { user, isLoading } = useAuth();
+  const { data, isLoading } = useAuthSession();
+  const user = data?.data?.data?.user;
 
   // Show loading state
   if (isLoading) {
@@ -92,7 +95,7 @@ interface AdminOnlyProps {
 
 export function AdminOnly({ children, fallback }: AdminOnlyProps) {
   return (
-    <RoleGuard roles={["ADMIN"]} fallback={fallback}>
+    <RoleGuard roles={['ADMIN']} fallback={fallback}>
       {children}
     </RoleGuard>
   );
@@ -104,7 +107,8 @@ interface AuthenticatedOnlyProps {
 }
 
 export function AuthenticatedOnly({ children, fallback }: AuthenticatedOnlyProps) {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { data, isLoading } = useAuthSession();
+  const isAuthenticated = data?.data?.data?.authenticated ?? false;
 
   if (isLoading) {
     return (

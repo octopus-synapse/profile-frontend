@@ -1,23 +1,22 @@
 /**
  * Onboarding Shell Component
  *
- * Terminal-style container with step navigation
- * Nielsen: Visibility of system status (progress bar & step indicator)
+ * Terminal-style container with step navigation.
+ * Uses 100% SDK hooks via useOnboarding.
  */
 
-"use client";
+'use client';
 
-import { useOnboardingStore, ONBOARDING_STEPS } from "./stores";
-import { CheckCircle2, Circle, ChevronRight } from "lucide-react";
+import { CheckCircle2, ChevronRight, Circle } from 'lucide-react';
+import { type OnboardingStep, useOnboarding } from './hooks';
 
 interface OnboardingShellProps {
   children: React.ReactNode;
 }
 
 export function OnboardingShell({ children }: OnboardingShellProps) {
-  const { currentStep, completedSteps } = useOnboardingStore();
-  const currentStepIndex = ONBOARDING_STEPS.findIndex((s) => s.id === currentStep);
-  const currentStepInfo = ONBOARDING_STEPS[currentStepIndex];
+  const { currentStep, currentStepIndex, completedSteps, allSteps } = useOnboarding();
+  const currentStepInfo = allSteps[currentStepIndex];
 
   return (
     <div className="bg-[#030303] min-h-screen">
@@ -37,8 +36,8 @@ export function OnboardingShell({ children }: OnboardingShellProps) {
 
             {/* Steps List */}
             <nav className="space-y-1">
-              {ONBOARDING_STEPS.map((step, index) => {
-                const isCompleted = completedSteps.includes(step.id);
+              {allSteps.map((step, index) => {
+                const isCompleted = completedSteps.includes(step.id as OnboardingStep);
                 const isCurrent = currentStep === step.id;
                 const isAccessible = index <= currentStepIndex || isCompleted;
 
@@ -47,12 +46,12 @@ export function OnboardingShell({ children }: OnboardingShellProps) {
                     key={step.id}
                     className={`flex items-center gap-2 rounded px-2 py-1.5 font-mono text-xs transition-colors ${
                       isCurrent
-                        ? "bg-cyan-500/10 text-cyan-400"
+                        ? 'bg-cyan-500/10 text-cyan-400'
                         : isCompleted
-                          ? "text-emerald-500"
+                          ? 'text-emerald-500'
                           : isAccessible
-                            ? "text-zinc-400 hover:bg-white/5"
-                            : "text-zinc-500 opacity-50"
+                            ? 'text-zinc-400 hover:bg-white/5'
+                            : 'text-zinc-500 opacity-50'
                     } `}
                   >
                     {isCompleted ? (
@@ -62,7 +61,7 @@ export function OnboardingShell({ children }: OnboardingShellProps) {
                     ) : (
                       <Circle className="h-3.5 w-3.5" strokeWidth={1.5} />
                     )}
-                    <span className={step.required ? "" : "italic"}>
+                    <span className={step.required ? '' : 'italic'}>
                       {step.label}
                       {!step.required && <span className="text-zinc-500 ml-1">?</span>}
                     </span>

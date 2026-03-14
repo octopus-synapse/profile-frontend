@@ -1,31 +1,31 @@
-"use client";
+'use client';
 
-import { useEffect, useState, useRef, useSyncExternalStore } from "react";
 import {
-  Trophy,
-  Flame,
-  Target,
-  Zap,
-  Star,
   Award,
   Calendar,
   CheckCircle2,
+  Flame,
   Medal,
-} from "lucide-react";
-import type { TranslationKeys } from "@/locales";
+  Star,
+  Target,
+  Trophy,
+  Zap,
+} from 'lucide-react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import type { TranslationKeys } from '@/locales';
 
 // SSR-safe hook for reduced motion preference
 function useReducedMotion(): boolean {
   const getSnapshot = () =>
-    typeof window !== "undefined"
-      ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    typeof window !== 'undefined'
+      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
       : false;
   const getServerSnapshot = () => false;
   const subscribe = (callback: () => void) => {
-    if (typeof window === "undefined") return () => {};
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    mediaQuery.addEventListener("change", callback);
-    return () => mediaQuery.removeEventListener("change", callback);
+    if (typeof window === 'undefined') return () => {};
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    mediaQuery.addEventListener('change', callback);
+    return () => mediaQuery.removeEventListener('change', callback);
   };
   return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }
@@ -49,7 +49,7 @@ export function GamificationDemo({ t }: GamificationDemoProps) {
           }
         });
       },
-      { threshold: 0.3 }
+      { threshold: 0.3 },
     );
 
     if (containerRef.current) {
@@ -65,7 +65,7 @@ export function GamificationDemo({ t }: GamificationDemoProps) {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           icon={Target}
-          label={t.gamification?.progress || "Profile Strength"}
+          label={t.gamification?.progress || 'Profile Strength'}
           value={85}
           suffix="%"
           color="accent"
@@ -75,7 +75,7 @@ export function GamificationDemo({ t }: GamificationDemoProps) {
         />
         <StatCard
           icon={Zap}
-          label={t.gamification?.applications || "Applications Sent"}
+          label={t.gamification?.applications || 'Applications Sent'}
           value={127}
           color="attention"
           isVisible={isVisible}
@@ -84,7 +84,7 @@ export function GamificationDemo({ t }: GamificationDemoProps) {
         />
         <StatCard
           icon={Calendar}
-          label={t.gamification?.interviews || "Interviews Scheduled"}
+          label={t.gamification?.interviews || 'Interviews Scheduled'}
           value={12}
           color="success"
           isVisible={isVisible}
@@ -93,7 +93,7 @@ export function GamificationDemo({ t }: GamificationDemoProps) {
         />
         <StatCard
           icon={Trophy}
-          label={t.gamification?.badges || "Achievements"}
+          label={t.gamification?.badges || 'Achievements'}
           value={8}
           color="done"
           isVisible={isVisible}
@@ -117,7 +117,7 @@ interface StatCardProps {
   label: string;
   value: number;
   suffix?: string;
-  color: "accent" | "success" | "attention" | "done";
+  color: 'accent' | 'success' | 'attention' | 'done';
   isVisible: boolean;
   prefersReducedMotion: boolean;
   delay: number;
@@ -127,7 +127,7 @@ function StatCard({
   icon: Icon,
   label,
   value,
-  suffix = "",
+  suffix = '',
   color,
   isVisible,
   prefersReducedMotion,
@@ -163,14 +163,14 @@ function StatCard({
   }, [isVisible, value, prefersReducedMotion, delay]);
 
   const colorClasses = {
-    accent: { bg: "bg-cyan-500/10", text: "text-cyan-400", icon: "text-cyan-400" },
-    success: { bg: "bg-emerald-500/10", text: "text-emerald-500", icon: "text-emerald-500" },
+    accent: { bg: 'bg-cyan-500/10', text: 'text-cyan-400', icon: 'text-cyan-400' },
+    success: { bg: 'bg-emerald-500/10', text: 'text-emerald-500', icon: 'text-emerald-500' },
     attention: {
-      bg: "bg-amber-500/10",
-      text: "text-amber-500",
-      icon: "text-amber-500",
+      bg: 'bg-amber-500/10',
+      text: 'text-amber-500',
+      icon: 'text-amber-500',
     },
-    done: { bg: "bg-purple-500/10", text: "text-purple-500", icon: "text-purple-500" },
+    done: { bg: 'bg-purple-500/10', text: 'text-purple-500', icon: 'text-purple-500' },
   };
 
   const colors = colorClasses[color];
@@ -200,13 +200,13 @@ function StreakDisplay({
   prefersReducedMotion: boolean;
 }) {
   const days = [
-    { day: "M", active: true },
-    { day: "T", active: true },
-    { day: "W", active: true },
-    { day: "T", active: true },
-    { day: "F", active: true },
-    { day: "S", active: true },
-    { day: "S", active: true },
+    { day: 'M', active: true },
+    { day: 'T', active: true },
+    { day: 'W', active: true },
+    { day: 'T', active: true },
+    { day: 'F', active: true },
+    { day: 'S', active: true },
+    { day: 'S', active: true },
   ];
 
   return (
@@ -221,7 +221,7 @@ function StreakDisplay({
               {t.gamification?.streakTitle || "You're on fire!"}
             </h3>
             <p className="text-sm text-zinc-400">
-              {t.gamification?.streakDescription || "7-day application streak"}
+              {t.gamification?.streakDescription || '7-day application streak'}
             </p>
           </div>
         </div>
@@ -233,8 +233,8 @@ function StreakDisplay({
               className={`flex h-10 w-10 items-center justify-center rounded-lg text-sm font-medium transition-all ${
                 isVisible && !prefersReducedMotion
                   ? `animate-stagger-${Math.min(index + 1, 6)}`
-                  : ""
-              } ${d.active ? "bg-amber-500 text-white" : "bg-white/5 text-zinc-500"}`}
+                  : ''
+              } ${d.active ? 'bg-amber-500 text-white' : 'bg-white/5 text-zinc-500'}`}
             >
               {d.day}
             </div>
@@ -247,12 +247,12 @@ function StreakDisplay({
 
 // Achievement Badges Component
 const ACHIEVEMENTS = [
-  { icon: Star, label: "First Application", color: "#FFD700", earned: true },
-  { icon: Zap, label: "Speed Demon", color: "#FF6B6B", earned: true },
-  { icon: Target, label: "Perfect Match", color: "#4ECDC4", earned: true },
-  { icon: Trophy, label: "Interview Pro", color: "#9B59B6", earned: true },
-  { icon: Medal, label: "Top Candidate", color: "#3498DB", earned: true },
-  { icon: Award, label: "Career Champion", color: "#E74C3C", earned: false },
+  { icon: Star, label: 'First Application', color: '#FFD700', earned: true },
+  { icon: Zap, label: 'Speed Demon', color: '#FF6B6B', earned: true },
+  { icon: Target, label: 'Perfect Match', color: '#4ECDC4', earned: true },
+  { icon: Trophy, label: 'Interview Pro', color: '#9B59B6', earned: true },
+  { icon: Medal, label: 'Top Candidate', color: '#3498DB', earned: true },
+  { icon: Award, label: 'Career Champion', color: '#E74C3C', earned: false },
 ];
 
 function AchievementBadges({
@@ -270,25 +270,25 @@ function AchievementBadges({
           <div
             key={achievement.label}
             className={`group relative flex flex-col items-center gap-2 rounded-xl p-3 transition-all ${
-              isVisible && !prefersReducedMotion ? `animate-stagger-${Math.min(index + 1, 6)}` : ""
+              isVisible && !prefersReducedMotion ? `animate-stagger-${Math.min(index + 1, 6)}` : ''
             } ${
               achievement.earned
-                ? "border border-white/10 bg-[#0A0A0A]/80 hover:shadow-lg"
-                : "bg-white/5 opacity-50"
+                ? 'border border-white/10 bg-[#0A0A0A]/80 hover:shadow-lg'
+                : 'bg-white/5 opacity-50'
             }`}
             title={achievement.label}
           >
             <div
               className={`flex h-12 w-12 items-center justify-center rounded-full ${
-                achievement.earned ? "shadow-lg" : ""
+                achievement.earned ? 'shadow-lg' : ''
               }`}
               style={{
-                backgroundColor: achievement.earned ? achievement.color + "20" : undefined,
+                backgroundColor: achievement.earned ? `${achievement.color}20` : undefined,
               }}
             >
               <Icon
                 className="h-6 w-6"
-                style={{ color: achievement.earned ? achievement.color : "#71717a" }}
+                style={{ color: achievement.earned ? achievement.color : '#71717a' }}
               />
             </div>
             {achievement.earned && (
@@ -309,22 +309,22 @@ export function ProgressRing({
   progress,
   size = 80,
   strokeWidth = 8,
-  color = "accent",
+  color = 'accent',
 }: {
   progress: number;
   size?: number;
   strokeWidth?: number;
-  color?: "accent" | "success" | "attention" | "done";
+  color?: 'accent' | 'success' | 'attention' | 'done';
 }) {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (progress / 100) * circumference;
 
   const colorValues = {
-    accent: "#22d3ee",
-    success: "#10b981",
-    attention: "#f59e0b",
-    done: "#a855f7",
+    accent: '#22d3ee',
+    success: '#10b981',
+    attention: '#f59e0b',
+    done: '#a855f7',
   };
 
   return (

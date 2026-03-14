@@ -5,17 +5,17 @@
  * First impression with clear value proposition
  */
 
-"use client";
+'use client';
 
-import { useOnboardingStore } from "../stores";
-import { StepNavigation } from "../step-navigation";
-import { Sparkles, Clock, Shield, Code } from "lucide-react";
+import { Clock, Code, Shield, Sparkles } from 'lucide-react';
+import { useOnboarding } from '../hooks';
+import { StepNavigation } from '../step-navigation';
 
 export function WelcomeStep() {
-  const { goToNextStep } = useOnboardingStore();
+  const { goToNextStep } = useOnboarding();
 
-  const handleStartSetup = () => {
-    goToNextStep();
+  const handleStartSetup = async () => {
+    await goToNextStep();
   };
 
   return (
@@ -35,7 +35,7 @@ export function WelcomeStep() {
       {/* Code Block */}
       <div className="rounded-lg border border-white/10 bg-[#0A0A0A] p-4 font-mono text-sm">
         <div className="mb-2 text-xs text-zinc-500">
-          <span className="opacity-60">{"//"}</span> initialization
+          <span className="opacity-60">{'//'}</span> initialization
         </div>
         <div className="space-y-1">
           <div>
@@ -57,7 +57,7 @@ export function WelcomeStep() {
           </div>
           <div className="mt-2">
             <span className="text-zinc-500">
-              <span className="opacity-60">{"//"}</span> Output: ✨ Professional resume ready!
+              <span className="opacity-60">{'//'}</span> Output: ✨ Professional resume ready!
             </span>
           </div>
         </div>

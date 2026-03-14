@@ -5,9 +5,8 @@
  * ProFile Resume & Portfolio Management API
  * OpenAPI spec version: 1.0.0
  */
-import type { ResumeAstDto } from './resumeAstDto';
 
 export interface DslPreviewResultDto {
   /** Compiled AST */
-  ast: ResumeAstDto;
+  ast: string;
 }

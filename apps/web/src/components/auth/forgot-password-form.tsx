@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
 /**
  * Forgot Password Form Component
  * Ultra Premium Version - Inspired by Linear, Vercel & Cursor
  */
 
-import { useState } from "react";
-import { apiClient } from "@/shared/lib/api-client";
-import { useT } from "@/lib/i18n";
-import { Button, Input, Spinner } from "@/shared/components/ui";
-import { Label } from "@/shared/components/ui/label";
-import { AlertCircle, Mail, CheckCircle2, ChevronRight } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useT } from '@profile/i18n';
+import { AnimatePresence, motion } from 'framer-motion';
+import { AlertCircle, CheckCircle2, ChevronRight, Mail } from 'lucide-react';
+import { useState } from 'react';
+import { Button, Input, Spinner } from '@/shared/components/ui';
+import { Label } from '@/shared/components/ui/label';
+import { apiClient } from '@/shared/lib/api-client';
 
 export function ForgotPasswordForm() {
   const t = useT();
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -28,23 +28,28 @@ export function ForgotPasswordForm() {
 
     try {
       // Use shared api-client
-      const result = await apiClient.auth.requestPasswordReset({ email });
+      const result = await apiClient.auth.forgotPassword({ email });
 
       // If we get here without error, the request was successful
       if (result.success) {
         setSuccess(true);
-        setEmail(""); // Clear email after successful submission
+        setEmail(''); // Clear email after successful submission
       } else {
         // Request failed
-        setError(result.message || t("auth.error.emailNotSent") || "Unable to send reset email. Please try again later.");
+        setError(
+          t('auth.error.emailNotSent') || 'Unable to send reset email. Please try again later.',
+        );
       }
     } catch (err) {
       // Email service failed or other error
-      const errorMessage = err instanceof Error ? err.message : "";
-      if (errorMessage.includes("Forbidden") || errorMessage.includes("email")) {
-        setError(t("auth.error.emailServiceError") || "Email service is temporarily unavailable. Please try again later.");
+      const errorMessage = err instanceof Error ? err.message : '';
+      if (errorMessage.includes('Forbidden') || errorMessage.includes('email')) {
+        setError(
+          t('auth.error.emailServiceError') ||
+            'Email service is temporarily unavailable. Please try again later.',
+        );
       } else {
-        setError(t("error.generic"));
+        setError(t('error.generic'));
       }
     } finally {
       setIsLoading(false);
@@ -67,13 +72,13 @@ export function ForgotPasswordForm() {
           {success && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
+              animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               className="overflow-hidden"
             >
               <div className="flex items-center gap-3 rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-3 font-mono text-xs text-emerald-400">
                 <CheckCircle2 className="h-4 w-4 shrink-0" />
-                <span>{t("auth.forgotPassword.success")}</span>
+                <span>{t('auth.forgotPassword.success')}</span>
               </div>
             </motion.div>
           )}
@@ -84,7 +89,7 @@ export function ForgotPasswordForm() {
           {error && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
+              animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               className="overflow-hidden"
             >
@@ -102,7 +107,7 @@ export function ForgotPasswordForm() {
             htmlFor="email"
             className="ml-1 font-mono text-[10px] tracking-[0.15em] text-zinc-500 uppercase"
           >
-            {t("auth.forgotPassword.email")}
+            {t('auth.forgotPassword.email')}
           </Label>
           <div className="group relative">
             <div className="absolute inset-y-0 left-3 flex items-center">
@@ -112,7 +117,7 @@ export function ForgotPasswordForm() {
               id="email"
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
               placeholder="name@company.com"
               required
               disabled={success || isLoading}
@@ -131,7 +136,7 @@ export function ForgotPasswordForm() {
             <Spinner size="sm" className="border-black/20 border-t-black" />
           ) : (
             <span className="relative z-10 flex items-center justify-center gap-2">
-              {t("auth.forgotPassword.submit")}
+              {t('auth.forgotPassword.submit')}
               <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </span>
           )}
@@ -155,4 +160,3 @@ export function ForgotPasswordForm() {
     </motion.div>
   );
 }
-

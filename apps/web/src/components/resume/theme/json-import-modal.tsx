@@ -3,13 +3,13 @@
  * Clean modal to import theme from JSON
  */
 
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useCreateTheme } from "../hooks";
-import type { ResumeStyleConfig } from "../../types/config";
-import { X, Upload, Clipboard, FileJson, AlertCircle, CheckCircle2 } from "lucide-react";
-import { cn } from "@/shared/utils";
+import { AlertCircle, CheckCircle2, Clipboard, FileJson, Upload, X } from 'lucide-react';
+import { useState } from 'react';
+import { cn } from '@/shared/utils';
+import { useCreateTheme } from '../hooks';
+import type { ResumeStyleConfig } from '../types/config';
 
 interface Props {
   isOpen: boolean;
@@ -18,8 +18,8 @@ interface Props {
 }
 
 export function JsonImportModal({ isOpen, onClose, onImported }: Props) {
-  const [json, setJson] = useState("");
-  const [name, setName] = useState("My Custom Theme");
+  const [json, setJson] = useState('');
+  const [name, setName] = useState('My Custom Theme');
   const [error, setError] = useState<string | null>(null);
   const [isValid, setIsValid] = useState(false);
 
@@ -37,12 +37,12 @@ export function JsonImportModal({ isOpen, onClose, onImported }: Props) {
     try {
       const parsed = JSON.parse(value) as Partial<ResumeStyleConfig>;
       if (!parsed.layout && !parsed.tokens && !parsed.sections) {
-        setError("Must include layout, tokens, or sections");
+        setError('Must include layout, tokens, or sections');
         return;
       }
       setIsValid(true);
     } catch {
-      setError("Invalid JSON syntax");
+      setError('Invalid JSON syntax');
     }
   };
 
@@ -50,20 +50,24 @@ export function JsonImportModal({ isOpen, onClose, onImported }: Props) {
     try {
       const parsed = JSON.parse(json) as Partial<ResumeStyleConfig>;
 
-      const theme = await createTheme.mutateAsync({
+      const themeResponse = await createTheme.mutateAsync({
         name,
-        category: "MODERN",
+        category: 'MODERN',
         styleConfig: parsed as Record<string, unknown>,
       });
 
-      onImported?.(theme.id);
+      // SDK response is nested: { data: { data: { theme: { id } } } }
+      const themeId = (themeResponse?.data?.data as { theme?: { id?: string } })?.theme?.id;
+      if (themeId) {
+        onImported?.(themeId);
+      }
       onClose();
-      setJson("");
-      setName("My Custom Theme");
+      setJson('');
+      setName('My Custom Theme');
       setError(null);
       setIsValid(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create theme");
+      setError(err instanceof Error ? err.message : 'Failed to create theme');
     }
   };
 
@@ -72,7 +76,7 @@ export function JsonImportModal({ isOpen, onClose, onImported }: Props) {
       const text = await navigator.clipboard.readText();
       validateJson(text);
     } catch {
-      setError("Failed to read clipboard");
+      setError('Failed to read clipboard');
     }
   };
 
@@ -98,6 +102,7 @@ export function JsonImportModal({ isOpen, onClose, onImported }: Props) {
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
             className="rounded-lg p-2 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-200"
           >
@@ -128,6 +133,7 @@ export function JsonImportModal({ isOpen, onClose, onImported }: Props) {
                 JSON Configuration
               </label>
               <button
+                type="button"
                 onClick={() => void handlePaste()}
                 className="flex items-center gap-1.5 text-xs font-medium text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200"
               >
@@ -140,12 +146,12 @@ export function JsonImportModal({ isOpen, onClose, onImported }: Props) {
                 value={json}
                 onChange={(e) => validateJson(e.target.value)}
                 className={cn(
-                  "h-56 w-full rounded-lg border bg-neutral-50 p-4 font-mono text-xs text-neutral-800 transition-colors focus:ring-2 focus:outline-none dark:bg-neutral-800 dark:text-neutral-200",
+                  'h-56 w-full rounded-lg border bg-neutral-50 p-4 font-mono text-xs text-neutral-800 transition-colors focus:ring-2 focus:outline-none dark:bg-neutral-800 dark:text-neutral-200',
                   error
-                    ? "border-red-300 focus:border-red-400 focus:ring-red-100 dark:border-red-700 dark:focus:ring-red-900/30"
+                    ? 'border-red-300 focus:border-red-400 focus:ring-red-100 dark:border-red-700 dark:focus:ring-red-900/30'
                     : isValid
-                      ? "border-green-300 focus:border-green-400 focus:ring-green-100 dark:border-green-700 dark:focus:ring-green-900/30"
-                      : "border-neutral-200 focus:border-neutral-400 focus:ring-neutral-200 dark:border-neutral-700 dark:focus:ring-neutral-700"
+                      ? 'border-green-300 focus:border-green-400 focus:ring-green-100 dark:border-green-700 dark:focus:ring-green-900/30'
+                      : 'border-neutral-200 focus:border-neutral-400 focus:ring-neutral-200 dark:border-neutral-700 dark:focus:ring-neutral-700',
                 )}
                 placeholder={`{
   "layout": {
@@ -195,11 +201,11 @@ export function JsonImportModal({ isOpen, onClose, onImported }: Props) {
               💡 Design Tokens Structure
             </p>
             <p className="text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
-              Your JSON should include{" "}
-              <code className="rounded bg-neutral-200 px-1 dark:bg-neutral-700">layout</code>,{" "}
-              <code className="rounded bg-neutral-200 px-1 dark:bg-neutral-700">tokens</code>{" "}
-              (typography, colors, spacing), and optionally{" "}
-              <code className="rounded bg-neutral-200 px-1 dark:bg-neutral-700">sections</code>{" "}
+              Your JSON should include{' '}
+              <code className="rounded bg-neutral-200 px-1 dark:bg-neutral-700">layout</code>,{' '}
+              <code className="rounded bg-neutral-200 px-1 dark:bg-neutral-700">tokens</code>{' '}
+              (typography, colors, spacing), and optionally{' '}
+              <code className="rounded bg-neutral-200 px-1 dark:bg-neutral-700">sections</code>{' '}
               configuration.
             </p>
           </div>
@@ -208,18 +214,20 @@ export function JsonImportModal({ isOpen, onClose, onImported }: Props) {
         {/* Footer */}
         <div className="flex items-center justify-end gap-3 border-t border-neutral-200 px-6 py-4 dark:border-neutral-700">
           <button
+            type="button"
             onClick={onClose}
             className="rounded-lg border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700"
           >
             Cancel
           </button>
           <button
+            type="button"
             onClick={() => void handleImport()}
             disabled={!isValid || !name.trim() || createTheme.isPending}
             className="flex items-center gap-2 rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100"
           >
             <Upload className="h-4 w-4" strokeWidth={1.5} />
-            {createTheme.isPending ? "Creating..." : "Create Theme"}
+            {createTheme.isPending ? 'Creating...' : 'Create Theme'}
           </button>
         </div>
       </div>

@@ -35,7 +35,24 @@ import type {
 import type {
   CreateResume,
   CreateShare,
+  DeleteResponseDto,
+  PaginatedResumesDataDto,
+  PublicResumeDataDto,
+  ResumeDetailsDataDto,
+  ResumeFullResponseDto,
+  ResumeListDataDto,
+  ResumeOperationMessageDataDto,
+  ResumeResponseDto,
+  ResumeSectionDeleteDataDto,
+  ResumeSectionItemDataDto,
+  ResumeSectionTypesDataDto,
+  ResumeSectionsDataDto,
+  ResumeSlotsResponseDto,
+  ResumesListTypesParams,
   SectionItemPayload,
+  ShareCreateDataDto,
+  ShareDeleteDataDto,
+  ShareListDataDto,
   UpdateResume
 } from '../../models';
 
@@ -50,7 +67,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary Get public resume by share slug
  */
 export type resumesGetPublicResumeResponse200 = {
-  data: void
+  data: PublicResumeDataDto
   status: 200
 }
     
@@ -312,7 +329,7 @@ export function useResumesGetPublicResumeSuspense<TData = Awaited<ReturnType<typ
  * @summary Download public resume by share slug
  */
 export type resumesDownloadPublicResumeResponse200 = {
-  data: void
+  data: PublicResumeDataDto
   status: 200
 }
     
@@ -574,7 +591,7 @@ export function useResumesDownloadPublicResumeSuspense<TData = Awaited<ReturnTyp
  * @summary Get all resumes for current user
  */
 export type resumesGetAllUserResumesResponse200 = {
-  data: void
+  data: PaginatedResumesDataDto
   status: 200
 }
 
@@ -843,7 +860,7 @@ export function useResumesGetAllUserResumesSuspense<TData = Awaited<ReturnType<t
  * @summary Create a new resume
  */
 export type resumesCreateResumeForUserResponse201 = {
-  data: void
+  data: ResumeResponseDto
   status: 201
 }
 
@@ -932,7 +949,7 @@ export const useResumesCreateResumeForUser = <TError = void,
  * @summary List all resumes for a specific user
  */
 export type resumesListResumesForUserResponse200 = {
-  data: void
+  data: ResumeListDataDto
   status: 200
 }
 
@@ -1201,7 +1218,7 @@ export function useResumesListResumesForUserSuspense<TData = Awaited<ReturnType<
  * @summary Delete a resume
  */
 export type resumesDeleteResumeResponse204 = {
-  data: void
+  data: ResumeOperationMessageDataDto
   status: 204
 }
 
@@ -1289,7 +1306,7 @@ export const useResumesDeleteResume = <TError = void,
  * @summary Get full resume details
  */
 export type resumesGetResumeDetailsResponse200 = {
-  data: void
+  data: ResumeDetailsDataDto
   status: 200
 }
 
@@ -1558,7 +1575,7 @@ export function useResumesGetResumeDetailsSuspense<TData = Awaited<ReturnType<ty
  * @summary Get remaining resume slots for current user
  */
 export type resumesGetRemainingSlotsResponse200 = {
-  data: void
+  data: ResumeSlotsResponseDto
   status: 200
 }
 
@@ -1827,7 +1844,7 @@ export function useResumesGetRemainingSlotsSuspense<TData = Awaited<ReturnType<t
  * @summary Delete a resume
  */
 export type resumesDeleteResumeForUserResponse204 = {
-  data: void
+  data: DeleteResponseDto
   status: 204
 }
 
@@ -1915,7 +1932,7 @@ export const useResumesDeleteResumeForUser = <TError = void,
  * @summary Get a specific resume
  */
 export type resumesGetResumeByIdForUserResponse200 = {
-  data: void
+  data: ResumeFullResponseDto
   status: 200
 }
 
@@ -2184,7 +2201,7 @@ export function useResumesGetResumeByIdForUserSuspense<TData = Awaited<ReturnTyp
  * @summary Update a resume
  */
 export type resumesUpdateResumeForUserResponse200 = {
-  data: void
+  data: ResumeResponseDto
   status: 200
 }
 
@@ -2274,7 +2291,7 @@ export const useResumesUpdateResumeForUser = <TError = void,
  * @summary Get a resume with all sections
  */
 export type resumesGetResumeByIdWithAllSectionsResponse200 = {
-  data: void
+  data: ResumeFullResponseDto
   status: 200
 }
 
@@ -2543,7 +2560,7 @@ export function useResumesGetResumeByIdWithAllSectionsSuspense<TData = Awaited<R
  * @summary List sections and items for a resume
  */
 export type resumesListResumeSectionsResponse200 = {
-  data: void
+  data: ResumeSectionsDataDto
   status: 200
 }
 
@@ -2809,10 +2826,10 @@ export function useResumesListResumeSectionsSuspense<TData = Awaited<ReturnType<
 
 
 /**
- * @summary List active dynamic section types
+ * @summary List active dynamic section types with resolved translations
  */
 export type resumesListTypesResponse200 = {
-  data: void
+  data: ResumeSectionTypesDataDto
   status: 200
 }
 
@@ -2830,17 +2847,26 @@ export type resumesListTypesResponseError = (resumesListTypesResponse401) & {
 
 export type resumesListTypesResponse = (resumesListTypesResponseSuccess | resumesListTypesResponseError)
 
-export const getResumesListTypesUrl = (resumeId: string,) => {
+export const getResumesListTypesUrl = (resumeId: string,
+    params?: ResumesListTypesParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
+    
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
 
-  
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/api/v1/resumes/${resumeId}/sections/types`
+  return stringifiedParams.length > 0 ? `/api/v1/resumes/${resumeId}/sections/types?${stringifiedParams}` : `/api/v1/resumes/${resumeId}/sections/types`
 }
 
-export const resumesListTypes = async (resumeId: string, options?: RequestInit): Promise<resumesListTypesResponse> => {
+export const resumesListTypes = async (resumeId: string,
+    params?: ResumesListTypesParams, options?: RequestInit): Promise<resumesListTypesResponse> => {
   
-  return customFetch<resumesListTypesResponse>(getResumesListTypesUrl(resumeId),
+  return customFetch<resumesListTypesResponse>(getResumesListTypesUrl(resumeId,params),
   {      
     ...options,
     method: 'GET'
@@ -2853,29 +2879,32 @@ export const resumesListTypes = async (resumeId: string, options?: RequestInit):
 
 
 
-export const getResumesListTypesInfiniteQueryKey = (resumeId: string,) => {
+export const getResumesListTypesInfiniteQueryKey = (resumeId: string,
+    params?: ResumesListTypesParams,) => {
     return [
-    'infinite', `/api/v1/resumes/${resumeId}/sections/types`
+    'infinite', `/api/v1/resumes/${resumeId}/sections/types`, ...(params ? [params] : [])
     ] as const;
     }
 
-export const getResumesListTypesQueryKey = (resumeId: string,) => {
+export const getResumesListTypesQueryKey = (resumeId: string,
+    params?: ResumesListTypesParams,) => {
     return [
-    `/api/v1/resumes/${resumeId}/sections/types`
+    `/api/v1/resumes/${resumeId}/sections/types`, ...(params ? [params] : [])
     ] as const;
     }
 
     
-export const getResumesListTypesInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof resumesListTypes>>>, TError = void>(resumeId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getResumesListTypesInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof resumesListTypes>>>, TError = void>(resumeId: string,
+    params?: ResumesListTypesParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getResumesListTypesInfiniteQueryKey(resumeId);
+  const queryKey =  queryOptions?.queryKey ?? getResumesListTypesInfiniteQueryKey(resumeId,params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumesListTypes>>> = ({ signal }) => resumesListTypes(resumeId, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumesListTypes>>> = ({ signal }) => resumesListTypes(resumeId,params, { signal, ...requestOptions });
 
       
 
@@ -2889,7 +2918,8 @@ export type ResumesListTypesInfiniteQueryError = void
 
 
 export function useResumesListTypesInfinite<TData = InfiniteData<Awaited<ReturnType<typeof resumesListTypes>>>, TError = void>(
- resumeId: string, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>> & Pick<
+ resumeId: string,
+    params: undefined |  ResumesListTypesParams, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof resumesListTypes>>,
           TError,
@@ -2899,7 +2929,8 @@ export function useResumesListTypesInfinite<TData = InfiniteData<Awaited<ReturnT
  , queryClient?: QueryClient
   ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumesListTypesInfinite<TData = InfiniteData<Awaited<ReturnType<typeof resumesListTypes>>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>> & Pick<
+ resumeId: string,
+    params?: ResumesListTypesParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof resumesListTypes>>,
           TError,
@@ -2909,19 +2940,21 @@ export function useResumesListTypesInfinite<TData = InfiniteData<Awaited<ReturnT
  , queryClient?: QueryClient
   ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumesListTypesInfinite<TData = InfiniteData<Awaited<ReturnType<typeof resumesListTypes>>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params?: ResumesListTypesParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary List active dynamic section types
+ * @summary List active dynamic section types with resolved translations
  */
 
 export function useResumesListTypesInfinite<TData = InfiniteData<Awaited<ReturnType<typeof resumesListTypes>>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params?: ResumesListTypesParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient 
  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getResumesListTypesInfiniteQueryOptions(resumeId,options)
+  const queryOptions = getResumesListTypesInfiniteQueryOptions(resumeId,params,options)
 
   const query = useInfiniteQuery(queryOptions, queryClient) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -2929,14 +2962,15 @@ export function useResumesListTypesInfinite<TData = InfiniteData<Awaited<ReturnT
 }
 
 /**
- * @summary List active dynamic section types
+ * @summary List active dynamic section types with resolved translations
  */
 export const prefetchResumesListTypesInfiniteQuery = async <TData = Awaited<ReturnType<typeof resumesListTypes>>, TError = void>(
- queryClient: QueryClient, resumeId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ queryClient: QueryClient, resumeId: string,
+    params?: ResumesListTypesParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 
   ): Promise<QueryClient> => {
 
-  const queryOptions = getResumesListTypesInfiniteQueryOptions(resumeId,options)
+  const queryOptions = getResumesListTypesInfiniteQueryOptions(resumeId,params,options)
 
   await queryClient.prefetchInfiniteQuery(queryOptions);
 
@@ -2945,16 +2979,17 @@ export const prefetchResumesListTypesInfiniteQuery = async <TData = Awaited<Retu
 
 
 
-export const getResumesListTypesQueryOptions = <TData = Awaited<ReturnType<typeof resumesListTypes>>, TError = void>(resumeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getResumesListTypesQueryOptions = <TData = Awaited<ReturnType<typeof resumesListTypes>>, TError = void>(resumeId: string,
+    params?: ResumesListTypesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getResumesListTypesQueryKey(resumeId);
+  const queryKey =  queryOptions?.queryKey ?? getResumesListTypesQueryKey(resumeId,params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumesListTypes>>> = ({ signal }) => resumesListTypes(resumeId, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumesListTypes>>> = ({ signal }) => resumesListTypes(resumeId,params, { signal, ...requestOptions });
 
       
 
@@ -2968,7 +3003,8 @@ export type ResumesListTypesQueryError = void
 
 
 export function useResumesListTypes<TData = Awaited<ReturnType<typeof resumesListTypes>>, TError = void>(
- resumeId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>> & Pick<
+ resumeId: string,
+    params: undefined |  ResumesListTypesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof resumesListTypes>>,
           TError,
@@ -2978,7 +3014,8 @@ export function useResumesListTypes<TData = Awaited<ReturnType<typeof resumesLis
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumesListTypes<TData = Awaited<ReturnType<typeof resumesListTypes>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>> & Pick<
+ resumeId: string,
+    params?: ResumesListTypesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof resumesListTypes>>,
           TError,
@@ -2988,19 +3025,21 @@ export function useResumesListTypes<TData = Awaited<ReturnType<typeof resumesLis
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumesListTypes<TData = Awaited<ReturnType<typeof resumesListTypes>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params?: ResumesListTypesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary List active dynamic section types
+ * @summary List active dynamic section types with resolved translations
  */
 
 export function useResumesListTypes<TData = Awaited<ReturnType<typeof resumesListTypes>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params?: ResumesListTypesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getResumesListTypesQueryOptions(resumeId,options)
+  const queryOptions = getResumesListTypesQueryOptions(resumeId,params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -3008,14 +3047,15 @@ export function useResumesListTypes<TData = Awaited<ReturnType<typeof resumesLis
 }
 
 /**
- * @summary List active dynamic section types
+ * @summary List active dynamic section types with resolved translations
  */
 export const prefetchResumesListTypesQuery = async <TData = Awaited<ReturnType<typeof resumesListTypes>>, TError = void>(
- queryClient: QueryClient, resumeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ queryClient: QueryClient, resumeId: string,
+    params?: ResumesListTypesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 
   ): Promise<QueryClient> => {
 
-  const queryOptions = getResumesListTypesQueryOptions(resumeId,options)
+  const queryOptions = getResumesListTypesQueryOptions(resumeId,params,options)
 
   await queryClient.prefetchQuery(queryOptions);
 
@@ -3024,16 +3064,17 @@ export const prefetchResumesListTypesQuery = async <TData = Awaited<ReturnType<t
 
 
 
-export const getResumesListTypesSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof resumesListTypes>>, TError = void>(resumeId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getResumesListTypesSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof resumesListTypes>>, TError = void>(resumeId: string,
+    params?: ResumesListTypesParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getResumesListTypesQueryKey(resumeId);
+  const queryKey =  queryOptions?.queryKey ?? getResumesListTypesQueryKey(resumeId,params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumesListTypes>>> = ({ signal }) => resumesListTypes(resumeId, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumesListTypes>>> = ({ signal }) => resumesListTypes(resumeId,params, { signal, ...requestOptions });
 
       
 
@@ -3047,27 +3088,31 @@ export type ResumesListTypesSuspenseQueryError = void
 
 
 export function useResumesListTypesSuspense<TData = Awaited<ReturnType<typeof resumesListTypes>>, TError = void>(
- resumeId: string, options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params: undefined |  ResumesListTypesParams, options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumesListTypesSuspense<TData = Awaited<ReturnType<typeof resumesListTypes>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params?: ResumesListTypesParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumesListTypesSuspense<TData = Awaited<ReturnType<typeof resumesListTypes>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params?: ResumesListTypesParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary List active dynamic section types
+ * @summary List active dynamic section types with resolved translations
  */
 
 export function useResumesListTypesSuspense<TData = Awaited<ReturnType<typeof resumesListTypes>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params?: ResumesListTypesParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumesListTypes>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient 
  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getResumesListTypesSuspenseQueryOptions(resumeId,options)
+  const queryOptions = getResumesListTypesSuspenseQueryOptions(resumeId,params,options)
 
   const query = useSuspenseQuery(queryOptions, queryClient) as  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -3081,7 +3126,7 @@ export function useResumesListTypesSuspense<TData = Awaited<ReturnType<typeof re
  * @summary Create section item in a dynamic section type
  */
 export type resumesCreateItemResponse201 = {
-  data: void
+  data: ResumeSectionItemDataDto
   status: 201
 }
 
@@ -3173,7 +3218,7 @@ export const useResumesCreateItem = <TError = void,
  * @summary Delete section item from a dynamic section type
  */
 export type resumesDeleteItemResponse204 = {
-  data: void
+  data: ResumeSectionDeleteDataDto
   status: 204
 }
 
@@ -3265,7 +3310,7 @@ export const useResumesDeleteItem = <TError = void,
  * @summary Update section item in a dynamic section type
  */
 export type resumesUpdateItemResponse200 = {
-  data: void
+  data: ResumeSectionItemDataDto
   status: 200
 }
 
@@ -3359,7 +3404,7 @@ export const useResumesUpdateItem = <TError = void,
  * @summary Create share link for a resume
  */
 export type resumesCreateShareResponse201 = {
-  data: void
+  data: ShareCreateDataDto
   status: 201
 }
 
@@ -3448,7 +3493,7 @@ export const useResumesCreateShare = <TError = void,
  * @summary List share links for a resume
  */
 export type resumesListResumeSharesResponse200 = {
-  data: void
+  data: ShareListDataDto
   status: 200
 }
 
@@ -3717,7 +3762,7 @@ export function useResumesListResumeSharesSuspense<TData = Awaited<ReturnType<ty
  * @summary Delete a share link
  */
 export type resumesDeleteShareResponse204 = {
-  data: void
+  data: ShareDeleteDataDto
   status: 204
 }
 

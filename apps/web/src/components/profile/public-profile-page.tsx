@@ -3,13 +3,13 @@
  * Displays a user's public profile with their resume
  */
 
-"use client";
+'use client';
 
-import { usePublicProfile } from "./hooks";
-import { PublicProfileHeader } from "./public-profile-header";
-import { PublicProfileResume } from "./public-profile-resume";
-import { PublicProfileNotFound } from "./public-profile-not-found";
-import { LoadingState } from "@/shared/components/ui";
+import { LoadingState } from '@/shared/components/ui';
+import { usePublicProfile } from './hooks';
+import { PublicProfileHeader } from './public-profile-header';
+import { PublicProfileNotFound } from './public-profile-not-found';
+import { PublicProfileResume } from './public-profile-resume';
 
 interface PublicProfilePageProps {
   username: string;
@@ -31,17 +31,22 @@ export function PublicProfilePage({ username }: PublicProfilePageProps) {
   }
 
   // Merge user and resume data for display
+  // ResumeDto.personalInfo contains user details (fullName, email, etc.)
+  const personalInfo = profile.resume?.personalInfo as Record<string, unknown> | undefined;
+
   const displayData = {
-    name: profile.user.displayName || profile.resume?.fullName || username,
-    jobTitle: profile.resume?.jobTitle || null,
+    name: profile.user.displayName || String(personalInfo?.fullName ?? '') || username,
+    jobTitle: personalInfo?.jobTitle ? String(personalInfo.jobTitle) : null,
     photoURL: profile.user.photoURL || null,
-    bio: profile.user.bio || profile.resume?.summary || null,
-    location: profile.user.location || profile.resume?.location || null,
-    website: profile.user.website || profile.resume?.website || null,
-    linkedin: profile.user.linkedin || profile.resume?.linkedin || null,
-    github: profile.user.github || profile.resume?.github || null,
-    email: profile.resume?.emailContact || null,
-    phone: profile.resume?.phone || null,
+    bio: profile.user.bio || (personalInfo?.summary ? String(personalInfo.summary) : null),
+    location:
+      profile.user.location || (personalInfo?.location ? String(personalInfo.location) : null),
+    website: profile.user.website || (personalInfo?.website ? String(personalInfo.website) : null),
+    linkedin:
+      profile.user.linkedin || (personalInfo?.linkedin ? String(personalInfo.linkedin) : null),
+    github: profile.user.github || (personalInfo?.github ? String(personalInfo.github) : null),
+    email: personalInfo?.email ? String(personalInfo.email) : null,
+    phone: personalInfo?.phone ? String(personalInfo.phone) : null,
   };
 
   return (

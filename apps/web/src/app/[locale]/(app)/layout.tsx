@@ -4,8 +4,8 @@
  * Dark theme consistent with landing page
  */
 
-import { ReactNode } from "react";
-import { Navbar } from "@/components/navigation";
+import type { ReactNode } from 'react';
+import { Navbar } from '@/components/navigation';
 
 interface AppLayoutProps {
   children: ReactNode;

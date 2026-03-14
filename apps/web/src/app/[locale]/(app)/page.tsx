@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import Link from "next/link";
 import {
-  Github,
-  FileText,
-  User,
   ArrowRight,
-  Sparkles,
-  Zap,
-  Shield,
-  Terminal,
   Code2,
-} from "lucide-react";
-import { ROUTES } from "@/config/routes";
+  FileText,
+  Github,
+  Shield,
+  Sparkles,
+  Terminal,
+  User,
+  Zap,
+} from 'lucide-react';
+import Link from 'next/link';
+import { ROUTES } from '@/config/routes';
 
 /**
  * Home Page (App)
@@ -52,22 +52,22 @@ export default function HomePage() {
                 </div>
                 <div className="p-4 font-mono text-[11px] leading-relaxed text-zinc-400">
                   <div>
-                    <span className="text-pink-400">const</span>{" "}
-                    <span className="text-cyan-300">features</span> = {"{"}
+                    <span className="text-pink-400">const</span>{' '}
+                    <span className="text-cyan-300">features</span> = {'{'}
                   </div>
                   <div className="ml-4">
-                    <span className="text-blue-400">portfolio</span>:{" "}
+                    <span className="text-blue-400">portfolio</span>:{' '}
                     <span className="text-emerald-400">&quot;showcase your work&quot;</span>,
                   </div>
                   <div className="ml-4">
-                    <span className="text-blue-400">resume</span>:{" "}
+                    <span className="text-blue-400">resume</span>:{' '}
                     <span className="text-emerald-400">&quot;export to PDF/DOCX&quot;</span>,
                   </div>
                   <div className="ml-4">
-                    <span className="text-blue-400">analytics</span>:{" "}
+                    <span className="text-blue-400">analytics</span>:{' '}
                     <span className="text-emerald-400">&quot;track engagement&quot;</span>,
                   </div>
-                  <div>{"}"}</div>
+                  <div>{'}'}</div>
                 </div>
               </div>
             </div>
@@ -96,7 +96,7 @@ export default function HomePage() {
 
             {/* Social proof */}
             <p className="pt-4 font-mono text-xs text-zinc-500">
-              <span className="text-cyan-400">✓</span> Trusted by{" "}
+              <span className="text-cyan-400">✓</span> Trusted by{' '}
               <span className="font-semibold text-zinc-400">1,000+</span> developers
             </p>
           </div>
@@ -167,7 +167,7 @@ export default function HomePage() {
               </div>
               <div className="p-4 text-left font-mono text-[11px] leading-relaxed text-zinc-400">
                 <div>
-                  <span className="text-cyan-400">➜</span>{" "}
+                  <span className="text-cyan-400">➜</span>{' '}
                   <span className="text-white">npx create-patch@latest</span>
                 </div>
                 <div className="mt-2">

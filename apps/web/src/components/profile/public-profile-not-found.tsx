@@ -3,10 +3,10 @@
  * Shown when a profile doesn't exist or is not public
  */
 
-"use client";
+'use client';
 
-import { UserX } from "lucide-react";
-import Link from "next/link";
+import { UserX } from 'lucide-react';
+import Link from 'next/link';
 
 interface PublicProfileNotFoundProps {
   username: string;

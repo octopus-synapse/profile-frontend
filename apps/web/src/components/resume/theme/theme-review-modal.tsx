@@ -3,13 +3,13 @@
  * For approvers to approve/reject themes
  */
 
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useApproveTheme, useRejectTheme } from "../hooks";
-import type { Theme } from "../../services/theme.types";
-import { ThemePreview } from "./theme-preview";
-import type { ResumeStyleConfig } from "../../types/config";
+import { useState } from 'react';
+import { useApproveTheme, useRejectTheme } from '../hooks';
+import type { Theme } from '../services/theme.types';
+import type { ResumeStyleConfig } from '../types/config';
+import { ThemePreview } from './theme-preview';
 
 interface Props {
   theme: Theme;
@@ -18,7 +18,7 @@ interface Props {
 }
 
 export function ThemeReviewModal({ theme, isOpen, onClose }: Props) {
-  const [rejectionReason, setRejectionReason] = useState("");
+  const [rejectionReason, setRejectionReason] = useState('');
   const [showRejectForm, setShowRejectForm] = useState(false);
 
   const approveTheme = useApproveTheme();
@@ -35,7 +35,7 @@ export function ThemeReviewModal({ theme, isOpen, onClose }: Props) {
     if (!rejectionReason.trim()) return;
     await rejectTheme.mutateAsync({ themeId: theme.id, reason: rejectionReason });
     onClose();
-    setRejectionReason("");
+    setRejectionReason('');
     setShowRejectForm(false);
   };
 
@@ -47,7 +47,11 @@ export function ThemeReviewModal({ theme, isOpen, onClose }: Props) {
         {/* Header */}
         <div className="flex items-center justify-between border-b p-4">
           <h2 className="text-lg font-semibold">Review Theme: {theme.name}</h2>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-muted-foreground hover:text-foreground"
+          >
             ✕
           </button>
         </div>
@@ -62,14 +66,14 @@ export function ThemeReviewModal({ theme, isOpen, onClose }: Props) {
             />
             <div className="mt-4 space-y-2 text-sm">
               <p>
-                <span className="text-muted-foreground">Author:</span>{" "}
-                {theme.author?.name || "Unknown"}
+                <span className="text-muted-foreground">Author:</span>{' '}
+                {theme.author?.name || 'Unknown'}
               </p>
               <p>
                 <span className="text-muted-foreground">Category:</span> {theme.category}
               </p>
               <p>
-                <span className="text-muted-foreground">Created:</span>{" "}
+                <span className="text-muted-foreground">Created:</span>{' '}
                 {new Date(theme.createdAt).toLocaleDateString()}
               </p>
             </div>
@@ -80,7 +84,7 @@ export function ThemeReviewModal({ theme, isOpen, onClose }: Props) {
             <div>
               <h3 className="font-medium">Description</h3>
               <p className="text-muted-foreground text-sm">
-                {theme.description || "No description provided"}
+                {theme.description || 'No description provided'}
               </p>
             </div>
 
@@ -127,6 +131,7 @@ export function ThemeReviewModal({ theme, isOpen, onClose }: Props) {
         {/* Footer */}
         <div className="flex justify-end gap-2 border-t p-4">
           <button
+            type="button"
             onClick={onClose}
             className="hover:bg-muted rounded border px-4 py-2 text-sm"
             disabled={isPending}
@@ -136,6 +141,7 @@ export function ThemeReviewModal({ theme, isOpen, onClose }: Props) {
           {showRejectForm ? (
             <>
               <button
+                type="button"
                 onClick={() => setShowRejectForm(false)}
                 className="text-muted-foreground px-4 py-2 text-sm hover:underline"
                 disabled={isPending}
@@ -143,16 +149,18 @@ export function ThemeReviewModal({ theme, isOpen, onClose }: Props) {
                 Back
               </button>
               <button
+                type="button"
                 onClick={() => void handleReject()}
                 disabled={!rejectionReason.trim() || isPending}
                 className="bg-pf-danger-emphasis text-pf-fg-on-emphasis rounded px-4 py-2 text-sm hover:opacity-90 disabled:opacity-50"
               >
-                {rejectTheme.isPending ? "Rejecting..." : "Confirm Rejection"}
+                {rejectTheme.isPending ? 'Rejecting...' : 'Confirm Rejection'}
               </button>
             </>
           ) : (
             <>
               <button
+                type="button"
                 onClick={() => setShowRejectForm(true)}
                 className="border-pf-danger-fg text-pf-danger-fg hover:bg-pf-danger-subtle rounded border px-4 py-2 text-sm"
                 disabled={isPending}
@@ -160,11 +168,12 @@ export function ThemeReviewModal({ theme, isOpen, onClose }: Props) {
                 Reject
               </button>
               <button
+                type="button"
                 onClick={() => void handleApprove()}
                 disabled={isPending}
                 className="bg-pf-success-emphasis text-pf-fg-on-emphasis rounded px-4 py-2 text-sm hover:opacity-90 disabled:opacity-50"
               >
-                {approveTheme.isPending ? "Approving..." : "Approve & Publish"}
+                {approveTheme.isPending ? 'Approving...' : 'Approve & Publish'}
               </button>
             </>
           )}

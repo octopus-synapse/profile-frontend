@@ -50,7 +50,7 @@ describe("E2E: Platform API", () => {
  describe("Platform Statistics (Public)", () => {
   it("should return platform statistics", async () => {
    const response = await e2eFetch<PlatformStatsResponseDto>(
-    PLATFORM_ROUTES.PLATFORM_GET_STATISTICS,
+    PLATFORM_ROUTES.PLATFORM_STATS_GET_STATISTICS,
     { method: "GET" },
    );
 

@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
 /**
  * useMobileMenu Hook
  * Manages mobile menu state with body scroll lock
  */
 
-import { useState, useCallback, useEffect, useRef, useSyncExternalStore } from "react";
-import { usePathname } from "next/navigation";
-import type { MobileMenuState } from "../types";
+import { usePathname } from 'next/navigation';
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import type { MobileMenuState } from '../config/types';
 
 // Track pathname changes externally to avoid setState in effect
 const pathnameListeners: Set<() => void> = new Set();
@@ -36,7 +36,9 @@ export function useMobileMenu(): MobileMenuState {
       previousPathnameRef.current = pathname;
       lastPathname = pathname;
       // Notify all listeners
-      pathnameListeners.forEach((listener) => listener());
+      for (const listener of pathnameListeners) {
+        listener();
+      }
       // Schedule close outside of render
       if (isOpen) {
         queueMicrotask(() => setIsOpen(false));
@@ -47,13 +49,13 @@ export function useMobileMenu(): MobileMenuState {
   // Lock body scroll when menu is open
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = "";
+      document.body.style.overflow = '';
     }
 
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = '';
     };
   }, [isOpen]);
 
@@ -65,8 +67,13 @@ export function useMobileMenu(): MobileMenuState {
     setIsOpen(false);
   }, []);
 
+  const open = useCallback(() => {
+    setIsOpen(true);
+  }, []);
+
   return {
     isOpen,
+    open,
     toggle,
     close,
   };

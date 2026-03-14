@@ -4,7 +4,7 @@
  * URL: /[locale]/[username]
  */
 
-import { PublicProfilePage } from "@/components/profile";
+import { PublicProfilePage } from '@/components/profile';
 
 interface PageProps {
   params: Promise<{

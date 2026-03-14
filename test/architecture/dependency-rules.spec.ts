@@ -127,6 +127,53 @@ describe("Architecture Rules", () => {
   });
  });
 
+ describe("Store Deprecation", () => {
+  it("apps/web/src components should NOT import from @profile/stores", () => {
+   const srcFiles = getAllTypeScriptFiles("apps/web/src");
+   const violations: string[] = [];
+
+   for (const file of srcFiles) {
+    const content = fs.readFileSync(file, "utf-8");
+
+    // Check for imports from @profile/stores (package has been deleted)
+    if (
+     content.includes('from "@profile/stores"') ||
+     content.includes("from '@profile/stores'") ||
+     content.includes('from "@profile/stores/')
+    ) {
+     violations.push(
+      `${file} imports from @profile/stores - use SDK hooks instead`,
+     );
+    }
+   }
+
+   expect(violations).toEqual([]);
+  });
+
+  it("packages should NOT import from @profile/stores", () => {
+   const packageDirs = ["packages/api-client", "packages/i18n", "packages/test-utils"];
+   const violations: string[] = [];
+
+   for (const pkgDir of packageDirs) {
+    if (!fs.existsSync(pkgDir)) continue;
+    const srcFiles = getAllTypeScriptFiles(pkgDir);
+    for (const file of srcFiles) {
+     const content = fs.readFileSync(file, "utf-8");
+     if (
+      content.includes('from "@profile/stores"') ||
+      content.includes("from '@profile/stores'")
+     ) {
+      violations.push(
+       `${file} imports from @profile/stores - use SDK hooks instead`,
+      );
+     }
+    }
+   }
+
+   expect(violations).toEqual([]);
+  });
+ });
+
  describe("Validation Strategy", () => {
   it("should NOT have Zod schema validation (.safeParse/.parse) in apps/web/src", () => {
    const srcFiles = getAllTypeScriptFiles("apps/web/src");
@@ -179,17 +226,9 @@ describe("Architecture Rules", () => {
  });
 
  describe("Dependency Direction (Clean Architecture)", () => {
-  it("packages/stores should depend on api-client", () => {
-   const storesPkg = JSON.parse(
-    fs.readFileSync("packages/stores/package.json", "utf-8"),
-   );
-   expect(storesPkg.dependencies?.["@profile/api-client"]).toBeDefined();
-  });
-
-  it("apps/web should depend on stores, api-client, and i18n", () => {
+  it("apps/web should depend on api-client and i18n", () => {
    const webPkg = JSON.parse(fs.readFileSync("apps/web/package.json", "utf-8"));
    expect(webPkg.dependencies?.["@profile/api-client"]).toBeDefined();
-   expect(webPkg.dependencies?.["@profile/stores"]).toBeDefined();
    expect(webPkg.dependencies?.["@profile/i18n"]).toBeDefined();
   });
 
@@ -201,8 +240,8 @@ describe("Architecture Rules", () => {
   it("packages should NOT depend on apps", () => {
    const packageDirs = [
     "packages/api-client",
-    "packages/hooks",
-    "packages/stores",
+    "packages/i18n",
+    "packages/test-utils",
    ];
 
    for (const pkgDir of packageDirs) {
@@ -243,6 +282,119 @@ describe("Architecture Rules", () => {
   it("should enforce Bun 1.3.9", () => {
    const rootPkg = JSON.parse(fs.readFileSync("package.json", "utf-8"));
    expect(rootPkg.engines?.bun).toBe("1.3.9");
+  });
+ });
+
+ describe("Generic Sections Architecture", () => {
+  it("should NOT have hardcoded section-specific API endpoints in repositories", () => {
+   // The generic sections API uses: /v1/resumes/:id/sections/:sectionTypeKey/items
+   // Old pattern was: /v1/resumes/:id/experiences, /v1/resumes/:id/education, etc.
+   const repositoryFiles = getAllTypeScriptFiles("apps/web/src/components/settings/services");
+   const violations: string[] = [];
+
+   // Legacy endpoint patterns that should NOT exist
+   const legacyPatterns = [
+    /\/resumes\/[^/]+\/experiences(?!-)/,  // /resumes/:id/experiences
+    /\/resumes\/[^/]+\/education(?!s)/,    // /resumes/:id/education
+    /\/resumes\/[^/]+\/skills[^-]/,        // /resumes/:id/skills
+    /\/resumes\/[^/]+\/languages[^-]/,     // /resumes/:id/languages
+    /\/resumes\/[^/]+\/certifications/,    // /resumes/:id/certifications
+    /\/resumes\/[^/]+\/projects/,          // /resumes/:id/projects
+   ];
+
+   for (const file of repositoryFiles) {
+    const content = fs.readFileSync(file, "utf-8");
+    for (const pattern of legacyPatterns) {
+     if (pattern.test(content)) {
+      violations.push(
+       `${file} uses legacy section-specific endpoint - use /sections/:sectionTypeKey/items`,
+      );
+      break;
+     }
+    }
+   }
+
+   expect(violations).toEqual([]);
+  });
+
+  it("should use generic sections repository for all section CRUD", () => {
+   // All section CRUD should go through generic-sections-repository
+   const settingsServices = getAllTypeScriptFiles("apps/web/src/components/settings/services");
+   
+   // generic-sections-repository.ts must exist
+   const hasGenericRepo = settingsServices.some((f) => f.includes("generic-sections-repository"));
+   expect(hasGenericRepo).toBe(true);
+  });
+
+  it("section hooks should use TanStack Query, not direct API calls", () => {
+   const hooksFiles = getAllTypeScriptFiles("apps/web/src/components/settings/hooks");
+   const violations: string[] = [];
+
+   for (const file of hooksFiles) {
+    // Skip non-hook files
+    if (!file.includes("use-")) continue;
+
+    const content = fs.readFileSync(file, "utf-8");
+    
+    // Should use useQuery/useMutation from @tanstack/react-query
+    if (!content.includes("useQuery") && !content.includes("useMutation")) {
+     // This file might not be a data hook, check if it has API calls
+     if (content.includes("apiClient") || content.includes("fetch(")) {
+      violations.push(
+       `${file} makes API calls but doesn't use TanStack Query`,
+      );
+     }
+    }
+   }
+
+   expect(violations).toEqual([]);
+  });
+ });
+
+ describe("SDK-Only CRUD", () => {
+  it("should NOT have direct fetch calls in feature components", () => {
+   const featureFiles = getAllTypeScriptFiles("apps/web/src/features");
+   const violations: string[] = [];
+
+   for (const file of featureFiles) {
+    // Skip hooks which legitimately use SDK
+    if (file.includes("/hooks/")) continue;
+    // Skip services which wrap SDK
+    if (file.includes("/services/")) continue;
+    // Skip test files
+    if (file.includes(".test.") || file.includes(".spec.")) continue;
+
+    const content = fs.readFileSync(file, "utf-8");
+
+    // Direct fetch calls indicate bypassing SDK layer
+    if (content.includes("fetch(") && content.includes("/api/")) {
+     violations.push(`${file} makes direct fetch calls - use SDK hooks instead`);
+    }
+   }
+
+   expect(violations).toEqual([]);
+  });
+
+  it("settings components should NOT have direct fetch calls", () => {
+   const settingsComponents = getAllTypeScriptFiles("apps/web/src/components/settings");
+   const violations: string[] = [];
+
+   for (const file of settingsComponents) {
+    // Skip services and hooks layers
+    if (file.includes("/services/") || file.includes("/hooks/")) continue;
+    // Skip test files
+    if (file.includes(".test.") || file.includes(".spec.")) continue;
+
+    const content = fs.readFileSync(file, "utf-8");
+
+    if (content.includes("fetch(") && content.includes("/api/")) {
+     violations.push(
+      `${file} has direct fetch calls - use repository/hooks layer`,
+     );
+    }
+   }
+
+   expect(violations).toEqual([]);
   });
  });
 });

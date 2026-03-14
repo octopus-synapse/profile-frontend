@@ -33,7 +33,10 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  CollaboratorDataDto,
+  CollaboratorsListDataDto,
   InviteCollaboratorDto,
+  SharedResumesListDataDto,
   UpdateRoleDto
 } from '../../models';
 
@@ -48,7 +51,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary Get resumes shared with current user
  */
 export type collaborationGetSharedWithMeResponse200 = {
-  data: void
+  data: SharedResumesListDataDto
   status: 200
 }
 
@@ -317,7 +320,7 @@ export function useCollaborationGetSharedWithMeSuspense<TData = Awaited<ReturnTy
  * @summary Get collaborators for a resume
  */
 export type collaborationGetCollaboratorsResponse200 = {
-  data: void
+  data: CollaboratorsListDataDto
   status: 200
 }
 
@@ -586,7 +589,7 @@ export function useCollaborationGetCollaboratorsSuspense<TData = Awaited<ReturnT
  * @summary Invite user to collaborate on resume
  */
 export type collaborationInviteResponse201 = {
-  data: void
+  data: CollaboratorDataDto
   status: 201
 }
 
@@ -766,7 +769,7 @@ export const useCollaborationRemove = <TError = void,
  * @summary Update collaborator role
  */
 export type collaborationUpdateRoleResponse200 = {
-  data: void
+  data: CollaboratorDataDto
   status: 200
 }
 

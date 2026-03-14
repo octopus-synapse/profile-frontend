@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { FileX, Home, User, FileText, Settings, ArrowLeft } from "lucide-react";
+import { ArrowLeft, FileText, FileX, Home, Settings, User } from 'lucide-react';
+import Link from 'next/link';
 
 /**
  * Protected Routes 404 Not Found Page
@@ -72,6 +72,7 @@ export default function ProtectedNotFound() {
 
         {/* Back link */}
         <button
+          type="button"
           onClick={() => history.back()}
           className="mt-6 inline-flex items-center gap-2 font-mono text-xs text-zinc-400 transition-colors hover:text-white"
         >

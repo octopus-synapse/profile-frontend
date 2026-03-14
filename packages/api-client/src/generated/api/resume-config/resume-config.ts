@@ -16,6 +16,7 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  ResumeConfigOperationDataDto,
   SectionBatch,
   SectionItem,
   SectionReorder,
@@ -33,7 +34,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary Batch update sections
  */
 export type resumeConfigBatchUpdateResponse201 = {
-  data: void
+  data: ResumeConfigOperationDataDto
   status: 201
 }
 
@@ -123,7 +124,7 @@ export const useResumeConfigBatchUpdate = <TError = void,
  * @summary Reorder item
  */
 export type resumeConfigReorderItemResponse201 = {
-  data: void
+  data: ResumeConfigOperationDataDto
   status: 201
 }
 
@@ -215,7 +216,7 @@ export const useResumeConfigReorderItem = <TError = void,
  * @summary Toggle item visibility
  */
 export type resumeConfigToggleItemResponse201 = {
-  data: void
+  data: ResumeConfigOperationDataDto
   status: 201
 }
 
@@ -307,7 +308,7 @@ export const useResumeConfigToggleItem = <TError = void,
  * @summary Reorder section
  */
 export type resumeConfigReorderSectionResponse201 = {
-  data: void
+  data: ResumeConfigOperationDataDto
   status: 201
 }
 
@@ -399,7 +400,7 @@ export const useResumeConfigReorderSection = <TError = void,
  * @summary Toggle section visibility
  */
 export type resumeConfigToggleSectionResponse201 = {
-  data: void
+  data: ResumeConfigOperationDataDto
   status: 201
 }
 

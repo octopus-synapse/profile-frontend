@@ -108,7 +108,7 @@ export function SectionTypesTable() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Kinds</SelectItem>
-              {(semanticKinds ?? []).map((kind) => (
+              {(semanticKinds ?? []).map((kind: string) => (
                 <SelectItem key={kind} value={kind}>
                   {kind}
                 </SelectItem>
@@ -161,7 +161,7 @@ export function SectionTypesTable() {
                   </td>
                 </tr>
               ) : (
-                data.items.map((item) => (
+                data.items.map((item: SectionTypeData) => (
                   <SectionTypeRow
                     key={item.key}
                     item={item}

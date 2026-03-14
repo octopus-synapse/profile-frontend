@@ -1,69 +1,125 @@
 /**
  * Section Config Mutation Hooks
  *
- * Uses @profile/api-client for all API calls.
- * This ensures web and mobile share the same implementation.
+ * Uses @profile/api-client SDK hooks directly.
  */
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "@/shared/lib/api-client";
+import {
+  useSectionConfigBatchUpdate,
+  useSectionConfigReorderItem,
+  useSectionConfigReorderSection,
+  useSectionConfigToggleItem,
+  useSectionConfigToggleSection,
+} from '@profile/api-client';
+import { useQueryClient } from '@tanstack/react-query';
 
 export function useToggleSection(resumeId: string) {
   const queryClient = useQueryClient();
+  const mutation = useSectionConfigToggleSection();
 
-  return useMutation({
-    mutationFn: ({ sectionId, visible }: { sectionId: string; visible: boolean }) =>
-      apiClient.sectionConfig.toggleSection(resumeId, sectionId, visible),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["resumes", resumeId] });
+  return {
+    ...mutation,
+    mutateAsync: async ({ sectionId, visible }: { sectionId: string; visible: boolean }) => {
+      const result = await mutation.mutateAsync({
+        resumeId,
+        sectionId,
+        data: { visible },
+      });
+      void queryClient.invalidateQueries({ queryKey: ['resumes', resumeId] });
+      return result;
     },
-  });
+  };
 }
 
 export function useReorderSection(resumeId: string) {
   const queryClient = useQueryClient();
+  const mutation = useSectionConfigReorderSection();
 
-  return useMutation({
-    mutationFn: ({ sectionId, order }: { sectionId: string; order: number }) =>
-      apiClient.sectionConfig.reorderSection(resumeId, sectionId, order),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["resumes", resumeId] });
+  return {
+    ...mutation,
+    mutateAsync: async ({ sectionId, order }: { sectionId: string; order: number }) => {
+      const result = await mutation.mutateAsync({
+        resumeId,
+        sectionId,
+        data: { order },
+      });
+      void queryClient.invalidateQueries({ queryKey: ['resumes', resumeId] });
+      return result;
     },
-  });
+  };
 }
 
 export function useToggleItem(resumeId: string) {
   const queryClient = useQueryClient();
+  const mutation = useSectionConfigToggleItem();
 
-  return useMutation({
-    mutationFn: (args: { sectionId: string; itemId: string; visible: boolean }) =>
-      apiClient.sectionConfig.toggleItem(resumeId, args.sectionId, args.itemId, args.visible),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["resumes", resumeId] });
+  return {
+    ...mutation,
+    mutateAsync: async ({
+      sectionId,
+      itemId,
+      visible,
+    }: {
+      sectionId: string;
+      itemId: string;
+      visible: boolean;
+    }) => {
+      const result = await mutation.mutateAsync({
+        resumeId,
+        sectionId,
+        data: { itemId, visible },
+      });
+      void queryClient.invalidateQueries({ queryKey: ['resumes', resumeId] });
+      return result;
     },
-  });
+  };
 }
 
 export function useReorderItem(resumeId: string) {
   const queryClient = useQueryClient();
+  const mutation = useSectionConfigReorderItem();
 
-  return useMutation({
-    mutationFn: (args: { sectionId: string; itemId: string; order: number }) =>
-      apiClient.sectionConfig.reorderItem(resumeId, args.sectionId, args.itemId, args.order),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["resumes", resumeId] });
+  return {
+    ...mutation,
+    mutateAsync: async ({
+      sectionId,
+      itemId,
+      order,
+    }: {
+      sectionId: string;
+      itemId: string;
+      order: number;
+    }) => {
+      const result = await mutation.mutateAsync({
+        resumeId,
+        sectionId,
+        data: { itemId, order },
+      });
+      void queryClient.invalidateQueries({ queryKey: ['resumes', resumeId] });
+      return result;
     },
-  });
+  };
 }
 
 export function useBatchUpdateSections(resumeId: string) {
   const queryClient = useQueryClient();
+  const mutation = useSectionConfigBatchUpdate();
 
-  return useMutation({
-    mutationFn: (sections: Array<{ id: string; visible?: boolean; order?: number }>) =>
-      apiClient.sectionConfig.batchUpdate(resumeId, sections),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["resumes", resumeId] });
+  return {
+    ...mutation,
+    mutateAsync: async (sections: Array<{ id: string; visible?: boolean; order?: number }>) => {
+      const result = await mutation.mutateAsync({
+        resumeId,
+        data: {
+          sections: sections.map((s) => ({
+            sectionKey: s.id,
+            visible: s.visible,
+            order: s.order,
+          })),
+        },
+      });
+      void queryClient.invalidateQueries({ queryKey: ['resumes', resumeId] });
+      return result;
     },
-  });
+  };
 }

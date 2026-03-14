@@ -5,10 +5,11 @@
  * ProFile Resume & Portfolio Management API
  * OpenAPI spec version: 1.0.0
  */
+import type { PublicResumeDataDtoResume } from './publicResumeDataDtoResume';
 import type { PublicShareInfoDto } from './publicShareInfoDto';
 
 export interface PublicResumeDataDto {
   /** @nullable */
-  resume: string | null;
+  resume: PublicResumeDataDtoResume;
   share: PublicShareInfoDto;
 }

@@ -65,7 +65,7 @@ export interface CoreFieldsSectionProps {
   onTitleChange: (v: string) => void;
   onDescriptionChange: (v: string) => void;
   onSemanticKindChange: (v: string) => void;
-  onIconTypeChange: (v: string) => void;
+  onIconTypeChange: (v: 'emoji' | 'lucide') => void;
   onIconChange: (v: string) => void;
   onIsActiveChange: (v: boolean) => void;
   onIsRepeatableChange: (v: boolean) => void;
@@ -215,8 +215,8 @@ export function TranslationsSection(props: TranslationsSectionProps) {
       <div className="flex gap-1">
         {LOCALES.map((locale) => (
           <button
-            key={locale.key}
             type="button"
+            key={locale.key}
             onClick={() => props.onLocaleChange(locale.key)}
             className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
               props.activeLocale === locale.key

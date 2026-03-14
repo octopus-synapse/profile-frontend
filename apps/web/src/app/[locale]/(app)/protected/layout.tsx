@@ -3,7 +3,7 @@
  * Layout for authenticated user pages
  */
 
-import { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
 interface ProtectedLayoutProps {
   children: ReactNode;

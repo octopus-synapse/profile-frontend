@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
 /**
  * Error Boundary Component
  * Catches JavaScript errors in child components
  */
 
-import { Component, Suspense, type ReactNode } from "react";
+import { Component, type ReactNode, Suspense } from 'react';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -29,7 +29,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error("ErrorBoundary caught:", error, errorInfo);
+    console.error('ErrorBoundary caught:', error, errorInfo);
     this.props.onError?.(error, errorInfo);
   }
 
@@ -46,12 +46,13 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             An error occurred while rendering this component.
           </p>
           <button
+            type="button"
             onClick={() => this.setState({ hasError: false, error: null })}
             className="bg-pf-fg text-pf-bg rounded-md px-4 py-2 text-sm font-medium transition-opacity hover:opacity-80"
           >
             Try again
           </button>
-          {process.env.NODE_ENV === "development" && this.state.error && (
+          {process.env.NODE_ENV === 'development' && this.state.error && (
             <pre className="bg-pf-bg mt-4 max-w-full overflow-auto rounded p-2 text-xs text-red-400">
               {this.state.error.message}
             </pre>

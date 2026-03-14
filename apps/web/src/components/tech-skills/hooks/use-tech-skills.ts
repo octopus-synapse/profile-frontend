@@ -3,24 +3,24 @@
  * React Query hooks for tech skills catalog
  */
 
-"use client";
+'use client';
 
-import { useQuery } from "@tanstack/react-query";
-import { techSkillsRepository } from "../services/tech-skills-repository";
-import type { TechAreaType } from "./types";
+import { useQuery } from '@tanstack/react-query';
+import { techSkillsRepository } from '../services/tech-skills-repository';
+import type { TechAreaType } from '../types';
 
 export const techSkillsKeys = {
-  all: ["tech-skills"] as const,
-  areas: () => [...techSkillsKeys.all, "areas"] as const,
-  niches: () => [...techSkillsKeys.all, "niches"] as const,
+  all: ['tech-skills'] as const,
+  areas: () => [...techSkillsKeys.all, 'areas'] as const,
+  niches: () => [...techSkillsKeys.all, 'niches'] as const,
   nichesByArea: (areaType: TechAreaType) => [...techSkillsKeys.niches(), areaType] as const,
-  languages: () => [...techSkillsKeys.all, "languages"] as const,
-  languagesSearch: (query: string) => [...techSkillsKeys.languages(), "search", query] as const,
-  skills: () => [...techSkillsKeys.all, "skills"] as const,
-  skillsSearch: (query: string) => [...techSkillsKeys.skills(), "search", query] as const,
-  skillsByNiche: (nicheSlug: string) => [...techSkillsKeys.skills(), "niche", nicheSlug] as const,
-  skillsByType: (type: string) => [...techSkillsKeys.skills(), "type", type] as const,
-  searchAll: (query: string) => [...techSkillsKeys.all, "search", query] as const,
+  languages: () => [...techSkillsKeys.all, 'languages'] as const,
+  languagesSearch: (query: string) => [...techSkillsKeys.languages(), 'search', query] as const,
+  skills: () => [...techSkillsKeys.all, 'skills'] as const,
+  skillsSearch: (query: string) => [...techSkillsKeys.skills(), 'search', query] as const,
+  skillsByNiche: (nicheSlug: string) => [...techSkillsKeys.skills(), 'niche', nicheSlug] as const,
+  skillsByType: (type: string) => [...techSkillsKeys.skills(), 'type', type] as const,
+  searchAll: (query: string) => [...techSkillsKeys.all, 'search', query] as const,
 };
 
 /**

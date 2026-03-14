@@ -2,9 +2,9 @@
  * Spacing Editor Component
  */
 
-"use client";
+'use client';
 
-import type { ResumeStyleConfig, SpacingTokens } from "../../../types/config";
+import type { ResumeStyleConfig, SpacingTokens } from '../../types/config';
 
 interface Props {
   config: Partial<ResumeStyleConfig>;
@@ -18,53 +18,53 @@ export function SpacingEditor({ config, onChange }: Props) {
     <div className="space-y-6">
       <SelectInput
         label="Density"
-        value={spacing.density || "comfortable"}
+        value={spacing.density || 'comfortable'}
         options={[
-          { value: "compact", label: "Compact" },
-          { value: "comfortable", label: "Comfortable" },
-          { value: "spacious", label: "Spacious" },
+          { value: 'compact', label: 'Compact' },
+          { value: 'comfortable', label: 'Comfortable' },
+          { value: 'spacious', label: 'Spacious' },
         ]}
         description="Controls overall whitespace"
-        onChange={(v) => onChange("tokens.spacing.density", v)}
+        onChange={(v) => onChange('tokens.spacing.density', v)}
       />
 
       <SelectInput
         label="Section Gap"
-        value={spacing.sectionGap || "lg"}
+        value={spacing.sectionGap || 'lg'}
         options={[
-          { value: "xs", label: "Extra Small" },
-          { value: "sm", label: "Small" },
-          { value: "md", label: "Medium" },
-          { value: "lg", label: "Large" },
-          { value: "xl", label: "Extra Large" },
+          { value: 'xs', label: 'Extra Small' },
+          { value: 'sm', label: 'Small' },
+          { value: 'md', label: 'Medium' },
+          { value: 'lg', label: 'Large' },
+          { value: 'xl', label: 'Extra Large' },
         ]}
         description="Space between sections"
-        onChange={(v) => onChange("tokens.spacing.sectionGap", v)}
+        onChange={(v) => onChange('tokens.spacing.sectionGap', v)}
       />
 
       <SelectInput
         label="Item Gap"
-        value={spacing.itemGap || "md"}
+        value={spacing.itemGap || 'md'}
         options={[
-          { value: "xs", label: "Extra Small" },
-          { value: "sm", label: "Small" },
-          { value: "md", label: "Medium" },
-          { value: "lg", label: "Large" },
+          { value: 'xs', label: 'Extra Small' },
+          { value: 'sm', label: 'Small' },
+          { value: 'md', label: 'Medium' },
+          { value: 'lg', label: 'Large' },
         ]}
         description="Space between items within sections"
-        onChange={(v) => onChange("tokens.spacing.itemGap", v)}
+        onChange={(v) => onChange('tokens.spacing.itemGap', v)}
       />
 
       <SelectInput
         label="Content Padding"
-        value={spacing.contentPadding || "md"}
+        value={spacing.contentPadding || 'md'}
         options={[
-          { value: "sm", label: "Small" },
-          { value: "md", label: "Medium" },
-          { value: "lg", label: "Large" },
+          { value: 'sm', label: 'Small' },
+          { value: 'md', label: 'Medium' },
+          { value: 'lg', label: 'Large' },
         ]}
         description="Inner padding of sections"
-        onChange={(v) => onChange("tokens.spacing.contentPadding", v)}
+        onChange={(v) => onChange('tokens.spacing.contentPadding', v)}
       />
     </div>
   );

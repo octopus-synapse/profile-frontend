@@ -3,23 +3,23 @@
  * Elegant compact theme preview
  */
 
-"use client";
+'use client';
 
-import { cn } from "@/shared/utils";
-import type { Theme } from "../../services/theme.types";
-import type { ResumeStyleConfig } from "../../types/config";
 import {
   Check,
-  Pencil,
+  Clock,
   Copy,
-  Trash2,
-  Send,
-  Sparkles,
   Globe,
   Lock,
-  Clock,
+  Pencil,
+  Send,
+  Sparkles,
+  Trash2,
   XCircle,
-} from "lucide-react";
+} from 'lucide-react';
+import { cn } from '@/shared/utils';
+import type { Theme } from '../services/theme.types';
+import type { ResumeStyleConfig } from '../types/config';
 
 interface Props {
   theme: Theme;
@@ -42,11 +42,11 @@ export function ThemeCard({
   onSubmitForApproval,
   showActions = true,
 }: Props) {
-  const isPublic = theme.status === "PUBLISHED";
+  const isPublic = theme.status === 'PUBLISHED';
   const isSystem = theme.isSystemTheme;
-  const isPrivate = theme.status === "PRIVATE";
-  const isPending = theme.status === "PENDING_APPROVAL";
-  const isRejected = theme.status === "REJECTED";
+  const isPrivate = theme.status === 'PRIVATE';
+  const isPending = theme.status === 'PENDING_APPROVAL';
+  const isRejected = theme.status === 'REJECTED';
 
   const canDelete = !isPublic && !isSystem;
   const canDirectEdit = !isPublic && !isSystem;
@@ -54,21 +54,25 @@ export function ThemeCard({
 
   // Extract colors from styleConfig
   const styleConfig = theme.styleConfig as Partial<ResumeStyleConfig> | undefined;
-  const primaryColor = styleConfig?.tokens?.colors?.colors?.primary ?? "#3B82F6";
-  const bgColor = styleConfig?.tokens?.colors?.colors?.background ?? "#FFFFFF";
-  const textColor = styleConfig?.tokens?.colors?.colors?.text?.primary ?? "#1E293B";
+  const primaryColor = styleConfig?.tokens?.colors?.colors?.primary ?? '#3B82F6';
+  const bgColor = styleConfig?.tokens?.colors?.colors?.background ?? '#FFFFFF';
+  const textColor = styleConfig?.tokens?.colors?.colors?.text?.primary ?? '#1E293B';
 
   return (
     <div
       className={cn(
-        "group relative overflow-hidden rounded-lg border transition-all",
+        'group relative overflow-hidden rounded-lg border transition-all',
         isActive
-          ? "border-pf-border-emphasis ring-pf-border-emphasis/10 ring-2"
-          : "border-pf-border-default hover:border-pf-border-emphasis/50"
+          ? 'border-pf-border-emphasis ring-pf-border-emphasis/10 ring-2'
+          : 'border-pf-border-default hover:border-pf-border-emphasis/50',
       )}
     >
       {/* Clickable area */}
-      <button onClick={onSelect} className="flex w-full items-start gap-3 p-3 text-left">
+      <button
+        type="button"
+        onClick={onSelect}
+        className="flex w-full items-start gap-3 p-3 text-left"
+      >
         {/* Color preview */}
         <div
           className="ring-pf-border-subtle relative h-12 w-12 shrink-0 overflow-hidden rounded-md shadow-sm ring-1"
@@ -172,13 +176,13 @@ function StatusIcon({ theme }: { theme: Theme }) {
     );
   }
   switch (theme.status) {
-    case "PUBLISHED":
+    case 'PUBLISHED':
       return (
         <span className="bg-pf-success-subtle text-pf-success-fg rounded-full p-0.5" title="Public">
           <Globe className="h-3 w-3" strokeWidth={1.5} />
         </span>
       );
-    case "PENDING_APPROVAL":
+    case 'PENDING_APPROVAL':
       return (
         <span
           className="bg-pf-attention-subtle text-pf-attention-fg rounded-full p-0.5"
@@ -187,7 +191,7 @@ function StatusIcon({ theme }: { theme: Theme }) {
           <Clock className="h-3 w-3" strokeWidth={1.5} />
         </span>
       );
-    case "REJECTED":
+    case 'REJECTED':
       return (
         <span className="bg-pf-danger-subtle text-pf-danger-fg rounded-full p-0.5" title="Rejected">
           <XCircle className="h-3 w-3" strokeWidth={1.5} />
@@ -215,13 +219,14 @@ function ActionButton({
 }) {
   return (
     <button
+      type="button"
       onClick={(e) => {
         e.stopPropagation();
         onClick?.();
       }}
       className={cn(
-        "text-pf-fg-muted hover:bg-pf-canvas-subtle hover:text-pf-fg-default flex flex-1 items-center justify-center gap-1.5 py-2 text-xs font-medium transition-colors",
-        className
+        'text-pf-fg-muted hover:bg-pf-canvas-subtle hover:text-pf-fg-default flex flex-1 items-center justify-center gap-1.5 py-2 text-xs font-medium transition-colors',
+        className,
       )}
     >
       <Icon className="h-3 w-3" strokeWidth={1.5} />
@@ -232,14 +237,14 @@ function ActionButton({
 
 function getCategoryLabel(category: string): string {
   const labels: Record<string, string> = {
-    PROFESSIONAL: "Professional style",
-    CREATIVE: "Creative design",
-    TECHNICAL: "Technical focus",
-    ACADEMIC: "Academic format",
-    MINIMAL: "Minimal & clean",
-    MODERN: "Modern layout",
-    CLASSIC: "Classic design",
-    EXECUTIVE: "Executive style",
+    PROFESSIONAL: 'Professional style',
+    CREATIVE: 'Creative design',
+    TECHNICAL: 'Technical focus',
+    ACADEMIC: 'Academic format',
+    MINIMAL: 'Minimal & clean',
+    MODERN: 'Modern layout',
+    CLASSIC: 'Classic design',
+    EXECUTIVE: 'Executive style',
   };
-  return labels[category] || "Custom theme";
+  return labels[category] || 'Custom theme';
 }

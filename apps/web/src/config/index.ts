@@ -2,6 +2,6 @@
  * Config barrel export
  */
 
-export * from "./env";
-export * from "./routes";
-export * from "./constants";
+export * from './constants';
+export * from './env';
+export * from './routes';

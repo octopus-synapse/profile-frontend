@@ -1,1 +1,1 @@
-export { getPublicProfile } from "./profile.service";
+export { getPublicProfile } from './profile.service';

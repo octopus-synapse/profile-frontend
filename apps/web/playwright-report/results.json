@@ -1,0 +1,330 @@
+{
+  "config": {
+    "configFile": "/home/ilelo/Documents/Projects/profile/profile-frontend/apps/web/playwright.config.ts",
+    "rootDir": "/home/ilelo/Documents/Projects/profile/profile-frontend/apps/web/e2e",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 3
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/ilelo/Documents/Projects/profile/profile-frontend/apps/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 3
+        },
+        "id": "setup",
+        "name": "setup",
+        "testDir": "/home/ilelo/Documents/Projects/profile/profile-frontend/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/.*\\.setup\\.ts/"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/ilelo/Documents/Projects/profile/profile-frontend/apps/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 3
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/home/ilelo/Documents/Projects/profile/profile-frontend/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/ilelo/Documents/Projects/profile/profile-frontend/apps/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 3
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "/home/ilelo/Documents/Projects/profile/profile-frontend/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/ilelo/Documents/Projects/profile/profile-frontend/apps/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 3
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "/home/ilelo/Documents/Projects/profile/profile-frontend/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/ilelo/Documents/Projects/profile/profile-frontend/apps/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 3
+        },
+        "id": "Mobile Chrome",
+        "name": "Mobile Chrome",
+        "testDir": "/home/ilelo/Documents/Projects/profile/profile-frontend/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/ilelo/Documents/Projects/profile/profile-frontend/apps/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 3
+        },
+        "id": "Mobile Safari",
+        "name": "Mobile Safari",
+        "testDir": "/home/ilelo/Documents/Projects/profile/profile-frontend/apps/web/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "playwright-report"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "playwright-report/results.json"
+        }
+      ],
+      [
+        "list",
+        null
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.2",
+    "workers": 6,
+    "webServer": {
+      "command": "bun run dev",
+      "url": "http://localhost:3000",
+      "reuseExistingServer": true,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "auth.spec.ts",
+      "file": "auth.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "API Authentication",
+          "file": "auth.spec.ts",
+          "line": 170,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should receive 401 for unauthenticated API requests",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 26,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m401\u001b[39m\nReceived: \u001b[31m200\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m401\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n    at /home/ilelo/Documents/Projects/profile/profile-frontend/apps/web/e2e/auth.spec.ts:173:31",
+                        "location": {
+                          "file": "/home/ilelo/Documents/Projects/profile/profile-frontend/apps/web/e2e/auth.spec.ts",
+                          "column": 31,
+                          "line": 173
+                        },
+                        "snippet": "  171 |   test('should receive 401 for unauthenticated API requests', async ({ request }) => {\n  172 |     const response = await request.get('http://localhost:3001/api/auth/session');\n> 173 |     expect(response.status()).toBe(401);\n      |                               ^\n  174 |   });\n  175 |\n  176 |   test('should login via API and receive session cookie', async ({ request }) => {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/ilelo/Documents/Projects/profile/profile-frontend/apps/web/e2e/auth.spec.ts",
+                            "column": 31,
+                            "line": 173
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m401\u001b[39m\nReceived: \u001b[31m200\u001b[39m\n\n  171 |   test('should receive 401 for unauthenticated API requests', async ({ request }) => {\n  172 |     const response = await request.get('http://localhost:3001/api/auth/session');\n> 173 |     expect(response.status()).toBe(401);\n      |                               ^\n  174 |   });\n  175 |\n  176 |   test('should login via API and receive session cookie', async ({ request }) => {\n    at /home/ilelo/Documents/Projects/profile/profile-frontend/apps/web/e2e/auth.spec.ts:173:31"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-12T18:32:25.399Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "/home/ilelo/Documents/Projects/profile/profile-frontend/apps/web/e2e/auth.spec.ts",
+                        "column": 31,
+                        "line": 173
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-920f2e5b988a95c8c5d0",
+              "file": "auth.spec.ts",
+              "line": 171,
+              "column": 7
+            },
+            {
+              "title": "should login via API and receive session cookie",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 25,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m401\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m401\u001b[39m\n    at /home/ilelo/Documents/Projects/profile/profile-frontend/apps/web/e2e/auth.spec.ts:184:31",
+                        "location": {
+                          "file": "/home/ilelo/Documents/Projects/profile/profile-frontend/apps/web/e2e/auth.spec.ts",
+                          "column": 31,
+                          "line": 184
+                        },
+                        "snippet": "  182 |     });\n  183 |\n> 184 |     expect(response.status()).toBe(200);\n      |                               ^\n  185 |\n  186 |     const body = await response.json();\n  187 |     expect(body.success).toBe(true);"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/home/ilelo/Documents/Projects/profile/profile-frontend/apps/web/e2e/auth.spec.ts",
+                            "column": 31,
+                            "line": 184
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m200\u001b[39m\nReceived: \u001b[31m401\u001b[39m\n\n  182 |     });\n  183 |\n> 184 |     expect(response.status()).toBe(200);\n      |                               ^\n  185 |\n  186 |     const body = await response.json();\n  187 |     expect(body.success).toBe(true);\n    at /home/ilelo/Documents/Projects/profile/profile-frontend/apps/web/e2e/auth.spec.ts:184:31"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-12T18:32:25.559Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "/home/ilelo/Documents/Projects/profile/profile-frontend/apps/web/e2e/auth.spec.ts",
+                        "column": 31,
+                        "line": 184
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-c41636151632e4486cbf",
+              "file": "auth.spec.ts",
+              "line": 176,
+              "column": 7
+            },
+            {
+              "title": "should return 401 for invalid credentials",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 32,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-03-12T18:32:25.381Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-7418b7cf2d40bc47e9c7",
+              "file": "auth.spec.ts",
+              "line": 195,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-03-12T18:32:22.647Z",
+    "duration": 2958.965,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

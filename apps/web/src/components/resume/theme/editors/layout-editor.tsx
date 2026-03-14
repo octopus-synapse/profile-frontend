@@ -2,9 +2,9 @@
  * Layout Editor Component
  */
 
-"use client";
+'use client';
 
-import type { ResumeStyleConfig, LayoutConfig } from "../../../types/config";
+import type { LayoutConfig, ResumeStyleConfig } from '../../types/config';
 
 interface Props {
   config: Partial<ResumeStyleConfig>;
@@ -14,60 +14,60 @@ interface Props {
 export function LayoutEditor({ config, onChange }: Props) {
   const layout: Partial<LayoutConfig> = config.layout || {};
   const isTwoColumn =
-    layout.type === "two-column" ||
-    layout.type === "sidebar-left" ||
-    layout.type === "sidebar-right";
+    layout.type === 'two-column' ||
+    layout.type === 'sidebar-left' ||
+    layout.type === 'sidebar-right';
 
   return (
     <div className="space-y-6">
       <div className="space-y-4">
         <SelectInput
           label="Layout Type"
-          value={layout.type || "single-column"}
+          value={layout.type || 'single-column'}
           options={[
-            { value: "single-column", label: "Single Column" },
-            { value: "two-column", label: "Two Column" },
-            { value: "sidebar-left", label: "Sidebar Left" },
-            { value: "sidebar-right", label: "Sidebar Right" },
+            { value: 'single-column', label: 'Single Column' },
+            { value: 'two-column', label: 'Two Column' },
+            { value: 'sidebar-left', label: 'Sidebar Left' },
+            { value: 'sidebar-right', label: 'Sidebar Right' },
           ]}
-          onChange={(v) => onChange("layout.type", v)}
+          onChange={(v) => onChange('layout.type', v)}
         />
 
         {isTwoColumn && (
           <SelectInput
             label="Column Distribution"
-            value={layout.columnDistribution || "60-40"}
+            value={layout.columnDistribution || '60-40'}
             options={[
-              { value: "50-50", label: "50% / 50%" },
-              { value: "60-40", label: "60% / 40%" },
-              { value: "65-35", label: "65% / 35%" },
-              { value: "70-30", label: "70% / 30%" },
+              { value: '50-50', label: '50% / 50%' },
+              { value: '60-40', label: '60% / 40%' },
+              { value: '65-35', label: '65% / 35%' },
+              { value: '70-30', label: '70% / 30%' },
             ]}
-            onChange={(v) => onChange("layout.columnDistribution", v)}
+            onChange={(v) => onChange('layout.columnDistribution', v)}
           />
         )}
 
         <SelectInput
           label="Paper Size"
-          value={layout.paperSize || "a4"}
+          value={layout.paperSize || 'a4'}
           options={[
-            { value: "a4", label: "A4" },
-            { value: "letter", label: "US Letter" },
-            { value: "legal", label: "US Legal" },
+            { value: 'a4', label: 'A4' },
+            { value: 'letter', label: 'US Letter' },
+            { value: 'legal', label: 'US Legal' },
           ]}
-          onChange={(v) => onChange("layout.paperSize", v)}
+          onChange={(v) => onChange('layout.paperSize', v)}
         />
 
         <SelectInput
           label="Margins"
-          value={layout.margins || "normal"}
+          value={layout.margins || 'normal'}
           options={[
-            { value: "compact", label: "Compact" },
-            { value: "normal", label: "Normal" },
-            { value: "relaxed", label: "Relaxed" },
-            { value: "wide", label: "Wide" },
+            { value: 'compact', label: 'Compact' },
+            { value: 'normal', label: 'Normal' },
+            { value: 'relaxed', label: 'Relaxed' },
+            { value: 'wide', label: 'Wide' },
           ]}
-          onChange={(v) => onChange("layout.margins", v)}
+          onChange={(v) => onChange('layout.margins', v)}
         />
       </div>
 
@@ -76,19 +76,19 @@ export function LayoutEditor({ config, onChange }: Props) {
         <CheckboxInput
           label="Show page numbers"
           checked={layout.showPageNumbers || false}
-          onChange={(v) => onChange("layout.showPageNumbers", v)}
+          onChange={(v) => onChange('layout.showPageNumbers', v)}
         />
 
         {layout.showPageNumbers && (
           <SelectInput
             label="Position"
-            value={layout.pageNumberPosition || "bottom-center"}
+            value={layout.pageNumberPosition || 'bottom-center'}
             options={[
-              { value: "bottom-center", label: "Bottom Center" },
-              { value: "bottom-right", label: "Bottom Right" },
-              { value: "top-right", label: "Top Right" },
+              { value: 'bottom-center', label: 'Bottom Center' },
+              { value: 'bottom-right', label: 'Bottom Right' },
+              { value: 'top-right', label: 'Top Right' },
             ]}
-            onChange={(v) => onChange("layout.pageNumberPosition", v)}
+            onChange={(v) => onChange('layout.pageNumberPosition', v)}
           />
         )}
       </div>

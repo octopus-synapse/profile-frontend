@@ -29,7 +29,9 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
-  SkillsSearchLanguagesByNameParams
+  SkillsSearchLanguagesByNameParams,
+  SpokenLanguageDataDto,
+  SpokenLanguagesListDataDto
 } from '../../models';
 
 import { customFetch } from '../../../client/fetcher';
@@ -43,7 +45,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary Get all active spoken languages
  */
 export type skillsFindAllActiveLanguagesResponse200 = {
-  data: void
+  data: SpokenLanguagesListDataDto
   status: 200
 }
 
@@ -312,7 +314,7 @@ export function useSkillsFindAllActiveLanguagesSuspense<TData = Awaited<ReturnTy
  * @summary Search spoken languages by name
  */
 export type skillsSearchLanguagesByNameResponse200 = {
-  data: void
+  data: SpokenLanguagesListDataDto
   status: 200
 }
 
@@ -588,7 +590,7 @@ export function useSkillsSearchLanguagesByNameSuspense<TData = Awaited<ReturnTyp
  * @summary Get spoken language by code
  */
 export type skillsFindLanguageByCodeResponse200 = {
-  data: void
+  data: SpokenLanguageDataDto
   status: 200
 }
 

@@ -14,7 +14,7 @@
  * Get the backend API base URL from environment or use default
  */
 export function getApiBaseUrl(): string {
-  return process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
+  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 }
 
 /**
@@ -24,7 +24,7 @@ export function getApiBaseUrl(): string {
 export function getBackendHost(): string {
   const apiUrl = getApiBaseUrl();
   // Remove /api suffix if present
-  return apiUrl.replace(/\/api\/?$/, "");
+  return apiUrl.replace(/\/api\/?$/, '');
 }
 
 // ============================================================================
@@ -32,440 +32,473 @@ export function getBackendHost(): string {
 // ============================================================================
 
 export const ACCOUNTS_ROUTES = {
-  ACCOUNTS_SIGNUP: "/api/accounts",
+  ACCOUNTS_SIGNUP: '/api/accounts',
+} as const;
+
+// Alias for E2E tests backward compatibility
+export const ACCOUNT_LIFECYCLE_ROUTES = ACCOUNTS_ROUTES;
+export const AUTHENTICATION_ROUTES = {
+  LOGIN: '/api/auth/login',
+  LOGOUT: '/api/auth/logout',
+  REFRESH: '/api/auth/refresh',
+  SESSION: '/api/auth/session',
+} as const;
+
+export const ADMIN_SECTION_TYPES_ROUTES = {
+  LIST: '/api/v1/admin/section-types',
+  GET: (key: string) => `/api/v1/admin/section-types/${key}`,
+  CREATE: '/api/v1/admin/section-types',
+  UPDATE: (key: string) => `/api/v1/admin/section-types/${key}`,
+  DELETE: (key: string) => `/api/v1/admin/section-types/${key}`,
 } as const;
 
 export const ATS_VALIDATION_ROUTES = {
-  ATS_VALIDATION_VALIDATE_C_V: "/api/v1/ats/validate",
+  ATS_VALIDATION_VALIDATE_C_V: '/api/v1/ats/validate',
 } as const;
 
 export const AUTH_ROUTES = {
-  AUTH_DISABLE: "/api/auth/2fa",
-  AUTH_LOGIN: "/api/auth/login",
-  AUTH_LOGOUT: "/api/auth/logout",
-  AUTH_REFRESH: "/api/auth/refresh",
+  AUTH_DISABLE: '/api/auth/2fa',
+  AUTH_LOGIN: '/api/auth/login',
+  AUTH_LOGOUT: '/api/auth/logout',
+  AUTH_REFRESH: '/api/auth/refresh',
+  AUTH_GET_SESSION: '/api/auth/session',
 } as const;
 
 export const CHAT_ROUTES = {
-  CHAT_GET_CONVERSATIONS: "/api/chat/conversations",
-  CHAT_SEND_MESSAGE: "/api/chat/messages",
-  CHAT_GET_UNREAD_COUNT: "/api/chat/unread",
+  CHAT_GET_CONVERSATIONS: '/api/chat/conversations',
+  CHAT_SEND_MESSAGE: '/api/chat/messages',
+  CHAT_GET_UNREAD_COUNT: '/api/chat/unread',
 } as const;
 
 export const CHAT_BLOCK_USERS_ROUTES = {
-  CHAT_BLOCK_USERS_GET_BLOCKED_USERS: "/api/chat/blocked",
-  CHAT_BLOCK_USERS_BLOCK_USER: "/api/chat/blocked",
+  CHAT_BLOCK_USERS_GET_BLOCKED_USERS: '/api/chat/blocked',
+  CHAT_BLOCK_USERS_BLOCK_USER: '/api/chat/blocked',
 } as const;
 
 export const COLLABORATION_ROUTES = {
-  COLLABORATION_GET_SHARED_WITH_ME: "/api/resumes/shared-with-me",
+  COLLABORATION_GET_SHARED_WITH_ME: '/api/resumes/shared-with-me',
 } as const;
 
 export const DSL_ROUTES = {
-  DSL_VALIDATE: "/api/v1/dsl/validate",
+  DSL_VALIDATE: '/api/v1/dsl/validate',
+} as const;
+
+export const EMAIL_VERIFICATION_ROUTES = {
+  EMAIL_VERIFICATION_HANDLE: '/api/email-verification/verify',
 } as const;
 
 export const ENUMS_ROUTES = {
-  ENUMS_GET_EXPORT_FORMATS: "/api/v1/enums/export-formats",
-  ENUMS_GET_SECTION_TYPES: "/api/v1/enums/section-types",
-  ENUMS_GET_USER_ROLES: "/api/v1/enums/user-roles",
+  ENUMS_GET_EXPORT_FORMATS: '/api/v1/enums/export-formats',
+  ENUMS_GET_SECTION_TYPES: '/api/v1/enums/section-types',
+  ENUMS_GET_USER_ROLES: '/api/v1/enums/user-roles',
 } as const;
 
 export const EXPORT_ROUTES = {
-  EXPORT_EXPORT_RESUME_D_O_C_X: "/api/v1/export/resume/docx",
+  EXPORT_EXPORT_RESUME_D_O_C_X: '/api/v1/export/resume/docx',
 } as const;
 
 export const GITHUB_ROUTES = {
-  GITHUB_SYNC_GIT_HUB: "/api/v1/integrations/github/sync",
+  GITHUB_SYNC_GIT_HUB: '/api/v1/integrations/github/sync',
 } as const;
 
 export const MEC_INTERNAL_ROUTES = {
-  MEC_INTERNAL_TRIGGER_SYNC: "/api/v1/mec/internal/sync",
-  MEC_INTERNAL_GET_SYNC_STATUS: "/api/v1/mec/internal/sync/status",
+  MEC_INTERNAL_TRIGGER_SYNC: '/api/v1/mec/internal/sync',
+  MEC_INTERNAL_GET_SYNC_STATUS: '/api/v1/mec/internal/sync/status',
 } as const;
 
 export const MEC_METADATA_ROUTES = {
-  MEC_METADATA_LIST_ALL_KNOWLEDGE_AREAS: "/api/v1/mec/areas",
-  MEC_METADATA_GET_MEC_STATISTICS: "/api/v1/mec/stats",
-  MEC_METADATA_LIST_ALL_STATE_CODES: "/api/v1/mec/ufs",
+  MEC_METADATA_LIST_ALL_KNOWLEDGE_AREAS: '/api/v1/mec/areas',
+  MEC_METADATA_GET_MEC_STATISTICS: '/api/v1/mec/stats',
+  MEC_METADATA_LIST_ALL_STATE_CODES: '/api/v1/mec/ufs',
 } as const;
 
 export const ONBOARDING_ROUTES = {
-  ONBOARDING_COMPLETE_ONBOARDING: "/api/v1/onboarding",
-  ONBOARDING_GET_PROGRESS: "/api/v1/onboarding/progress",
-  ONBOARDING_SAVE_PROGRESS: "/api/v1/onboarding/progress",
-  ONBOARDING_GET_STATUS: "/api/v1/onboarding/status",
+  ONBOARDING_COMPLETE_ONBOARDING: '/api/v1/onboarding',
+  ONBOARDING_GET_PROGRESS: '/api/v1/onboarding/progress',
+  ONBOARDING_SAVE_PROGRESS: '/api/v1/onboarding/progress',
+  ONBOARDING_COMPLETE_FROM_SESSION: '/api/v1/onboarding/session/complete',
 } as const;
 
 export const PLATFORM_ROUTES = {
-  PLATFORM_CHECK: "/api/health",
-  PLATFORM_CHECK_DATABASE: "/api/health/db",
-  PLATFORM_CHECK_REDIS: "/api/health/redis",
-  PLATFORM_CHECK_STORAGE: "/api/health/storage",
-  PLATFORM_CHECK_TRANSLATE: "/api/health/translate",
-  PLATFORM_GET_STATISTICS: "/api/v1/platform/stats",
+  PLATFORM_CHECK: '/api/health',
+  PLATFORM_CHECK_DATABASE: '/api/health/db',
+  PLATFORM_CHECK_REDIS: '/api/health/redis',
+  PLATFORM_CHECK_STORAGE: '/api/health/storage',
+  PLATFORM_CHECK_TRANSLATE: '/api/health/translate',
+  PLATFORM_GET_STATISTICS: '/api/v1/platform/stats',
 } as const;
 
 export const RESUME_IMPORT_ROUTES = {
-  RESUME_IMPORT_GET_HISTORY: "/api/resume-import",
-  RESUME_IMPORT_IMPORT_JSON: "/api/resume-import/json",
-  RESUME_IMPORT_PARSE_JSON: "/api/resume-import/parse",
+  RESUME_IMPORT_GET_HISTORY: '/api/resume-import',
+  RESUME_IMPORT_IMPORT_JSON: '/api/resume-import/json',
+  RESUME_IMPORT_PARSE_JSON: '/api/resume-import/parse',
 } as const;
 
 export const RESUMES_ROUTES = {
-  RESUMES_GET_ALL_USER_RESUMES: "/api/v1/resumes",
-  RESUMES_CREATE_RESUME_FOR_USER: "/api/v1/resumes",
-  RESUMES_GET_REMAINING_SLOTS: "/api/v1/resumes/slots",
-  RESUMES_CREATE_SHARE: "/api/v1/shares",
+  RESUMES_GET_ALL_USER_RESUMES: '/api/v1/resumes',
+  RESUMES_CREATE_RESUME_FOR_USER: '/api/v1/resumes',
+  RESUMES_GET_REMAINING_SLOTS: '/api/v1/resumes/slots',
+  RESUMES_CREATE_SHARE: '/api/v1/shares',
 } as const;
 
 export const SKILLS_ROUTES = {
-  SKILLS_FIND_ALL_ACTIVE_LANGUAGES: "/api/v1/spoken-languages",
+  SKILLS_FIND_ALL_ACTIVE_LANGUAGES: '/api/v1/spoken-languages',
 } as const;
 
 export const SOCIAL_ROUTES = {
-  SOCIAL_SUBSCRIBE_TO_FEED: "/api/v1/feed/subscribe",
+  SOCIAL_SUBSCRIBE_TO_FEED: '/api/v1/feed/subscribe',
 } as const;
 
 export const TECH_AREAS_ROUTES = {
-  TECH_AREAS_GET_AREAS: "/api/v1/tech-areas",
+  TECH_AREAS_GET_AREAS: '/api/v1/tech-areas',
 } as const;
 
 export const TECH_NICHES_ROUTES = {
-  TECH_NICHES_GET_NICHES: "/api/v1/tech-niches",
+  TECH_NICHES_GET_NICHES: '/api/v1/tech-niches',
 } as const;
 
 export const TECH_SKILLS_ROUTES = {
-  TECH_SKILLS_GET_SKILLS: "/api/v1/tech-skills",
+  TECH_SKILLS_GET_SKILLS: '/api/v1/tech-skills',
 } as const;
 
 export const THEMES_ROUTES = {
-  THEMES_FIND_ALL_THEMES_WITH_PAGINATION: "/api/v1/themes",
-  THEMES_CREATE_THEME_FOR_USER: "/api/v1/themes",
-  THEMES_APPLY: "/api/v1/themes/apply",
-  THEMES_GET_PENDING: "/api/v1/themes/approval/pending",
-  THEMES_REVIEW: "/api/v1/themes/approval/review",
-  THEMES_FORK: "/api/v1/themes/fork",
-  THEMES_GET_ALL_THEMES_BY_USER: "/api/v1/themes/me",
-  THEMES_FIND_ALL_SYSTEM_THEMES: "/api/v1/themes/system",
+  THEMES_FIND_ALL_THEMES_WITH_PAGINATION: '/api/v1/themes',
+  THEMES_CREATE_THEME_FOR_USER: '/api/v1/themes',
+  THEMES_APPLY: '/api/v1/themes/apply',
+  THEMES_GET_PENDING: '/api/v1/themes/approval/pending',
+  THEMES_REVIEW: '/api/v1/themes/approval/review',
+  THEMES_FORK: '/api/v1/themes/fork',
+  THEMES_GET_ALL_THEMES_BY_USER: '/api/v1/themes/me',
+  THEMES_FIND_ALL_SYSTEM_THEMES: '/api/v1/themes/system',
 } as const;
 
 export const TRANSLATION_ROUTES = {
-  TRANSLATION_TRANSLATE_BATCH: "/api/v1/translation/batch",
-  TRANSLATION_TRANSLATE_EN_TO_PT: "/api/v1/translation/en-to-pt",
-  TRANSLATION_HEALTH_CHECK: "/api/v1/translation/health",
-  TRANSLATION_TRANSLATE_PT_TO_EN: "/api/v1/translation/pt-to-en",
-  TRANSLATION_TRANSLATE_TEXT: "/api/v1/translation/text",
+  TRANSLATION_TRANSLATE_BATCH: '/api/v1/translation/batch',
+  TRANSLATION_TRANSLATE_EN_TO_PT: '/api/v1/translation/en-to-pt',
+  TRANSLATION_HEALTH_CHECK: '/api/v1/translation/health',
+  TRANSLATION_TRANSLATE_PT_TO_EN: '/api/v1/translation/pt-to-en',
+  TRANSLATION_TRANSLATE_TEXT: '/api/v1/translation/text',
 } as const;
 
 export const UPLOAD_ROUTES = {
-  UPLOAD_UPLOAD_PROFILE_IMAGE: "/api/v1/upload/profile-image",
+  UPLOAD_UPLOAD_PROFILE_IMAGE: '/api/v1/upload/profile-image',
 } as const;
 
 export const USER_CONSENT_ROUTES = {
-  USER_CONSENT_EXPORT_DATA: "/api/gdpr/export",
-  USER_CONSENT_ACCEPT_CONSENT: "/api/v1/users/me/accept-consent",
+  USER_CONSENT_EXPORT_DATA: '/api/gdpr/export',
+  USER_CONSENT_ACCEPT_CONSENT: '/api/v1/users/me/accept-consent',
 } as const;
 
 export const USERS_ROUTES = {
-  USERS_HANDLE: "/api/password/reset",
-  USERS_CREATE_USER: "/api/v1/users/manage",
-  USERS_GET_PREFERENCES: "/api/v1/users/preferences",
-  USERS_UPDATE_PREFERENCES: "/api/v1/users/preferences",
-  USERS_GET_FULL_PREFERENCES: "/api/v1/users/preferences/full",
-  USERS_UPDATE_FULL_PREFERENCES: "/api/v1/users/preferences/full",
-  USERS_GET_PROFILE: "/api/v1/users/profile",
-  USERS_UPDATE_PROFILE: "/api/v1/users/profile",
-  USERS_UPDATE_USERNAME: "/api/v1/users/username",
-  USERS_VALIDATE_USERNAME: "/api/v1/users/username/validate",
+  USERS_HANDLE: '/api/password/reset',
+  USERS_CREATE_USER: '/api/v1/users/manage',
+  USERS_GET_PREFERENCES: '/api/v1/users/preferences',
+  USERS_UPDATE_PREFERENCES: '/api/v1/users/preferences',
+  USERS_GET_FULL_PREFERENCES: '/api/v1/users/preferences/full',
+  USERS_UPDATE_FULL_PREFERENCES: '/api/v1/users/preferences/full',
+  USERS_GET_PROFILE: '/api/v1/users/profile',
+  USERS_UPDATE_PROFILE: '/api/v1/users/profile',
+  USERS_UPDATE_USERNAME: '/api/v1/users/username',
+  USERS_VALIDATE_USERNAME: '/api/v1/users/username/validate',
 } as const;
-
 
 // ============================================================================
 // URL Functions (with parameters) - Re-exported from SDK
 // ============================================================================
 
 // accounts
-export {
-  getAccountsSignupUrl
-} from "../generated/api/accounts/accounts";
+export { getAccountsSignupUrl } from '../generated/api/accounts/accounts';
 
 // ats-validation
-export {
-  getAtsValidationValidateCVUrl
-} from "../generated/api/ats-validation/ats-validation";
+export { getAtsValidationValidateCVUrl } from '../generated/api/ats-validation/ats-validation';
 
 // auth
 export {
   getAuthDisableUrl,
+  getAuthGetSessionUrl,
   getAuthLoginUrl,
   getAuthLogoutUrl,
-  getAuthRefreshUrl
-} from "../generated/api/auth/auth";
+  getAuthRefreshUrl,
+} from '../generated/api/auth/auth';
 
 // chat
 export {
-  getChatGetConversationWithUrl,
   getChatGetConversationsUrl,
   getChatGetConversationUrl,
+  getChatGetConversationWithUrl,
   getChatGetMessagesUrl,
-  getChatSendMessageToConversationUrl,
+  getChatGetUnreadCountUrl,
   getChatMarkConversationAsReadUrl,
+  getChatSendMessageToConversationUrl,
   getChatSendMessageUrl,
-  getChatGetUnreadCountUrl
-} from "../generated/api/chat/chat";
+} from '../generated/api/chat/chat';
 
 // chat-block-users
 export {
-  getChatBlockUsersGetBlockedUsersUrl,
   getChatBlockUsersBlockUserUrl,
+  getChatBlockUsersGetBlockedUsersUrl,
+  getChatBlockUsersIsBlockedUrl,
   getChatBlockUsersUnblockUserUrl,
-  getChatBlockUsersIsBlockedUrl
-} from "../generated/api/chat-block-users/chat-block-users";
+} from '../generated/api/chat-block-users/chat-block-users';
 
 // collaboration
 export {
-  getCollaborationGetSharedWithMeUrl,
   getCollaborationGetCollaboratorsUrl,
+  getCollaborationGetSharedWithMeUrl,
   getCollaborationInviteUrl,
   getCollaborationRemoveUrl,
-  getCollaborationUpdateRoleUrl
-} from "../generated/api/collaboration/collaboration";
+  getCollaborationUpdateRoleUrl,
+} from '../generated/api/collaboration/collaboration';
 
 // dsl
 export {
   getDslPreviewUrl,
   getDslRenderPublicUrl,
   getDslRenderUrl,
-  getDslValidateUrl
-} from "../generated/api/dsl/dsl";
+  getDslValidateUrl,
+} from '../generated/api/dsl/dsl';
+
+// email-verification
+export { getEmailVerificationHandleUrl } from '../generated/api/email-verification/email-verification';
 
 // enums
 export {
   getEnumsGetExportFormatsUrl,
   getEnumsGetSectionTypesUrl,
-  getEnumsGetUserRolesUrl
-} from "../generated/api/enums/enums";
+  getEnumsGetUserRolesUrl,
+} from '../generated/api/enums/enums';
 
 // export
 export {
+  getExportExportBannerUrl,
   getExportExportJsonUrl,
   getExportExportLatexUrl,
-  getExportExportBannerUrl,
   getExportExportResumeDOCXUrl,
-  getExportExportResumePDFUrl
-} from "../generated/api/export/export";
+  getExportExportResumePDFUrl,
+} from '../generated/api/export/export';
 
 // github
 export {
+  getGithubAutoSyncGitHubUrl,
   getGithubGetGitHubSummaryUrl,
-  getGithubSyncGitHubUrl,
   getGithubGetSyncStatusUrl,
-  getGithubAutoSyncGitHubUrl
-} from "../generated/api/github/github";
+  getGithubSyncGitHubUrl,
+} from '../generated/api/github/github';
 
 // mec-courses
 export {
+  getMecCoursesGetCourseByCodeUrl,
   getMecCoursesSearchCoursesByNameUrl,
-  getMecCoursesGetCourseByCodeUrl
-} from "../generated/api/mec-courses/mec-courses";
+} from '../generated/api/mec-courses/mec-courses';
 
 // mec-institutions
 export {
+  getMecInstitutionsGetInstitutionByCodeWithCoursesUrl,
+  getMecInstitutionsListCoursesByInstitutionCodeUrl,
   getMecInstitutionsListInstitutionsUrl,
   getMecInstitutionsSearchInstitutionsByNameUrl,
-  getMecInstitutionsGetInstitutionByCodeWithCoursesUrl,
-  getMecInstitutionsListCoursesByInstitutionCodeUrl
-} from "../generated/api/mec-institutions/mec-institutions";
+} from '../generated/api/mec-institutions/mec-institutions';
 
 // mec-internal
 export {
-  getMecInternalTriggerSyncUrl,
   getMecInternalGetSyncHistoryUrl,
-  getMecInternalGetSyncStatusUrl
-} from "../generated/api/mec-internal/mec-internal";
+  getMecInternalGetSyncStatusUrl,
+  getMecInternalTriggerSyncUrl,
+} from '../generated/api/mec-internal/mec-internal';
 
 // mec-metadata
 export {
-  getMecMetadataListAllKnowledgeAreasUrl,
   getMecMetadataGetMecStatisticsUrl,
-  getMecMetadataListAllStateCodesUrl
-} from "../generated/api/mec-metadata/mec-metadata";
+  getMecMetadataListAllKnowledgeAreasUrl,
+  getMecMetadataListAllStateCodesUrl,
+} from '../generated/api/mec-metadata/mec-metadata';
 
 // onboarding
 export {
+  getOnboardingCompleteFromSessionUrl,
   getOnboardingCompleteOnboardingUrl,
   getOnboardingGetProgressUrl,
+  getOnboardingGetSessionUrl,
+  getOnboardingGotoStepUrl,
+  getOnboardingNextStepUrl,
+  getOnboardingPreviousStepUrl,
   getOnboardingSaveProgressUrl,
-  getOnboardingGetStatusUrl
-} from "../generated/api/onboarding/onboarding";
+  getOnboardingSaveStepDataUrl,
+} from '../generated/api/onboarding/onboarding';
 
 // platform
 export {
-  getPlatformCheckUrl,
   getPlatformCheckDatabaseUrl,
   getPlatformCheckRedisUrl,
   getPlatformCheckStorageUrl,
   getPlatformCheckTranslateUrl,
-  getPlatformGetStatisticsUrl
-} from "../generated/api/platform/platform";
+  getPlatformCheckUrl,
+  getPlatformGetStatisticsUrl,
+} from '../generated/api/platform/platform';
 
 // resume-analytics
 export {
+  getResumeAnalyticsCreateSnapshotUrl,
   getResumeAnalyticsGetATSScoreUrl,
   getResumeAnalyticsGetBenchmarkUrl,
   getResumeAnalyticsGetDashboardUrl,
   getResumeAnalyticsGetHistoryUrl,
   getResumeAnalyticsGetKeywordSuggestionsUrl,
-  getResumeAnalyticsMatchJobUrl,
   getResumeAnalyticsGetProgressionUrl,
-  getResumeAnalyticsCreateSnapshotUrl,
-  getResumeAnalyticsTrackViewUrl,
   getResumeAnalyticsGetViewStatsUrl,
+  getResumeAnalyticsMatchJobUrl,
   getResumeAnalyticsSubscribeToAtsScoreUrl,
   getResumeAnalyticsSubscribeToResumeAnalyticsUrl,
-  getResumeAnalyticsSubscribeToViewsUrl
-} from "../generated/api/resume-analytics/resume-analytics";
+  getResumeAnalyticsSubscribeToViewsUrl,
+  getResumeAnalyticsTrackViewUrl,
+} from '../generated/api/resume-analytics/resume-analytics';
 
 // resume-config
 export {
   getResumeConfigBatchUpdateUrl,
   getResumeConfigReorderItemUrl,
-  getResumeConfigToggleItemUrl,
   getResumeConfigReorderSectionUrl,
-  getResumeConfigToggleSectionUrl
-} from "../generated/api/resume-config/resume-config";
+  getResumeConfigToggleItemUrl,
+  getResumeConfigToggleSectionUrl,
+} from '../generated/api/resume-config/resume-config';
 
 // resume-import
 export {
+  getResumeImportCancelUrl,
   getResumeImportGetHistoryUrl,
+  getResumeImportGetStatusUrl,
   getResumeImportImportJsonUrl,
   getResumeImportParseJsonUrl,
-  getResumeImportCancelUrl,
-  getResumeImportGetStatusUrl,
-  getResumeImportRetryUrl
-} from "../generated/api/resume-import/resume-import";
+  getResumeImportRetryUrl,
+} from '../generated/api/resume-import/resume-import';
+
+// resume-skills
+export {
+  getResumeSkillsAddSkillToResumeUrl,
+  getResumeSkillsDeleteSkillUrl,
+  getResumeSkillsListSkillsForResumeUrl,
+  getResumeSkillsUpdateSkillUrl,
+} from '../generated/api/resume-skills/resume-skills';
 
 // resumes
 export {
-  getResumesGetPublicResumeUrl,
+  getResumesCreateItemUrl,
+  getResumesCreateResumeForUserUrl,
+  getResumesCreateShareUrl,
+  getResumesDeleteItemUrl,
+  getResumesDeleteResumeForUserUrl,
+  getResumesDeleteResumeUrl,
+  getResumesDeleteShareUrl,
   getResumesDownloadPublicResumeUrl,
   getResumesGetAllUserResumesUrl,
-  getResumesCreateResumeForUserUrl,
-  getResumesListResumesForUserUrl,
-  getResumesDeleteResumeUrl,
-  getResumesGetResumeDetailsUrl,
+  getResumesGetPublicResumeUrl,
   getResumesGetRemainingSlotsUrl,
-  getResumesDeleteResumeForUserUrl,
   getResumesGetResumeByIdForUserUrl,
-  getResumesUpdateResumeForUserUrl,
   getResumesGetResumeByIdWithAllSectionsUrl,
+  getResumesGetResumeDetailsUrl,
   getResumesListResumeSectionsUrl,
-  getResumesListTypesUrl,
-  getResumesCreateItemUrl,
-  getResumesDeleteItemUrl,
-  getResumesUpdateItemUrl,
-  getResumesCreateShareUrl,
   getResumesListResumeSharesUrl,
-  getResumesDeleteShareUrl
-} from "../generated/api/resumes/resumes";
+  getResumesListResumesForUserUrl,
+  getResumesListTypesUrl,
+  getResumesUpdateItemUrl,
+  getResumesUpdateResumeForUserUrl,
+} from '../generated/api/resumes/resumes';
 
 // search
 export {
   getSearchSearchUrl,
   getSearchSimilarUrl,
-  getSearchSuggestionsUrl
-} from "../generated/api/search/search";
+  getSearchSuggestionsUrl,
+} from '../generated/api/search/search';
 
 // skills
 export {
   getSkillsFindAllActiveLanguagesUrl,
+  getSkillsFindLanguageByCodeUrl,
   getSkillsSearchLanguagesByNameUrl,
-  getSkillsFindLanguageByCodeUrl
-} from "../generated/api/skills/skills";
+} from '../generated/api/skills/skills';
 
 // social
 export {
+  getSocialSubscribeToActivityTypeUrl,
   getSocialSubscribeToFeedUrl,
-  getSocialSubscribeToActivityTypeUrl
-} from "../generated/api/social/social";
+} from '../generated/api/social/social';
 
 // tech-areas
 export {
   getTechAreasGetAreasUrl,
-  getTechAreasGetNichesByAreaUrl
-} from "../generated/api/tech-areas/tech-areas";
+  getTechAreasGetNichesByAreaUrl,
+} from '../generated/api/tech-areas/tech-areas';
 
 // tech-niches
 export {
   getTechNichesGetNichesUrl,
-  getTechNichesGetSkillsByNicheUrl
-} from "../generated/api/tech-niches/tech-niches";
+  getTechNichesGetSkillsByNicheUrl,
+} from '../generated/api/tech-niches/tech-niches';
 
 // tech-skills
 export {
+  getTechSkillsGetSkillsByTypeUrl,
   getTechSkillsGetSkillsUrl,
-  getTechSkillsGetSkillsByTypeUrl
-} from "../generated/api/tech-skills/tech-skills";
+} from '../generated/api/tech-skills/tech-skills';
 
 // themes
 export {
-  getThemesFindAllThemesWithPaginationUrl,
-  getThemesCreateThemeForUserUrl,
   getThemesApplyUrl,
-  getThemesGetPendingUrl,
-  getThemesReviewUrl,
-  getThemesSubmitUrl,
+  getThemesCreateThemeForUserUrl,
+  getThemesDeleteThemeForUserUrl,
+  getThemesFindAllSystemThemesUrl,
+  getThemesFindAllThemesWithPaginationUrl,
+  getThemesFindPopularThemesUrl,
+  getThemesFindThemeByIdUrl,
   getThemesForkUrl,
   getThemesGetAllThemesByUserUrl,
-  getThemesFindPopularThemesUrl,
+  getThemesGetPendingUrl,
   getThemesGetResolvedConfigUrl,
-  getThemesFindAllSystemThemesUrl,
-  getThemesDeleteThemeForUserUrl,
-  getThemesFindThemeByIdUrl,
-  getThemesUpdateThemeForUserUrl
-} from "../generated/api/themes/themes";
+  getThemesReviewUrl,
+  getThemesSubmitUrl,
+  getThemesUpdateThemeForUserUrl,
+} from '../generated/api/themes/themes';
 
 // translation
 export {
+  getTranslationHealthCheckUrl,
   getTranslationTranslateBatchUrl,
   getTranslationTranslateEnToPtUrl,
-  getTranslationHealthCheckUrl,
   getTranslationTranslatePtToEnUrl,
-  getTranslationTranslateTextUrl
-} from "../generated/api/translation/translation";
+  getTranslationTranslateTextUrl,
+} from '../generated/api/translation/translation';
 
 // upload
 export {
-  getUploadUploadCompanyLogoUrl,
   getUploadDeleteFileUrl,
-  getUploadUploadProfileImageUrl
-} from "../generated/api/upload/upload";
+  getUploadUploadCompanyLogoUrl,
+  getUploadUploadProfileImageUrl,
+} from '../generated/api/upload/upload';
 
 // user-consent
 export {
+  getUserConsentAcceptConsentUrl,
   getUserConsentExportDataUrl,
-  getUserConsentAcceptConsentUrl
-} from "../generated/api/user-consent/user-consent";
+} from '../generated/api/user-consent/user-consent';
 
 // users
 export {
-  getUsersHandleUrl,
-  getUsersListUsersUrl,
+  getUsersCheckUsernameAvailabilityUrl,
   getUsersCreateUserUrl,
   getUsersDeleteUserUrl,
-  getUsersGetUserDetailsUrl,
-  getUsersUpdateUserUrl,
-  getUsersResetPasswordUrl,
-  getUsersGetPreferencesUrl,
-  getUsersUpdatePreferencesUrl,
   getUsersGetFullPreferencesUrl,
-  getUsersUpdateFullPreferencesUrl,
+  getUsersGetPreferencesUrl,
   getUsersGetProfileUrl,
+  getUsersGetPublicProfileByUsernameUrl,
+  getUsersGetUserDetailsUrl,
+  getUsersHandleUrl,
+  getUsersListUsersUrl,
+  getUsersResetPasswordUrl,
+  getUsersUpdateFullPreferencesUrl,
+  getUsersUpdatePreferencesUrl,
   getUsersUpdateProfileUrl,
   getUsersUpdateUsernameUrl,
-  getUsersCheckUsernameAvailabilityUrl,
+  getUsersUpdateUserUrl,
   getUsersValidateUsernameUrl,
-  getUsersGetPublicProfileByUsernameUrl
-} from "../generated/api/users/users";
-
+} from '../generated/api/users/users';

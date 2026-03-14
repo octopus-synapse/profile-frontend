@@ -3,10 +3,10 @@
  * Displays user info: avatar, name, bio, links
  */
 
-"use client";
+'use client';
 
-import { MapPin, Globe, Linkedin, Github, Mail, Phone, AtSign } from "lucide-react";
-import { Avatar } from "@/shared/components/ui";
+import { AtSign, Github, Globe, Linkedin, Mail, MapPin, Phone } from 'lucide-react';
+import { Avatar } from '@/shared/components/ui';
 
 interface ProfileDisplayData {
   name: string;
@@ -28,25 +28,25 @@ interface PublicProfileHeaderProps {
 
 export function PublicProfileHeader({ data, username }: PublicProfileHeaderProps) {
   const initials = data.name
-    .split(" ")
+    .split(' ')
     .map((n) => n[0])
-    .join("")
+    .join('')
     .toUpperCase()
     .slice(0, 2);
 
   const socialLinks = [
-    data.website && { icon: Globe, href: data.website, label: "Website" },
+    data.website && { icon: Globe, href: data.website, label: 'Website' },
     data.linkedin && {
       icon: Linkedin,
-      href: data.linkedin.startsWith("http")
+      href: data.linkedin.startsWith('http')
         ? data.linkedin
         : `https://linkedin.com/in/${data.linkedin}`,
-      label: "LinkedIn",
+      label: 'LinkedIn',
     },
     data.github && {
       icon: Github,
-      href: data.github.startsWith("http") ? data.github : `https://github.com/${data.github}`,
-      label: "GitHub",
+      href: data.github.startsWith('http') ? data.github : `https://github.com/${data.github}`,
+      label: 'GitHub',
     },
   ].filter(Boolean) as { icon: typeof Globe; href: string; label: string }[];
 
@@ -81,9 +81,7 @@ export function PublicProfileHeader({ data, username }: PublicProfileHeaderProps
               {data.name}
             </h1>
             {data.jobTitle && (
-              <p className="mt-2 text-lg text-pf-accent-fg font-medium">
-                {data.jobTitle}
-              </p>
+              <p className="mt-2 text-lg text-pf-accent-fg font-medium">{data.jobTitle}</p>
             )}
           </div>
 

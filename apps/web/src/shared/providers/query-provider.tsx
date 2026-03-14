@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
 /**
  * TanStack Query Provider
  * Configured for optimal caching and SSR support
  */
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useState, type ReactNode } from "react";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { type ReactNode, useState } from 'react';
 
 interface QueryProviderProps {
   children: ReactNode;
@@ -22,7 +22,7 @@ function makeQueryClient() {
         refetchOnWindowFocus: false,
         retry: (failureCount, error) => {
           // Don't retry on 4xx errors
-          if (error && typeof error === "object" && "statusCode" in error) {
+          if (error && typeof error === 'object' && 'statusCode' in error) {
             const status = (error as { statusCode: number }).statusCode;
             if (status >= 400 && status < 500) {
               return false;
@@ -38,10 +38,10 @@ function makeQueryClient() {
   });
 }
 
-let browserQueryClient: QueryClient | undefined = undefined;
+let browserQueryClient: QueryClient | undefined;
 
 function getQueryClient() {
-  if (typeof window === "undefined") {
+  if (typeof window === 'undefined') {
     // Server: always make a new query client
     return makeQueryClient();
   } else {

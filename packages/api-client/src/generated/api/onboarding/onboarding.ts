@@ -34,7 +34,18 @@ import type {
 
 import type {
   CompleteOnboardingRequestDto,
-  OnboardingProgress
+  CompleteOnboardingResponseDto,
+  GotoStepRequestDto,
+  NextStepRequestDto,
+  OnboardingGetSessionParams,
+  OnboardingGotoStepParams,
+  OnboardingNextStepParams,
+  OnboardingPreviousStepParams,
+  OnboardingSaveStepDataParams,
+  OnboardingSessionDto,
+  SaveProgressRequestDto,
+  SaveProgressResponseDto,
+  SaveStepDataRequestDto
 } from '../../models';
 
 import { customFetch } from '../../../client/fetcher';
@@ -45,10 +56,10 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
 /**
- * @summary Complete user onboarding with resume data
+ * @summary [Legacy] Complete onboarding with explicit payload
  */
 export type onboardingCompleteOnboardingResponse201 = {
-  data: void
+  data: CompleteOnboardingResponseDto
   status: 201
 }
 
@@ -121,7 +132,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type OnboardingCompleteOnboardingMutationError = void
 
     /**
- * @summary Complete user onboarding with resume data
+ * @summary [Legacy] Complete onboarding with explicit payload
  */
 export const useOnboardingCompleteOnboarding = <TError = void,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof onboardingCompleteOnboarding>>, TError,{data: CompleteOnboardingRequestDto}, TContext>, request?: SecondParameter<typeof customFetch>}
@@ -134,10 +145,10 @@ export const useOnboardingCompleteOnboarding = <TError = void,
       return useMutation(getOnboardingCompleteOnboardingMutationOptions(options), queryClient);
     }
     /**
- * @summary Get user onboarding progress (checkpoint)
+ * @summary [Legacy] Get onboarding progress
  */
 export type onboardingGetProgressResponse200 = {
-  data: void
+  data: OnboardingSessionDto
   status: 200
 }
 
@@ -238,7 +249,7 @@ export function useOnboardingGetProgressInfinite<TData = InfiniteData<Awaited<Re
  , queryClient?: QueryClient
   ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Get user onboarding progress (checkpoint)
+ * @summary [Legacy] Get onboarding progress
  */
 
 export function useOnboardingGetProgressInfinite<TData = InfiniteData<Awaited<ReturnType<typeof onboardingGetProgress>>>, TError = void>(
@@ -254,7 +265,7 @@ export function useOnboardingGetProgressInfinite<TData = InfiniteData<Awaited<Re
 }
 
 /**
- * @summary Get user onboarding progress (checkpoint)
+ * @summary [Legacy] Get onboarding progress
  */
 export const prefetchOnboardingGetProgressInfiniteQuery = async <TData = Awaited<ReturnType<typeof onboardingGetProgress>>, TError = void>(
  queryClient: QueryClient,  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof onboardingGetProgress>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
@@ -317,7 +328,7 @@ export function useOnboardingGetProgress<TData = Awaited<ReturnType<typeof onboa
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Get user onboarding progress (checkpoint)
+ * @summary [Legacy] Get onboarding progress
  */
 
 export function useOnboardingGetProgress<TData = Awaited<ReturnType<typeof onboardingGetProgress>>, TError = void>(
@@ -333,7 +344,7 @@ export function useOnboardingGetProgress<TData = Awaited<ReturnType<typeof onboa
 }
 
 /**
- * @summary Get user onboarding progress (checkpoint)
+ * @summary [Legacy] Get onboarding progress
  */
 export const prefetchOnboardingGetProgressQuery = async <TData = Awaited<ReturnType<typeof onboardingGetProgress>>, TError = void>(
  queryClient: QueryClient,  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof onboardingGetProgress>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
@@ -384,7 +395,7 @@ export function useOnboardingGetProgressSuspense<TData = Awaited<ReturnType<type
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Get user onboarding progress (checkpoint)
+ * @summary [Legacy] Get onboarding progress
  */
 
 export function useOnboardingGetProgressSuspense<TData = Awaited<ReturnType<typeof onboardingGetProgress>>, TError = void>(
@@ -403,10 +414,10 @@ export function useOnboardingGetProgressSuspense<TData = Awaited<ReturnType<type
 
 
 /**
- * @summary Save user onboarding progress (checkpoint)
+ * @summary [Legacy] Save onboarding progress
  */
 export type onboardingSaveProgressResponse200 = {
-  data: void
+  data: SaveProgressResponseDto
   status: 200
 }
 
@@ -432,7 +443,7 @@ export const getOnboardingSaveProgressUrl = () => {
   return `/api/v1/onboarding/progress`
 }
 
-export const onboardingSaveProgress = async (onboardingProgress: OnboardingProgress, options?: RequestInit): Promise<onboardingSaveProgressResponse> => {
+export const onboardingSaveProgress = async (saveProgressRequestDto: SaveProgressRequestDto, options?: RequestInit): Promise<onboardingSaveProgressResponse> => {
   
   return customFetch<onboardingSaveProgressResponse>(getOnboardingSaveProgressUrl(),
   {      
@@ -440,7 +451,7 @@ export const onboardingSaveProgress = async (onboardingProgress: OnboardingProgr
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', ...options?.headers },
     body: JSON.stringify(
-      onboardingProgress,)
+      saveProgressRequestDto,)
   }
 );}
 
@@ -448,8 +459,8 @@ export const onboardingSaveProgress = async (onboardingProgress: OnboardingProgr
 
 
 export const getOnboardingSaveProgressMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof onboardingSaveProgress>>, TError,{data: OnboardingProgress}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof onboardingSaveProgress>>, TError,{data: OnboardingProgress}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof onboardingSaveProgress>>, TError,{data: SaveProgressRequestDto}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof onboardingSaveProgress>>, TError,{data: SaveProgressRequestDto}, TContext> => {
 
 const mutationKey = ['onboardingSaveProgress'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -461,7 +472,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof onboardingSaveProgress>>, {data: OnboardingProgress}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof onboardingSaveProgress>>, {data: SaveProgressRequestDto}> = (props) => {
           const {data} = props ?? {};
 
           return  onboardingSaveProgress(data,requestOptions)
@@ -475,55 +486,62 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type OnboardingSaveProgressMutationResult = NonNullable<Awaited<ReturnType<typeof onboardingSaveProgress>>>
-    export type OnboardingSaveProgressMutationBody = OnboardingProgress
+    export type OnboardingSaveProgressMutationBody = SaveProgressRequestDto
     export type OnboardingSaveProgressMutationError = void
 
     /**
- * @summary Save user onboarding progress (checkpoint)
+ * @summary [Legacy] Save onboarding progress
  */
 export const useOnboardingSaveProgress = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof onboardingSaveProgress>>, TError,{data: OnboardingProgress}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof onboardingSaveProgress>>, TError,{data: SaveProgressRequestDto}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof onboardingSaveProgress>>,
         TError,
-        {data: OnboardingProgress},
+        {data: SaveProgressRequestDto},
         TContext
       > => {
       return useMutation(getOnboardingSaveProgressMutationOptions(options), queryClient);
     }
     /**
- * @summary Get user onboarding status
+ * @summary Get onboarding session with field definitions and navigation
  */
-export type onboardingGetStatusResponse200 = {
-  data: void
+export type onboardingGetSessionResponse200 = {
+  data: OnboardingSessionDto
   status: 200
 }
 
-export type onboardingGetStatusResponse401 = {
+export type onboardingGetSessionResponse401 = {
   data: void
   status: 401
 }
     
-export type onboardingGetStatusResponseSuccess = (onboardingGetStatusResponse200) & {
+export type onboardingGetSessionResponseSuccess = (onboardingGetSessionResponse200) & {
   headers: Headers;
 };
-export type onboardingGetStatusResponseError = (onboardingGetStatusResponse401) & {
+export type onboardingGetSessionResponseError = (onboardingGetSessionResponse401) & {
   headers: Headers;
 };
 
-export type onboardingGetStatusResponse = (onboardingGetStatusResponseSuccess | onboardingGetStatusResponseError)
+export type onboardingGetSessionResponse = (onboardingGetSessionResponseSuccess | onboardingGetSessionResponseError)
 
-export const getOnboardingGetStatusUrl = () => {
+export const getOnboardingGetSessionUrl = (params?: OnboardingGetSessionParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
+    
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
 
-  
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/api/v1/onboarding/status`
+  return stringifiedParams.length > 0 ? `/api/v1/onboarding/session?${stringifiedParams}` : `/api/v1/onboarding/session`
 }
 
-export const onboardingGetStatus = async ( options?: RequestInit): Promise<onboardingGetStatusResponse> => {
+export const onboardingGetSession = async (params?: OnboardingGetSessionParams, options?: RequestInit): Promise<onboardingGetSessionResponse> => {
   
-  return customFetch<onboardingGetStatusResponse>(getOnboardingGetStatusUrl(),
+  return customFetch<onboardingGetSessionResponse>(getOnboardingGetSessionUrl(params),
   {      
     ...options,
     method: 'GET'
@@ -536,75 +554,75 @@ export const onboardingGetStatus = async ( options?: RequestInit): Promise<onboa
 
 
 
-export const getOnboardingGetStatusInfiniteQueryKey = () => {
+export const getOnboardingGetSessionInfiniteQueryKey = (params?: OnboardingGetSessionParams,) => {
     return [
-    'infinite', `/api/v1/onboarding/status`
+    'infinite', `/api/v1/onboarding/session`, ...(params ? [params] : [])
     ] as const;
     }
 
-export const getOnboardingGetStatusQueryKey = () => {
+export const getOnboardingGetSessionQueryKey = (params?: OnboardingGetSessionParams,) => {
     return [
-    `/api/v1/onboarding/status`
+    `/api/v1/onboarding/session`, ...(params ? [params] : [])
     ] as const;
     }
 
     
-export const getOnboardingGetStatusInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof onboardingGetStatus>>>, TError = void>( options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof onboardingGetStatus>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getOnboardingGetSessionInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof onboardingGetSession>>>, TError = void>(params?: OnboardingGetSessionParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof onboardingGetSession>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getOnboardingGetStatusInfiniteQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getOnboardingGetSessionInfiniteQueryKey(params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof onboardingGetStatus>>> = ({ signal }) => onboardingGetStatus({ signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof onboardingGetSession>>> = ({ signal }) => onboardingGetSession(params, { signal, ...requestOptions });
 
       
 
       
 
-   return  { queryKey, queryFn, ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof onboardingGetStatus>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof onboardingGetSession>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type OnboardingGetStatusInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof onboardingGetStatus>>>
-export type OnboardingGetStatusInfiniteQueryError = void
+export type OnboardingGetSessionInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof onboardingGetSession>>>
+export type OnboardingGetSessionInfiniteQueryError = void
 
 
-export function useOnboardingGetStatusInfinite<TData = InfiniteData<Awaited<ReturnType<typeof onboardingGetStatus>>>, TError = void>(
-  options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof onboardingGetStatus>>, TError, TData>> & Pick<
+export function useOnboardingGetSessionInfinite<TData = InfiniteData<Awaited<ReturnType<typeof onboardingGetSession>>>, TError = void>(
+ params: undefined |  OnboardingGetSessionParams, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof onboardingGetSession>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof onboardingGetStatus>>,
+          Awaited<ReturnType<typeof onboardingGetSession>>,
           TError,
-          Awaited<ReturnType<typeof onboardingGetStatus>>
+          Awaited<ReturnType<typeof onboardingGetSession>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useOnboardingGetStatusInfinite<TData = InfiniteData<Awaited<ReturnType<typeof onboardingGetStatus>>>, TError = void>(
-  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof onboardingGetStatus>>, TError, TData>> & Pick<
+export function useOnboardingGetSessionInfinite<TData = InfiniteData<Awaited<ReturnType<typeof onboardingGetSession>>>, TError = void>(
+ params?: OnboardingGetSessionParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof onboardingGetSession>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof onboardingGetStatus>>,
+          Awaited<ReturnType<typeof onboardingGetSession>>,
           TError,
-          Awaited<ReturnType<typeof onboardingGetStatus>>
+          Awaited<ReturnType<typeof onboardingGetSession>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useOnboardingGetStatusInfinite<TData = InfiniteData<Awaited<ReturnType<typeof onboardingGetStatus>>>, TError = void>(
-  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof onboardingGetStatus>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export function useOnboardingGetSessionInfinite<TData = InfiniteData<Awaited<ReturnType<typeof onboardingGetSession>>>, TError = void>(
+ params?: OnboardingGetSessionParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof onboardingGetSession>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Get user onboarding status
+ * @summary Get onboarding session with field definitions and navigation
  */
 
-export function useOnboardingGetStatusInfinite<TData = InfiniteData<Awaited<ReturnType<typeof onboardingGetStatus>>>, TError = void>(
-  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof onboardingGetStatus>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export function useOnboardingGetSessionInfinite<TData = InfiniteData<Awaited<ReturnType<typeof onboardingGetSession>>>, TError = void>(
+ params?: OnboardingGetSessionParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof onboardingGetSession>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient 
  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getOnboardingGetStatusInfiniteQueryOptions(options)
+  const queryOptions = getOnboardingGetSessionInfiniteQueryOptions(params,options)
 
   const query = useInfiniteQuery(queryOptions, queryClient) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -612,14 +630,14 @@ export function useOnboardingGetStatusInfinite<TData = InfiniteData<Awaited<Retu
 }
 
 /**
- * @summary Get user onboarding status
+ * @summary Get onboarding session with field definitions and navigation
  */
-export const prefetchOnboardingGetStatusInfiniteQuery = async <TData = Awaited<ReturnType<typeof onboardingGetStatus>>, TError = void>(
- queryClient: QueryClient,  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof onboardingGetStatus>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const prefetchOnboardingGetSessionInfiniteQuery = async <TData = Awaited<ReturnType<typeof onboardingGetSession>>, TError = void>(
+ queryClient: QueryClient, params?: OnboardingGetSessionParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof onboardingGetSession>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 
   ): Promise<QueryClient> => {
 
-  const queryOptions = getOnboardingGetStatusInfiniteQueryOptions(options)
+  const queryOptions = getOnboardingGetSessionInfiniteQueryOptions(params,options)
 
   await queryClient.prefetchInfiniteQuery(queryOptions);
 
@@ -628,62 +646,62 @@ export const prefetchOnboardingGetStatusInfiniteQuery = async <TData = Awaited<R
 
 
 
-export const getOnboardingGetStatusQueryOptions = <TData = Awaited<ReturnType<typeof onboardingGetStatus>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof onboardingGetStatus>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getOnboardingGetSessionQueryOptions = <TData = Awaited<ReturnType<typeof onboardingGetSession>>, TError = void>(params?: OnboardingGetSessionParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof onboardingGetSession>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getOnboardingGetStatusQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getOnboardingGetSessionQueryKey(params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof onboardingGetStatus>>> = ({ signal }) => onboardingGetStatus({ signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof onboardingGetSession>>> = ({ signal }) => onboardingGetSession(params, { signal, ...requestOptions });
 
       
 
       
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof onboardingGetStatus>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof onboardingGetSession>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type OnboardingGetStatusQueryResult = NonNullable<Awaited<ReturnType<typeof onboardingGetStatus>>>
-export type OnboardingGetStatusQueryError = void
+export type OnboardingGetSessionQueryResult = NonNullable<Awaited<ReturnType<typeof onboardingGetSession>>>
+export type OnboardingGetSessionQueryError = void
 
 
-export function useOnboardingGetStatus<TData = Awaited<ReturnType<typeof onboardingGetStatus>>, TError = void>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof onboardingGetStatus>>, TError, TData>> & Pick<
+export function useOnboardingGetSession<TData = Awaited<ReturnType<typeof onboardingGetSession>>, TError = void>(
+ params: undefined |  OnboardingGetSessionParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof onboardingGetSession>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof onboardingGetStatus>>,
+          Awaited<ReturnType<typeof onboardingGetSession>>,
           TError,
-          Awaited<ReturnType<typeof onboardingGetStatus>>
+          Awaited<ReturnType<typeof onboardingGetSession>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useOnboardingGetStatus<TData = Awaited<ReturnType<typeof onboardingGetStatus>>, TError = void>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof onboardingGetStatus>>, TError, TData>> & Pick<
+export function useOnboardingGetSession<TData = Awaited<ReturnType<typeof onboardingGetSession>>, TError = void>(
+ params?: OnboardingGetSessionParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof onboardingGetSession>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof onboardingGetStatus>>,
+          Awaited<ReturnType<typeof onboardingGetSession>>,
           TError,
-          Awaited<ReturnType<typeof onboardingGetStatus>>
+          Awaited<ReturnType<typeof onboardingGetSession>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useOnboardingGetStatus<TData = Awaited<ReturnType<typeof onboardingGetStatus>>, TError = void>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof onboardingGetStatus>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export function useOnboardingGetSession<TData = Awaited<ReturnType<typeof onboardingGetSession>>, TError = void>(
+ params?: OnboardingGetSessionParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof onboardingGetSession>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Get user onboarding status
+ * @summary Get onboarding session with field definitions and navigation
  */
 
-export function useOnboardingGetStatus<TData = Awaited<ReturnType<typeof onboardingGetStatus>>, TError = void>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof onboardingGetStatus>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export function useOnboardingGetSession<TData = Awaited<ReturnType<typeof onboardingGetSession>>, TError = void>(
+ params?: OnboardingGetSessionParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof onboardingGetSession>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getOnboardingGetStatusQueryOptions(options)
+  const queryOptions = getOnboardingGetSessionQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -691,14 +709,14 @@ export function useOnboardingGetStatus<TData = Awaited<ReturnType<typeof onboard
 }
 
 /**
- * @summary Get user onboarding status
+ * @summary Get onboarding session with field definitions and navigation
  */
-export const prefetchOnboardingGetStatusQuery = async <TData = Awaited<ReturnType<typeof onboardingGetStatus>>, TError = void>(
- queryClient: QueryClient,  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof onboardingGetStatus>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const prefetchOnboardingGetSessionQuery = async <TData = Awaited<ReturnType<typeof onboardingGetSession>>, TError = void>(
+ queryClient: QueryClient, params?: OnboardingGetSessionParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof onboardingGetSession>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 
   ): Promise<QueryClient> => {
 
-  const queryOptions = getOnboardingGetStatusQueryOptions(options)
+  const queryOptions = getOnboardingGetSessionQueryOptions(params,options)
 
   await queryClient.prefetchQuery(queryOptions);
 
@@ -707,50 +725,50 @@ export const prefetchOnboardingGetStatusQuery = async <TData = Awaited<ReturnTyp
 
 
 
-export const getOnboardingGetStatusSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof onboardingGetStatus>>, TError = void>( options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof onboardingGetStatus>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getOnboardingGetSessionSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof onboardingGetSession>>, TError = void>(params?: OnboardingGetSessionParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof onboardingGetSession>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getOnboardingGetStatusQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getOnboardingGetSessionQueryKey(params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof onboardingGetStatus>>> = ({ signal }) => onboardingGetStatus({ signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof onboardingGetSession>>> = ({ signal }) => onboardingGetSession(params, { signal, ...requestOptions });
 
       
 
       
 
-   return  { queryKey, queryFn, ...queryOptions} as UseSuspenseQueryOptions<Awaited<ReturnType<typeof onboardingGetStatus>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseSuspenseQueryOptions<Awaited<ReturnType<typeof onboardingGetSession>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type OnboardingGetStatusSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof onboardingGetStatus>>>
-export type OnboardingGetStatusSuspenseQueryError = void
+export type OnboardingGetSessionSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof onboardingGetSession>>>
+export type OnboardingGetSessionSuspenseQueryError = void
 
 
-export function useOnboardingGetStatusSuspense<TData = Awaited<ReturnType<typeof onboardingGetStatus>>, TError = void>(
-  options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof onboardingGetStatus>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export function useOnboardingGetSessionSuspense<TData = Awaited<ReturnType<typeof onboardingGetSession>>, TError = void>(
+ params: undefined |  OnboardingGetSessionParams, options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof onboardingGetSession>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useOnboardingGetStatusSuspense<TData = Awaited<ReturnType<typeof onboardingGetStatus>>, TError = void>(
-  options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof onboardingGetStatus>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export function useOnboardingGetSessionSuspense<TData = Awaited<ReturnType<typeof onboardingGetSession>>, TError = void>(
+ params?: OnboardingGetSessionParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof onboardingGetSession>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useOnboardingGetStatusSuspense<TData = Awaited<ReturnType<typeof onboardingGetStatus>>, TError = void>(
-  options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof onboardingGetStatus>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export function useOnboardingGetSessionSuspense<TData = Awaited<ReturnType<typeof onboardingGetSession>>, TError = void>(
+ params?: OnboardingGetSessionParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof onboardingGetSession>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Get user onboarding status
+ * @summary Get onboarding session with field definitions and navigation
  */
 
-export function useOnboardingGetStatusSuspense<TData = Awaited<ReturnType<typeof onboardingGetStatus>>, TError = void>(
-  options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof onboardingGetStatus>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export function useOnboardingGetSessionSuspense<TData = Awaited<ReturnType<typeof onboardingGetSession>>, TError = void>(
+ params?: OnboardingGetSessionParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof onboardingGetSession>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient 
  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getOnboardingGetStatusSuspenseQueryOptions(options)
+  const queryOptions = getOnboardingGetSessionSuspenseQueryOptions(params,options)
 
   const query = useSuspenseQuery(queryOptions, queryClient) as  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -760,3 +778,478 @@ export function useOnboardingGetStatusSuspense<TData = Awaited<ReturnType<typeof
 
 
 
+/**
+ * @summary Complete onboarding — backend builds payload from saved progress
+ */
+export type onboardingCompleteFromSessionResponse201 = {
+  data: CompleteOnboardingResponseDto
+  status: 201
+}
+
+export type onboardingCompleteFromSessionResponse401 = {
+  data: void
+  status: 401
+}
+    
+export type onboardingCompleteFromSessionResponseSuccess = (onboardingCompleteFromSessionResponse201) & {
+  headers: Headers;
+};
+export type onboardingCompleteFromSessionResponseError = (onboardingCompleteFromSessionResponse401) & {
+  headers: Headers;
+};
+
+export type onboardingCompleteFromSessionResponse = (onboardingCompleteFromSessionResponseSuccess | onboardingCompleteFromSessionResponseError)
+
+export const getOnboardingCompleteFromSessionUrl = () => {
+
+
+  
+
+  return `/api/v1/onboarding/session/complete`
+}
+
+export const onboardingCompleteFromSession = async ( options?: RequestInit): Promise<onboardingCompleteFromSessionResponse> => {
+  
+  return customFetch<onboardingCompleteFromSessionResponse>(getOnboardingCompleteFromSessionUrl(),
+  {      
+    ...options,
+    method: 'POST'
+    
+    
+  }
+);}
+
+
+
+
+export const getOnboardingCompleteFromSessionMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof onboardingCompleteFromSession>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof onboardingCompleteFromSession>>, TError,void, TContext> => {
+
+const mutationKey = ['onboardingCompleteFromSession'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof onboardingCompleteFromSession>>, void> = () => {
+          
+
+          return  onboardingCompleteFromSession(requestOptions)
+        }
+
+
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type OnboardingCompleteFromSessionMutationResult = NonNullable<Awaited<ReturnType<typeof onboardingCompleteFromSession>>>
+    
+    export type OnboardingCompleteFromSessionMutationError = void
+
+    /**
+ * @summary Complete onboarding — backend builds payload from saved progress
+ */
+export const useOnboardingCompleteFromSession = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof onboardingCompleteFromSession>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof onboardingCompleteFromSession>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getOnboardingCompleteFromSessionMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Jump to an accessible step
+ */
+export type onboardingGotoStepResponse201 = {
+  data: OnboardingSessionDto
+  status: 201
+}
+
+export type onboardingGotoStepResponse401 = {
+  data: void
+  status: 401
+}
+    
+export type onboardingGotoStepResponseSuccess = (onboardingGotoStepResponse201) & {
+  headers: Headers;
+};
+export type onboardingGotoStepResponseError = (onboardingGotoStepResponse401) & {
+  headers: Headers;
+};
+
+export type onboardingGotoStepResponse = (onboardingGotoStepResponseSuccess | onboardingGotoStepResponseError)
+
+export const getOnboardingGotoStepUrl = (params?: OnboardingGotoStepParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/v1/onboarding/session/goto?${stringifiedParams}` : `/api/v1/onboarding/session/goto`
+}
+
+export const onboardingGotoStep = async (gotoStepRequestDto: GotoStepRequestDto,
+    params?: OnboardingGotoStepParams, options?: RequestInit): Promise<onboardingGotoStepResponse> => {
+  
+  return customFetch<onboardingGotoStepResponse>(getOnboardingGotoStepUrl(params),
+  {      
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      gotoStepRequestDto,)
+  }
+);}
+
+
+
+
+export const getOnboardingGotoStepMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof onboardingGotoStep>>, TError,{data: GotoStepRequestDto;params?: OnboardingGotoStepParams}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof onboardingGotoStep>>, TError,{data: GotoStepRequestDto;params?: OnboardingGotoStepParams}, TContext> => {
+
+const mutationKey = ['onboardingGotoStep'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof onboardingGotoStep>>, {data: GotoStepRequestDto;params?: OnboardingGotoStepParams}> = (props) => {
+          const {data,params} = props ?? {};
+
+          return  onboardingGotoStep(data,params,requestOptions)
+        }
+
+
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type OnboardingGotoStepMutationResult = NonNullable<Awaited<ReturnType<typeof onboardingGotoStep>>>
+    export type OnboardingGotoStepMutationBody = GotoStepRequestDto
+    export type OnboardingGotoStepMutationError = void
+
+    /**
+ * @summary Jump to an accessible step
+ */
+export const useOnboardingGotoStep = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof onboardingGotoStep>>, TError,{data: GotoStepRequestDto;params?: OnboardingGotoStepParams}, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof onboardingGotoStep>>,
+        TError,
+        {data: GotoStepRequestDto;params?: OnboardingGotoStepParams},
+        TContext
+      > => {
+      return useMutation(getOnboardingGotoStepMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Save current step data and advance to next step
+ */
+export type onboardingNextStepResponse201 = {
+  data: OnboardingSessionDto
+  status: 201
+}
+
+export type onboardingNextStepResponse401 = {
+  data: void
+  status: 401
+}
+    
+export type onboardingNextStepResponseSuccess = (onboardingNextStepResponse201) & {
+  headers: Headers;
+};
+export type onboardingNextStepResponseError = (onboardingNextStepResponse401) & {
+  headers: Headers;
+};
+
+export type onboardingNextStepResponse = (onboardingNextStepResponseSuccess | onboardingNextStepResponseError)
+
+export const getOnboardingNextStepUrl = (params?: OnboardingNextStepParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/v1/onboarding/session/next?${stringifiedParams}` : `/api/v1/onboarding/session/next`
+}
+
+export const onboardingNextStep = async (nextStepRequestDto: NextStepRequestDto,
+    params?: OnboardingNextStepParams, options?: RequestInit): Promise<onboardingNextStepResponse> => {
+  
+  return customFetch<onboardingNextStepResponse>(getOnboardingNextStepUrl(params),
+  {      
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      nextStepRequestDto,)
+  }
+);}
+
+
+
+
+export const getOnboardingNextStepMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof onboardingNextStep>>, TError,{data: NextStepRequestDto;params?: OnboardingNextStepParams}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof onboardingNextStep>>, TError,{data: NextStepRequestDto;params?: OnboardingNextStepParams}, TContext> => {
+
+const mutationKey = ['onboardingNextStep'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof onboardingNextStep>>, {data: NextStepRequestDto;params?: OnboardingNextStepParams}> = (props) => {
+          const {data,params} = props ?? {};
+
+          return  onboardingNextStep(data,params,requestOptions)
+        }
+
+
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type OnboardingNextStepMutationResult = NonNullable<Awaited<ReturnType<typeof onboardingNextStep>>>
+    export type OnboardingNextStepMutationBody = NextStepRequestDto
+    export type OnboardingNextStepMutationError = void
+
+    /**
+ * @summary Save current step data and advance to next step
+ */
+export const useOnboardingNextStep = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof onboardingNextStep>>, TError,{data: NextStepRequestDto;params?: OnboardingNextStepParams}, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof onboardingNextStep>>,
+        TError,
+        {data: NextStepRequestDto;params?: OnboardingNextStepParams},
+        TContext
+      > => {
+      return useMutation(getOnboardingNextStepMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Go back to previous step
+ */
+export type onboardingPreviousStepResponse201 = {
+  data: OnboardingSessionDto
+  status: 201
+}
+
+export type onboardingPreviousStepResponse401 = {
+  data: void
+  status: 401
+}
+    
+export type onboardingPreviousStepResponseSuccess = (onboardingPreviousStepResponse201) & {
+  headers: Headers;
+};
+export type onboardingPreviousStepResponseError = (onboardingPreviousStepResponse401) & {
+  headers: Headers;
+};
+
+export type onboardingPreviousStepResponse = (onboardingPreviousStepResponseSuccess | onboardingPreviousStepResponseError)
+
+export const getOnboardingPreviousStepUrl = (params?: OnboardingPreviousStepParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/v1/onboarding/session/previous?${stringifiedParams}` : `/api/v1/onboarding/session/previous`
+}
+
+export const onboardingPreviousStep = async (params?: OnboardingPreviousStepParams, options?: RequestInit): Promise<onboardingPreviousStepResponse> => {
+  
+  return customFetch<onboardingPreviousStepResponse>(getOnboardingPreviousStepUrl(params),
+  {      
+    ...options,
+    method: 'POST'
+    
+    
+  }
+);}
+
+
+
+
+export const getOnboardingPreviousStepMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof onboardingPreviousStep>>, TError,{params?: OnboardingPreviousStepParams}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof onboardingPreviousStep>>, TError,{params?: OnboardingPreviousStepParams}, TContext> => {
+
+const mutationKey = ['onboardingPreviousStep'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof onboardingPreviousStep>>, {params?: OnboardingPreviousStepParams}> = (props) => {
+          const {params} = props ?? {};
+
+          return  onboardingPreviousStep(params,requestOptions)
+        }
+
+
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type OnboardingPreviousStepMutationResult = NonNullable<Awaited<ReturnType<typeof onboardingPreviousStep>>>
+    
+    export type OnboardingPreviousStepMutationError = void
+
+    /**
+ * @summary Go back to previous step
+ */
+export const useOnboardingPreviousStep = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof onboardingPreviousStep>>, TError,{params?: OnboardingPreviousStepParams}, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof onboardingPreviousStep>>,
+        TError,
+        {params?: OnboardingPreviousStepParams},
+        TContext
+      > => {
+      return useMutation(getOnboardingPreviousStepMutationOptions(options), queryClient);
+    }
+    /**
+ * @summary Save current step data without advancing
+ */
+export type onboardingSaveStepDataResponse201 = {
+  data: OnboardingSessionDto
+  status: 201
+}
+
+export type onboardingSaveStepDataResponse401 = {
+  data: void
+  status: 401
+}
+    
+export type onboardingSaveStepDataResponseSuccess = (onboardingSaveStepDataResponse201) & {
+  headers: Headers;
+};
+export type onboardingSaveStepDataResponseError = (onboardingSaveStepDataResponse401) & {
+  headers: Headers;
+};
+
+export type onboardingSaveStepDataResponse = (onboardingSaveStepDataResponseSuccess | onboardingSaveStepDataResponseError)
+
+export const getOnboardingSaveStepDataUrl = (params?: OnboardingSaveStepDataParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/v1/onboarding/session/save?${stringifiedParams}` : `/api/v1/onboarding/session/save`
+}
+
+export const onboardingSaveStepData = async (saveStepDataRequestDto: SaveStepDataRequestDto,
+    params?: OnboardingSaveStepDataParams, options?: RequestInit): Promise<onboardingSaveStepDataResponse> => {
+  
+  return customFetch<onboardingSaveStepDataResponse>(getOnboardingSaveStepDataUrl(params),
+  {      
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      saveStepDataRequestDto,)
+  }
+);}
+
+
+
+
+export const getOnboardingSaveStepDataMutationOptions = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof onboardingSaveStepData>>, TError,{data: SaveStepDataRequestDto;params?: OnboardingSaveStepDataParams}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof onboardingSaveStepData>>, TError,{data: SaveStepDataRequestDto;params?: OnboardingSaveStepDataParams}, TContext> => {
+
+const mutationKey = ['onboardingSaveStepData'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof onboardingSaveStepData>>, {data: SaveStepDataRequestDto;params?: OnboardingSaveStepDataParams}> = (props) => {
+          const {data,params} = props ?? {};
+
+          return  onboardingSaveStepData(data,params,requestOptions)
+        }
+
+
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type OnboardingSaveStepDataMutationResult = NonNullable<Awaited<ReturnType<typeof onboardingSaveStepData>>>
+    export type OnboardingSaveStepDataMutationBody = SaveStepDataRequestDto
+    export type OnboardingSaveStepDataMutationError = void
+
+    /**
+ * @summary Save current step data without advancing
+ */
+export const useOnboardingSaveStepData = <TError = void,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof onboardingSaveStepData>>, TError,{data: SaveStepDataRequestDto;params?: OnboardingSaveStepDataParams}, TContext>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof onboardingSaveStepData>>,
+        TError,
+        {data: SaveStepDataRequestDto;params?: OnboardingSaveStepDataParams},
+        TContext
+      > => {
+      return useMutation(getOnboardingSaveStepDataMutationOptions(options), queryClient);
+    }
+    

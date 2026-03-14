@@ -1,26 +1,16 @@
 /**
  * Resume Config Types - Barrel Export
+ *
+ * These types define visual styling options for resume rendering.
+ * Section types are defined by the backend (SectionType entity).
  */
 
-// Layout
-export * from "./layout.types";
-
-// Design Tokens
-export * from "./typography.types";
-export * from "./colors.types";
-export * from "./spacing.types";
-export * from "./design-tokens.types";
-
-// Sections
-export * from "./section-ids.types";
-export * from "./section-styles.types";
-export * from "./section-config.types";
-
-// Persona-based Sections
-export * from "./persona-sections.types";
-
-// Complete Config
-export * from "./style-config.types";
-
-// Theme Metadata
-export * from "./theme-metadata.types";
+export * from './colors.types';
+export * from './design-tokens.types';
+export * from './layout.types';
+export * from './section-config.types';
+export * from './section-styles.types';
+export * from './spacing.types';
+export * from './style-config.types';
+export * from './theme-metadata.types';
+export * from './typography.types';

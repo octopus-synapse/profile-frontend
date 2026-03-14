@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { ForgotPasswordForm } from "@/components/auth";
-import { LocalizedLink } from "@/shared/components/localized-link";
-import { ROUTES } from "@/config/routes";
-import { ArrowLeft, Mail } from "lucide-react";
-import { useI18n } from "@/lib/i18n";
-import { motion } from "framer-motion";
+import { useI18n } from '@profile/i18n';
+import { motion } from 'framer-motion';
+import { ArrowLeft, Mail } from 'lucide-react';
+import { ForgotPasswordForm } from '@/components/auth';
+import { ROUTES } from '@/config/routes';
+import { LocalizedLink } from '@/shared/components/localized-link';
 
 export default function ForgotPasswordPage() {
   const { t } = useI18n();
@@ -30,7 +30,7 @@ export default function ForgotPasswordPage() {
               strokeWidth={2}
             />
             <span className="font-mono text-xs tracking-widest uppercase">
-              {t("auth.forgotPassword.backToSignIn")}
+              {t('auth.forgotPassword.backToSignIn')}
             </span>
           </LocalizedLink>
 
@@ -55,9 +55,9 @@ export default function ForgotPasswordPage() {
               <Mail className="h-6 w-6 text-white" strokeWidth={1.5} />
             </div>
             <h1 className="mb-2 text-3xl font-bold tracking-tight text-white">
-              {t("auth.forgotPassword.title")}
+              {t('auth.forgotPassword.title')}
             </h1>
-            <p className="text-sm text-zinc-500">{t("auth.forgotPassword.subtitle")}</p>
+            <p className="text-sm text-zinc-500">{t('auth.forgotPassword.subtitle')}</p>
           </div>
 
           {/* Form Card com borda "Glass" */}
@@ -74,4 +74,3 @@ export default function ForgotPasswordPage() {
     </div>
   );
 }
-
