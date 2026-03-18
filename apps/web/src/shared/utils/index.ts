@@ -2,6 +2,6 @@
  * Shared utilities barrel export
  */
 
-export * from "./cn";
-export { formatRelativeTime, formatNumber, truncate, capitalize, slugify } from "./format";
-export * from "./date";
+export * from './cn';
+export * from './date';
+export { capitalize, formatNumber, formatRelativeTime, slugify, truncate } from './format';

@@ -3,17 +3,19 @@
  * For approvers to see and review pending themes
  */
 
-"use client";
+'use client';
 
-import { useState } from "react";
-import { usePendingThemes } from "../hooks";
-import type { Theme } from "../../services/theme.types";
-import { ThemeCard } from "./theme-card";
-import { ThemeReviewModal } from "./theme-review-modal";
+import { useState } from 'react';
+import { usePendingThemes } from '../hooks';
+import type { Theme } from '../services/theme.types';
+import { ThemeCard } from './theme-card';
+import { ThemeReviewModal } from './theme-review-modal';
 
 export function ThemeApprovalQueue() {
   const [reviewingTheme, setReviewingTheme] = useState<Theme | null>(null);
-  const { data: themes, isLoading, error } = usePendingThemes();
+  const { data: pendingData, isLoading, error } = usePendingThemes();
+  // usePendingThemes returns unknown[] stub - cast to Theme[]
+  const themes = pendingData as Theme[];
 
   if (isLoading) return <LoadingSkeleton />;
   if (error) return <ErrorState error={error} />;
@@ -51,7 +53,7 @@ function Header({ count }: { count: number }) {
       <div>
         <h2 className="text-xl font-semibold">Pending Theme Reviews</h2>
         <p className="text-muted-foreground text-sm">
-          {count} theme{count !== 1 ? "s" : ""} awaiting approval
+          {count} theme{count !== 1 ? 's' : ''} awaiting approval
         </p>
       </div>
     </div>
@@ -89,7 +91,7 @@ function ErrorState({ error }: { error: Error }) {
       <div className="mb-4 text-4xl">⚠️</div>
       <h3 className="text-pf-danger-fg mb-2 text-lg font-medium">Failed to Load</h3>
       <p className="text-muted-foreground max-w-sm">
-        {error.message || "Could not load pending themes. Please try again."}
+        {error.message || 'Could not load pending themes. Please try again.'}
       </p>
     </div>
   );

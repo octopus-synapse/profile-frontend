@@ -35,6 +35,8 @@ import type {
 import type {
   CreateSnapshotRequestDto,
   JobMatch,
+  MessageResponseDto,
+  Object,
   TrackView
 } from '../../models';
 
@@ -49,7 +51,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary Calculate ATS compatibility score
  */
 export type resumeAnalyticsGetATSScoreResponse200 = {
-  data: void
+  data: Object
   status: 200
 }
 
@@ -318,7 +320,7 @@ export function useResumeAnalyticsGetATSScoreSuspense<TData = Awaited<ReturnType
  * @summary Get industry benchmark comparison
  */
 export type resumeAnalyticsGetBenchmarkResponse200 = {
-  data: void
+  data: Object
   status: 200
 }
 
@@ -587,7 +589,7 @@ export function useResumeAnalyticsGetBenchmarkSuspense<TData = Awaited<ReturnTyp
  * @summary Get complete analytics dashboard
  */
 export type resumeAnalyticsGetDashboardResponse200 = {
-  data: void
+  data: Object
   status: 200
 }
 
@@ -856,7 +858,7 @@ export function useResumeAnalyticsGetDashboardSuspense<TData = Awaited<ReturnTyp
  * @summary Get analytics history
  */
 export type resumeAnalyticsGetHistoryResponse200 = {
-  data: void
+  data: Object
   status: 200
 }
 
@@ -1125,7 +1127,7 @@ export function useResumeAnalyticsGetHistorySuspense<TData = Awaited<ReturnType<
  * @summary Get keyword optimization suggestions
  */
 export type resumeAnalyticsGetKeywordSuggestionsResponse200 = {
-  data: void
+  data: Object
   status: 200
 }
 
@@ -1394,7 +1396,7 @@ export function useResumeAnalyticsGetKeywordSuggestionsSuspense<TData = Awaited<
  * @summary Match resume against job description
  */
 export type resumeAnalyticsMatchJobResponse201 = {
-  data: void
+  data: Object
   status: 201
 }
 
@@ -1484,7 +1486,7 @@ export const useResumeAnalyticsMatchJob = <TError = void,
  * @summary Get score progression over time
  */
 export type resumeAnalyticsGetProgressionResponse200 = {
-  data: void
+  data: Object
   status: 200
 }
 
@@ -1753,7 +1755,7 @@ export function useResumeAnalyticsGetProgressionSuspense<TData = Awaited<ReturnT
  * @summary Save analytics snapshot for tracking progress
  */
 export type resumeAnalyticsCreateSnapshotResponse201 = {
-  data: void
+  data: Object
   status: 201
 }
 
@@ -1843,7 +1845,7 @@ export const useResumeAnalyticsCreateSnapshot = <TError = void,
  * @summary Track resume view (public endpoint)
  */
 export type resumeAnalyticsTrackViewResponse201 = {
-  data: void
+  data: MessageResponseDto
   status: 201
 }
 
@@ -1933,7 +1935,7 @@ export const useResumeAnalyticsTrackView = <TError = void,
  * @summary Get view statistics
  */
 export type resumeAnalyticsGetViewStatsResponse200 = {
-  data: void
+  data: Object
   status: 200
 }
 

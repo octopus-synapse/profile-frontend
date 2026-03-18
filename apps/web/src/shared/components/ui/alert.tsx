@@ -3,27 +3,27 @@
  * Alert messages with different variants
  */
 
-import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
-import { AlertCircle, CheckCircle2, Info, AlertTriangle } from "lucide-react";
-import { cn } from "@/shared/utils/cn";
+import { cva, type VariantProps } from 'class-variance-authority';
+import { AlertCircle, AlertTriangle, CheckCircle2, Info } from 'lucide-react';
+import * as React from 'react';
+import { cn } from '@/shared/utils/cn';
 
 const alertVariants = cva(
-  "relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-current",
+  'relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-current',
   {
     variants: {
       variant: {
-        default: "bg-white/5 border-white/10 text-white",
-        info: "bg-cyan-500/10 border-cyan-500/30 text-cyan-400",
-        success: "bg-emerald-500/10 border-emerald-500/30 text-emerald-500",
-        warning: "bg-amber-500/10 border-amber-500/30 text-amber-500",
-        danger: "bg-red-500/10 border-red-500/30 text-red-500",
+        default: 'bg-white/5 border-white/10 text-white',
+        info: 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400',
+        success: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-500',
+        warning: 'bg-amber-500/10 border-amber-500/30 text-amber-500',
+        danger: 'bg-red-500/10 border-red-500/30 text-red-500',
       },
     },
     defaultVariants: {
-      variant: "default",
+      variant: 'default',
     },
-  }
+  },
 );
 
 const icons = {
@@ -41,7 +41,7 @@ const Alert = React.forwardRef<
       showIcon?: boolean;
     }
 >(({ className, variant, showIcon = true, children, ...props }, ref) => {
-  const Icon = icons[variant ?? "default"];
+  const Icon = icons[variant ?? 'default'];
 
   return (
     <div ref={ref} role="alert" className={cn(alertVariants({ variant }), className)} {...props}>
@@ -50,25 +50,25 @@ const Alert = React.forwardRef<
     </div>
   );
 });
-Alert.displayName = "Alert";
+Alert.displayName = 'Alert';
 
 const AlertTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement>>(
   ({ className, ...props }, ref) => (
     <h5
       ref={ref}
-      className={cn("mb-1 leading-none font-medium tracking-tight", className)}
+      className={cn('mb-1 leading-none font-medium tracking-tight', className)}
       {...props}
     />
-  )
+  ),
 );
-AlertTitle.displayName = "AlertTitle";
+AlertTitle.displayName = 'AlertTitle';
 
 const AlertDescription = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("text-sm opacity-90 [&_p]:leading-relaxed", className)} {...props} />
+  <div ref={ref} className={cn('text-sm opacity-90 [&_p]:leading-relaxed', className)} {...props} />
 ));
-AlertDescription.displayName = "AlertDescription";
+AlertDescription.displayName = 'AlertDescription';
 
 export { Alert, AlertTitle, AlertDescription };

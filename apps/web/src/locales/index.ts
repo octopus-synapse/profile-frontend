@@ -1,14 +1,14 @@
-import type { Locale } from "@/config/i18n.config";
+import type { Locale } from '@/config/i18n.config';
 
 // Import translations statically for SSR support
-import en from "./en.json";
-import ptBR from "./pt-BR.json";
+import en from './en.json';
+import ptBR from './pt-BR.json';
 
 export type TranslationKeys = typeof en;
 
 const translations: Record<Locale, TranslationKeys> = {
   en,
-  "pt-BR": ptBR,
+  'pt-BR': ptBR,
 };
 
 /**
@@ -26,11 +26,11 @@ export function getTranslations(locale: Locale): TranslationKeys {
  * @returns Translated string
  */
 export function t<T extends TranslationKeys>(translations: T, key: string): string {
-  const keys = key.split(".");
+  const keys = key.split('.');
   let result: unknown = translations;
 
   for (const k of keys) {
-    if (result && typeof result === "object" && k in result) {
+    if (result && typeof result === 'object' && k in result) {
       result = (result as Record<string, unknown>)[k];
     } else {
       console.warn(`Translation key not found: ${key}`);
@@ -38,7 +38,7 @@ export function t<T extends TranslationKeys>(translations: T, key: string): stri
     }
   }
 
-  return typeof result === "string" ? result : key;
+  return typeof result === 'string' ? result : key;
 }
 
 export { en, ptBR };

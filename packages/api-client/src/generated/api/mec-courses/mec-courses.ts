@@ -29,6 +29,8 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  MecCourseDataDto,
+  MecCourseListDataDto,
   MecCoursesSearchCoursesByNameParams
 } from '../../models';
 
@@ -43,7 +45,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary Search courses
  */
 export type mecCoursesSearchCoursesByNameResponse200 = {
-  data: void
+  data: MecCourseListDataDto
   status: 200
 }
     
@@ -312,7 +314,7 @@ export function useMecCoursesSearchCoursesByNameSuspense<TData = Awaited<ReturnT
  * @summary Get course by MEC code
  */
 export type mecCoursesGetCourseByCodeResponse200 = {
-  data: void
+  data: MecCourseDataDto
   status: 200
 }
     

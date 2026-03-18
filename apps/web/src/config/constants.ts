@@ -8,9 +8,9 @@
 // ============================================================================
 
 export const APP = {
- NAME: "ProFile",
- DESCRIPTION: "Professional developer profiles and resumes",
- VERSION: "2.0.0",
+  NAME: 'ProFile',
+  DESCRIPTION: 'Professional developer profiles and resumes',
+  VERSION: '2.0.0',
 } as const;
 
 // ============================================================================
@@ -18,9 +18,9 @@ export const APP = {
 // ============================================================================
 
 export const API = {
- TIMEOUT: 30000, // 30 seconds
- RETRY_ATTEMPTS: 3,
- RETRY_DELAY: 1000, // 1 second
+  TIMEOUT: 30000, // 30 seconds
+  RETRY_ATTEMPTS: 3,
+  RETRY_DELAY: 1000, // 1 second
 } as const;
 
 // ============================================================================
@@ -28,8 +28,8 @@ export const API = {
 // ============================================================================
 
 export const AUTH = {
- SESSION_MAX_AGE: 30 * 24 * 60 * 60, // 30 days in seconds
- TOKEN_REFRESH_THRESHOLD: 5 * 60, // 5 minutes in seconds
+  SESSION_MAX_AGE: 30 * 24 * 60 * 60, // 30 days in seconds
+  TOKEN_REFRESH_THRESHOLD: 5 * 60, // 5 minutes in seconds
 } as const;
 
 // ============================================================================
@@ -37,8 +37,8 @@ export const AUTH = {
 // ============================================================================
 
 export const PAGINATION = {
- DEFAULT_PAGE_SIZE: 10,
- MAX_PAGE_SIZE: 100,
+  DEFAULT_PAGE_SIZE: 10,
+  MAX_PAGE_SIZE: 100,
 } as const;
 
 // ============================================================================
@@ -46,26 +46,26 @@ export const PAGINATION = {
 // ============================================================================
 
 export const VALIDATION = {
- USERNAME: {
-  MIN_LENGTH: 3,
-  MAX_LENGTH: 30,
-  PATTERN: /^[a-z0-9_-]+$/i,
- },
- PASSWORD: {
-  MIN_LENGTH: 8,
-  MAX_LENGTH: 128,
-  // At least 1 uppercase, 1 lowercase, 1 number, 1 special char (@$!%*?&)
-  PATTERN: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
-  REQUIREMENTS_MESSAGE:
-   "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&)",
- },
- BIO: {
-  MAX_LENGTH: 500,
- },
- RESUME: {
-  TITLE_MAX_LENGTH: 100,
-  SUMMARY_MAX_LENGTH: 2000,
- },
+  USERNAME: {
+    MIN_LENGTH: 3,
+    MAX_LENGTH: 30,
+    PATTERN: /^[a-z0-9_-]+$/i,
+  },
+  PASSWORD: {
+    MIN_LENGTH: 8,
+    MAX_LENGTH: 128,
+    // At least 1 uppercase, 1 lowercase, 1 number, 1 special char (@$!%*?&)
+    PATTERN: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
+    REQUIREMENTS_MESSAGE:
+      'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&)',
+  },
+  BIO: {
+    MAX_LENGTH: 500,
+  },
+  RESUME: {
+    TITLE_MAX_LENGTH: 100,
+    SUMMARY_MAX_LENGTH: 2000,
+  },
 } as const;
 
 // ============================================================================
@@ -73,8 +73,8 @@ export const VALIDATION = {
 // ============================================================================
 
 export const THEME = {
- DEFAULT: "dark" as const,
- OPTIONS: ["light", "dark", "system"] as const,
+  DEFAULT: 'dark' as const,
+  OPTIONS: ['light', 'dark', 'system'] as const,
 } as const;
 
 // ============================================================================
@@ -82,8 +82,8 @@ export const THEME = {
 // ============================================================================
 
 export const LANGUAGES = {
-  DEFAULT: "en" as const,
-  SUPPORTED: ["en", "pt-BR", "es"] as const,
+  DEFAULT: 'en' as const,
+  SUPPORTED: ['en', 'pt-BR', 'es'] as const,
 } as const;
 
 export type SupportedLanguage = (typeof LANGUAGES.SUPPORTED)[number];

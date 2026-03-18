@@ -5,12 +5,10 @@
  * ProFile Resume & Portfolio Management API
  * OpenAPI spec version: 1.0.0
  */
+import type { SectionItemDto } from './sectionItemDto';
 
 export interface SectionProgressDto {
-  /** Section type key from SectionType */
   sectionTypeKey: string;
-  /** Section items (content varies by section type) */
-  items?: string[];
-  /** User has no data for this section */
+  items?: SectionItemDto[];
   noData?: boolean;
 }

@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useCallback } from "react";
+import { useCallback } from 'react';
 
 interface LanguageSelectorProps {
   locale: string;

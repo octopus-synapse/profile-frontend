@@ -33,7 +33,9 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
-  AcceptConsentRequestDto
+  AcceptConsentRequestDto,
+  AcceptConsentResponseDto,
+  ExportDataResponseDto
 } from '../../models';
 
 import { customFetch } from '../../../client/fetcher';
@@ -48,7 +50,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary Export user data (GDPR Article 20)
  */
 export type userConsentExportDataResponse200 = {
-  data: void
+  data: ExportDataResponseDto
   status: 200
 }
 
@@ -318,7 +320,7 @@ export function useUserConsentExportDataSuspense<TData = Awaited<ReturnType<type
  * @summary Accept Terms of Service or Privacy Policy
  */
 export type userConsentAcceptConsentResponse201 = {
-  data: void
+  data: AcceptConsentResponseDto
   status: 201
 }
 

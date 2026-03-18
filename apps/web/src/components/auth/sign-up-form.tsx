@@ -1,22 +1,31 @@
-"use client";
+'use client';
 
 /**
  * Sign Up Form Component
  * GitHub + Cursor inspired design
  */
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { apiClient } from "@/shared/lib/api-client";
-import { useAuth } from "@/lib/auth";
-import { useT } from "@/lib/i18n";
-import { Button, Input } from "@/shared/components/ui";
-import { Label } from "@/shared/components/ui/label";
-import { ROUTES } from "@/config/routes";
-import { AlertCircle, User, Mail, Lock, Eye, EyeOff, ChevronRight } from "lucide-react";
-import { motion } from "framer-motion";
+import {
+  accountsSignup,
+  authLogin,
+  type CreateAccountDto,
+  getAuthSessionQueryKey,
+} from '@profile/api-client';
+import { useT } from '@profile/i18n';
+import { useQueryClient } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
+import { AlertCircle, ChevronRight, Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { ROUTES } from '@/config/routes';
+import { Button, Input } from '@/shared/components/ui';
+import { Label } from '@/shared/components/ui/label';
 
-function getPasswordStrength(password: string): { score: number; label: string; color: string } {
+function getPasswordStrength(password: string): {
+  score: number;
+  label: string;
+  color: string;
+} {
   let score = 0;
   if (password.length >= 8) score++;
   if (password.length >= 12) score++;
@@ -24,21 +33,21 @@ function getPasswordStrength(password: string): { score: number; label: string; 
   if (/[0-9]/.test(password)) score++;
   if (/[^A-Za-z0-9]/.test(password)) score++;
 
-  if (score <= 1) return { score, label: "Weak", color: "bg-red-500" };
-  if (score <= 2) return { score, label: "Fair", color: "bg-amber-500" };
-  if (score <= 3) return { score, label: "Good", color: "bg-cyan-500" };
-  return { score, label: "Strong", color: "bg-emerald-500" };
+  if (score <= 1) return { score, label: 'Weak', color: 'bg-red-500' };
+  if (score <= 2) return { score, label: 'Fair', color: 'bg-amber-500' };
+  if (score <= 3) return { score, label: 'Good', color: 'bg-cyan-500' };
+  return { score, label: 'Strong', color: 'bg-emerald-500' };
 }
 
 export function SignUpForm() {
   const t = useT();
   const router = useRouter();
-  const { signIn } = useAuth();
+  const queryClient = useQueryClient();
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -50,36 +59,42 @@ export function SignUpForm() {
 
     // Validate passwords match
     if (password !== confirmPassword) {
-      setError(t("auth.error.passwordMismatch"));
+      setError(t('auth.error.passwordMismatch'));
       return;
     }
 
     // Validate password strength
     if (password.length < 8) {
-      setError(t("auth.error.weakPassword"));
+      setError(t('auth.error.weakPassword'));
       return;
     }
 
     setIsLoading(true);
 
     try {
-      // Register user using shared api-client
-      await apiClient.auth.register({ email, password, name });
+      // Register user using SDK
+      const createAccountDto: CreateAccountDto = { email, password, name };
+      await accountsSignup(createAccountDto);
 
       // Auto sign in after registration
-      const success = await signIn(email, password, ROUTES.ONBOARDING);
+      const loginResponse = await authLogin({ email, password });
 
-      if (!success) {
+      if (loginResponse.status === 200) {
+        await queryClient.invalidateQueries({
+          queryKey: getAuthSessionQueryKey(),
+        });
+        router.push(ROUTES.ONBOARDING);
+      } else {
         // Registration succeeded but auto-login failed, redirect to sign in
         router.push(ROUTES.AUTH.SIGN_IN);
       }
     } catch (err) {
       // Check for email exists error
-      const errorMessage = err instanceof Error ? err.message : "";
-      if (errorMessage.includes("409") || errorMessage.includes("exists")) {
-        setError(t("auth.error.emailExists"));
+      const errorMessage = err instanceof Error ? err.message : '';
+      if (errorMessage.includes('409') || errorMessage.includes('exists')) {
+        setError(t('auth.error.emailExists'));
       } else {
-        setError(t("error.generic"));
+        setError(t('error.generic'));
       }
     } finally {
       setIsLoading(false);
@@ -92,7 +107,7 @@ export function SignUpForm() {
       {error && (
         <motion.div
           initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
+          animate={{ opacity: 1, height: 'auto' }}
           className="overflow-hidden"
         >
           <div className="flex items-center gap-3 rounded-lg border border-red-500/20 bg-red-500/10 p-3 font-mono text-xs text-red-400">
@@ -108,7 +123,7 @@ export function SignUpForm() {
           htmlFor="name"
           className="ml-1 font-mono text-[10px] tracking-[0.15em] text-zinc-500 uppercase"
         >
-          {t("auth.signUp.name")}
+          {t('auth.signUp.name')}
         </Label>
         <div className="group relative">
           <div className="absolute inset-y-0 left-3 flex items-center">
@@ -118,7 +133,7 @@ export function SignUpForm() {
             id="name"
             type="text"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
             placeholder="John Doe"
             required
             autoComplete="name"
@@ -133,7 +148,7 @@ export function SignUpForm() {
           htmlFor="email"
           className="ml-1 font-mono text-[10px] tracking-[0.15em] text-zinc-500 uppercase"
         >
-          {t("auth.signUp.email")}
+          {t('auth.signUp.email')}
         </Label>
         <div className="group relative">
           <div className="absolute inset-y-0 left-3 flex items-center">
@@ -143,7 +158,7 @@ export function SignUpForm() {
             id="email"
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
             placeholder="you@example.com"
             required
             autoComplete="email"
@@ -159,7 +174,7 @@ export function SignUpForm() {
           htmlFor="password"
           className="ml-1 font-mono text-[10px] tracking-[0.15em] text-zinc-500 uppercase"
         >
-          {t("auth.signUp.password")}
+          {t('auth.signUp.password')}
         </Label>
         <div className="group relative">
           <div className="absolute inset-y-0 left-3 flex items-center">
@@ -167,9 +182,9 @@ export function SignUpForm() {
           </div>
           <Input
             id="password"
-            type={showPassword ? "text" : "password"}
+            type={showPassword ? 'text' : 'password'}
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
             placeholder="••••••••"
             required
             autoComplete="new-password"
@@ -194,7 +209,7 @@ export function SignUpForm() {
                   <div
                     key={level}
                     className={`h-1 flex-1 rounded-full transition-colors ${
-                      level <= strength.score ? strength.color : "bg-white/10"
+                      level <= strength.score ? strength.color : 'bg-white/10'
                     }`}
                   />
                 );
@@ -203,19 +218,19 @@ export function SignUpForm() {
             <p
               className={`ml-1 font-mono text-[10px] ${
                 getPasswordStrength(password).score <= 1
-                  ? "text-red-400"
+                  ? 'text-red-400'
                   : getPasswordStrength(password).score <= 2
-                    ? "text-amber-400"
+                    ? 'text-amber-400'
                     : getPasswordStrength(password).score <= 3
-                      ? "text-cyan-400"
-                      : "text-emerald-400"
+                      ? 'text-cyan-400'
+                      : 'text-emerald-400'
               }`}
             >
               {getPasswordStrength(password).label}
             </p>
           </div>
         )}
-        <p className="ml-1 font-mono text-[10px] text-zinc-600">{t("auth.signUp.passwordHint")}</p>
+        <p className="ml-1 font-mono text-[10px] text-zinc-600">{t('auth.signUp.passwordHint')}</p>
       </div>
 
       {/* Confirm Password Field */}
@@ -224,7 +239,7 @@ export function SignUpForm() {
           htmlFor="confirmPassword"
           className="ml-1 font-mono text-[10px] tracking-[0.15em] text-zinc-500 uppercase"
         >
-          {t("auth.signUp.confirmPassword")}
+          {t('auth.signUp.confirmPassword')}
         </Label>
         <div className="group relative">
           <div className="absolute inset-y-0 left-3 flex items-center">
@@ -232,9 +247,11 @@ export function SignUpForm() {
           </div>
           <Input
             id="confirmPassword"
-            type={showConfirmPassword ? "text" : "password"}
+            type={showConfirmPassword ? 'text' : 'password'}
             value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setConfirmPassword(e.target.value)
+            }
             placeholder="••••••••"
             required
             autoComplete="new-password"
@@ -258,10 +275,10 @@ export function SignUpForm() {
         className="group relative mt-6 h-12 w-full overflow-hidden rounded-lg bg-white text-sm font-bold text-black transition-all hover:bg-cyan-400 active:scale-[0.98]"
       >
         {isLoading ? (
-          <span className="font-mono text-xs">{t("auth.loading.creatingAccount")}</span>
+          <span className="font-mono text-xs">{t('auth.loading.creatingAccount')}</span>
         ) : (
           <span className="relative z-10 flex items-center justify-center gap-2">
-            {t("auth.signUp.submit")}
+            {t('auth.signUp.submit')}
             <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </span>
         )}

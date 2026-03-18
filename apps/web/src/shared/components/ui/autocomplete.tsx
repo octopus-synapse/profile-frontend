@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
 /**
  * Autocomplete Component
  * A searchable combobox with async data loading
  */
 
-import * as React from "react";
-import { Check, ChevronDown, Loader2, Search, X } from "lucide-react";
-import { cn } from "@/shared/utils/cn";
-import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
+import { Popover, PopoverContent, PopoverTrigger } from '@radix-ui/react-popover';
+import { Check, ChevronDown, Loader2, Search, X } from 'lucide-react';
+import * as React from 'react';
+import { cn } from '@/shared/utils/cn';
 
 export interface AutocompleteOption {
   value: string;
@@ -54,9 +54,9 @@ export function Autocomplete({
   onValueChange,
   onSearch,
   options = [],
-  placeholder = "Selecione...",
-  searchPlaceholder = "Buscar...",
-  emptyMessage = "Nenhum resultado encontrado",
+  placeholder = 'Selecione...',
+  searchPlaceholder = 'Buscar...',
+  emptyMessage = 'Nenhum resultado encontrado',
   isLoading = false,
   disabled = false,
   error = false,
@@ -65,7 +65,7 @@ export function Autocomplete({
   clearable = true,
 }: AutocompleteProps) {
   const [open, setOpen] = React.useState(false);
-  const [search, setSearch] = React.useState("");
+  const [search, setSearch] = React.useState('');
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   // Find selected option
@@ -93,13 +93,13 @@ export function Autocomplete({
   const handleSelect = (option: AutocompleteOption) => {
     onValueChange?.(option.value, option);
     setOpen(false);
-    setSearch("");
+    setSearch('');
   };
 
   const handleClear = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onValueChange?.("", undefined);
-    setSearch("");
+    onValueChange?.('', undefined);
+    setSearch('');
   };
 
   const listboxId = React.useId();
@@ -114,17 +114,17 @@ export function Autocomplete({
           aria-haspopup="listbox"
           aria-controls={listboxId}
           className={cn(
-            "flex h-10 w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm",
-            "border border-white/10 bg-[#030303]",
-            "text-white",
-            "ring-offset-[#030303]",
-            "focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:outline-none",
-            "disabled:cursor-not-allowed disabled:opacity-50",
-            error && "border-pf-danger-emphasis",
-            className
+            'flex h-10 w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm',
+            'border border-white/10 bg-[#030303]',
+            'text-white',
+            'ring-offset-[#030303]',
+            'focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:outline-none',
+            'disabled:cursor-not-allowed disabled:opacity-50',
+            error && 'border-red-500',
+            className,
           )}
         >
-          <span className={cn("flex-1 truncate", !displayText && "text-zinc-500")}>
+          <span className={cn('flex-1 truncate', !displayText && 'text-zinc-500')}>
             {displayText || placeholder}
           </span>
           <div className="ml-2 flex items-center gap-1">
@@ -140,9 +140,9 @@ export function Autocomplete({
       </PopoverTrigger>
       <PopoverContent
         className={cn(
-          "z-50 w-[--radix-popover-trigger-width] overflow-hidden rounded-lg p-0",
-          "border border-white/10 bg-[#0A0A0A]/95 shadow-lg",
-          "animate-in fade-in-0 zoom-in-95"
+          'z-50 w-[--radix-popover-trigger-width] overflow-hidden rounded-lg p-0',
+          'border border-white/10 bg-[#0A0A0A]/95 shadow-lg',
+          'animate-in fade-in-0 zoom-in-95',
         )}
         align="start"
         sideOffset={4}
@@ -154,8 +154,8 @@ export function Autocomplete({
             ref={inputRef}
             type="text"
             className={cn(
-              "flex h-10 w-full bg-transparent py-3 text-sm outline-none",
-              "text-white placeholder:text-zinc-600"
+              'flex h-10 w-full bg-transparent py-3 text-sm outline-none',
+              'text-white placeholder:text-zinc-600',
             )}
             placeholder={searchPlaceholder}
             value={search}
@@ -177,19 +177,19 @@ export function Autocomplete({
           ) : (
             options.map((option) => (
               <button
-                key={option.value}
                 type="button"
+                key={option.value}
                 className={cn(
-                  "relative flex w-full cursor-pointer items-center rounded-md px-2 py-2 text-sm outline-none select-none",
-                  "hover:bg-white/5",
-                  value === option.value && "bg-cyan-500/10"
+                  'relative flex w-full cursor-pointer items-center rounded-md px-2 py-2 text-sm outline-none select-none',
+                  'hover:bg-white/5',
+                  value === option.value && 'bg-cyan-500/10',
                 )}
                 onClick={() => handleSelect(option)}
               >
                 <Check
                   className={cn(
-                    "mr-2 h-4 w-4 flex-shrink-0",
-                    value === option.value ? "opacity-100" : "opacity-0"
+                    'mr-2 h-4 w-4 flex-shrink-0',
+                    value === option.value ? 'opacity-100' : 'opacity-0',
                   )}
                 />
                 <div className="flex flex-col items-start overflow-hidden">
@@ -207,4 +207,4 @@ export function Autocomplete({
   );
 }
 
-Autocomplete.displayName = "Autocomplete";
+Autocomplete.displayName = 'Autocomplete';

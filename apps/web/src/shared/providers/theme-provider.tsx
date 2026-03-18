@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 /**
  * Theme Provider
@@ -10,18 +10,19 @@
  * This provider syncs React state with the already-applied theme.
  */
 
+import { safeLocalStorage } from '@profile/api-client';
 import {
   createContext,
+  type ReactNode,
+  useCallback,
   useContext,
   useEffect,
-  useState,
-  useCallback,
   useMemo,
-  type ReactNode,
-} from "react";
+  useState,
+} from 'react';
 
-type Theme = "light" | "dark" | "system";
-type ResolvedTheme = "light" | "dark";
+type Theme = 'light' | 'dark' | 'system';
+type ResolvedTheme = 'light' | 'dark';
 
 interface ThemeContextValue {
   theme: Theme;
@@ -32,27 +33,26 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-const THEME_KEY = "profile-theme";
+const THEME_KEY = 'profile-theme';
 
 function getSystemTheme(): ResolvedTheme {
-  if (typeof window === "undefined") return "dark";
-  return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+  if (typeof window === 'undefined') return 'dark';
+  return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
 }
 
 function getInitialTheme(): Theme {
-  if (typeof window === "undefined") return "system";
-  const stored = localStorage.getItem(THEME_KEY);
-  if (stored === "light" || stored === "dark" || stored === "system") {
+  const stored = safeLocalStorage.getItem(THEME_KEY);
+  if (stored === 'light' || stored === 'dark' || stored === 'system') {
     return stored;
   }
-  return "system";
+  return 'system';
 }
 
 function getInitialResolvedTheme(): ResolvedTheme {
-  if (typeof window === "undefined") return "dark";
+  if (typeof window === 'undefined') return 'dark';
   // Read from DOM - themeScript already applied the correct class
-  if (document.documentElement.classList.contains("light")) return "light";
-  return "dark";
+  if (document.documentElement.classList.contains('light')) return 'light';
+  return 'dark';
 }
 
 interface ThemeProviderProps {
@@ -60,10 +60,10 @@ interface ThemeProviderProps {
   defaultTheme?: Theme;
 }
 
-export function ThemeProvider({ children, defaultTheme = "dark" }: ThemeProviderProps) {
+export function ThemeProvider({ children, defaultTheme = 'dark' }: ThemeProviderProps) {
   // Initialize with values that match what themeScript already applied
   const [theme, setThemeState] = useState<Theme>(defaultTheme);
-  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>("dark");
+  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>('dark');
   const [mounted, setMounted] = useState(false);
 
   // Sync React state with already-applied theme on mount
@@ -79,12 +79,12 @@ export function ThemeProvider({ children, defaultTheme = "dark" }: ThemeProvider
   useEffect(() => {
     if (!mounted) return;
 
-    const resolved = theme === "system" ? getSystemTheme() : theme;
+    const resolved = theme === 'system' ? getSystemTheme() : theme;
     queueMicrotask(() => setResolvedTheme(resolved));
 
     // Apply theme to document
     const root = document.documentElement;
-    root.classList.remove("light", "dark");
+    root.classList.remove('light', 'dark');
     root.classList.add(resolved);
 
     // Update color-scheme for native elements
@@ -93,33 +93,33 @@ export function ThemeProvider({ children, defaultTheme = "dark" }: ThemeProvider
 
   // Listen for system theme changes
   useEffect(() => {
-    if (!mounted || theme !== "system") return;
+    if (!mounted || theme !== 'system') return;
 
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = () => {
       const newResolved = getSystemTheme();
       setResolvedTheme(newResolved);
-      document.documentElement.classList.remove("light", "dark");
+      document.documentElement.classList.remove('light', 'dark');
       document.documentElement.classList.add(newResolved);
     };
 
-    mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
   }, [mounted, theme]);
 
   const setTheme = useCallback((newTheme: Theme) => {
     setThemeState(newTheme);
-    localStorage.setItem(THEME_KEY, newTheme);
+    safeLocalStorage.setItem(THEME_KEY, newTheme);
   }, []);
 
   const toggleTheme = useCallback(() => {
-    setTheme(resolvedTheme === "light" ? "dark" : "light");
+    setTheme(resolvedTheme === 'light' ? 'dark' : 'light');
   }, [resolvedTheme, setTheme]);
 
   // Memoize context value to prevent unnecessary re-renders
   const contextValue = useMemo(
     () => ({ theme, resolvedTheme, setTheme, toggleTheme }),
-    [theme, resolvedTheme, setTheme, toggleTheme]
+    [theme, resolvedTheme, setTheme, toggleTheme],
   );
 
   // Always render Provider - themeScript prevents flash, no need for visibility hidden
@@ -129,7 +129,7 @@ export function ThemeProvider({ children, defaultTheme = "dark" }: ThemeProvider
 export function useTheme() {
   const context = useContext(ThemeContext);
   if (context === null) {
-    throw new Error("useTheme must be used within a ThemeProvider");
+    throw new Error('useTheme must be used within a ThemeProvider');
   }
   return context;
 }

@@ -8,32 +8,32 @@
  * This context just passes the AST to child components.
  */
 
-"use client";
+'use client';
 
-import { createContext, useContext, type ReactNode } from "react";
-import type { ResumeAst, PlacedSection } from "@profile/api-client";
+import type { PlacedSectionDto, ResumeAstDto } from '@profile/api-client';
+import { createContext, type ReactNode, useContext } from 'react';
 
 interface RenderContextValue {
- ast: ResumeAst;
- // Convenience accessors
- page: ResumeAst["page"];
- sections: ResumeAst["sections"];
- globalStyles: ResumeAst["globalStyles"];
+  ast: ResumeAstDto;
+  // Convenience accessors
+  page: ResumeAstDto['page'];
+  sections: ResumeAstDto['sections'];
+  globalStyles: ResumeAstDto['globalStyles'];
 }
 
 const RenderContext = createContext<RenderContextValue | null>(null);
 
 export function useRenderContext() {
- const context = useContext(RenderContext);
- if (!context) {
-  throw new Error("useRenderContext must be used within RenderProvider");
- }
- return context;
+  const context = useContext(RenderContext);
+  if (!context) {
+    throw new Error('useRenderContext must be used within RenderProvider');
+  }
+  return context;
 }
 
 interface RenderProviderProps {
- ast: ResumeAst;
- children: ReactNode;
+  ast: ResumeAstDto;
+  children: ReactNode;
 }
 
 /**
@@ -43,44 +43,42 @@ interface RenderProviderProps {
  * All values come pre-resolved from the backend.
  */
 export function RenderProvider({ ast, children }: RenderProviderProps) {
- const value: RenderContextValue = {
-  ast,
-  page: ast.page,
-  sections: ast.sections,
-  globalStyles: ast.globalStyles,
- };
+  const value: RenderContextValue = {
+    ast,
+    page: ast.page,
+    sections: ast.sections,
+    globalStyles: ast.globalStyles,
+  };
 
- return (
-  <RenderContext.Provider value={value}>{children}</RenderContext.Provider>
- );
+  return <RenderContext.Provider value={value}>{children}</RenderContext.Provider>;
 }
 
 /**
  * Hook to get section styles by sectionId
  */
 export function useSectionStyles(sectionId: string) {
- const { sections } = useRenderContext();
- const section = sections.find((s: PlacedSection) => s.sectionId === sectionId);
+  const { sections } = useRenderContext();
+  const section = sections.find((s: PlacedSectionDto) => s.sectionId === sectionId);
 
- if (!section) {
-  return null;
- }
+  if (!section) {
+    return null;
+  }
 
- return section.styles;
+  return section.styles;
 }
 
 /**
  * Hook to get page layout
  */
 export function usePageLayout() {
- const { page } = useRenderContext();
- return page;
+  const { page } = useRenderContext();
+  return page;
 }
 
 /**
  * Hook to get global styles
  */
 export function useGlobalStyles() {
- const { globalStyles } = useRenderContext();
- return globalStyles;
+  const { globalStyles } = useRenderContext();
+  return globalStyles;
 }

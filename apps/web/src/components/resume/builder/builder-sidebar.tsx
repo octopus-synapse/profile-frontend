@@ -3,21 +3,29 @@
  * Clean panel for customization options
  */
 
-"use client";
+'use client';
 
-import { useState } from "react";
-import Link from "next/link";
-import { Eye, Palette, Settings, RotateCcw, ChevronRight, Layers } from "lucide-react";
-import { cn } from "@/shared/utils";
-import { ThemePicker } from "../theme";
-import { ThemeEditor } from "../theme";
-import type { Theme } from "../../services/theme.types";
-import type { Resume } from "../../types";
+import { ChevronRight, Eye, Layers, Palette, RotateCcw, Settings } from 'lucide-react';
+import Link from 'next/link';
+import { useState } from 'react';
+import { cn } from '@/shared/utils';
+import type { Theme } from '../services/theme.types';
+import { ThemeEditor, ThemePicker } from '../theme';
 
-type ViewMode = "preview" | "themes" | "editor";
+type ViewMode = 'preview' | 'themes' | 'editor';
+
+/**
+ * Minimal resume data needed for sidebar display.
+ * Accepts both ResumeDto (sections[]) and ResumeFullResponseDto (resumeSections[]).
+ */
+interface ResumeForSidebar {
+  id: string;
+  sections?: Array<{ sectionTypeKey?: string; items?: unknown[] }>;
+  resumeSections?: Array<{ sectionTypeKey?: string; items?: unknown[] }>;
+}
 
 interface BuilderSidebarProps {
-  resume: Resume;
+  resume: ResumeForSidebar;
   activeThemeName?: string;
   onThemeApplied: () => void;
   onRefresh: () => void;
@@ -29,36 +37,40 @@ export function BuilderSidebar({
   onThemeApplied,
   onRefresh,
 }: BuilderSidebarProps) {
-  const [viewMode, setViewMode] = useState<ViewMode>("preview");
+  const [viewMode, setViewMode] = useState<ViewMode>('preview');
   const [editingTheme, setEditingTheme] = useState<Theme | null>(null);
 
   const handleEditTheme = (theme: Theme) => {
     setEditingTheme(theme);
-    setViewMode("editor");
+    setViewMode('editor');
   };
 
   const handleEditorClose = () => {
     setEditingTheme(null);
-    setViewMode("themes");
+    setViewMode('themes');
   };
 
   const handleThemeSaved = () => {
     onThemeApplied();
     setEditingTheme(null);
-    setViewMode("themes");
+    setViewMode('themes');
   };
 
   const handleThemeApplied = () => {
     onThemeApplied();
-    setViewMode("preview");
+    setViewMode('preview');
   };
 
-  // Stats for the resume
+  // Stats derived from generic sections (supports both ResumeDto and ResumeFullResponseDto)
+  const allSections = resume.sections ?? resume.resumeSections ?? [];
+  const getSectionCount = (key: string) =>
+    allSections.find((s) => s.sectionTypeKey === key)?.items?.length ?? 0;
+
   const stats = [
-    { label: "Experience", value: resume.experiences?.length ?? 0 },
-    { label: "Education", value: resume.educations?.length ?? 0 },
-    { label: "Skills", value: resume.skills?.length ?? 0 },
-    { label: "Languages", value: resume.languages?.length ?? 0 },
+    { label: 'Experience', value: getSectionCount('work_experience_v1') },
+    { label: 'Education', value: getSectionCount('education_v1') },
+    { label: 'Skills', value: getSectionCount('skill_set_v1') },
+    { label: 'Languages', value: getSectionCount('language_v1') },
   ];
 
   return (
@@ -66,14 +78,14 @@ export function BuilderSidebar({
       {/* Tabs */}
       <div className="border-pf-border-muted flex border-b">
         <TabButton
-          active={viewMode === "preview"}
-          onClick={() => setViewMode("preview")}
+          active={viewMode === 'preview'}
+          onClick={() => setViewMode('preview')}
           icon={<Eye className="h-4 w-4" strokeWidth={1.5} />}
           label="Overview"
         />
         <TabButton
-          active={viewMode === "themes" || viewMode === "editor"}
-          onClick={() => setViewMode("themes")}
+          active={viewMode === 'themes' || viewMode === 'editor'}
+          onClick={() => setViewMode('themes')}
           icon={<Palette className="h-4 w-4" strokeWidth={1.5} />}
           label="Themes"
         />
@@ -81,12 +93,13 @@ export function BuilderSidebar({
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto">
-        {viewMode === "preview" && (
+        {viewMode === 'preview' && (
           <div className="p-4">
             {/* Current Theme */}
             <Section title="Active Theme">
               <button
-                onClick={() => setViewMode("themes")}
+                type="button"
+                onClick={() => setViewMode('themes')}
                 className="border-pf-border-default bg-pf-canvas-subtle group hover:border-pf-border-emphasis hover:bg-pf-canvas-inset flex w-full items-center justify-between rounded-lg border p-3 text-left transition-colors"
               >
                 <div className="flex items-center gap-3">
@@ -94,7 +107,7 @@ export function BuilderSidebar({
                     <Layers className="text-pf-fg-muted h-4 w-4" strokeWidth={1.5} />
                   </div>
                   <span className="text-pf-fg-default text-sm font-medium">
-                    {activeThemeName ?? "Modern"}
+                    {activeThemeName ?? 'Modern'}
                   </span>
                 </div>
                 <ChevronRight
@@ -127,6 +140,7 @@ export function BuilderSidebar({
                   Edit Content
                 </Link>
                 <button
+                  type="button"
                   onClick={onRefresh}
                   className="border-pf-border-default text-pf-fg-muted hover:bg-pf-canvas-subtle hover:text-pf-fg-default flex w-full items-center gap-3 rounded-lg border p-3 text-sm font-medium transition-colors"
                 >
@@ -138,18 +152,18 @@ export function BuilderSidebar({
           </div>
         )}
 
-        {viewMode === "themes" && (
+        {viewMode === 'themes' && (
           <div className="p-4">
             <ThemePicker
               resumeId={resume.id}
-              activeThemeId={resume.activeThemeId}
+              activeThemeId={undefined}
               onThemeApplied={handleThemeApplied}
               onEditTheme={handleEditTheme}
             />
           </div>
         )}
 
-        {viewMode === "editor" && editingTheme && (
+        {viewMode === 'editor' && editingTheme && (
           <ThemeEditor
             theme={editingTheme}
             onCancel={handleEditorClose}
@@ -176,12 +190,13 @@ function TabButton({
 }) {
   return (
     <button
+      type="button"
       onClick={onClick}
       className={cn(
-        "flex flex-1 items-center justify-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-colors",
+        'flex flex-1 items-center justify-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-colors',
         active
-          ? "border-pf-border-emphasis text-pf-fg-default"
-          : "text-pf-fg-muted hover:text-pf-fg-default border-transparent"
+          ? 'border-pf-border-emphasis text-pf-fg-default'
+          : 'text-pf-fg-muted hover:text-pf-fg-default border-transparent',
       )}
     >
       {icon}

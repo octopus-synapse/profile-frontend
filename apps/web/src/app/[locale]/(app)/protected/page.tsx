@@ -3,13 +3,13 @@
  * Developer-inspired design with code aesthetic
  */
 
-import { Metadata } from "next";
-import Link from "next/link";
-import { User, FileText, Settings, ArrowRight, Terminal, Code2 } from "lucide-react";
+import { ArrowRight, Code2, FileText, Settings, Terminal, User } from 'lucide-react';
+import type { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: "Dashboard",
-  description: "Your personal dashboard",
+  title: 'Dashboard',
+  description: 'Your personal dashboard',
 };
 
 export default function ProtectedPage() {
@@ -41,22 +41,22 @@ export default function ProtectedPage() {
         </div>
         <div className="code-block-content">
           <div>
-            <span className="code-keyword">const</span>{" "}
-            <span className="code-variable">status</span> = {"{"}
+            <span className="code-keyword">const</span>{' '}
+            <span className="code-variable">status</span> = {'{'}
           </div>
           <div className="ml-4">
-            <span className="code-function">profile</span>:{" "}
+            <span className="code-function">profile</span>:{' '}
             <span className="code-string">&quot;incomplete&quot;</span>,
           </div>
           <div className="ml-4">
-            <span className="code-function">resume</span>:{" "}
+            <span className="code-function">resume</span>:{' '}
             <span className="code-string">&quot;draft&quot;</span>,
           </div>
           <div className="ml-4">
-            <span className="code-function">visibility</span>:{" "}
+            <span className="code-function">visibility</span>:{' '}
             <span className="code-string">&quot;private&quot;</span>,
           </div>
-          <div>{"}"}</div>
+          <div>{'}'}</div>
         </div>
       </div>
 
@@ -94,7 +94,7 @@ export default function ProtectedPage() {
         </div>
         <div className="terminal-content">
           <div>
-            <span className="terminal-prompt">➜</span>{" "}
+            <span className="terminal-prompt">➜</span>{' '}
             <span className="terminal-command">patch --help</span>
           </div>
           <div className="terminal-output mt-2">

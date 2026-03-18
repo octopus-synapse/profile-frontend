@@ -1,21 +1,19 @@
-"use client";
+'use client';
 
 /**
  * Phone Input Component
  * Input with automatic phone number formatting
  */
 
-import * as React from "react";
-import { cn } from "@/shared/utils/cn";
+import * as React from 'react';
+import { cn } from '@/shared/utils/cn';
 
-export interface PhoneInputProps extends Omit<
-  React.InputHTMLAttributes<HTMLInputElement>,
-  "onChange"
-> {
+export interface PhoneInputProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
   value?: string;
   onChange?: (value: string) => void;
   /** Country code format: "BR" | "US" | "auto" */
-  countryFormat?: "BR" | "US" | "auto";
+  countryFormat?: 'BR' | 'US' | 'auto';
 }
 
 /**
@@ -23,24 +21,24 @@ export interface PhoneInputProps extends Omit<
  * BR: +55 (11) 99999-9999
  * US: +1 (555) 123-4567
  */
-function formatPhoneNumber(value: string, format: "BR" | "US" | "auto"): string {
+function formatPhoneNumber(value: string, format: 'BR' | 'US' | 'auto'): string {
   // Remove all non-digit characters
-  const digits = value.replace(/\D/g, "");
+  const digits = value.replace(/\D/g, '');
 
-  if (!digits) return "";
+  if (!digits) return '';
 
   // Detect format if auto
   let effectiveFormat = format;
-  if (format === "auto") {
+  if (format === 'auto') {
     // If starts with 55 or has 10-11 digits after country code, assume BR
-    if (digits.startsWith("55") || (digits.length >= 10 && digits.length <= 11)) {
-      effectiveFormat = "BR";
+    if (digits.startsWith('55') || (digits.length >= 10 && digits.length <= 11)) {
+      effectiveFormat = 'BR';
     } else {
-      effectiveFormat = "US";
+      effectiveFormat = 'US';
     }
   }
 
-  if (effectiveFormat === "BR") {
+  if (effectiveFormat === 'BR') {
     // Brazilian format: +55 (11) 99999-9999
     if (digits.length <= 2) {
       return `+${digits}`;
@@ -90,7 +88,7 @@ function formatPhoneNumber(value: string, format: "BR" | "US" | "auto"): string 
 }
 
 export const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
-  ({ className, value = "", onChange, countryFormat = "auto", placeholder, ...props }, ref) => {
+  ({ className, value = '', onChange, countryFormat = 'auto', placeholder, ...props }, ref) => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const rawValue = e.target.value;
 
@@ -105,7 +103,7 @@ export const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
     };
 
     // Format initial value if needed
-    const displayValue = value ? formatPhoneNumber(value, countryFormat) : "";
+    const displayValue = value ? formatPhoneNumber(value, countryFormat) : '';
 
     return (
       <input
@@ -114,18 +112,18 @@ export const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
         value={displayValue}
         onChange={handleChange}
         placeholder={
-          placeholder || (countryFormat === "BR" ? "+55 (11) 99999-9999" : "+1 (555) 123-4567")
+          placeholder || (countryFormat === 'BR' ? '+55 (11) 99999-9999' : '+1 (555) 123-4567')
         }
         className={cn(
-          "border-white/10 bg-[#0A0A0A]/95 text-white",
-          "placeholder:text-zinc-600 focus:border-cyan-500",
-          "w-full border px-3 py-2 font-mono text-sm focus:outline-none",
-          className
+          'border-white/10 bg-[#0A0A0A]/95 text-white',
+          'placeholder:text-zinc-600 focus:border-cyan-500',
+          'w-full border px-3 py-2 font-mono text-sm focus:outline-none',
+          className,
         )}
         {...props}
       />
     );
-  }
+  },
 );
 
-PhoneInput.displayName = "PhoneInput";
+PhoneInput.displayName = 'PhoneInput';

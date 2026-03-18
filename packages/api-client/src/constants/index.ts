@@ -8,8 +8,8 @@
  * ```ts
  * import { AUTH_ROUTES, buildApiUrl } from '@profile/api-client/constants';
  *
- * const loginUrl = buildApiUrl(AUTH_ROUTES.LOGIN, 'http://localhost:3001');
+ * const loginUrl = buildApiUrl(AUTH_ROUTES.AUTH_LOGIN, 'http://localhost:3001');
  * ```
  */
 
-export * from "./routes";
+export * from './routes';

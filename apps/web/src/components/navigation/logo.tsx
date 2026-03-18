@@ -1,39 +1,35 @@
-"use client";
+'use client';
 
-import { LocalizedLink } from "@/shared/components/localized-link";
-import { ROUTES } from "@/config/routes";
+import { ROUTES } from '@/config/routes';
+import { LocalizedLink } from '@/shared/components/localized-link';
 
 export function Logo({ className }: { className?: string }) {
   return (
     <LocalizedLink
       href={ROUTES.HOME}
       aria-label="PATCH - Go to homepage"
-      className={`group flex items-center justify-center transition-all active:scale-95 ${className ?? ""}`}
+      className={`group flex items-center justify-center transition-all active:scale-95 ${className ?? ''}`}
     >
-      <svg
-        viewBox="0 0 240 90"
-        className="h-10 w-auto"
-        xmlns="http://www.w3.org/2000/svg"
-      >
+      <svg viewBox="0 0 240 90" className="h-10 w-auto" xmlns="http://www.w3.org/2000/svg">
         {/* Sombra sutil para a garrafa inteira */}
         <defs>
           <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
             <feDropShadow dx="0" dy="1" stdDeviation="1.5" floodColor="white" floodOpacity="0.1" />
             <feDropShadow dx="0" dy="2" stdDeviation="2" floodColor="white" floodOpacity="0.05" />
           </filter>
-          
+
           <linearGradient id="capShine" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#ffffff" stopOpacity="0.8" />
             <stop offset="50%" stopColor="#ffffff" stopOpacity="0.3" />
             <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
           </linearGradient>
-          
+
           <linearGradient id="capShadow" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor="#2a2a2a" stopOpacity="1" />
             <stop offset="40%" stopColor="#1a1a1a" stopOpacity="1" />
             <stop offset="100%" stopColor="#0a0a0a" stopOpacity="1" />
           </linearGradient>
-          
+
           <radialGradient id="capTopGlow" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stopColor="white" stopOpacity="0.4" />
             <stop offset="70%" stopColor="white" stopOpacity="0.1" />
@@ -58,14 +54,7 @@ export function Logo({ className }: { className?: string }) {
         />
 
         {/* TAMPA - Sombra principal */}
-        <ellipse
-          cx="27"
-          cy="60"
-          rx="14"
-          ry="5"
-          fill="rgba(0,0,0,0.3)"
-          filter="blur(2px)"
-        />
+        <ellipse cx="27" cy="60" rx="14" ry="5" fill="rgba(0,0,0,0.3)" filter="blur(2px)" />
 
         {/* TAMPA - Base cilíndrica com sombra */}
         <ellipse
@@ -90,14 +79,7 @@ export function Logo({ className }: { className?: string }) {
         />
 
         {/* Efeito de brilho na tampa */}
-        <rect
-          x="16"
-          y="30"
-          width="22"
-          height="28"
-          fill="url(#capShine)"
-          opacity="0.3"
-        />
+        <rect x="16" y="30" width="22" height="28" fill="url(#capShine)" opacity="0.3" />
 
         {/* TAMPA - Serrilhado lateral esquerdo com brilho */}
         <g fill="rgba(100,100,100,0.8)" filter="drop-shadow(0 1px 1px rgba(255,255,255,0.2))">
@@ -119,9 +101,30 @@ export function Logo({ className }: { className?: string }) {
 
         {/* TAMPA - Anéis de rosca/detalhes com brilho */}
         <g stroke="rgba(255,255,255,0.6)" strokeWidth="1.5" fill="none">
-          <ellipse cx="27" cy="35" rx="10" ry="2.5" opacity="0.4" filter="drop-shadow(0 1px 1px rgba(255,255,255,0.3))" />
-          <ellipse cx="27" cy="42" rx="10" ry="2.5" opacity="0.4" filter="drop-shadow(0 1px 1px rgba(255,255,255,0.3))" />
-          <ellipse cx="27" cy="49" rx="10" ry="2.5" opacity="0.4" filter="drop-shadow(0 1px 1px rgba(255,255,255,0.3))" />
+          <ellipse
+            cx="27"
+            cy="35"
+            rx="10"
+            ry="2.5"
+            opacity="0.4"
+            filter="drop-shadow(0 1px 1px rgba(255,255,255,0.3))"
+          />
+          <ellipse
+            cx="27"
+            cy="42"
+            rx="10"
+            ry="2.5"
+            opacity="0.4"
+            filter="drop-shadow(0 1px 1px rgba(255,255,255,0.3))"
+          />
+          <ellipse
+            cx="27"
+            cy="49"
+            rx="10"
+            ry="2.5"
+            opacity="0.4"
+            filter="drop-shadow(0 1px 1px rgba(255,255,255,0.3))"
+          />
         </g>
 
         {/* TAMPA - Base inferior com efeito 3D */}
@@ -145,24 +148,12 @@ export function Logo({ className }: { className?: string }) {
           fill="#0a0a0a"
           filter="drop-shadow(0 0 4px rgba(255,255,255,0.3))"
         />
-        
+
         {/* Brilho no topo da tampa */}
-        <ellipse
-          cx="27"
-          cy="26"
-          rx="9"
-          ry="3"
-          fill="url(#capTopGlow)"
-        />
-        
-        <ellipse
-          cx="27"
-          cy="27"
-          rx="9"
-          ry="2.5"
-          fill="#3a3a3a"
-        />
-        
+        <ellipse cx="27" cy="26" rx="9" ry="3" fill="url(#capTopGlow)" />
+
+        <ellipse cx="27" cy="27" rx="9" ry="2.5" fill="#3a3a3a" />
+
         <ellipse
           cx="27"
           cy="26.5"

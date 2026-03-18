@@ -3,16 +3,16 @@
  * The complete configuration that defines how a resume looks
  */
 
-import type { LayoutConfig } from "./layout.types";
-import type { DesignTokens } from "./design-tokens.types";
-import type { SectionConfig, SectionItemOverrides } from "./section-config.types";
-import type { SectionId } from "./section-ids.types";
+import type { DesignTokens } from './design-tokens.types';
+import type { LayoutConfig } from './layout.types';
+import type { SectionConfig, SectionItemOverrides } from './section-config.types';
 
 /**
  * Print-specific overrides
  */
 export interface PrintConfig {
-  hideElements?: SectionId[];
+  /** Section keys to hide when printing (e.g., 'work_experience_v1') */
+  hideElements?: string[];
   forceBlackAndWhite?: boolean;
   reducedSpacing?: boolean;
 }

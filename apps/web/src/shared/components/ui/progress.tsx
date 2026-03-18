@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
 /**
  * Progress Component
  * Progress bar with optional label
  */
 
-import * as React from "react";
-import * as ProgressPrimitive from "@radix-ui/react-progress";
-import { cn } from "@/shared/utils/cn";
+import * as ProgressPrimitive from '@radix-ui/react-progress';
+import * as React from 'react';
+import { cn } from '@/shared/utils/cn';
 
 interface ProgressProps extends React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root> {
   showValue?: boolean;
@@ -18,7 +18,7 @@ const Progress = React.forwardRef<React.ElementRef<typeof ProgressPrimitive.Root
     <div className="relative">
       <ProgressPrimitive.Root
         ref={ref}
-        className={cn("relative h-2 w-full overflow-hidden rounded-full bg-white/5", className)}
+        className={cn('relative h-2 w-full overflow-hidden rounded-full bg-white/5', className)}
         {...props}
       >
         <ProgressPrimitive.Indicator
@@ -32,7 +32,7 @@ const Progress = React.forwardRef<React.ElementRef<typeof ProgressPrimitive.Root
         </span>
       )}
     </div>
-  )
+  ),
 );
 Progress.displayName = ProgressPrimitive.Root.displayName;
 

@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { SignInForm } from "@/components/auth";
-import { LocalizedLink } from "@/shared/components/localized-link";
-import { ROUTES } from "@/config/routes";
-import { Terminal, Github, ArrowLeft } from "lucide-react";
-import { useI18n } from "@/lib/i18n";
-import { motion } from "framer-motion"; // Opcional: npm install framer-motion
+import { useI18n } from '@profile/i18n';
+import { motion } from 'framer-motion'; // Opcional: npm install framer-motion
+import { ArrowLeft, Github, Terminal } from 'lucide-react';
+import { SignInForm } from '@/components/auth';
+import { ROUTES } from '@/config/routes';
+import { LocalizedLink } from '@/shared/components/localized-link';
 
 export default function SignInPage() {
   const { t } = useI18n();
@@ -29,7 +29,7 @@ export default function SignInPage() {
               className="h-4 w-4 transition-transform group-hover:-translate-x-1"
               strokeWidth={2}
             />
-            <span className="font-mono text-xs tracking-widest uppercase">{t("auth.back")}</span>
+            <span className="font-mono text-xs tracking-widest uppercase">{t('auth.back')}</span>
           </LocalizedLink>
 
           <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1">
@@ -53,7 +53,7 @@ export default function SignInPage() {
               <Terminal className="h-6 w-6 text-white" strokeWidth={1.5} />
             </div>
             <h1 className="mb-2 text-3xl font-bold tracking-tight text-white">
-              {t("auth.signIn.title")}
+              {t('auth.signIn.title')}
             </h1>
             <div className="flex items-center justify-center gap-2 font-mono text-[10px] tracking-[0.2em] text-zinc-500 uppercase">
               <span className="text-cyan-400">Ready to patch</span>
@@ -76,26 +76,29 @@ export default function SignInPage() {
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
                   <span className="bg-[#0A0A0A] px-2 font-mono tracking-widest text-zinc-600">
-                    {t("auth.or")}
+                    {t('auth.or')}
                   </span>
                 </div>
               </div>
 
-              <button className="flex w-full items-center justify-center gap-3 rounded-lg border border-white/10 bg-white/5 py-3 font-mono text-sm font-medium transition-all hover:border-white/20 hover:bg-white/10 active:scale-[0.98]">
+              <button
+                type="button"
+                className="flex w-full items-center justify-center gap-3 rounded-lg border border-white/10 bg-white/5 py-3 font-mono text-sm font-medium transition-all hover:border-white/20 hover:bg-white/10 active:scale-[0.98]"
+              >
                 <Github className="h-4 w-4 text-white" />
-                <span className="text-white">{t("auth.continueWithGithub")}</span>
+                <span className="text-white">{t('auth.continueWithGithub')}</span>
               </button>
             </div>
           </div>
 
           {/* Footer Sign Up */}
           <p className="mt-8 text-center font-mono text-xs text-zinc-500">
-            {t("auth.signIn.noAccount")}{" "}
+            {t('auth.signIn.noAccount')}{' '}
             <LocalizedLink
               href={ROUTES.AUTH.SIGN_UP}
               className="font-bold text-white underline-offset-4 hover:underline"
             >
-              {t("auth.signIn.createAccount")}
+              {t('auth.signIn.createAccount')}
             </LocalizedLink>
           </p>
         </motion.div>

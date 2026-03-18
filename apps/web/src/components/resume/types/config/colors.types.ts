@@ -17,9 +17,9 @@ export interface ColorPalette {
   divider: string;
 }
 
-export type BorderRadius = "none" | "sm" | "md" | "lg" | "full";
-export type ShadowIntensity = "none" | "subtle" | "medium" | "strong";
-export type GradientDirection = "to-right" | "to-bottom" | "to-bottom-right";
+export type BorderRadius = 'none' | 'sm' | 'md' | 'lg' | 'full';
+export type ShadowIntensity = 'none' | 'subtle' | 'medium' | 'strong';
+export type GradientDirection = 'to-right' | 'to-bottom' | 'to-bottom-right';
 
 export interface ColorTokens {
   colors: ColorPalette;
@@ -33,18 +33,18 @@ export interface ColorTokens {
 
 export const DEFAULT_COLORS: ColorTokens = {
   colors: {
-    primary: "#3B82F6",
-    secondary: "#64748B",
-    background: "#FFFFFF",
-    surface: "#F8FAFC",
+    primary: '#3B82F6',
+    secondary: '#64748B',
+    background: '#FFFFFF',
+    surface: '#F8FAFC',
     text: {
-      primary: "#1E293B",
-      secondary: "#64748B",
-      accent: "#3B82F6",
+      primary: '#1E293B',
+      secondary: '#64748B',
+      accent: '#3B82F6',
     },
-    border: "#E2E8F0",
-    divider: "#F1F5F9",
+    border: '#E2E8F0',
+    divider: '#F1F5F9',
   },
-  borderRadius: "md",
-  shadows: "subtle",
+  borderRadius: 'md',
+  shadows: 'subtle',
 };

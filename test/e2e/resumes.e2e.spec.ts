@@ -18,8 +18,8 @@ import type {
 import {
  e2eFetch,
  skipIfBackendUnavailable,
- ACCOUNTS_ROUTES,
- AUTH_ROUTES,
+ ACCOUNT_LIFECYCLE_ROUTES,
+ AUTHENTICATION_ROUTES,
  RESUMES_ROUTES,
 } from "./setup";
 
@@ -39,7 +39,7 @@ describe("E2E: Resumes API", () => {
 
   // Register and login test user
   const signupResponse = await e2eFetch<CreateAccountResponseDto>(
-   ACCOUNTS_ROUTES.ACCOUNTS_SIGNUP,
+   ACCOUNT_LIFECYCLE_ROUTES.ACCOUNTS_SIGNUP,
    {
     method: "POST",
     body: JSON.stringify({
@@ -57,7 +57,7 @@ describe("E2E: Resumes API", () => {
   }
 
   const loginResponse = await e2eFetch<LoginResponseDto>(
-   AUTH_ROUTES.AUTH_LOGIN,
+   AUTHENTICATION_ROUTES.AUTH_LOGIN,
    {
     method: "POST",
     body: JSON.stringify({
@@ -79,7 +79,7 @@ describe("E2E: Resumes API", () => {
   // Cleanup: delete test resume if created
   if (createdResumeId && accessToken) {
    await e2eFetch<DeleteResponseDto>(
-    `${RESUMES_ROUTES.RESUMES_GET_ALL_USER_RESUMES}/${createdResumeId}`,
+    `${RESUMES_ROUTES.RESUMES_CREATE_RESUME_FOR_USER}/${createdResumeId}`,
     {
      method: "DELETE",
      token: accessToken,
@@ -121,8 +121,8 @@ describe("E2E: Resumes API", () => {
     return;
    }
 
-   const response = await e2eFetch<ResumeResponseDto[]>(
-    RESUMES_ROUTES.RESUMES_GET_ALL_USER_RESUMES,
+   const response = await e2eFetch<{ data: ResumeResponseDto[]; meta: unknown }>(
+    RESUMES_ROUTES.RESUMES_CREATE_RESUME_FOR_USER,
     {
      method: "GET",
      token: accessToken,
@@ -130,11 +130,13 @@ describe("E2E: Resumes API", () => {
    );
 
    expect(response.status).toBe(200);
-   expect(Array.isArray(response.data)).toBe(true);
+   // Backend returns paginated response: { data: [...], meta: {...} }
+   expect(response.data).toBeDefined();
+   expect(Array.isArray(response.data.data)).toBe(true);
 
    // Should contain the resume we just created
    if (createdResumeId) {
-    const found = response.data.find((r) => r.id === createdResumeId);
+    const found = response.data.data.find((r) => r.id === createdResumeId);
     expect(found).toBeDefined();
    }
   });
@@ -146,7 +148,7 @@ describe("E2E: Resumes API", () => {
    }
 
    const response = await e2eFetch<ResumeResponseDto>(
-    `${RESUMES_ROUTES.RESUMES_GET_ALL_USER_RESUMES}/${createdResumeId}`,
+    `${RESUMES_ROUTES.RESUMES_CREATE_RESUME_FOR_USER}/${createdResumeId}`,
     {
      method: "GET",
      token: accessToken,
@@ -165,7 +167,7 @@ describe("E2E: Resumes API", () => {
    }
 
    const response = await e2eFetch<ResumeResponseDto>(
-    `${RESUMES_ROUTES.RESUMES_GET_ALL_USER_RESUMES}/${createdResumeId}`,
+    `${RESUMES_ROUTES.RESUMES_CREATE_RESUME_FOR_USER}/${createdResumeId}`,
     {
      method: "PATCH",
      token: accessToken,
@@ -186,7 +188,7 @@ describe("E2E: Resumes API", () => {
    }
 
    const response = await e2eFetch<DeleteResponseDto>(
-    `${RESUMES_ROUTES.RESUMES_GET_ALL_USER_RESUMES}/${createdResumeId}`,
+    `${RESUMES_ROUTES.RESUMES_CREATE_RESUME_FOR_USER}/${createdResumeId}`,
     {
      method: "DELETE",
      token: accessToken,
@@ -197,7 +199,7 @@ describe("E2E: Resumes API", () => {
 
    // Verify deletion
    const verifyResponse = await e2eFetch<ResumeResponseDto>(
-    `${RESUMES_ROUTES.RESUMES_GET_ALL_USER_RESUMES}/${createdResumeId}`,
+    `${RESUMES_ROUTES.RESUMES_CREATE_RESUME_FOR_USER}/${createdResumeId}`,
     {
      method: "GET",
      token: accessToken,
@@ -214,7 +216,7 @@ describe("E2E: Resumes API", () => {
  describe("Resume Access Control", () => {
   it("should require authentication to list resumes", async () => {
    const response = await e2eFetch<ResumeResponseDto[]>(
-    RESUMES_ROUTES.RESUMES_GET_ALL_USER_RESUMES,
+    RESUMES_ROUTES.RESUMES_CREATE_RESUME_FOR_USER,
     {
      method: "GET",
      // No token
@@ -246,7 +248,7 @@ describe("E2E: Resumes API", () => {
    }
 
    const response = await e2eFetch<ResumeResponseDto>(
-    `${RESUMES_ROUTES.RESUMES_GET_ALL_USER_RESUMES}/non-existent-id-12345`,
+    `${RESUMES_ROUTES.RESUMES_CREATE_RESUME_FOR_USER}/non-existent-id-12345`,
     {
      method: "GET",
      token: accessToken,

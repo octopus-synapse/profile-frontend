@@ -5,11 +5,11 @@
  * that make real HTTP requests to the backend.
  */
 
-import { GlobalRegistrator } from "@happy-dom/global-registrator";
+import { GlobalRegistrator } from '@happy-dom/global-registrator';
 
 // Register happy-dom with CORS disabled for E2E tests
 GlobalRegistrator.register({
-  url: "http://localhost:3000",
+  url: 'http://localhost:3000',
   settings: {
     fetch: {
       disableSameOriginPolicy: true,

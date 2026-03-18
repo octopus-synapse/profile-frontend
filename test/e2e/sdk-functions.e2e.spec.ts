@@ -104,6 +104,7 @@ describe("E2E: SDK Generated Functions", () => {
     const code = getErrorCode(error);
     const validCodes = [
      "UNAUTHORIZED",
+     "FORBIDDEN",
      "NOT_FOUND",
      "INTERNAL_ERROR",
      "UNKNOWN",

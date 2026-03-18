@@ -28,7 +28,10 @@
       "title": "No CSRF Protection on State-Changing Requests",
       "severity": "CRITICAL",
       "status": "OPEN",
-      "files_related": ["apps/web/src/shared/lib/http-client.ts", "packages/api-client/src/client/http-client.ts"],
+      "files_related": [
+        "apps/web/src/shared/lib/http-client.ts",
+        "packages/api-client/src/client/http-client.ts"
+      ],
       "description": "POST/PUT/DELETE requests have no CSRF token validation. Next.js App Router should use Server Actions for CSRF protection, but API client calls bypass this. Vulnerable to cross-site request forgery attacks."
     },
     {
@@ -56,7 +59,10 @@
       "title": "No Rate Limiting on Client-Side API Calls",
       "severity": "HIGH",
       "status": "OPEN",
-      "files_related": ["apps/web/src/shared/lib/http-client.ts", "packages/api-client/src/client/http-client.ts"],
+      "files_related": [
+        "apps/web/src/shared/lib/http-client.ts",
+        "packages/api-client/src/client/http-client.ts"
+      ],
       "description": "No rate limiting implemented on client-side. User can spam API endpoints, potentially causing DoS or hitting rate limits. Should implement debouncing and request queuing."
     },
     {
@@ -120,7 +126,10 @@
       "title": "No Debouncing on Username/Email Checks",
       "severity": "MEDIUM",
       "status": "OPEN",
-      "files_related": ["apps/web/src/features/settings/components/username-field.tsx", "apps/web/src/features/onboarding/components/steps/username-step.tsx"],
+      "files_related": [
+        "apps/web/src/features/settings/components/username-field.tsx",
+        "apps/web/src/features/onboarding/components/steps/username-step.tsx"
+      ],
       "description": "Username/email availability checks triggered on every keystroke. Should debounce to prevent API spam and reduce server load."
     },
     {
@@ -205,7 +214,3 @@
     }
   ]
 }
-
-
-
-

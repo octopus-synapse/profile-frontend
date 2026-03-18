@@ -28,6 +28,12 @@ import type {
   UseSuspenseQueryResult
 } from '@tanstack/react-query';
 
+import type {
+  MecKnowledgeAreasDataDto,
+  MecStateCodesDataDto,
+  MecStatisticsDataDto
+} from '../../models';
+
 import { customFetch } from '../../../client/fetcher';
 
 
@@ -39,7 +45,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary List knowledge areas
  */
 export type mecMetadataListAllKnowledgeAreasResponse200 = {
-  data: void
+  data: MecKnowledgeAreasDataDto
   status: 200
 }
     
@@ -301,7 +307,7 @@ export function useMecMetadataListAllKnowledgeAreasSuspense<TData = Awaited<Retu
  * @summary Get MEC statistics
  */
 export type mecMetadataGetMecStatisticsResponse200 = {
-  data: void
+  data: MecStatisticsDataDto
   status: 200
 }
     
@@ -563,7 +569,7 @@ export function useMecMetadataGetMecStatisticsSuspense<TData = Awaited<ReturnTyp
  * @summary List all states (UFs)
  */
 export type mecMetadataListAllStateCodesResponse200 = {
-  data: void
+  data: MecStateCodesDataDto
   status: 200
 }
     

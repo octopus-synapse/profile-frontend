@@ -1,13 +1,14 @@
 /**
  * HTTP Client
- * Centralized HTTP client with interceptors, retry logic, and error handling
+ *
+ * Centralized HTTP client with interceptors, retry logic, and error handling.
+ * Authentication is handled via httpOnly session cookie from backend.
  */
 
-import axios, { type AxiosError, type AxiosInstance, type AxiosRequestConfig } from "axios";
-import { getSession } from "next-auth/react";
-import { API_URL } from "@/config/env";
-import { API } from "@/config/constants";
-import { type ApiError, createApiError, statusToErrorCode } from "@/shared/types/errors";
+import axios, { type AxiosError, type AxiosInstance, type AxiosRequestConfig } from 'axios';
+import { API } from '@/config/constants';
+import { API_URL } from '@/config/env';
+import { type ApiError, createApiError, statusToErrorCode } from '@/shared/types/errors';
 
 // ============================================================================
 // Types
@@ -62,7 +63,7 @@ export function createHttpClient(config: HttpClientConfig = {}): AxiosInstance {
     baseURL,
     timeout,
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
   });
 
@@ -77,7 +78,7 @@ export function createHttpClient(config: HttpClientConfig = {}): AxiosInstance {
       }
       return config;
     },
-    (error: unknown) => Promise.reject(error instanceof Error ? error : new Error(String(error)))
+    (error: unknown) => Promise.reject(error instanceof Error ? error : new Error(String(error))),
   );
 
   // Response interceptor - handle errors and refresh token
@@ -112,7 +113,7 @@ export function createHttpClient(config: HttpClientConfig = {}): AxiosInstance {
       // Transform to ApiError
       const apiError = transformError(error);
       return Promise.reject(new Error(apiError.message));
-    }
+    },
   );
 
   return client;
@@ -125,7 +126,7 @@ export function createHttpClient(config: HttpClientConfig = {}): AxiosInstance {
 function transformError(error: AxiosError): ApiError {
   if (!error.response) {
     // Network error
-    return createApiError("NETWORK_ERROR", "Network error. Please check your connection.", 0);
+    return createApiError('NETWORK_ERROR', 'Network error. Please check your connection.', 0);
   }
 
   const { status, data } = error.response;
@@ -141,19 +142,19 @@ function transformError(error: AxiosError): ApiError {
 function getDefaultMessage(status: number): string {
   switch (status) {
     case 400:
-      return "Invalid request. Please check your input.";
+      return 'Invalid request. Please check your input.';
     case 401:
-      return "You need to sign in to access this resource.";
+      return 'You need to sign in to access this resource.';
     case 403:
       return "You don't have permission to access this resource.";
     case 404:
-      return "The requested resource was not found.";
+      return 'The requested resource was not found.';
     case 409:
-      return "A conflict occurred. The resource may already exist.";
+      return 'A conflict occurred. The resource may already exist.';
     case 500:
-      return "An internal server error occurred. Please try again later.";
+      return 'An internal server error occurred. Please try again later.';
     default:
-      return "An unexpected error occurred.";
+      return 'An unexpected error occurred.';
   }
 }
 
@@ -163,7 +164,7 @@ function getDefaultMessage(status: number): string {
 
 export async function withRetry<T>(
   fn: () => Promise<T>,
-  config: Partial<RetryConfig> = {}
+  config: Partial<RetryConfig> = {},
 ): Promise<T> {
   const { retries, delay, shouldRetry } = { ...defaultRetryConfig, ...config };
 
@@ -181,74 +182,70 @@ export async function withRetry<T>(
       if (!shouldRetry(axiosError)) break;
 
       // Exponential backoff with jitter
-      const backoffDelay = delay * Math.pow(2, attempt) + Math.random() * 100;
+      const backoffDelay = delay * 2 ** attempt + Math.random() * 100;
       await new Promise((resolve) => setTimeout(resolve, backoffDelay));
     }
   }
 
-  throw lastError || new Error("Unknown error");
+  throw lastError || new Error('Unknown error');
 }
 
 // ============================================================================
-// Default Client Instance (with NextAuth integration)
+// Default Client Instance
 // ============================================================================
 
-const axiosClient = createHttpClient({
-  getToken: () => {
-    // Token is fetched dynamically in the request interceptor
-    // This is just a placeholder for synchronous check
-    return null;
-  },
-});
+const axiosClient = createHttpClient({});
 
-// Add async interceptor for NextAuth session token
-axiosClient.interceptors.request.use(
-  async (config) => {
-    // Get session with token from NextAuth
-    const session = await getSession();
-    if (session?.accessToken) {
-      config.headers.Authorization = `Bearer ${session.accessToken}`;
-    }
-    return config;
-  },
-  (error: unknown) => Promise.reject(error instanceof Error ? error : new Error(String(error)))
-);
+// Configure client to send httpOnly cookies for authentication
+axiosClient.defaults.withCredentials = true;
 
-// Add response interceptor to transform errors to ApiError
-axiosClient.interceptors.response.use(
-  (response) => response,
-  async (error: AxiosError) => {
-    // Transform to ApiError
-    const apiError = transformError(error);
-    return Promise.reject(new Error(apiError.message));
+// ============================================================================
+// Backend Response Wrapper Type
+// ============================================================================
+
+interface BackendResponse<T> {
+  success: boolean;
+  data: T;
+  error?: {
+    code: string;
+    message: string;
+    details?: Record<string, unknown>;
+  };
+}
+
+// Helper to extract data from backend wrapper
+function extractData<T>(response: BackendResponse<T>): T {
+  if (!response.success && response.error) {
+    throw new Error(response.error.message);
   }
-);
+  return response.data;
+}
 
-// Wrapper that extracts data from response
+// Wrapper that extracts data from response AND backend wrapper
 export const httpClient = {
   async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    const response = await axiosClient.get<T>(url, config);
-    return response.data;
+    const response = await axiosClient.get<BackendResponse<T>>(url, config);
+    return extractData(response.data);
   },
 
   async post<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> {
-    const response = await axiosClient.post<T>(url, data, config);
-    return response.data;
+    const response = await axiosClient.post<BackendResponse<T>>(url, data, config);
+    return extractData(response.data);
   },
 
   async put<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> {
-    const response = await axiosClient.put<T>(url, data, config);
-    return response.data;
+    const response = await axiosClient.put<BackendResponse<T>>(url, data, config);
+    return extractData(response.data);
   },
 
   async patch<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> {
-    const response = await axiosClient.patch<T>(url, data, config);
-    return response.data;
+    const response = await axiosClient.patch<BackendResponse<T>>(url, data, config);
+    return extractData(response.data);
   },
 
   async delete<T = void>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    const response = await axiosClient.delete<T>(url, config);
-    return response.data;
+    const response = await axiosClient.delete<BackendResponse<T>>(url, config);
+    return extractData(response.data);
   },
 
   // Access underlying axios instance if needed

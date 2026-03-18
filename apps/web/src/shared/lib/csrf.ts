@@ -6,7 +6,7 @@
  * combined with Next.js Server Actions for maximum protection.
  */
 
-const CSRF_COOKIE_NAME = "csrf-token";
+const CSRF_COOKIE_NAME = 'csrf-token';
 const CSRF_TOKEN_LENGTH = 32;
 
 // ============================================================================
@@ -17,19 +17,19 @@ const CSRF_TOKEN_LENGTH = 32;
  * Generate a cryptographically secure random token
  */
 function generateToken(): string {
-  if (typeof window === "undefined") {
+  if (typeof window === 'undefined') {
     // Server-side: use Node.js crypto
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const crypto = require("crypto") as {
+    const crypto = require('node:crypto') as {
       randomBytes: (size: number) => { toString: (encoding: string) => string };
     };
-    return crypto.randomBytes(CSRF_TOKEN_LENGTH).toString("hex");
+    return crypto.randomBytes(CSRF_TOKEN_LENGTH).toString('hex');
   }
 
   // Client-side: use Web Crypto API
   const array = new Uint8Array(CSRF_TOKEN_LENGTH);
   crypto.getRandomValues(array);
-  return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join("");
+  return Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join('');
 }
 
 // ============================================================================
@@ -40,11 +40,11 @@ function generateToken(): string {
  * Get CSRF token from cookie
  */
 export function getCsrfTokenFromCookie(): string | null {
-  if (typeof document === "undefined") return null;
+  if (typeof document === 'undefined') return null;
 
-  const cookies = document.cookie.split(";");
+  const cookies = document.cookie.split(';');
   for (const cookie of cookies) {
-    const [name, value] = cookie.trim().split("=");
+    const [name, value] = cookie.trim().split('=');
     if (name === CSRF_COOKIE_NAME && value) {
       return decodeURIComponent(value);
     }
@@ -57,17 +57,17 @@ export function getCsrfTokenFromCookie(): string | null {
  * Uses Secure, SameSite=Strict for maximum protection
  */
 export function setCsrfTokenCookie(token: string): void {
-  if (typeof document === "undefined") return;
+  if (typeof document === 'undefined') return;
 
-  const isSecure = window.location.protocol === "https:";
+  const isSecure = window.location.protocol === 'https:';
   const cookieOptions = [
     `${CSRF_COOKIE_NAME}=${encodeURIComponent(token)}`,
-    "Path=/",
-    "SameSite=Strict",
-    isSecure ? "Secure" : "",
+    'Path=/',
+    'SameSite=Strict',
+    isSecure ? 'Secure' : '',
   ]
     .filter(Boolean)
-    .join("; ");
+    .join('; ');
 
   document.cookie = cookieOptions;
 }
@@ -97,7 +97,7 @@ export function getCsrfToken(): string {
  * Async version for HTTP client compatibility
  */
 export function getCsrfTokenAsync(): string | null {
-  if (typeof window === "undefined") return null;
+  if (typeof window === 'undefined') return null;
   return getCsrfToken();
 }
 

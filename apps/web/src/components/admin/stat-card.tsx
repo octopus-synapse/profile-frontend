@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
 /**
  * Admin Stat Card Component
  * Clean, professional design
  */
 
-import { LucideIcon, TrendingUp, TrendingDown } from "lucide-react";
-import { cn } from "@/shared/utils/cn";
+import { type LucideIcon, TrendingDown, TrendingUp } from 'lucide-react';
+import { cn } from '@/shared/utils/cn';
 
 interface StatCardProps {
   label: string;
@@ -47,8 +47,8 @@ export function StatCard({ label, value, trend, trendUp, icon: Icon, loading }: 
               )}
               <p
                 className={cn(
-                  "text-xs font-medium",
-                  trendUp ? "text-pf-success-fg" : "text-pf-danger-fg"
+                  'text-xs font-medium',
+                  trendUp ? 'text-pf-success-fg' : 'text-pf-danger-fg',
                 )}
               >
                 {trend}

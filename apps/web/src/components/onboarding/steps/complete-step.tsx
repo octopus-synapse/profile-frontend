@@ -4,30 +4,40 @@
  * Nielsen: Visibility of system status (success feedback)
  */
 
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
-import { useOnboardingStore } from "../stores";
-import { CheckCircle2, ArrowRight, Sparkles, ExternalLink } from "lucide-react";
-import Link from "next/link";
-import { ROUTES } from "@/config/routes";
-import confetti from "canvas-confetti";
+import { getAuthSessionQueryKey, useAuthSession } from '@profile/api-client';
+import { useQueryClient } from '@tanstack/react-query';
+import confetti from 'canvas-confetti';
+import { ArrowRight, CheckCircle2, ExternalLink, Sparkles } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
+import { ROUTES } from '@/config/routes';
+import { useOnboarding } from '../hooks';
 
 export function CompleteStep() {
   const router = useRouter();
-  const { data: session, update: updateSession } = useSession();
-  const { personalInfo, reset } = useOnboardingStore();
+  const queryClient = useQueryClient();
+  const { data } = useAuthSession();
+  const user = data?.data?.data?.user;
+  const { personalInfo } = useOnboarding();
   const [showContent, setShowContent] = useState(false);
   const [countdown, setCountdown] = useState(5);
+
+  // Refresh session data from backend
+  const refreshSession = useCallback(async () => {
+    await queryClient.invalidateQueries({
+      queryKey: getAuthSessionQueryKey(),
+    });
+  }, [queryClient]);
 
   useEffect(() => {
     // Trigger confetti 🎉
     const duration = 2000;
     const end = Date.now() + duration;
 
-    const colors = ["#2563eb", "#16a34a", "#9333ea"];
+    const colors = ['#2563eb', '#16a34a', '#9333ea'];
 
     (function frame() {
       void confetti({
@@ -57,29 +67,19 @@ export function CompleteStep() {
 
   // Update session and redirect automatically
   useEffect(() => {
-    let countdownInterval: NodeJS.Timeout | null = null;
+    let countdownInterval: ReturnType<typeof setInterval> | null = null;
     let isRedirecting = false;
 
-    // Update session to reflect completed onboarding
-    const updateSessionData = async () => {
-      // Only update if not already marked as completed
-      if (session?.user && !session.user.hasCompletedOnboarding) {
-        try {
-          await updateSession({
-            ...session,
-            user: {
-              ...session.user,
-              hasCompletedOnboarding: true,
-            },
-          });
-        } catch (error) {
-          console.error("Failed to update session:", error);
-        }
+    // Refresh session to reflect completed onboarding
+    const updateAuthState = async () => {
+      if (user && !user.hasCompletedOnboarding) {
+        // Refresh from backend to ensure sync
+        await refreshSession();
       }
     };
 
-    if (session?.user && !session.user.hasCompletedOnboarding) {
-      void updateSessionData();
+    if (user && !user.hasCompletedOnboarding) {
+      void updateAuthState();
     }
 
     // Countdown and auto-redirect
@@ -90,12 +90,7 @@ export function CompleteStep() {
           if (countdownInterval) {
             clearInterval(countdownInterval);
           }
-          // Redirect first, then reset store after navigation
           router.push(ROUTES.PROTECTED.RESUME);
-          // Reset store after a short delay to ensure navigation happens
-          setTimeout(() => {
-            reset();
-          }, 100);
           return 0;
         }
         return prev - 1;
@@ -107,11 +102,10 @@ export function CompleteStep() {
         clearInterval(countdownInterval);
       }
     };
-  }, [session, updateSession, router, reset]);
+  }, [user, refreshSession, router]);
 
   const handleGoToDashboard = () => {
-    // Don't reset here - let the redirect handle it
-    // The reset will happen in the useEffect after navigation
+    // No action needed - React Query handles state
   };
 
   return (
@@ -129,27 +123,28 @@ export function CompleteStep() {
 
       {/* Success Message */}
       <div
-        className={`transition-all duration-500 ${showContent ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
+        className={`transition-all duration-500 ${showContent ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}
       >
         <h2 className="text-2xl font-bold text-white">
-          Welcome, {personalInfo?.fullName?.split(" ")[0]}! 🎉
+          Welcome, {personalInfo?.fullName?.split(' ')[0]}! 🎉
         </h2>
         <p className="mt-2 font-mono text-sm text-zinc-400">
           Your professional profile has been created successfully
         </p>
         {countdown > 0 && (
           <p className="mt-2 font-mono text-xs text-cyan-400">
-            Redirecting to your resume in {countdown} second{countdown !== 1 ? "s" : ""}...
+            Redirecting to your resume in {countdown} second
+            {countdown !== 1 ? 's' : ''}...
           </p>
         )}
       </div>
 
       {/* Code Block Celebration */}
       <div
-        className={`rounded-lg border border-white/10 bg-[#0A0A0A] p-4 text-left font-mono text-sm transition-all delay-300 duration-700 ${showContent ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
+        className={`rounded-lg border border-white/10 bg-[#0A0A0A] p-4 text-left font-mono text-sm transition-all delay-300 duration-700 ${showContent ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}
       >
         <div className="mb-2 text-xs text-zinc-500">
-          <span className="opacity-60">{"//"}</span> profile.created.ts
+          <span className="opacity-60">{'//'}</span> profile.created.ts
         </div>
         <div className="space-y-1">
           <div>
@@ -191,7 +186,7 @@ export function CompleteStep() {
 
       {/* What's Next */}
       <div
-        className={`border border-white/10 p-4 text-left transition-all delay-500 duration-700 ${showContent ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
+        className={`border border-white/10 p-4 text-left transition-all delay-500 duration-700 ${showContent ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}
       >
         <h3 className="font-mono text-sm font-semibold text-white">What&apos;s next?</h3>
         <ul className="mt-3 space-y-2 font-mono text-xs text-zinc-400">
@@ -216,7 +211,7 @@ export function CompleteStep() {
 
       {/* Action Buttons */}
       <div
-        className={`flex flex-col gap-3 transition-all delay-700 duration-700 sm:flex-row sm:justify-center ${showContent ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}
+        className={`flex flex-col gap-3 transition-all delay-700 duration-700 sm:flex-row sm:justify-center ${showContent ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}
       >
         <Link
           href={ROUTES.PROTECTED.RESUME}
@@ -239,11 +234,11 @@ export function CompleteStep() {
 
       {/* Footer */}
       <p className="font-mono text-xs text-zinc-500">
-        Need help? Check our{" "}
+        Need help? Check our{' '}
         <Link href="#" className="text-cyan-400 hover:underline">
           documentation
-        </Link>{" "}
-        or{" "}
+        </Link>{' '}
+        or{' '}
         <Link href="#" className="text-cyan-400 hover:underline">
           contact support
         </Link>

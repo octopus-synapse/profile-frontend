@@ -3,8 +3,8 @@
  * Placeholder for empty content
  */
 
-import { cn } from "@/shared/utils/cn";
-import { LucideIcon } from "lucide-react";
+import type { LucideIcon } from 'lucide-react';
+import { cn } from '@/shared/utils/cn';
 
 interface EmptyStateProps {
   icon?: LucideIcon;
@@ -17,7 +17,7 @@ interface EmptyStateProps {
 export function EmptyState({ icon: Icon, title, description, action, className }: EmptyStateProps) {
   return (
     <div
-      className={cn("flex flex-col items-center justify-center px-4 py-12 text-center", className)}
+      className={cn('flex flex-col items-center justify-center px-4 py-12 text-center', className)}
     >
       {Icon && (
         <div className="mb-4 rounded-full bg-white/5 p-4">

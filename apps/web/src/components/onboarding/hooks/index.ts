@@ -1,4 +1,26 @@
-export { onboardingKeys } from "./query-keys";
-export { useOnboardingStatus, useOnboardingProgress } from "./use-onboarding-queries";
-export { useSubmitOnboarding, useSaveOnboardingProgress } from "./use-onboarding-mutations";
-export { useOnboardingSync } from "./use-onboarding-sync";
+import type {
+  OnboardingPersonalInfoDto,
+  OnboardingProfessionalProfileDto,
+  OnboardingSessionDto,
+  OnboardingTemplateSelectionDto,
+  SectionProgressDto,
+  StepFieldDto,
+  StepMetaDto,
+} from '@profile/api-client';
+
+export { useGitHubUser } from './use-github-user';
+export { useOnboarding } from './use-onboarding';
+
+export type OnboardingStep = string;
+export type SectionStep = `section:${string}`;
+export const isSectionStep = (step: string): step is SectionStep => step.startsWith('section:');
+export const getSectionTypeFromStep = (step: SectionStep | string) => step.replace('section:', '');
+
+export type { OnboardingSessionDto, StepMetaDto, StepFieldDto };
+export type PersonalInfo = OnboardingPersonalInfoDto;
+export type ProfessionalProfile = OnboardingProfessionalProfileDto;
+export type TemplateSelection = OnboardingTemplateSelectionDto;
+export type SectionItem = { id?: string; content: Record<string, unknown> };
+export type SectionData = Omit<SectionProgressDto, 'items'> & {
+  items: SectionItem[];
+};

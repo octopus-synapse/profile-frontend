@@ -1,1 +1,1 @@
-export { usePublicProfile } from "./use-public-profile";
+export { usePublicProfile } from './use-public-profile';

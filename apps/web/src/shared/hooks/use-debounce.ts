@@ -1,7 +1,10 @@
-import { useState, useEffect } from "react";
+'use client';
+
+import { useEffect, useState } from 'react';
 
 /**
- * Hook that debounces a value by delaying updates until after a specified delay
+ * Custom hook that debounces a value
+ *
  * @param value - The value to debounce
  * @param delay - The delay in milliseconds (default: 500ms)
  * @returns The debounced value
@@ -20,4 +23,36 @@ export function useDebounce<T>(value: T, delay: number = 500): T {
   }, [value, delay]);
 
   return debouncedValue;
+}
+
+/**
+ * Custom hook that returns a debounced callback function
+ *
+ * @param callback - The callback to debounce
+ * @param delay - The delay in milliseconds (default: 500ms)
+ * @returns A debounced version of the callback
+ */
+export function useDebouncedCallback<T extends (...args: unknown[]) => unknown>(
+  callback: T,
+  delay: number = 500,
+): (...args: Parameters<T>) => void {
+  const [timeoutId, setTimeoutId] = useState<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [timeoutId]);
+
+  return (...args: Parameters<T>) => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    const newTimeoutId = setTimeout(() => {
+      callback(...args);
+    }, delay);
+    setTimeoutId(newTimeoutId);
+  };
 }

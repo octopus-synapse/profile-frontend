@@ -3,7 +3,7 @@
  * Based on profile-services Prisma schema
  */
 
-export type UserRole = "USER" | "ADMIN";
+export type UserRole = 'USER' | 'ADMIN';
 
 export interface User {
   id: string;
@@ -61,8 +61,8 @@ export interface AdminUserFilters {
   role?: UserRole;
   page?: number;
   limit?: number;
-  sortBy?: "createdAt" | "name" | "email";
-  sortOrder?: "asc" | "desc";
+  sortBy?: 'createdAt' | 'name' | 'email';
+  sortOrder?: 'asc' | 'desc';
 }
 
 export interface PaginatedUsers {

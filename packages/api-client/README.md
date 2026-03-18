@@ -8,9 +8,9 @@ The package is part of the monorepo and is linked via pnpm workspace:
 
 ```json
 {
-  "dependencies": {
-    "@profile/api-client": "workspace:*"
-  }
+ "dependencies": {
+  "@profile/api-client": "workspace:*"
+ }
 }
 ```
 
@@ -22,8 +22,8 @@ The package is part of the monorepo and is linked via pnpm workspace:
 import { createProfileApiClient } from "@profile/api-client";
 
 const apiClient = createProfileApiClient({
-  baseURL: "https://api.example.com",
-  getToken: async () => localStorage.getItem("accessToken"),
+ baseURL: "https://api.example.com",
+ getToken: async () => localStorage.getItem("accessToken"),
 });
 
 // Use repositories
@@ -37,17 +37,13 @@ const themes = await apiClient.themes.getSystem();
 ```typescript
 // shared/lib/api-client.ts
 import { createProfileApiClient } from "@profile/api-client";
-import { getSession } from "next-auth/react";
 
 export const apiClient = createProfileApiClient({
-  baseURL: process.env.NEXT_PUBLIC_API_URL!,
-  getToken: async () => {
-    const session = await getSession();
-    return session?.accessToken ?? null;
-  },
-  onUnauthorized: () => {
-    window.location.href = "/login";
-  },
+ baseURL: process.env.NEXT_PUBLIC_API_URL!,
+ // Auth is handled via httpOnly session cookies
+ onUnauthorized: () => {
+  window.location.href = "/login";
+ },
 });
 ```
 
@@ -58,12 +54,12 @@ import { createProfileApiClient } from "@profile/api-client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const apiClient = createProfileApiClient({
-  baseURL: "https://api.example.com",
-  getToken: () => AsyncStorage.getItem("accessToken"),
-  onUnauthorized: () => {
-    // Navigate to login screen
-    navigationRef.navigate("Login");
-  },
+ baseURL: "https://api.example.com",
+ getToken: () => AsyncStorage.getItem("accessToken"),
+ onUnauthorized: () => {
+  // Navigate to login screen
+  navigationRef.navigate("Login");
+ },
 });
 ```
 
@@ -73,59 +69,59 @@ export const apiClient = createProfileApiClient({
 
 ```typescript
 interface HttpClientConfig {
-  baseURL: string;
-  timeout?: number; // default: 30000
-  getToken?: () => string | null | Promise<string | null>;
-  refreshToken?: () => Promise<string | null>;
-  onUnauthorized?: () => void;
-  headers?: Record<string, string>;
+ baseURL: string;
+ timeout?: number; // default: 30000
+ getToken?: () => string | null | Promise<string | null>;
+ refreshToken?: () => Promise<string | null>;
+ onUnauthorized?: () => void;
+ headers?: Record<string, string>;
 }
 ```
 
 ### Available Repositories
 
-| Repository | Description |
-|------------|-------------|
-| `users` | User profile management |
-| `resumes` | Resume CRUD operations |
-| `onboarding` | Onboarding flow |
-| `themes` | Theme management |
-| `techSkills` | Tech skills catalog |
-| `admin` | Admin dashboard |
-| `auth` | Authentication |
+| Repository      | Description                  |
+| --------------- | ---------------------------- |
+| `users`         | User profile management      |
+| `resumes`       | Resume CRUD operations       |
+| `onboarding`    | Onboarding flow              |
+| `themes`        | Theme management             |
+| `techSkills`    | Tech skills catalog          |
+| `admin`         | Admin dashboard              |
+| `auth`          | Authentication               |
 | `sectionConfig` | Resume section configuration |
 
 ### Users Repository
 
 ```typescript
-apiClient.users.getMe()                    // Get current user
-apiClient.users.updateMe(data)             // Update profile
-apiClient.users.getMyStats()               // Get user stats
-apiClient.users.getByUsername(username)    // Get public profile
-apiClient.users.checkUsername(username)    // Check availability
-apiClient.users.uploadImage(file)          // Upload avatar
+apiClient.users.getMe(); // Get current user
+apiClient.users.updateMe(data); // Update profile
+apiClient.users.getMyStats(); // Get user stats
+apiClient.users.getByUsername(username); // Get public profile
+apiClient.users.checkUsername(username); // Check availability
+apiClient.users.uploadImage(file); // Upload avatar
 ```
 
 ### Resumes Repository
 
 ```typescript
-apiClient.resumes.getAll()                 // List all resumes
-apiClient.resumes.getById(id)              // Get resume by ID
-apiClient.resumes.getBySlug(slug)          // Get public resume
-apiClient.resumes.create(data)             // Create resume
-apiClient.resumes.update(id, data)         // Update resume
-apiClient.resumes.delete(id)               // Delete resume
-apiClient.resumes.duplicate(id)            // Duplicate resume
+apiClient.resumes.getAll(); // List all resumes
+apiClient.resumes.getById(id); // Get resume by ID
+apiClient.resumes.getBySlug(slug); // Get public resume
+apiClient.resumes.create(data); // Create resume
+apiClient.resumes.update(id, data); // Update resume
+apiClient.resumes.delete(id); // Delete resume
+apiClient.resumes.duplicate(id); // Duplicate resume
 
 // Experience
-apiClient.resumes.addExperience(resumeId, data)
-apiClient.resumes.updateExperience(resumeId, expId, data)
-apiClient.resumes.deleteExperience(resumeId, expId)
+apiClient.resumes.addExperience(resumeId, data);
+apiClient.resumes.updateExperience(resumeId, expId, data);
+apiClient.resumes.deleteExperience(resumeId, expId);
 
 // Education
-apiClient.resumes.addEducation(resumeId, data)
-apiClient.resumes.updateEducation(resumeId, eduId, data)
-apiClient.resumes.deleteEducation(resumeId, eduId)
+apiClient.resumes.addEducation(resumeId, data);
+apiClient.resumes.updateEducation(resumeId, eduId, data);
+apiClient.resumes.deleteEducation(resumeId, eduId);
 
 // Skills, Languages, Certifications, Projects...
 ```
@@ -148,14 +144,14 @@ apiClient.themes.apply(data)               // Apply to resume
 ### Tech Skills Repository
 
 ```typescript
-apiClient.techSkills.getAreas()            // Get tech areas
-apiClient.techSkills.getNiches()           // Get niches
-apiClient.techSkills.getNichesByArea(type) // Get niches by area
-apiClient.techSkills.getLanguages()        // Get programming langs
-apiClient.techSkills.searchLanguages(q)    // Search languages
-apiClient.techSkills.getSkills()           // Get all skills
-apiClient.techSkills.searchSkills(q)       // Search skills
-apiClient.techSkills.searchAll(q)          // Combined search
+apiClient.techSkills.getAreas(); // Get tech areas
+apiClient.techSkills.getNiches(); // Get niches
+apiClient.techSkills.getNichesByArea(type); // Get niches by area
+apiClient.techSkills.getLanguages(); // Get programming langs
+apiClient.techSkills.searchLanguages(q); // Search languages
+apiClient.techSkills.getSkills(); // Get all skills
+apiClient.techSkills.searchSkills(q); // Search skills
+apiClient.techSkills.searchAll(q); // Combined search
 ```
 
 ## 🛠️ Development

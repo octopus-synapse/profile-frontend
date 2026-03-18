@@ -6,19 +6,40 @@
  * OpenAPI spec version: 1.0.0
  */
 import {
-  useMutation
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useSuspenseQuery
 } from '@tanstack/react-query';
 import type {
+  DataTag,
+  DefinedInitialDataOptions,
+  DefinedUseInfiniteQueryResult,
+  DefinedUseQueryResult,
+  InfiniteData,
   MutationFunction,
   QueryClient,
+  QueryFunction,
+  QueryKey,
+  UndefinedInitialDataOptions,
+  UseInfiniteQueryOptions,
+  UseInfiniteQueryResult,
   UseMutationOptions,
-  UseMutationResult
+  UseMutationResult,
+  UseQueryOptions,
+  UseQueryResult,
+  UseSuspenseQueryOptions,
+  UseSuspenseQueryResult
 } from '@tanstack/react-query';
 
 import type {
   LoginDto,
+  LoginResponseDto,
   LogoutDto,
-  RefreshTokenDto
+  LogoutResponseDto,
+  RefreshTokenDto,
+  RefreshTokenResponseDto,
+  SessionResponseDto
 } from '../../models';
 
 import { customFetch } from '../../../client/fetcher';
@@ -122,7 +143,7 @@ export const useAuthDisable = <TError = void,
  * @summary Login
  */
 export type authLoginResponse201 = {
-  data: void
+  data: LoginResponseDto
   status: 201
 }
 
@@ -208,11 +229,11 @@ export const useAuthLogin = <TError = void,
       return useMutation(getAuthLoginMutationOptions(options), queryClient);
     }
     /**
- * Logs out the user by invalidating refresh token(s).
+ * Logs out the user by invalidating refresh token(s) and clearing session cookie.
  * @summary Logout
  */
 export type authLogoutResponse201 = {
-  data: void
+  data: LogoutResponseDto
   status: 201
 }
 
@@ -302,7 +323,7 @@ export const useAuthLogout = <TError = void,
  * @summary Refresh access token
  */
 export type authRefreshResponse201 = {
-  data: void
+  data: RefreshTokenResponseDto
   status: 201
 }
 
@@ -387,4 +408,273 @@ export const useAuthRefresh = <TError = void,
       > => {
       return useMutation(getAuthRefreshMutationOptions(options), queryClient);
     }
+    /**
+ * Validates session cookie and returns current user data if authenticated.
+ * @summary Get Session
+ */
+export type authGetSessionResponse200 = {
+  data: SessionResponseDto
+  status: 200
+}
+
+export type authGetSessionResponse401 = {
+  data: void
+  status: 401
+}
     
+export type authGetSessionResponseSuccess = (authGetSessionResponse200) & {
+  headers: Headers;
+};
+export type authGetSessionResponseError = (authGetSessionResponse401) & {
+  headers: Headers;
+};
+
+export type authGetSessionResponse = (authGetSessionResponseSuccess | authGetSessionResponseError)
+
+export const getAuthGetSessionUrl = () => {
+
+
+  
+
+  return `/api/auth/session`
+}
+
+export const authGetSession = async ( options?: RequestInit): Promise<authGetSessionResponse> => {
+  
+  return customFetch<authGetSessionResponse>(getAuthGetSessionUrl(),
+  {      
+    ...options,
+    method: 'GET'
+    
+    
+  }
+);}
+
+
+
+
+
+export const getAuthGetSessionInfiniteQueryKey = () => {
+    return [
+    'infinite', `/api/auth/session`
+    ] as const;
+    }
+
+export const getAuthGetSessionQueryKey = () => {
+    return [
+    `/api/auth/session`
+    ] as const;
+    }
+
+    
+export const getAuthGetSessionInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof authGetSession>>>, TError = void>( options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof authGetSession>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getAuthGetSessionInfiniteQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof authGetSession>>> = ({ signal }) => authGetSession({ signal, ...requestOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseInfiniteQueryOptions<Awaited<ReturnType<typeof authGetSession>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type AuthGetSessionInfiniteQueryResult = NonNullable<Awaited<ReturnType<typeof authGetSession>>>
+export type AuthGetSessionInfiniteQueryError = void
+
+
+export function useAuthGetSessionInfinite<TData = InfiniteData<Awaited<ReturnType<typeof authGetSession>>>, TError = void>(
+  options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof authGetSession>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof authGetSession>>,
+          TError,
+          Awaited<ReturnType<typeof authGetSession>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAuthGetSessionInfinite<TData = InfiniteData<Awaited<ReturnType<typeof authGetSession>>>, TError = void>(
+  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof authGetSession>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof authGetSession>>,
+          TError,
+          Awaited<ReturnType<typeof authGetSession>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAuthGetSessionInfinite<TData = InfiniteData<Awaited<ReturnType<typeof authGetSession>>>, TError = void>(
+  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof authGetSession>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get Session
+ */
+
+export function useAuthGetSessionInfinite<TData = InfiniteData<Awaited<ReturnType<typeof authGetSession>>>, TError = void>(
+  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof authGetSession>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient 
+ ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getAuthGetSessionInfiniteQueryOptions(options)
+
+  const query = useInfiniteQuery(queryOptions, queryClient) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Get Session
+ */
+export const prefetchAuthGetSessionInfiniteQuery = async <TData = Awaited<ReturnType<typeof authGetSession>>, TError = void>(
+ queryClient: QueryClient,  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof authGetSession>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+
+  ): Promise<QueryClient> => {
+
+  const queryOptions = getAuthGetSessionInfiniteQueryOptions(options)
+
+  await queryClient.prefetchInfiniteQuery(queryOptions);
+
+  return queryClient;
+}
+
+
+
+export const getAuthGetSessionQueryOptions = <TData = Awaited<ReturnType<typeof authGetSession>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof authGetSession>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getAuthGetSessionQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof authGetSession>>> = ({ signal }) => authGetSession({ signal, ...requestOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof authGetSession>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type AuthGetSessionQueryResult = NonNullable<Awaited<ReturnType<typeof authGetSession>>>
+export type AuthGetSessionQueryError = void
+
+
+export function useAuthGetSession<TData = Awaited<ReturnType<typeof authGetSession>>, TError = void>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof authGetSession>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof authGetSession>>,
+          TError,
+          Awaited<ReturnType<typeof authGetSession>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAuthGetSession<TData = Awaited<ReturnType<typeof authGetSession>>, TError = void>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof authGetSession>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof authGetSession>>,
+          TError,
+          Awaited<ReturnType<typeof authGetSession>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAuthGetSession<TData = Awaited<ReturnType<typeof authGetSession>>, TError = void>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof authGetSession>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get Session
+ */
+
+export function useAuthGetSession<TData = Awaited<ReturnType<typeof authGetSession>>, TError = void>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof authGetSession>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getAuthGetSessionQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Get Session
+ */
+export const prefetchAuthGetSessionQuery = async <TData = Awaited<ReturnType<typeof authGetSession>>, TError = void>(
+ queryClient: QueryClient,  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof authGetSession>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+
+  ): Promise<QueryClient> => {
+
+  const queryOptions = getAuthGetSessionQueryOptions(options)
+
+  await queryClient.prefetchQuery(queryOptions);
+
+  return queryClient;
+}
+
+
+
+export const getAuthGetSessionSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof authGetSession>>, TError = void>( options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof authGetSession>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getAuthGetSessionQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof authGetSession>>> = ({ signal }) => authGetSession({ signal, ...requestOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseSuspenseQueryOptions<Awaited<ReturnType<typeof authGetSession>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type AuthGetSessionSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof authGetSession>>>
+export type AuthGetSessionSuspenseQueryError = void
+
+
+export function useAuthGetSessionSuspense<TData = Awaited<ReturnType<typeof authGetSession>>, TError = void>(
+  options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof authGetSession>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAuthGetSessionSuspense<TData = Awaited<ReturnType<typeof authGetSession>>, TError = void>(
+  options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof authGetSession>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAuthGetSessionSuspense<TData = Awaited<ReturnType<typeof authGetSession>>, TError = void>(
+  options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof authGetSession>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient
+  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get Session
+ */
+
+export function useAuthGetSessionSuspense<TData = Awaited<ReturnType<typeof authGetSession>>, TError = void>(
+  options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof authGetSession>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ , queryClient?: QueryClient 
+ ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getAuthGetSessionSuspenseQueryOptions(options)
+
+  const query = useSuspenseQuery(queryOptions, queryClient) as  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+

@@ -29,9 +29,12 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  SearchResultsResponseDto,
   SearchSearchParams,
   SearchSimilarParams,
-  SearchSuggestionsParams
+  SearchSuggestionsParams,
+  SearchSuggestionsResponseDto,
+  SimilarResumesResponseDto
 } from '../../models';
 
 import { customFetch } from '../../../client/fetcher';
@@ -45,7 +48,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary Search public resumes
  */
 export type searchSearchResponse200 = {
-  data: void
+  data: SearchResultsResponseDto
   status: 200
 }
     
@@ -314,7 +317,7 @@ export function useSearchSearchSuspense<TData = Awaited<ReturnType<typeof search
  * @summary Find similar resumes by resume id
  */
 export type searchSimilarResponse200 = {
-  data: void
+  data: SimilarResumesResponseDto
   status: 200
 }
     
@@ -604,7 +607,7 @@ export function useSearchSimilarSuspense<TData = Awaited<ReturnType<typeof searc
  * @summary Get search autocomplete suggestions
  */
 export type searchSuggestionsResponse200 = {
-  data: void
+  data: SearchSuggestionsResponseDto
   status: 200
 }
     

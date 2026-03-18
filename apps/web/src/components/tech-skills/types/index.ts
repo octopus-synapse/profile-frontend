@@ -5,27 +5,27 @@
 
 // Tech Area Types
 export type TechAreaType =
-  | "DEVELOPMENT"
-  | "DEVOPS"
-  | "DATA"
-  | "SECURITY"
-  | "DESIGN"
-  | "PRODUCT"
-  | "QA"
-  | "INFRASTRUCTURE"
-  | "OTHER";
+  | 'DEVELOPMENT'
+  | 'DEVOPS'
+  | 'DATA'
+  | 'SECURITY'
+  | 'DESIGN'
+  | 'PRODUCT'
+  | 'QA'
+  | 'INFRASTRUCTURE'
+  | 'OTHER';
 
 export type SkillType =
-  | "LANGUAGE"
-  | "FRAMEWORK"
-  | "LIBRARY"
-  | "DATABASE"
-  | "TOOL"
-  | "PLATFORM"
-  | "METHODOLOGY"
-  | "SOFT_SKILL"
-  | "CERTIFICATION"
-  | "OTHER";
+  | 'LANGUAGE'
+  | 'FRAMEWORK'
+  | 'LIBRARY'
+  | 'DATABASE'
+  | 'TOOL'
+  | 'PLATFORM'
+  | 'METHODOLOGY'
+  | 'SOFT_SKILL'
+  | 'CERTIFICATION'
+  | 'OTHER';
 
 // Tech Area DTO
 export interface TechAreaDto {
@@ -99,7 +99,7 @@ export interface TechSkillDisplayItem {
   id: string;
   slug: string;
   name: string; // Localized name based on user's language
-  type: "language" | "skill";
+  type: 'language' | 'skill';
   skillType?: SkillType;
   color: string | null;
   category?: string; // Niche or paradigm info

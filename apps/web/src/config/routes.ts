@@ -3,7 +3,7 @@
  * Single source of truth for all route definitions
  */
 
-import type { UserRole } from "@/shared/types/auth";
+import type { SessionUserResponseDtoRole } from '@profile/api-client';
 
 // ============================================================================
 // Route Path Constants
@@ -11,40 +11,40 @@ import type { UserRole } from "@/shared/types/auth";
 
 export const ROUTES = {
   // Public routes
-  HOME: "/",
-  CONTACT: "/contact",
-  UNAUTHORIZED: "/unauthorized",
+  HOME: '/',
+  CONTACT: '/contact',
+  UNAUTHORIZED: '/unauthorized',
 
   // Auth routes
   AUTH: {
-    SIGN_IN: "/auth/sign-in",
-    SIGN_UP: "/auth/sign-up",
-    FORGOT_PASSWORD: "/auth/forgot-password",
-    RESET_PASSWORD: "/auth/reset-password",
-    VERIFY_EMAIL: "/auth/verify-email",
+    SIGN_IN: '/auth/sign-in',
+    SIGN_UP: '/auth/sign-up',
+    FORGOT_PASSWORD: '/auth/forgot-password',
+    RESET_PASSWORD: '/auth/reset-password',
+    VERIFY_EMAIL: '/auth/verify-email',
   },
 
   // Protected routes (require authentication)
   PROTECTED: {
-    ROOT: "/protected",
-    PROFILE: "/protected/profile",
-    RESUME: "/protected/resume",
-    BANNER: "/protected/banner",
-    SETTINGS: "/protected/settings",
-    TEMPLATES: "/protected/templates",
+    ROOT: '/protected',
+    PROFILE: '/protected/profile',
+    RESUME: '/protected/resume',
+    BANNER: '/protected/banner',
+    SETTINGS: '/protected/settings',
+    TEMPLATES: '/protected/templates',
   },
 
-  // Admin routes (require ADMIN role)
+  // Admin routes (require ADMIN role) - under /protected
   ADMIN: {
-    ROOT: "/admin",
-    DASHBOARD: "/admin",
-    USERS: "/admin/users",
-    RESUMES: "/admin/resumes",
-    SETTINGS: "/admin/settings",
+    ROOT: '/protected/admin',
+    DASHBOARD: '/protected/admin',
+    USERS: '/protected/admin/users',
+    RESUMES: '/protected/admin/resumes',
+    SETTINGS: '/protected/admin/settings',
   },
 
-  // Onboarding
-  ONBOARDING: "/onboarding",
+  // Onboarding - under /protected
+  ONBOARDING: '/protected/onboarding',
 
   // Public profile (dynamic)
   PUBLIC_PROFILE: (username: string) => `/${username}`,
@@ -54,14 +54,14 @@ export const ROUTES = {
 // Route Metadata Types
 // ============================================================================
 
-export type Locale = "en" | "pt-BR";
+export type Locale = 'en' | 'pt-BR';
 
 export interface RouteConfig {
   key: string;
   path: string;
   labelKey: string; // i18n key for the label
   icon?: string;
-  requiredRoles?: UserRole[];
+  requiredRoles?: SessionUserResponseDtoRole[];
   requiresAuth: boolean;
   showInNav: boolean;
   children?: RouteConfig[];
@@ -73,34 +73,34 @@ export interface RouteConfig {
 
 export const NAV_ROUTES: RouteConfig[] = [
   {
-    key: "home",
+    key: 'home',
     path: ROUTES.HOME,
-    labelKey: "nav.home",
-    icon: "Home",
+    labelKey: 'nav.home',
+    icon: 'Home',
     requiresAuth: false,
     showInNav: true,
   },
   {
-    key: "profile",
+    key: 'profile',
     path: ROUTES.PROTECTED.PROFILE,
-    labelKey: "nav.profile",
-    icon: "User",
+    labelKey: 'nav.profile',
+    icon: 'User',
     requiresAuth: true,
     showInNav: true,
   },
   {
-    key: "resume",
+    key: 'resume',
     path: ROUTES.PROTECTED.RESUME,
-    labelKey: "nav.resume",
-    icon: "FileText",
+    labelKey: 'nav.resume',
+    icon: 'FileText',
     requiresAuth: true,
     showInNav: true,
   },
   {
-    key: "banner",
+    key: 'banner',
     path: ROUTES.PROTECTED.BANNER,
-    labelKey: "nav.banner",
-    icon: "Image",
+    labelKey: 'nav.banner',
+    icon: 'Image',
     requiresAuth: true,
     showInNav: true,
   },
@@ -108,18 +108,18 @@ export const NAV_ROUTES: RouteConfig[] = [
 
 export const AUTH_NAV_ROUTES: RouteConfig[] = [
   {
-    key: "signIn",
+    key: 'signIn',
     path: ROUTES.AUTH.SIGN_IN,
-    labelKey: "nav.signIn",
-    icon: "LogIn",
+    labelKey: 'nav.signIn',
+    icon: 'LogIn',
     requiresAuth: false,
     showInNav: true,
   },
   {
-    key: "signUp",
+    key: 'signUp',
     path: ROUTES.AUTH.SIGN_UP,
-    labelKey: "nav.signUp",
-    icon: "UserPlus",
+    labelKey: 'nav.signUp',
+    icon: 'UserPlus',
     requiresAuth: false,
     showInNav: true,
   },
@@ -127,20 +127,20 @@ export const AUTH_NAV_ROUTES: RouteConfig[] = [
 
 export const ADMIN_NAV_ROUTES: RouteConfig[] = [
   {
-    key: "adminDashboard",
+    key: 'adminDashboard',
     path: ROUTES.ADMIN.DASHBOARD,
-    labelKey: "nav.admin.dashboard",
-    icon: "LayoutDashboard",
-    requiredRoles: ["ADMIN"],
+    labelKey: 'nav.admin.dashboard',
+    icon: 'LayoutDashboard',
+    requiredRoles: ['ADMIN'],
     requiresAuth: true,
     showInNav: true,
   },
   {
-    key: "adminUsers",
+    key: 'adminUsers',
     path: ROUTES.ADMIN.USERS,
-    labelKey: "nav.admin.users",
-    icon: "Users",
-    requiredRoles: ["ADMIN"],
+    labelKey: 'nav.admin.users',
+    icon: 'Users',
+    requiredRoles: ['ADMIN'],
     requiresAuth: true,
     showInNav: true,
   },
@@ -151,17 +151,19 @@ export const ADMIN_NAV_ROUTES: RouteConfig[] = [
 // ============================================================================
 
 export function isProtectedRoute(path: string): boolean {
-  return (
-    path.startsWith("/protected") || path.startsWith("/admin") || path.startsWith("/onboarding")
-  );
+  return path.startsWith('/protected');
 }
 
 export function isAdminRoute(path: string): boolean {
-  return path.startsWith("/admin");
+  return path.startsWith('/protected/admin');
+}
+
+export function isOnboardingRoute(path: string): boolean {
+  return path.startsWith('/protected/onboarding');
 }
 
 export function isAuthRoute(path: string): boolean {
-  return path.startsWith("/auth");
+  return path.startsWith('/auth');
 }
 
 export function getRouteByKey(key: string): RouteConfig | undefined {

@@ -33,9 +33,12 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  BatchTranslationResultDto,
+  HealthCheckResponseDto,
   TranslateBatch,
   TranslateSimpleRequestDto,
-  TranslateText
+  TranslateText,
+  TranslationResultDto
 } from '../../models';
 
 import { customFetch } from '../../../client/fetcher';
@@ -49,7 +52,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary Translate multiple texts in batch
  */
 export type translationTranslateBatchResponse201 = {
-  data: void
+  data: BatchTranslationResultDto
   status: 201
 }
 
@@ -138,7 +141,7 @@ export const useTranslationTranslateBatch = <TError = void,
  * @summary Translate English to Portuguese
  */
 export type translationTranslateEnToPtResponse201 = {
-  data: void
+  data: TranslationResultDto
   status: 201
 }
 
@@ -227,7 +230,7 @@ export const useTranslationTranslateEnToPt = <TError = void,
  * @summary Check translation service health
  */
 export type translationHealthCheckResponse200 = {
-  data: void
+  data: HealthCheckResponseDto
   status: 200
 }
 
@@ -496,7 +499,7 @@ export function useTranslationHealthCheckSuspense<TData = Awaited<ReturnType<typ
  * @summary Translate Portuguese to English
  */
 export type translationTranslatePtToEnResponse201 = {
-  data: void
+  data: TranslationResultDto
   status: 201
 }
 
@@ -585,7 +588,7 @@ export const useTranslationTranslatePtToEn = <TError = void,
  * @summary Translate a single text
  */
 export type translationTranslateTextResponse201 = {
-  data: void
+  data: TranslationResultDto
   status: 201
 }
 

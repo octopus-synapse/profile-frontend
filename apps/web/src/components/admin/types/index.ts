@@ -17,7 +17,7 @@ export interface AdminUser {
   email: string;
   name: string | null;
   username: string | null;
-  role: "USER" | "ADMIN";
+  role: 'USER' | 'ADMIN';
   createdAt: string;
   lastLoginAt: string | null;
   hasCompletedOnboarding: boolean;
@@ -27,7 +27,7 @@ export interface AdminUser {
 
 export interface RecentActivity {
   id: string;
-  type: "USER_REGISTERED" | "USER_LOGIN" | "RESUME_CREATED" | "PROFILE_UPDATED";
+  type: 'USER_REGISTERED' | 'USER_LOGIN' | 'RESUME_CREATED' | 'PROFILE_UPDATED';
   userId: string;
   userName: string;
   timestamp: string;
@@ -35,8 +35,8 @@ export interface RecentActivity {
 }
 
 export interface SystemHealth {
-  database: "healthy" | "degraded" | "down";
-  api: "healthy" | "degraded" | "down";
-  storage: "healthy" | "degraded" | "down";
+  database: 'healthy' | 'degraded' | 'down';
+  api: 'healthy' | 'degraded' | 'down';
+  storage: 'healthy' | 'degraded' | 'down';
   lastChecked: string;
 }

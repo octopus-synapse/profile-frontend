@@ -33,9 +33,16 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  ChatMessageDataDto,
+  ConversationDataDto,
+  ConversationNullableDataDto,
+  ConversationsListDataDto,
+  MarkAsReadDataDto,
   MarkConversationAsReadRequestDto,
+  MessagesListDataDto,
   SendMessageRequestDto,
-  SendMessageToConversationRequestDto
+  SendMessageToConversationRequestDto,
+  UnreadCountDataDto
 } from '../../models';
 
 import { customFetch } from '../../../client/fetcher';
@@ -49,7 +56,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary Get or create conversation with a user
  */
 export type chatGetConversationWithResponse200 = {
-  data: void
+  data: ConversationNullableDataDto
   status: 200
 }
 
@@ -318,7 +325,7 @@ export function useChatGetConversationWithSuspense<TData = Awaited<ReturnType<ty
  * @summary Get all conversations for the current user
  */
 export type chatGetConversationsResponse200 = {
-  data: void
+  data: ConversationsListDataDto
   status: 200
 }
 
@@ -587,7 +594,7 @@ export function useChatGetConversationsSuspense<TData = Awaited<ReturnType<typeo
  * @summary Get a single conversation
  */
 export type chatGetConversationResponse200 = {
-  data: void
+  data: ConversationDataDto
   status: 200
 }
 
@@ -856,7 +863,7 @@ export function useChatGetConversationSuspense<TData = Awaited<ReturnType<typeof
  * @summary Get messages for a conversation
  */
 export type chatGetMessagesResponse200 = {
-  data: void
+  data: MessagesListDataDto
   status: 200
 }
 
@@ -1125,7 +1132,7 @@ export function useChatGetMessagesSuspense<TData = Awaited<ReturnType<typeof cha
  * @summary Send a message to an existing conversation
  */
 export type chatSendMessageToConversationResponse201 = {
-  data: void
+  data: ChatMessageDataDto
   status: 201
 }
 
@@ -1215,7 +1222,7 @@ export const useChatSendMessageToConversation = <TError = void,
  * @summary Mark all messages in a conversation as read
  */
 export type chatMarkConversationAsReadResponse201 = {
-  data: void
+  data: MarkAsReadDataDto
   status: 201
 }
 
@@ -1305,7 +1312,7 @@ export const useChatMarkConversationAsRead = <TError = void,
  * @summary Send a message to a user
  */
 export type chatSendMessageResponse201 = {
-  data: void
+  data: ChatMessageDataDto
   status: 201
 }
 
@@ -1394,7 +1401,7 @@ export const useChatSendMessage = <TError = void,
  * @summary Get unread message count
  */
 export type chatGetUnreadCountResponse200 = {
-  data: void
+  data: UnreadCountDataDto
   status: 200
 }
 

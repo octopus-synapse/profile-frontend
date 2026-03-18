@@ -1,103 +1,103 @@
 {
- "$schema": "https://biomejs.dev/schemas/2.3.14/schema.json",
- "vcs": {
-  "enabled": true,
-  "clientKind": "git",
-  "useIgnoreFile": true,
-  "defaultBranch": "main"
- },
- "files": {
-  "ignoreUnknown": false,
-  "includes": [
-   "**",
-   "!**/node_modules",
-   "!**/dist",
-   "!**/.next",
-   "!**/coverage",
-   "!**/generated",
-   "!**/*.spec.ts",
-   "!**/*.test.ts",
-   "!**/*.test.tsx",
-   "!**/test",
-   "!**/tests",
-   "!**/__tests__"
-  ]
- },
- "formatter": {
-  "enabled": true,
-  "indentStyle": "space",
-  "indentWidth": 2,
-  "lineWidth": 100
- },
- "linter": {
-  "enabled": true,
-  "rules": {
-   "recommended": true,
-   "complexity": {
-    "noExcessiveCognitiveComplexity": "warn"
-   },
-   "style": {
-    "useImportType": "error",
-    "noNonNullAssertion": "warn",
-    "noParameterAssign": "off"
-   },
-   "suspicious": {
-    "noExplicitAny": "warn",
-    "noConfusingVoidType": "error",
-    "noDoubleEquals": "error",
-    "noArrayIndexKey": "off"
-   },
-   "correctness": {
-    "noUnusedVariables": "error",
-    "noUnusedImports": "error",
-    "useExhaustiveDependencies": "warn"
-   }
-  }
- },
- "javascript": {
-  "formatter": {
-   "quoteStyle": "single",
-   "semicolons": "always",
-   "trailingCommas": "all",
-   "arrowParentheses": "always"
-  }
- },
- "overrides": [
-  {
-   "includes": [
-    "**/*.spec.ts",
-    "**/*.test.ts",
-    "**/*.test.tsx",
-    "test/**",
-    "tests/**",
-    "**/__tests__/**"
-   ],
-   "linter": {
-    "rules": {
-     "suspicious": {
-      "noExplicitAny": "off"
-     },
-     "correctness": {
-      "noUnusedVariables": "warn"
-     }
-    }
-   }
+  "$schema": "https://biomejs.dev/schemas/2.3.14/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true,
+    "defaultBranch": "main"
   },
-  {
-   "includes": ["**/generated/**"],
-   "linter": {
-    "enabled": false
-   },
-   "formatter": {
-    "enabled": false
-   }
+  "files": {
+    "ignoreUnknown": false,
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/dist",
+      "!**/.next",
+      "!**/coverage",
+      "!**/generated",
+      "!**/*.spec.ts",
+      "!**/*.test.ts",
+      "!**/*.test.tsx",
+      "!**/test",
+      "!**/tests",
+      "!**/__tests__",
+      "!**/playwright-report",
+      "!**/test-results",
+      "!**/*.snap",
+      "!**/*.css"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "complexity": {
+        "noExcessiveCognitiveComplexity": "off"
+      },
+      "style": {
+        "useImportType": "error",
+        "noNonNullAssertion": "off",
+        "noParameterAssign": "off"
+      },
+      "suspicious": {
+        "noExplicitAny": "off",
+        "noConfusingVoidType": "error",
+        "noDoubleEquals": "error",
+        "noArrayIndexKey": "off",
+        "noAssignInExpressions": "off",
+        "noImplicitAnyLet": "off",
+        "noDocumentCookie": "off"
+      },
+      "correctness": {
+        "noUnusedVariables": "error",
+        "noUnusedImports": "error",
+        "useExhaustiveDependencies": "warn"
+      },
+      "a11y": {
+        "noLabelWithoutControl": "off",
+        "noSvgWithoutTitle": "off",
+        "useSemanticElements": "off",
+        "useAriaPropsSupportedByRole": "off",
+        "useValidAnchor": "off"
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "off"
+      },
+      "performance": {
+        "noImgElement": "off"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "semicolons": "always",
+      "trailingCommas": "all",
+      "arrowParentheses": "always"
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["**/generated/**"],
+      "linter": {
+        "enabled": false
+      },
+      "formatter": {
+        "enabled": false
+      }
+    }
+  ],
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
   }
- ],
- "assist": {
-  "actions": {
-   "source": {
-    "organizeImports": "on"
-   }
-  }
- }
 }

@@ -1,17 +1,18 @@
-"use client";
+'use client';
 
 /**
  * LocalizedLink Component
  * Automatically adds the current locale prefix to internal links
  */
 
-import Link, { type LinkProps } from "next/link";
-import { useParams } from "next/navigation";
-import type { AnchorHTMLAttributes } from "react";
-import { i18nConfig, type Locale } from "@/config/i18n.config";
+import Link, { type LinkProps } from 'next/link';
+import { useParams } from 'next/navigation';
+import type { AnchorHTMLAttributes } from 'react';
+import { i18nConfig, type Locale } from '@/config/i18n.config';
 
 interface LocalizedLinkProps
-  extends Omit<LinkProps, "href">, Omit<AnchorHTMLAttributes<HTMLAnchorElement>, keyof LinkProps> {
+  extends Omit<LinkProps, 'href'>,
+    Omit<AnchorHTMLAttributes<HTMLAnchorElement>, keyof LinkProps> {
   href: string;
   children: React.ReactNode;
   locale?: Locale;
@@ -21,14 +22,14 @@ interface LocalizedLinkProps
  * Check if a URL is external
  */
 function isExternalUrl(url: string): boolean {
-  return url.startsWith("http://") || url.startsWith("https://") || url.startsWith("//");
+  return url.startsWith('http://') || url.startsWith('https://') || url.startsWith('//');
 }
 
 /**
  * Check if URL is a hash-only link (anchor)
  */
 function isHashLink(url: string): boolean {
-  return url.startsWith("#");
+  return url.startsWith('#');
 }
 
 /**
@@ -36,7 +37,7 @@ function isHashLink(url: string): boolean {
  */
 function hasLocalePrefix(pathname: string): boolean {
   return i18nConfig.locales.some(
-    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
+    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`,
   );
 }
 
@@ -60,7 +61,7 @@ export function LocalizedLink({
   }
 
   // Add locale prefix to internal URLs
-  const localizedHref = href.startsWith("/")
+  const localizedHref = href.startsWith('/')
     ? `/${targetLocale}${href}`
     : `/${targetLocale}/${href}`;
 
@@ -85,6 +86,6 @@ export function useLocalizedPath() {
       return path;
     }
 
-    return path.startsWith("/") ? `/${targetLocale}${path}` : `/${targetLocale}/${path}`;
+    return path.startsWith('/') ? `/${targetLocale}${path}` : `/${targetLocale}/${path}`;
   };
 }

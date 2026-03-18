@@ -3,17 +3,17 @@
  * For theme marketplace and management
  */
 
-export type ThemeStatus = "draft" | "private" | "pending_approval" | "published" | "rejected";
+export type ThemeStatus = 'draft' | 'private' | 'pending_approval' | 'published' | 'rejected';
 
 export type ThemeCategory =
-  | "professional"
-  | "creative"
-  | "technical"
-  | "academic"
-  | "minimal"
-  | "modern"
-  | "classic"
-  | "executive";
+  | 'professional'
+  | 'creative'
+  | 'technical'
+  | 'academic'
+  | 'minimal'
+  | 'modern'
+  | 'classic'
+  | 'executive';
 
 export interface ThemeAuthor {
   id: string;

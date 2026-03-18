@@ -5,19 +5,26 @@
  * Supports: English (en), Portuguese Brazil (pt-BR)
  *
  * Usage:
- *   import { t, setLocale, getLocale, type Locale } from '@profile/i18n';
+ *   // React hooks and provider
+ *   import { I18nProvider, useI18n, useT, type Locale } from '@profile/i18n';
  *
- *   setLocale('pt-BR');
- *   console.log(t('common.save')); // "Salvar"
+ *   // Core utilities
+ *   import { t, setLocale, getLocale } from '@profile/i18n';
  */
 
-export { en } from "./locales/en";
-export { ptBR } from "./locales/pt-BR";
+export { getLocale, setLocale, type TranslationKey, t } from './core';
+// Core utilities (non-React)
+export { en } from './locales/en';
+export { ptBR } from './locales/pt-BR';
+export type { DictionaryKey, Locale, LocaleInfo } from './react';
+
+// React hooks and provider (Next.js compatible)
 export {
- t,
- setLocale,
- getLocale,
- type Locale,
- type TranslationKey,
-} from "./core";
-export type { Translations } from "./types";
+  getLocaleFromHeaders,
+  getLocaleFromPathname,
+  I18nProvider,
+  i18nConfig,
+  useI18n,
+  useT,
+} from './react';
+export type { Translations } from './types';

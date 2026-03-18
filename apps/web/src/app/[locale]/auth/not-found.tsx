@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { KeyRound, LogIn, UserPlus, Home, ArrowLeft } from "lucide-react";
+import { ArrowLeft, Home, KeyRound, LogIn, UserPlus } from 'lucide-react';
+import Link from 'next/link';
 
 /**
  * Auth 404 Not Found Page
@@ -61,17 +61,17 @@ export default function AuthNotFound() {
           </div>
           <div className="code-block-content text-left">
             <div>
-              <span className="code-keyword">const</span>{" "}
-              <span className="code-variable">error</span> = {"{"}
+              <span className="code-keyword">const</span>{' '}
+              <span className="code-variable">error</span> = {'{'}
             </div>
             <div className="ml-4">
               <span className="code-function">code</span>: <span className="code-number">404</span>,
             </div>
             <div className="ml-4">
-              <span className="code-function">message</span>:{" "}
+              <span className="code-function">message</span>:{' '}
               <span className="code-string">&quot;Page not found&quot;</span>
             </div>
-            <div>{"}"}</div>
+            <div>{'}'}</div>
           </div>
         </div>
 
@@ -86,6 +86,7 @@ export default function AuthNotFound() {
           </Link>
           <span className="text-pf-fg-subtle">|</span>
           <button
+            type="button"
             onClick={() => history.back()}
             className="text-pf-fg-muted hover:text-pf-fg-default inline-flex items-center gap-2 transition-colors"
           >

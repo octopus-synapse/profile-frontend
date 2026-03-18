@@ -3,36 +3,34 @@
  * Pre-populated tech skills catalog from GitHub Linguist + Stack Overflow
  */
 
-// Types
-export type {
-  TechAreaType,
-  SkillType,
-  TechAreaDto,
-  TechNicheDto,
-  TechSkillDto,
-  ProgrammingLanguageDto,
-  TechSkillsSearchResult,
-  TechSkillDisplayItem,
-} from "./types";
-
-// Services
-export { techSkillsRepository } from "./services";
+export type { TechSkillAutocompleteProps } from './components';
+// Components
+export { TechSkillAutocomplete } from './components';
 
 // Hooks
 export {
   techSkillsKeys,
-  useTechAreas,
-  useTechNiches,
-  useTechNichesByArea,
   useProgrammingLanguages,
+  useSearchAllTechSkills,
   useSearchLanguages,
-  useTechSkills,
   useSearchTechSkills,
   useSkillsByNiche,
   useSkillsByType,
-  useSearchAllTechSkills,
-} from "./hooks";
-
-// Components
-export { TechSkillAutocomplete } from "./components";
-export type { TechSkillAutocompleteProps } from "./components";
+  useTechAreas,
+  useTechNiches,
+  useTechNichesByArea,
+  useTechSkills,
+} from './hooks';
+// Services
+export { techSkillsRepository } from './services';
+// Types
+export type {
+  ProgrammingLanguageDto,
+  SkillType,
+  TechAreaDto,
+  TechAreaType,
+  TechNicheDto,
+  TechSkillDisplayItem,
+  TechSkillDto,
+  TechSkillsSearchResult,
+} from './types';

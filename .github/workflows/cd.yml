@@ -29,8 +29,6 @@ jobs:
         NODE_ENV=production
         FRONTEND_PORT=${{ secrets.FRONTEND_PORT }}
         NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
-        NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
-        NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
 
   smoke-test:
     name: Smoke Test - Backend Connectivity
@@ -42,7 +40,7 @@ jobs:
           BACKEND_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
         run: |
           echo "🔍 Verifying backend connectivity..."
-          
+
           # Check backend health endpoint
           for i in {1..5}; do
             if curl -sf "${BACKEND_URL}/api/health" > /dev/null; then
@@ -52,7 +50,7 @@ jobs:
             echo "⏳ Attempt $i/5 - Backend not ready, waiting..."
             sleep 5
           done
-          
+
           echo "❌ Backend unreachable at ${BACKEND_URL}/api/health"
           exit 1
 
@@ -62,19 +60,19 @@ jobs:
           BACKEND_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
         run: |
           echo "🔍 Verifying frontend can reach backend..."
-          
+
           # Test frontend health
           curl -sf "${FRONTEND_URL}/api/health" > /dev/null || {
             echo "❌ Frontend health check failed"
             exit 1
           }
           echo "✅ Frontend is healthy"
-          
+
           # Test backend from same network perspective
           curl -sf "${BACKEND_URL}/api/health" > /dev/null || {
             echo "❌ Backend health check failed"
             exit 1
           }
           echo "✅ Backend is healthy"
-          
+
           echo "🎉 Frontend-Backend integration verified!"

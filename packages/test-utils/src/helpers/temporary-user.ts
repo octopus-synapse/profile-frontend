@@ -8,49 +8,49 @@
  * - Zero test data pollution in development/staging environments
  */
 
-import { getApiBaseUrl } from "@profile/api-client";
+import { getApiBaseUrl } from '@profile/api-client';
 
 /**
  * Temporary user creation request
  */
 export interface CreateTemporaryUserRequest {
- /** Valid email address */
- email: string;
- /** Password (min 8 characters) */
- password: string;
- /** Optional display name */
- name?: string;
- /** Time-to-live in seconds (60s - 7 days, default 24 hours) */
- ttlSeconds?: number;
+  /** Valid email address */
+  email: string;
+  /** Password (min 8 characters) */
+  password: string;
+  /** Optional display name */
+  name?: string;
+  /** Time-to-live in seconds (60s - 7 days, default 24 hours) */
+  ttlSeconds?: number;
 }
 
 /**
  * Response from creating a temporary user
  */
 export interface TemporaryUserResponse {
- user: {
-  id: string;
-  email: string;
-  name: string | null;
-  isTemporary: boolean;
-  expiresAt: string;
- };
- accessToken: string;
- refreshToken: string;
+  user: {
+    id: string;
+    email: string;
+    name: string | null;
+    isTemporary: boolean;
+    expiresAt: string;
+  };
+  accessToken: string;
+  refreshToken: string;
 }
 
 /**
  * Default TTL values for different test scenarios
  */
 export const TTL = {
- /** 5 minutes - for quick tests */
- QUICK_TEST: 300,
- /** 1 hour - for longer test sessions */
- HOUR: 3600,
- /** 24 hours - default, good for CI/CD */
- DAY: 86400,
- /** 1 week - maximum allowed */
- WEEK: 604800,
+  /** 5 minutes - for quick tests */
+  QUICK_TEST: 300,
+  /** 1 hour - for longer test sessions */
+  HOUR: 3600,
+  /** 24 hours - default, good for CI/CD */
+  DAY: 86400,
+  /** 1 week - maximum allowed */
+  WEEK: 604800,
 } as const;
 
 /**
@@ -73,37 +73,35 @@ export const TTL = {
  * ```
  */
 export async function createTemporaryUser(
- request: CreateTemporaryUserRequest,
- options?: {
-  /** API base URL (defaults to getApiBaseUrl()) */
-  baseUrl?: string;
-  /** Test API key for production environments */
-  apiKey?: string;
- },
+  request: CreateTemporaryUserRequest,
+  options?: {
+    /** API base URL (defaults to getApiBaseUrl()) */
+    baseUrl?: string;
+    /** Test API key for production environments */
+    apiKey?: string;
+  },
 ): Promise<TemporaryUserResponse> {
- const baseUrl = options?.baseUrl ?? getApiBaseUrl();
- const headers: Record<string, string> = {
-  "Content-Type": "application/json",
- };
+  const baseUrl = options?.baseUrl ?? getApiBaseUrl();
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
 
- if (options?.apiKey) {
-  headers["x-test-api-key"] = options.apiKey;
- }
+  if (options?.apiKey) {
+    headers['x-test-api-key'] = options.apiKey;
+  }
 
- const response = await fetch(`${baseUrl}/v1/testing/users/temporary`, {
-  method: "POST",
-  headers,
-  body: JSON.stringify(request),
- });
+  const response = await fetch(`${baseUrl}/v1/testing/users/temporary`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(request),
+  });
 
- if (!response.ok) {
-  const error = await response.text();
-  throw new Error(
-   `Failed to create temporary user: ${response.status} ${error}`,
-  );
- }
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`Failed to create temporary user: ${response.status} ${error}`);
+  }
 
- return response.json();
+  return response.json();
 }
 
 /**
@@ -118,10 +116,10 @@ export async function createTemporaryUser(
  * const email = createTestEmail('auth'); // auth-1704067200000-1234@test.local
  * ```
  */
-export function createTestEmail(prefix = "e2e-test"): string {
- const timestamp = Date.now();
- const random = Math.floor(Math.random() * 10000);
- return `${prefix}-${timestamp}-${random}@test.local`;
+export function createTestEmail(prefix = 'e2e-test'): string {
+  const timestamp = Date.now();
+  const random = Math.floor(Math.random() * 10000);
+  return `${prefix}-${timestamp}-${random}@test.local`;
 }
 
 /**
@@ -145,29 +143,29 @@ export function createTestEmail(prefix = "e2e-test"): string {
  * ```
  */
 export async function createQuickTestUser(options?: {
- emailPrefix?: string;
- password?: string;
- name?: string;
- ttlSeconds?: number;
- baseUrl?: string;
- apiKey?: string;
+  emailPrefix?: string;
+  password?: string;
+  name?: string;
+  ttlSeconds?: number;
+  baseUrl?: string;
+  apiKey?: string;
 }): Promise<TemporaryUserResponse> {
- const email = createTestEmail(options?.emailPrefix);
- const password = options?.password ?? "SecureTestPass123!";
- const name = options?.name ?? `Test User ${Date.now()}`;
+  const email = createTestEmail(options?.emailPrefix);
+  const password = options?.password ?? 'SecureTestPass123!';
+  const name = options?.name ?? `Test User ${Date.now()}`;
 
- return createTemporaryUser(
-  {
-   email,
-   password,
-   name,
-   ttlSeconds: options?.ttlSeconds ?? TTL.QUICK_TEST,
-  },
-  {
-   baseUrl: options?.baseUrl,
-   apiKey: options?.apiKey,
-  },
- );
+  return createTemporaryUser(
+    {
+      email,
+      password,
+      name,
+      ttlSeconds: options?.ttlSeconds ?? TTL.QUICK_TEST,
+    },
+    {
+      baseUrl: options?.baseUrl,
+      apiKey: options?.apiKey,
+    },
+  );
 }
 
 /**
@@ -187,14 +185,14 @@ export async function createQuickTestUser(options?: {
  * ```
  */
 export async function setupAuthenticatedSession(
- page: {
-  evaluate: (fn: (token: string) => void, arg: string) => Promise<void>;
- },
- accessToken: string,
+  page: {
+    evaluate: (fn: (token: string) => void, arg: string) => Promise<void>;
+  },
+  accessToken: string,
 ): Promise<void> {
- await page.evaluate((token: string) => {
-  localStorage.setItem("accessToken", token);
- }, accessToken);
+  await page.evaluate((token: string) => {
+    localStorage.setItem('accessToken', token);
+  }, accessToken);
 }
 
 /**
@@ -207,27 +205,25 @@ export async function setupAuthenticatedSession(
  * @returns Cleanup result with deleted count
  */
 export async function cleanupExpiredUsers(options?: {
- baseUrl?: string;
- apiKey?: string;
+  baseUrl?: string;
+  apiKey?: string;
 }): Promise<{ deletedCount: number }> {
- const baseUrl = options?.baseUrl ?? getApiBaseUrl();
- const headers: Record<string, string> = {};
+  const baseUrl = options?.baseUrl ?? getApiBaseUrl();
+  const headers: Record<string, string> = {};
 
- if (options?.apiKey) {
-  headers["x-test-api-key"] = options.apiKey;
- }
+  if (options?.apiKey) {
+    headers['x-test-api-key'] = options.apiKey;
+  }
 
- const response = await fetch(`${baseUrl}/v1/testing/users/expired`, {
-  method: "DELETE",
-  headers,
- });
+  const response = await fetch(`${baseUrl}/v1/testing/users/expired`, {
+    method: 'DELETE',
+    headers,
+  });
 
- if (!response.ok) {
-  const error = await response.text();
-  throw new Error(
-   `Failed to cleanup expired users: ${response.status} ${error}`,
-  );
- }
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`Failed to cleanup expired users: ${response.status} ${error}`);
+  }
 
- return response.json();
+  return response.json();
 }

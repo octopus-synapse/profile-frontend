@@ -8,5 +8,10 @@
 
 export interface OnboardingProfessionalProfileDto {
   title?: string;
+  /** Alias for title */
+  jobTitle?: string;
   summary?: string;
+  linkedin?: string;
+  github?: string;
+  website?: string;
 }

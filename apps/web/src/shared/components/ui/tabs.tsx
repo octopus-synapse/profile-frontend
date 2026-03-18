@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
 /**
  * Tabs Component
  * Tab navigation built on Radix UI Tabs primitive
  */
 
-import * as React from "react";
-import * as TabsPrimitive from "@radix-ui/react-tabs";
-import { cn } from "@/shared/utils/cn";
+import * as TabsPrimitive from '@radix-ui/react-tabs';
+import * as React from 'react';
+import { cn } from '@/shared/utils/cn';
 
 const Tabs = TabsPrimitive.Root;
 
@@ -18,9 +18,9 @@ const TabsList = React.forwardRef<
   <TabsPrimitive.List
     ref={ref}
     className={cn(
-      "inline-flex h-10 items-center justify-center rounded-lg p-1",
-      "border border-white/10 bg-white/5",
-      className
+      'inline-flex h-10 items-center justify-center rounded-lg p-1',
+      'border border-white/10 bg-white/5',
+      className,
     )}
     {...props}
   />
@@ -34,12 +34,12 @@ const TabsTrigger = React.forwardRef<
   <TabsPrimitive.Trigger
     ref={ref}
     className={cn(
-      "inline-flex items-center justify-center rounded-md px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-all",
-      "text-zinc-400",
-      "focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2 focus-visible:outline-none",
-      "disabled:pointer-events-none disabled:opacity-50",
-      "data-[state=active]:bg-[#030303] data-[state=active]:text-white data-[state=active]:shadow-sm",
-      className
+      'inline-flex items-center justify-center rounded-md px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-all',
+      'text-zinc-400',
+      'focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2 focus-visible:outline-none',
+      'disabled:pointer-events-none disabled:opacity-50',
+      'data-[state=active]:bg-[#030303] data-[state=active]:text-white data-[state=active]:shadow-sm',
+      className,
     )}
     {...props}
   />
@@ -53,9 +53,9 @@ const TabsContent = React.forwardRef<
   <TabsPrimitive.Content
     ref={ref}
     className={cn(
-      "mt-2 ring-offset-[#030303]",
-      "focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2 focus-visible:outline-none",
-      className
+      'mt-2 ring-offset-[#030303]',
+      'focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2 focus-visible:outline-none',
+      className,
     )}
     {...props}
   />

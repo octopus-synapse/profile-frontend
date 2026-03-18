@@ -2,7 +2,7 @@
  * Profile Components
  */
 
-export { PublicProfilePage } from "./public-profile-page";
-export { PublicProfileHeader } from "./public-profile-header";
-export { PublicProfileResume } from "./public-profile-resume";
-export { PublicProfileNotFound } from "./public-profile-not-found";
+export { PublicProfileHeader } from './public-profile-header';
+export { PublicProfileNotFound } from './public-profile-not-found';
+export { PublicProfilePage } from './public-profile-page';
+export { PublicProfileResume } from './public-profile-resume';

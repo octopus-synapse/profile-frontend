@@ -1,24 +1,27 @@
-"use client";
+'use client';
 
 /**
  * Resume Queries
  *
- * Uses @profile/api-client for all API calls.
- * This ensures web and mobile share the same implementation.
+ * Uses @profile/api-client SDK hooks directly.
  */
 
-import { useQuery } from "@tanstack/react-query";
-import { apiClient } from "@/shared/lib/api-client";
-import { resumeKeys } from "./query-keys";
+import {
+  usePublicResumeGetPublicResume,
+  useResumesGetAllUserResumes,
+  useResumesGetResumeByIdForUser,
+} from '@profile/api-client';
+import { resumeKeys } from './query-keys';
 
 /**
  * Get all resumes for current user
  */
 export function useResumes() {
-  return useQuery({
-    queryKey: resumeKeys.list(),
-    queryFn: () => apiClient.resumes.getAll(),
-    staleTime: 1 * 60 * 1000, // 1 minute
+  return useResumesGetAllUserResumes({
+    query: {
+      queryKey: resumeKeys.list(),
+      staleTime: 1 * 60 * 1000, // 1 minute
+    },
   });
 }
 
@@ -26,11 +29,12 @@ export function useResumes() {
  * Get single resume by ID
  */
 export function useResume(id: string) {
-  return useQuery({
-    queryKey: resumeKeys.detail(id),
-    queryFn: () => apiClient.resumes.getById(id),
-    enabled: !!id,
-    staleTime: 30 * 1000, // 30 seconds
+  return useResumesGetResumeByIdForUser(id, {
+    query: {
+      queryKey: resumeKeys.detail(id),
+      enabled: !!id,
+      staleTime: 30 * 1000, // 30 seconds
+    },
   });
 }
 
@@ -38,10 +42,11 @@ export function useResume(id: string) {
  * Get public resume by slug
  */
 export function usePublicResume(slug: string) {
-  return useQuery({
-    queryKey: resumeKeys.public(slug),
-    queryFn: () => apiClient.resumes.getBySlug(slug),
-    enabled: !!slug,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+  return usePublicResumeGetPublicResume(slug, {
+    query: {
+      queryKey: resumeKeys.public(slug),
+      enabled: !!slug,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
   });
 }

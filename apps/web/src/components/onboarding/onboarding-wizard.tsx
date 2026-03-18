@@ -1,70 +1,86 @@
 /**
  * Onboarding Wizard Component
  *
- * Main orchestrator for the multi-step onboarding flow
+ * Main orchestrator for the multi-step onboarding flow.
+ * Uses 100% SDK hooks - no local Zustand store.
  */
 
-"use client";
+'use client';
 
-import { useOnboardingStore } from "./stores";
-import { OnboardingShell } from "./onboarding-shell";
-import { useOnboardingSync } from "./hooks/use-onboarding-sync";
-import { LoadingState } from "@/shared/components/ui";
+import { useAuthSession } from '@profile/api-client';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { ROUTES } from '@/config/routes';
+import { LoadingState } from '@/shared/components/ui';
+import { isSectionStep, type SectionStep, useOnboarding } from './hooks';
+import { OnboardingShell } from './onboarding-shell';
+import { shouldRedirectCompletedOnboarding } from './onboarding-wizard.utils';
 import {
-  WelcomeStep,
-  PersonalInfoStep,
-  UsernameStep,
-  ProfessionalProfileStep,
-  ExperienceStep,
-  EducationStep,
-  SkillsStep,
-  LanguagesStep,
-  TemplateStep,
-  ReviewStep,
   CompleteStep,
-} from "./steps";
+  GenericSectionStep,
+  PersonalInfoStep,
+  ProfessionalProfileStep,
+  ReviewStep,
+  TemplateStep,
+  UsernameStep,
+  WelcomeStep,
+} from './steps';
 
 export function OnboardingWizard() {
-  const { currentStep } = useOnboardingStore();
-  const { isLoading, isError } = useOnboardingSync();
+  const router = useRouter();
+  const { data: authSession, isLoading: isAuthLoading } = useAuthSession();
+  const { currentStep, isLoading, isError } = useOnboarding();
+  const user = authSession?.data?.data?.user;
+  const mustRedirectCompletedUser = shouldRedirectCompletedOnboarding({
+    hasCompletedOnboarding: user?.hasCompletedOnboarding,
+    currentStep,
+  });
 
-  // Note: We no longer reset the store if user has completed onboarding
-  // The middleware should redirect completed users away from /onboarding
-  // If they land here, let them continue from where they left off
+  useEffect(() => {
+    if (!mustRedirectCompletedUser) return;
+    router.replace(ROUTES.PROTECTED.RESUME);
+  }, [mustRedirectCompletedUser, router]);
 
   const renderStep = () => {
+    // Handle section steps generically
+    if (isSectionStep(currentStep)) {
+      return <GenericSectionStep stepId={currentStep as SectionStep} />;
+    }
+
+    // Static steps
     switch (currentStep) {
-      case "welcome":
+      case 'welcome':
         return <WelcomeStep />;
-      case "personal-info":
+      case 'personal-info':
         return <PersonalInfoStep />;
-      case "username":
+      case 'username':
         return <UsernameStep />;
-      case "professional-profile":
+      case 'professional-profile':
         return <ProfessionalProfileStep />;
-      case "experience":
-        return <ExperienceStep />;
-      case "education":
-        return <EducationStep />;
-      case "skills":
-        return <SkillsStep />;
-      case "languages":
-        return <LanguagesStep />;
-      case "template":
+      case 'template':
         return <TemplateStep />;
-      case "review":
+      case 'review':
         return <ReviewStep />;
-      case "complete":
+      case 'complete':
         return <CompleteStep />;
       default:
         return <WelcomeStep />;
     }
   };
 
+  if (mustRedirectCompletedUser) {
+    return (
+      <OnboardingShell>
+        <LoadingState
+          message="Onboarding already completed. Redirecting to your resume..."
+          minHeight="400px"
+        />
+      </OnboardingShell>
+    );
+  }
+
   // Show loading state while fetching progress from backend
-  // But don't block forever - if there's an error, let user proceed
-  // Also don't show loading if we are on the complete step (to allow confetti and redirect)
-  if (isLoading && !isError && currentStep !== "complete") {
+  if ((isLoading || isAuthLoading) && !isError && currentStep !== 'complete') {
     return (
       <OnboardingShell>
         <LoadingState message="Loading your progress..." minHeight="400px" />

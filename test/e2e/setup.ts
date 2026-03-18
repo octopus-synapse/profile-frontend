@@ -47,12 +47,16 @@ export async function e2eFetch<T>(
  }
 
  const url = `${E2E_CONFIG.BASE_URL}${path}`;
+ console.log("[e2eFetch] URL:", url, "token:", token ? "yes" : "no");
 
  const response = await fetch(url, {
   ...fetchOptions,
   headers,
   cache: "no-store",
+  credentials: "omit", // Explicitly omit cookies
  });
+ 
+ console.log("[e2eFetch] Response status:", response.status);
 
  let data: T;
  if (
@@ -105,8 +109,10 @@ export async function isBackendAvailable(): Promise<boolean> {
  * Re-export routes for E2E tests
  */
 export {
- ACCOUNTS_ROUTES,
- AUTH_ROUTES,
+ ACCOUNT_LIFECYCLE_ROUTES,
+ ADMIN_SECTION_TYPES_ROUTES,
+ AUTHENTICATION_ROUTES,
+ ENUMS_ROUTES,
  RESUMES_ROUTES,
  THEMES_ROUTES,
  PLATFORM_ROUTES,
@@ -114,6 +120,7 @@ export {
  TECH_SKILLS_ROUTES,
  MEC_METADATA_ROUTES,
  ONBOARDING_ROUTES,
+ USERS_ROUTES,
 } from "../../packages/api-client/src/constants/routes";
 
 /**

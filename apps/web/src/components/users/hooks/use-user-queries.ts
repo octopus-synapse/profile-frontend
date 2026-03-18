@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
 /**
  * User Queries
  * TanStack Query hooks for user data fetching
  */
 
-import { useQuery } from "@tanstack/react-query";
-import { userRepository } from "../services/user-repository";
-import { userKeys } from "./query-keys";
-import type { AdminUserFilters } from "./types";
+import { useQuery } from '@tanstack/react-query';
+import { userRepository } from '../services/user-repository';
+import type { AdminUserFilters } from '../types';
+import { userKeys } from './query-keys';
 
 /**
  * Get current user profile

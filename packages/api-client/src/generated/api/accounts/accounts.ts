@@ -16,7 +16,8 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
-  CreateAccountDto
+  CreateAccountDto,
+  CreateAccountResponseDto
 } from '../../models';
 
 import { customFetch } from '../../../client/fetcher';
@@ -31,7 +32,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary Create new account
  */
 export type accountsSignupResponse201 = {
-  data: void
+  data: CreateAccountResponseDto
   status: 201
 }
 

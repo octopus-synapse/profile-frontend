@@ -33,11 +33,14 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  DslAstResponseDto,
   DslPreviewBody,
   DslPreviewParams,
+  DslPreviewResultDto,
   DslRenderParams,
   DslRenderPublicParams,
-  DslValidateBody
+  DslValidateBody,
+  DslValidationResultDto
 } from '../../models';
 
 import { customFetch } from '../../../client/fetcher';
@@ -51,7 +54,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary Compile DSL to AST (preview, no persistence)
  */
 export type dslPreviewResponse201 = {
-  data: void
+  data: DslPreviewResultDto
   status: 201
 }
 
@@ -148,7 +151,7 @@ export const useDslPreview = <TError = void,
  * @summary Get compiled AST for a public resume
  */
 export type dslRenderPublicResponse200 = {
-  data: void
+  data: DslAstResponseDto
   status: 200
 }
 
@@ -445,7 +448,7 @@ export function useDslRenderPublicSuspense<TData = Awaited<ReturnType<typeof dsl
  * @summary Get compiled AST for a resume
  */
 export type dslRenderResponse200 = {
-  data: void
+  data: DslAstResponseDto
   status: 200
 }
 
@@ -742,7 +745,7 @@ export function useDslRenderSuspense<TData = Awaited<ReturnType<typeof dslRender
  * @summary Validate DSL schema
  */
 export type dslValidateResponse201 = {
-  data: void
+  data: DslValidationResultDto
   status: 201
 }
 

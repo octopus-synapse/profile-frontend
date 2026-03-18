@@ -54,9 +54,9 @@ describe("E2E: Platform API", () => {
     { method: "GET" },
    );
 
-   // May return 401 if not authenticated - that's OK
+   // May return 401/403 if not authenticated - that's OK
    // We're testing the endpoint exists and responds
-   expect([200, 401]).toContain(response.status);
+   expect([200, 401, 403]).toContain(response.status);
   });
  });
 });

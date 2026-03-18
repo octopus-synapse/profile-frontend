@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { ResetPasswordForm } from "@/components/auth";
-import { LocalizedLink } from "@/shared/components/localized-link";
-import { ROUTES } from "@/config/routes";
-import { ArrowLeft, Lock } from "lucide-react";
-import { useI18n } from "@/lib/i18n";
-import { motion } from "framer-motion";
+import { useI18n } from '@profile/i18n';
+import { motion } from 'framer-motion';
+import { ArrowLeft, Lock } from 'lucide-react';
+import { ResetPasswordForm } from '@/components/auth';
+import { ROUTES } from '@/config/routes';
+import { LocalizedLink } from '@/shared/components/localized-link';
 
 export default function ResetPasswordPage() {
   const { t } = useI18n();
@@ -30,7 +30,7 @@ export default function ResetPasswordPage() {
               strokeWidth={2}
             />
             <span className="font-mono text-xs tracking-widest uppercase">
-              {t("auth.resetPassword.backToSignIn")}
+              {t('auth.resetPassword.backToSignIn')}
             </span>
           </LocalizedLink>
 
@@ -55,9 +55,9 @@ export default function ResetPasswordPage() {
               <Lock className="h-6 w-6 text-white" strokeWidth={1.5} />
             </div>
             <h1 className="mb-2 text-3xl font-bold tracking-tight text-white">
-              {t("auth.resetPassword.title")}
+              {t('auth.resetPassword.title')}
             </h1>
-            <p className="text-sm text-zinc-500">{t("auth.resetPassword.subtitle")}</p>
+            <p className="text-sm text-zinc-500">{t('auth.resetPassword.subtitle')}</p>
           </div>
 
           {/* Form Card com borda "Glass" */}
@@ -74,4 +74,3 @@ export default function ResetPasswordPage() {
     </div>
   );
 }
-

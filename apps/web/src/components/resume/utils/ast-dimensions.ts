@@ -46,7 +46,7 @@ export function getUsablePageHeight(page: {
  */
 export function getColumnWidthPx(
   column: { widthPercentage: number },
-  usablePageWidth: number
+  usablePageWidth: number,
 ): number {
   return Math.round((usablePageWidth * column.widthPercentage) / 100);
 }

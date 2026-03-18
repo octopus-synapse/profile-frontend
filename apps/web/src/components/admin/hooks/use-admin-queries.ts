@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
 /**
  * Admin Queries
  */
 
-import { useQuery } from "@tanstack/react-query";
-import { adminRepository } from "../services/admin-repository";
-import { adminKeys } from "./query-keys";
+import { useQuery } from '@tanstack/react-query';
+import { adminRepository } from '../services/admin-repository';
+import { adminKeys } from './query-keys';
 
 /**
  * Get admin dashboard stats

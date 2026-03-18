@@ -5,9 +5,10 @@
  * ProFile Resume & Portfolio Management API
  * OpenAPI spec version: 1.0.0
  */
+import type { DslValidationErrorDto } from './dslValidationErrorDto';
 
 export interface DslValidationResultDto {
   valid: boolean;
   /** @nullable */
-  errors: string | null;
+  errors: DslValidationErrorDto[] | null;
 }

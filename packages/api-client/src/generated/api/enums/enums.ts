@@ -28,6 +28,12 @@ import type {
   UseSuspenseQueryResult
 } from '@tanstack/react-query';
 
+import type {
+  ExportFormatsDataDto,
+  SectionTypesDataDto,
+  UserRolesDataDto
+} from '../../models';
+
 import { customFetch } from '../../../client/fetcher';
 
 
@@ -40,7 +46,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary Get available export formats
  */
 export type enumsGetExportFormatsResponse200 = {
-  data: void
+  data: ExportFormatsDataDto
   status: 200
 }
 
@@ -310,7 +316,7 @@ export function useEnumsGetExportFormatsSuspense<TData = Awaited<ReturnType<type
  * @summary Get available section types
  */
 export type enumsGetSectionTypesResponse200 = {
-  data: void
+  data: SectionTypesDataDto
   status: 200
 }
 
@@ -580,7 +586,7 @@ export function useEnumsGetSectionTypesSuspense<TData = Awaited<ReturnType<typeo
  * @summary Get available user roles
  */
 export type enumsGetUserRolesResponse200 = {
-  data: void
+  data: UserRolesDataDto
   status: 200
 }
 

@@ -2,7 +2,7 @@
  * Public Profile Types
  */
 
-import type { Resume } from "@/components/resume/types";
+import type { ResumeDto } from '@profile/api-client';
 
 export interface PublicUser {
   displayName: string | null;
@@ -16,5 +16,5 @@ export interface PublicUser {
 
 export interface PublicProfile {
   user: PublicUser;
-  resume: Resume | null;
+  resume: ResumeDto | null;
 }

@@ -34,6 +34,9 @@ import type {
 
 import type {
   MecInternalGetSyncHistoryParams,
+  MecSyncExecutionDataDto,
+  MecSyncHistoryDataDto,
+  MecSyncStatusDataDto,
   TriggerMecSyncRequestDto
 } from '../../models';
 
@@ -48,7 +51,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary Trigger MEC data synchronization
  */
 export type mecInternalTriggerSyncResponse201 = {
-  data: void
+  data: MecSyncExecutionDataDto
   status: 201
 }
     
@@ -130,7 +133,7 @@ export const useMecInternalTriggerSync = <TError = unknown,
  * @summary Get sync history
  */
 export type mecInternalGetSyncHistoryResponse200 = {
-  data: void
+  data: MecSyncHistoryDataDto
   status: 200
 }
     
@@ -399,7 +402,7 @@ export function useMecInternalGetSyncHistorySuspense<TData = Awaited<ReturnType<
  * @summary Get sync status
  */
 export type mecInternalGetSyncStatusResponse200 = {
-  data: void
+  data: MecSyncStatusDataDto
   status: 200
 }
     

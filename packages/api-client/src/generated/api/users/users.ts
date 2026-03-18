@@ -36,14 +36,26 @@ import type {
   AdminCreateUser,
   AdminResetPassword,
   AdminUpdateUser,
+  PublicProfileResponseDto,
   ResetPasswordDto,
+  ResetPasswordResponseDto,
   UpdateFullPreferences,
   UpdatePreferences,
   UpdateProfile,
   UpdateUsername,
+  UpdateUsernameResponseDto,
+  UserDetailsDataDto,
+  UserFullPreferencesResponseDto,
+  UserManagementListDataDto,
+  UserMutationDataDto,
+  UserOperationMessageDataDto,
+  UserPreferencesResponseDto,
+  UserProfileResponseDto,
+  UsernameAvailabilityResponseDto,
   UsersCheckUsernameAvailabilityParams,
   UsersListUsersParams,
-  ValidateUsernameRequest
+  ValidateUsernameRequest,
+  ValidateUsernameResponseDto
 } from '../../models';
 
 import { customFetch } from '../../../client/fetcher';
@@ -58,7 +70,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary Reset password with token
  */
 export type usersHandleResponse201 = {
-  data: void
+  data: ResetPasswordResponseDto
   status: 201
 }
     
@@ -140,7 +152,7 @@ export const useUsersHandle = <TError = unknown,
  * @summary List all users with pagination
  */
 export type usersListUsersResponse200 = {
-  data: void
+  data: UserManagementListDataDto
   status: 200
 }
 
@@ -416,7 +428,7 @@ export function useUsersListUsersSuspense<TData = Awaited<ReturnType<typeof user
  * @summary Create a new user
  */
 export type usersCreateUserResponse201 = {
-  data: void
+  data: UserMutationDataDto
   status: 201
 }
 
@@ -506,7 +518,7 @@ export const useUsersCreateUser = <TError = void,
  * @summary Delete a user
  */
 export type usersDeleteUserResponse204 = {
-  data: void
+  data: UserOperationMessageDataDto
   status: 204
 }
 
@@ -594,7 +606,7 @@ export const useUsersDeleteUser = <TError = void,
  * @summary Get user details by ID
  */
 export type usersGetUserDetailsResponse200 = {
-  data: void
+  data: UserDetailsDataDto
   status: 200
 }
 
@@ -863,7 +875,7 @@ export function useUsersGetUserDetailsSuspense<TData = Awaited<ReturnType<typeof
  * @summary Update user information
  */
 export type usersUpdateUserResponse200 = {
-  data: void
+  data: UserMutationDataDto
   status: 200
 }
 
@@ -953,7 +965,7 @@ export const useUsersUpdateUser = <TError = void,
  * @summary Reset user password
  */
 export type usersResetPasswordResponse201 = {
-  data: void
+  data: UserOperationMessageDataDto
   status: 201
 }
 
@@ -1043,7 +1055,7 @@ export const useUsersResetPassword = <TError = void,
  * @summary Get user preferences
  */
 export type usersGetPreferencesResponse200 = {
-  data: void
+  data: UserPreferencesResponseDto
   status: 200
 }
 
@@ -1312,7 +1324,7 @@ export function useUsersGetPreferencesSuspense<TData = Awaited<ReturnType<typeof
  * @summary Update user preferences
  */
 export type usersUpdatePreferencesResponse200 = {
-  data: void
+  data: UserPreferencesResponseDto
   status: 200
 }
 
@@ -1401,7 +1413,7 @@ export const useUsersUpdatePreferences = <TError = void,
  * @summary Get full user preferences
  */
 export type usersGetFullPreferencesResponse200 = {
-  data: void
+  data: UserFullPreferencesResponseDto
   status: 200
 }
 
@@ -1670,7 +1682,7 @@ export function useUsersGetFullPreferencesSuspense<TData = Awaited<ReturnType<ty
  * @summary Update full user preferences
  */
 export type usersUpdateFullPreferencesResponse200 = {
-  data: void
+  data: UserFullPreferencesResponseDto
   status: 200
 }
 
@@ -1759,7 +1771,7 @@ export const useUsersUpdateFullPreferences = <TError = void,
  * @summary Get authenticated user profile
  */
 export type usersGetProfileResponse200 = {
-  data: void
+  data: UserProfileResponseDto
   status: 200
 }
 
@@ -2028,7 +2040,7 @@ export function useUsersGetProfileSuspense<TData = Awaited<ReturnType<typeof use
  * @summary Update authenticated user profile
  */
 export type usersUpdateProfileResponse200 = {
-  data: void
+  data: UserProfileResponseDto
   status: 200
 }
 
@@ -2117,7 +2129,7 @@ export const useUsersUpdateProfile = <TError = void,
  * @summary Update username
  */
 export type usersUpdateUsernameResponse200 = {
-  data: void
+  data: UpdateUsernameResponseDto
   status: 200
 }
 
@@ -2206,7 +2218,7 @@ export const useUsersUpdateUsername = <TError = void,
  * @summary Check username availability
  */
 export type usersCheckUsernameAvailabilityResponse200 = {
-  data: void
+  data: UsernameAvailabilityResponseDto
   status: 200
 }
 
@@ -2483,7 +2495,7 @@ export function useUsersCheckUsernameAvailabilitySuspense<TData = Awaited<Return
  * @summary Validate username format and availability
  */
 export type usersValidateUsernameResponse201 = {
-  data: void
+  data: ValidateUsernameResponseDto
   status: 201
 }
 
@@ -2572,7 +2584,7 @@ export const useUsersValidateUsername = <TError = void,
  * @summary Get public profile by username
  */
 export type usersGetPublicProfileByUsernameResponse200 = {
-  data: void
+  data: PublicProfileResponseDto
   status: 200
 }
 

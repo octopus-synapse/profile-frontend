@@ -3,4 +3,4 @@
  * Modular, clean architecture
  */
 
-export { BuilderSidebar } from "./builder-sidebar";
+export { BuilderSidebar } from './builder-sidebar';

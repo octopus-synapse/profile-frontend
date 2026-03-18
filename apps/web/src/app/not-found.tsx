@@ -1,5 +1,5 @@
-import Link from "next/link";
-import { Terminal, Home, ArrowLeft, Search } from "lucide-react";
+import { ArrowLeft, Home, Search, Terminal } from 'lucide-react';
+import Link from 'next/link';
 
 /**
  * Global 404 Not Found Page
@@ -15,7 +15,7 @@ export default function NotFound() {
             <Terminal className="h-12 w-12 text-zinc-400" strokeWidth={1.5} />
           </div>
           {/* Status indicator */}
-          <div className="bg-pf-danger-fg absolute -top-1 -right-1 h-4 w-4 animate-pulse rounded-full" />
+          <div className="bg-red-500 absolute -top-1 -right-1 h-4 w-4 animate-pulse rounded-full" />
         </div>
 
         {/* 404 Number */}
@@ -49,10 +49,10 @@ export default function NotFound() {
         <div className="mt-12 flex items-center gap-2 font-mono text-xs text-zinc-400">
           <Search className="h-4 w-4" />
           <span>
-            Looking for something?{" "}
+            Looking for something?{' '}
             <Link href="/auth/sign-in" className="text-white hover:underline">
               Sign in
-            </Link>{" "}
+            </Link>{' '}
             to access your profile.
           </span>
         </div>
@@ -69,22 +69,22 @@ export default function NotFound() {
           </div>
           <div className="code-block-content text-left">
             <div>
-              <span className="code-keyword">const</span>{" "}
-              <span className="code-variable">response</span> = {"{"}
+              <span className="code-keyword">const</span>{' '}
+              <span className="code-variable">response</span> = {'{'}
             </div>
             <div className="ml-4">
-              <span className="code-function">status</span>:{" "}
+              <span className="code-function">status</span>:{' '}
               <span className="code-number">404</span>,
             </div>
             <div className="ml-4">
-              <span className="code-function">error</span>:{" "}
+              <span className="code-function">error</span>:{' '}
               <span className="code-string">&quot;NOT_FOUND&quot;</span>,
             </div>
             <div className="ml-4">
-              <span className="code-function">message</span>:{" "}
+              <span className="code-function">message</span>:{' '}
               <span className="code-string">&quot;Page not found&quot;</span>
             </div>
-            <div>{"}"}</div>
+            <div>{'}'}</div>
           </div>
         </div>
       </div>

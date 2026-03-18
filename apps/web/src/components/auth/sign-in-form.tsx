@@ -1,29 +1,31 @@
-"use client";
+'use client';
 
 /**
  * Sign In Form - Ultra Premium Version
  * Inspired by Linear, Vercel & Cursor
  */
 
-import { Suspense, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { LocalizedLink } from "@/shared/components/localized-link";
-import { useAuth } from "@/lib/auth";
-import { useT } from "@/lib/i18n";
-import { Button, Input, Spinner } from "@/shared/components/ui";
-import { Label } from "@/shared/components/ui/label";
-import { ROUTES } from "@/config/routes";
-import { AlertCircle, Mail, Lock, Eye, EyeOff, ChevronRight } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { authLogin, getAuthSessionQueryKey } from '@profile/api-client';
+import { useT } from '@profile/i18n';
+import { useQueryClient } from '@tanstack/react-query';
+import { AnimatePresence, motion } from 'framer-motion';
+import { AlertCircle, ChevronRight, Eye, EyeOff, Lock, Mail } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useState } from 'react';
+import { ROUTES } from '@/config/routes';
+import { LocalizedLink } from '@/shared/components/localized-link';
+import { Button, Input, Spinner } from '@/shared/components/ui';
+import { Label } from '@/shared/components/ui/label';
 
 function SignInFormContent() {
   const t = useT();
-  const { signIn } = useAuth();
+  const router = useRouter();
+  const queryClient = useQueryClient();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") ?? undefined;
+  const callbackUrl = searchParams.get('callbackUrl') ?? ROUTES.PROTECTED.PROFILE;
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -34,12 +36,19 @@ function SignInFormContent() {
     setIsLoading(true);
 
     try {
-      const success = await signIn(email, password, callbackUrl);
-      if (!success) {
-        setError(t("auth.error.invalidCredentials"));
+      const response = await authLogin({ email, password });
+
+      if (response.status === 200) {
+        // Invalidate session cache to refetch user data
+        await queryClient.invalidateQueries({
+          queryKey: getAuthSessionQueryKey(),
+        });
+        router.push(callbackUrl);
+      } else {
+        setError(t('auth.error.invalidCredentials'));
       }
     } catch {
-      setError(t("error.generic"));
+      setError(t('error.generic'));
     } finally {
       setIsLoading(false);
     }
@@ -61,7 +70,7 @@ function SignInFormContent() {
           {error && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
+              animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               className="overflow-hidden"
             >
@@ -79,7 +88,7 @@ function SignInFormContent() {
             htmlFor="email"
             className="ml-1 font-mono text-[10px] tracking-[0.15em] text-zinc-500 uppercase"
           >
-            {t("auth.signIn.email")}
+            {t('auth.signIn.email')}
           </Label>
           <div className="group relative">
             <div className="absolute inset-y-0 left-3 flex items-center">
@@ -89,7 +98,7 @@ function SignInFormContent() {
               id="email"
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
               placeholder="name@company.com"
               required
               className="h-11 border-white/10 bg-white/[0.02] pl-10 transition-all focus:border-cyan-500/50 focus:bg-white/[0.05] focus:ring-cyan-500/20"
@@ -104,13 +113,13 @@ function SignInFormContent() {
               htmlFor="password"
               className="font-mono text-[10px] tracking-[0.15em] text-zinc-500 uppercase"
             >
-              {t("auth.signIn.password")}
+              {t('auth.signIn.password')}
             </Label>
             <LocalizedLink
               href={ROUTES.AUTH.FORGOT_PASSWORD}
               className="font-mono text-[10px] text-cyan-400/80 uppercase hover:text-cyan-400 hover:underline"
             >
-              {t("auth.signIn.forgotPassword")}
+              {t('auth.signIn.forgotPassword')}
             </LocalizedLink>
           </div>
           <div className="group relative">
@@ -119,9 +128,9 @@ function SignInFormContent() {
             </div>
             <Input
               id="password"
-              type={showPassword ? "text" : "password"}
+              type={showPassword ? 'text' : 'password'}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
               className="h-11 border-white/10 bg-white/[0.02] pr-10 pl-10 transition-all focus:border-cyan-500/50 focus:bg-white/[0.05] focus:ring-cyan-500/20"
@@ -146,7 +155,7 @@ function SignInFormContent() {
             <Spinner size="sm" className="border-black/20 border-t-black" />
           ) : (
             <span className="relative z-10 flex items-center justify-center gap-2">
-              {t("auth.signIn.submit")}
+              {t('auth.signIn.submit')}
               <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </span>
           )}
@@ -159,11 +168,11 @@ function SignInFormContent() {
         <div className="mt-4 flex items-center justify-center gap-4 font-mono text-[10px] tracking-tighter text-zinc-600 uppercase">
           <div className="flex items-center gap-1">
             <div className="h-1 w-1 rounded-full bg-cyan-500" />
-            <span>{t("auth.security.secureSession")}</span>
+            <span>{t('auth.security.secureSession')}</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="h-1 w-1 rounded-full bg-cyan-500" />
-            <span>{t("auth.security.encrypted")}</span>
+            <span>{t('auth.security.encrypted')}</span>
           </div>
         </div>
       </form>
@@ -177,7 +186,7 @@ function SignInFallback() {
     <div className="flex flex-col items-center justify-center gap-4 py-12">
       <Spinner size="lg" />
       <span className="font-mono text-xs tracking-widest text-zinc-500 uppercase">
-        {t("auth.loading.initializing")}
+        {t('auth.loading.initializing')}
       </span>
     </div>
   );

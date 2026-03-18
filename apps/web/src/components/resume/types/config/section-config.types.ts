@@ -1,22 +1,24 @@
 /**
  * Section Configuration
  * Per-section visibility, ordering, and styling
+ *
+ * NOTE: Section keys are now dynamic (from backend SectionType).
+ * Use string keys like 'work_experience_v1', 'education_v1', etc.
  */
 
-import type { ColumnPosition } from "./layout.types";
-import type { SectionId, ListSectionId } from "./section-ids.types";
-import type { SectionStyleMap } from "./section-styles.types";
+import type { ColumnPosition } from './layout.types';
 
 /**
  * Configuration for a single section
+ * @param key - The section type key (e.g., 'work_experience_v1')
  */
-export interface SectionConfig<T extends SectionId = SectionId> {
-  id: T;
+export interface SectionConfig {
+  key: string;
   visible: boolean;
   order: number;
   column: ColumnPosition;
   customTitle?: string;
-  style: T extends keyof SectionStyleMap ? Partial<SectionStyleMap[T]> : object;
+  style?: Record<string, unknown>;
 }
 
 /**
@@ -24,23 +26,21 @@ export interface SectionConfig<T extends SectionId = SectionId> {
  * Allows hiding/reordering individual items (experiences, skills, etc.)
  */
 export interface ItemOverride {
-  itemId: string; // ID from database
-  visible: boolean; // Can hide specific items
-  order: number; // Custom order (overrides default)
-  customLabel?: string; // Override display name
+  itemId: string;
+  visible: boolean;
+  order: number;
+  customLabel?: string;
 }
 
 /**
  * Per-section item overrides
- * Maps section ID to array of item overrides
+ * Maps section key to array of item overrides
  */
-export type SectionItemOverrides = {
-  [K in ListSectionId]?: ItemOverride[];
-};
+export type SectionItemOverrides = Record<string, ItemOverride[] | undefined>;
 
 /**
  * Complete section configuration including item overrides
  */
-export interface FullSectionConfig<T extends SectionId = SectionId> extends SectionConfig<T> {
-  itemOverrides?: T extends ListSectionId ? ItemOverride[] : never;
+export interface FullSectionConfig extends SectionConfig {
+  itemOverrides?: ItemOverride[];
 }

@@ -29,6 +29,7 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  TechSkillListDataDto,
   TechSkillsGetSkillsByTypeParams
 } from '../../models';
 
@@ -43,7 +44,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary Get all tech skills
  */
 export type techSkillsGetSkillsResponse200 = {
-  data: void
+  data: TechSkillListDataDto
   status: 200
 }
     
@@ -305,7 +306,7 @@ export function useTechSkillsGetSkillsSuspense<TData = Awaited<ReturnType<typeof
  * @summary Get skills by type
  */
 export type techSkillsGetSkillsByTypeResponse200 = {
-  data: void
+  data: TechSkillListDataDto
   status: 200
 }
     
