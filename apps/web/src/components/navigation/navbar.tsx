@@ -45,7 +45,7 @@ export function Navbar({
   variant = 'default',
 }: NavbarProps) {
   const { data, isLoading } = useAuthSession();
-  const isAuthenticated = !!data?.data?.data?.user;
+  const isAuthenticated = !!data?.data?.user;
   const { t } = useI18n();
   const commandPalette = useCommandPalette();
   const mobileMenu = useMobileMenu();

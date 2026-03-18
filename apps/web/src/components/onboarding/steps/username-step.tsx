@@ -54,7 +54,7 @@ function validateUsername(value: string): ValidationResult {
 export function UsernameStep() {
   const { username, goToNextStep } = useOnboarding();
   const { data, isLoading } = useAuthSession();
-  const isAuthenticated = !!data?.data?.data?.user;
+  const isAuthenticated = !!data?.data?.user;
 
   const [inputValue, setInputValue] = useState(username || '');
   const [isChecking, setIsChecking] = useState(false);

@@ -21,7 +21,7 @@ import type { NavItem } from '../config/types';
 
 export function useNavigation() {
   const { data } = useAuthSession();
-  const user = data?.data?.data?.user;
+  const user = data?.data?.user;
   const isAuthenticated = !!user;
   const pathname = usePathname();
 

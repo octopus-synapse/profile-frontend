@@ -23,7 +23,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   const queryClient = useQueryClient();
   const { t, language, setLanguage, locales } = useI18n();
   const { data } = useAuthSession();
-  const user = data?.data?.data?.user;
+  const user = data?.data?.user;
   const themeContext = useThemeOptional();
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState('');

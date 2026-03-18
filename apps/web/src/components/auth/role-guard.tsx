@@ -60,7 +60,7 @@ export function RoleGuard({
   loading,
 }: RoleGuardProps) {
   const { data, isLoading } = useAuthSession();
-  const user = data?.data?.data?.user;
+  const user = data?.data?.user;
 
   // Show loading state
   if (isLoading) {
@@ -108,7 +108,7 @@ interface AuthenticatedOnlyProps {
 
 export function AuthenticatedOnly({ children, fallback }: AuthenticatedOnlyProps) {
   const { data, isLoading } = useAuthSession();
-  const isAuthenticated = data?.data?.data?.authenticated ?? false;
+  const isAuthenticated = data?.data?.authenticated ?? false;
 
   if (isLoading) {
     return (

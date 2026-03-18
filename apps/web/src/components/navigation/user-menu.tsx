@@ -28,7 +28,7 @@ export function UserMenu() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { data } = useAuthSession();
-  const user = data?.data?.data?.user;
+  const user = data?.data?.user;
   const themeContext = useThemeOptional();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);

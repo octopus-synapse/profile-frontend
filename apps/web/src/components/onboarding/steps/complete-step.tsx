@@ -20,7 +20,7 @@ export function CompleteStep() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { data } = useAuthSession();
-  const user = data?.data?.data?.user;
+  const user = data?.data?.user;
   const { personalInfo } = useOnboarding();
   const [showContent, setShowContent] = useState(false);
   const [countdown, setCountdown] = useState(5);

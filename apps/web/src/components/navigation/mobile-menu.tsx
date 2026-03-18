@@ -31,7 +31,7 @@ export function MobileMenu({ menu, navItems, onOpenCommandPalette }: MobileMenuP
   const router = useRouter();
   const queryClient = useQueryClient();
   const { data } = useAuthSession();
-  const isAuthenticated = !!data?.data?.data?.user;
+  const isAuthenticated = !!data?.data?.user;
   const { t, language, setLanguage, locales } = useI18n();
   const themeContext = useThemeOptional();
 

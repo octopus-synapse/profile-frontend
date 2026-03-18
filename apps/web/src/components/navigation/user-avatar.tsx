@@ -5,7 +5,7 @@ import { Avatar } from '@/shared/components/ui';
 
 export function UserAvatar() {
   const { data } = useAuthSession();
-  const user = data?.data?.data?.user;
+  const user = data?.data?.user;
 
   if (!user) return null;
 
