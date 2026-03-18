@@ -38,7 +38,7 @@ function SignInFormContent() {
     try {
       const response = await authLogin({ email, password });
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         // Invalidate session cache to refetch user data
         await queryClient.invalidateQueries({
           queryKey: getAuthSessionQueryKey(),

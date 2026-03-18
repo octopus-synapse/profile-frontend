@@ -19,7 +19,7 @@ import {
   onboardingGetProgress,
   onboardingSaveProgress,
   type ResetPasswordDto,
-  resetPasswordHandle as usersResetPasswordWithToken,
+  usersHandle as usersResetPasswordWithToken,
 } from '@profile/api-client';
 
 /**

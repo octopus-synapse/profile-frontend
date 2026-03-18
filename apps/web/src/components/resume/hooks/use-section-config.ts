@@ -5,17 +5,17 @@
  */
 
 import {
-  useSectionConfigBatchUpdate,
-  useSectionConfigReorderItem,
-  useSectionConfigReorderSection,
-  useSectionConfigToggleItem,
-  useSectionConfigToggleSection,
+  useResumeConfigBatchUpdate,
+  useResumeConfigReorderItem,
+  useResumeConfigReorderSection,
+  useResumeConfigToggleItem,
+  useResumeConfigToggleSection,
 } from '@profile/api-client';
 import { useQueryClient } from '@tanstack/react-query';
 
 export function useToggleSection(resumeId: string) {
   const queryClient = useQueryClient();
-  const mutation = useSectionConfigToggleSection();
+  const mutation = useResumeConfigToggleSection();
 
   return {
     ...mutation,
@@ -33,7 +33,7 @@ export function useToggleSection(resumeId: string) {
 
 export function useReorderSection(resumeId: string) {
   const queryClient = useQueryClient();
-  const mutation = useSectionConfigReorderSection();
+  const mutation = useResumeConfigReorderSection();
 
   return {
     ...mutation,
@@ -51,7 +51,7 @@ export function useReorderSection(resumeId: string) {
 
 export function useToggleItem(resumeId: string) {
   const queryClient = useQueryClient();
-  const mutation = useSectionConfigToggleItem();
+  const mutation = useResumeConfigToggleItem();
 
   return {
     ...mutation,
@@ -77,7 +77,7 @@ export function useToggleItem(resumeId: string) {
 
 export function useReorderItem(resumeId: string) {
   const queryClient = useQueryClient();
-  const mutation = useSectionConfigReorderItem();
+  const mutation = useResumeConfigReorderItem();
 
   return {
     ...mutation,
@@ -103,7 +103,7 @@ export function useReorderItem(resumeId: string) {
 
 export function useBatchUpdateSections(resumeId: string) {
   const queryClient = useQueryClient();
-  const mutation = useSectionConfigBatchUpdate();
+  const mutation = useResumeConfigBatchUpdate();
 
   return {
     ...mutation,
