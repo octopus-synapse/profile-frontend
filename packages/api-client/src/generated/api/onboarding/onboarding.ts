@@ -45,7 +45,8 @@ import type {
   OnboardingSessionDto,
   SaveProgressRequestDto,
   SaveProgressResponseDto,
-  SaveStepDataRequestDto
+  SaveStepDataRequestDto,
+  _NoBody
 } from '../../models';
 
 import { customFetch } from '../../../client/fetcher';
@@ -808,14 +809,15 @@ export const getOnboardingCompleteFromSessionUrl = () => {
   return `/api/v1/onboarding/session/complete`
 }
 
-export const onboardingCompleteFromSession = async ( options?: RequestInit): Promise<onboardingCompleteFromSessionResponse> => {
+export const onboardingCompleteFromSession = async (_noBody: _NoBody, options?: RequestInit): Promise<onboardingCompleteFromSessionResponse> => {
   
   return customFetch<onboardingCompleteFromSessionResponse>(getOnboardingCompleteFromSessionUrl(),
   {      
     ...options,
-    method: 'POST'
-    
-    
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      _noBody,)
   }
 );}
 
@@ -823,8 +825,8 @@ export const onboardingCompleteFromSession = async ( options?: RequestInit): Pro
 
 
 export const getOnboardingCompleteFromSessionMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof onboardingCompleteFromSession>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof onboardingCompleteFromSession>>, TError,void, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof onboardingCompleteFromSession>>, TError,{data: _NoBody}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof onboardingCompleteFromSession>>, TError,{data: _NoBody}, TContext> => {
 
 const mutationKey = ['onboardingCompleteFromSession'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -836,10 +838,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof onboardingCompleteFromSession>>, void> = () => {
-          
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof onboardingCompleteFromSession>>, {data: _NoBody}> = (props) => {
+          const {data} = props ?? {};
 
-          return  onboardingCompleteFromSession(requestOptions)
+          return  onboardingCompleteFromSession(data,requestOptions)
         }
 
 
@@ -850,18 +852,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type OnboardingCompleteFromSessionMutationResult = NonNullable<Awaited<ReturnType<typeof onboardingCompleteFromSession>>>
-    
+    export type OnboardingCompleteFromSessionMutationBody = _NoBody
     export type OnboardingCompleteFromSessionMutationError = void
 
     /**
  * @summary Complete onboarding — backend builds payload from saved progress
  */
 export const useOnboardingCompleteFromSession = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof onboardingCompleteFromSession>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof onboardingCompleteFromSession>>, TError,{data: _NoBody}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof onboardingCompleteFromSession>>,
         TError,
-        void,
+        {data: _NoBody},
         TContext
       > => {
       return useMutation(getOnboardingCompleteFromSessionMutationOptions(options), queryClient);
@@ -1097,14 +1099,16 @@ export const getOnboardingPreviousStepUrl = (params?: OnboardingPreviousStepPara
   return stringifiedParams.length > 0 ? `/api/v1/onboarding/session/previous?${stringifiedParams}` : `/api/v1/onboarding/session/previous`
 }
 
-export const onboardingPreviousStep = async (params?: OnboardingPreviousStepParams, options?: RequestInit): Promise<onboardingPreviousStepResponse> => {
+export const onboardingPreviousStep = async (_noBody: _NoBody,
+    params?: OnboardingPreviousStepParams, options?: RequestInit): Promise<onboardingPreviousStepResponse> => {
   
   return customFetch<onboardingPreviousStepResponse>(getOnboardingPreviousStepUrl(params),
   {      
     ...options,
-    method: 'POST'
-    
-    
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      _noBody,)
   }
 );}
 
@@ -1112,8 +1116,8 @@ export const onboardingPreviousStep = async (params?: OnboardingPreviousStepPara
 
 
 export const getOnboardingPreviousStepMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof onboardingPreviousStep>>, TError,{params?: OnboardingPreviousStepParams}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof onboardingPreviousStep>>, TError,{params?: OnboardingPreviousStepParams}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof onboardingPreviousStep>>, TError,{data: _NoBody;params?: OnboardingPreviousStepParams}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof onboardingPreviousStep>>, TError,{data: _NoBody;params?: OnboardingPreviousStepParams}, TContext> => {
 
 const mutationKey = ['onboardingPreviousStep'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -1125,10 +1129,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof onboardingPreviousStep>>, {params?: OnboardingPreviousStepParams}> = (props) => {
-          const {params} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof onboardingPreviousStep>>, {data: _NoBody;params?: OnboardingPreviousStepParams}> = (props) => {
+          const {data,params} = props ?? {};
 
-          return  onboardingPreviousStep(params,requestOptions)
+          return  onboardingPreviousStep(data,params,requestOptions)
         }
 
 
@@ -1139,18 +1143,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type OnboardingPreviousStepMutationResult = NonNullable<Awaited<ReturnType<typeof onboardingPreviousStep>>>
-    
+    export type OnboardingPreviousStepMutationBody = _NoBody
     export type OnboardingPreviousStepMutationError = void
 
     /**
  * @summary Go back to previous step
  */
 export const useOnboardingPreviousStep = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof onboardingPreviousStep>>, TError,{params?: OnboardingPreviousStepParams}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof onboardingPreviousStep>>, TError,{data: _NoBody;params?: OnboardingPreviousStepParams}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof onboardingPreviousStep>>,
         TError,
-        {params?: OnboardingPreviousStepParams},
+        {data: _NoBody;params?: OnboardingPreviousStepParams},
         TContext
       > => {
       return useMutation(getOnboardingPreviousStepMutationOptions(options), queryClient);

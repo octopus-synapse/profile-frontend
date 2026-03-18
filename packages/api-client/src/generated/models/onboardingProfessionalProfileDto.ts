@@ -7,9 +7,8 @@
  */
 
 export interface OnboardingProfessionalProfileDto {
-  title?: string;
-  /** Alias for title */
-  jobTitle?: string;
+  /** Job title (required) */
+  jobTitle: string;
   summary?: string;
   linkedin?: string;
   github?: string;
