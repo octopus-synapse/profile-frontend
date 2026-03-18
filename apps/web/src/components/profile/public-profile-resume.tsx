@@ -29,9 +29,13 @@ function getIcon(semanticKind: string): LucideIcon {
 }
 
 function getContentValue(item: ResumeItemDto, key: string): string {
-  const content = item.content as Record<string, unknown>;
+  const content = getContentObject(item);
   const value = content[key];
   return value != null ? String(value) : '';
+}
+
+function getContentObject(item: ResumeItemDto): Record<string, unknown> {
+  return typeof item.content === 'string' ? JSON.parse(item.content) : item.content;
 }
 
 function getSectionTitle(section: ResumeSectionDto): string {
@@ -130,7 +134,7 @@ function GenericSection({ section }: { section: ResumeSectionDto }) {
 }
 
 function TimelineItem({ item, kind }: { item: ResumeItemDto; kind: string }) {
-  const content = item.content as Record<string, unknown>;
+  const content = getContentObject(item);
   const title =
     kind === 'EXPERIENCE'
       ? getContentValue(item, 'position') || getContentValue(item, 'role')
@@ -211,7 +215,7 @@ function LanguageCard({ item }: { item: ResumeItemDto }) {
 }
 
 function GenericItem({ item }: { item: ResumeItemDto }) {
-  const content = item.content as Record<string, unknown>;
+  const content = getContentObject(item);
   // Find first string field to display
   const primaryField = Object.entries(content).find(([_, v]) => typeof v === 'string' && v);
 

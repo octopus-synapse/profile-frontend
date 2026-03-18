@@ -61,7 +61,10 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   const cycleLanguage = useCallback(() => {
     const currentIndex = locales.findIndex((l: LocaleInfo) => l.code === language);
     const nextIndex = (currentIndex + 1) % locales.length;
-    setLanguage(locales[nextIndex].code);
+    const nextLocale = locales[nextIndex];
+    if (nextLocale) {
+      setLanguage(nextLocale.code);
+    }
     onClose();
   }, [language, locales, setLanguage, onClose]);
 
@@ -71,7 +74,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
         isAuthenticated,
         isAdmin: isAdmin ?? false,
         hasCompletedOnboarding: hasCompletedOnboarding ?? false,
-        currentTheme: themeContext?.theme ?? 'dark',
+        currentTheme: (themeContext?.theme === 'system' ? 'dark' : themeContext?.theme) ?? 'dark',
         currentLanguage: language,
         t,
         onToggleTheme: toggleTheme,

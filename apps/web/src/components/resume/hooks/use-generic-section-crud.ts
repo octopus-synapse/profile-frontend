@@ -103,7 +103,7 @@ export function useGenericSectionCRUD({
   const queryClient = useQueryClient();
 
   // Fetch section types to get metadata
-  const typesQuery = useResumesListTypes(resumeId, {
+  const typesQuery = useResumesListTypes(resumeId, undefined, {
     query: {
       enabled: enabled && !!resumeId,
       staleTime: 5 * 60 * 1000, // Types rarely change
@@ -119,19 +119,19 @@ export function useGenericSectionCRUD({
   });
 
   // Parse section types from raw API response
-  // Response shape: { data: { data: { sectionTypes: [...] } }, status, headers }
-  const typesData = typesQuery.data?.data?.data;
-  const sectionTypes = (typesData?.sectionTypes ?? []).map((raw: Record<string, unknown>) =>
-    parseSectionTypeMetadata(raw),
+  // Response shape: { data: { sectionTypes: [...] }, status, headers }
+  const typesData = typesQuery.data?.data;
+  const sectionTypes = (typesData?.sectionTypes ?? []).map((raw: unknown) =>
+    parseSectionTypeMetadata(raw as Record<string, unknown>),
   );
 
   // Find the specific section type metadata
   const sectionType = sectionTypes.find((st: SectionTypeMetadata) => st.key === sectionTypeKey);
 
   // Parse sections from raw API response
-  const sectionsData = sectionsQuery.data?.data?.data;
-  const sections = (sectionsData?.sections ?? []).map((raw: Record<string, unknown>) =>
-    parseResumeSection(raw),
+  const sectionsData = sectionsQuery.data?.data;
+  const sections = (sectionsData?.sections ?? []).map((raw: unknown) =>
+    parseResumeSection(raw as Record<string, unknown>),
   );
 
   // Find section for this type

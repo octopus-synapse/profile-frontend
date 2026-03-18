@@ -33,8 +33,8 @@ describe('OnboardingShell', () => {
       </OnboardingShell>,
     );
 
-    const onboardingState = (useOnboarding as Mock<typeof useOnboarding>).mock.results[0]?.value;
-    const goToStep = onboardingState.goToStep as Mock<() => Promise<void>>;
+    const onboardingState = (useOnboarding as Mock<typeof useOnboarding>).mock.results[0]?.value as { goToStep: Mock<() => Promise<void>> } | undefined;
+    const goToStep = onboardingState?.goToStep;
 
     fireEvent.click(screen.getByRole('button', { name: 'Go to Personal info' }));
 

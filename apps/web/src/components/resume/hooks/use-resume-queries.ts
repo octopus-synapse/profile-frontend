@@ -7,8 +7,8 @@
  */
 
 import {
-  usePublicResumeGetPublicResume,
   useResumesGetAllUserResumes,
+  useResumesGetPublicResume,
   useResumesGetResumeByIdForUser,
 } from '@profile/api-client';
 import { resumeKeys } from './query-keys';
@@ -42,7 +42,7 @@ export function useResume(id: string) {
  * Get public resume by slug
  */
 export function usePublicResume(slug: string) {
-  return usePublicResumeGetPublicResume(slug, {
+  return useResumesGetPublicResume(slug, {
     query: {
       queryKey: resumeKeys.public(slug),
       enabled: !!slug,

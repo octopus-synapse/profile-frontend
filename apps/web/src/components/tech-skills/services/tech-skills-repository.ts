@@ -33,9 +33,9 @@ import type {
   TechSkillsSearchResult,
 } from '../types';
 
-// Helper to extract data from SDK response
-function extractData<T>(response: { data?: { data?: T } }): T | undefined {
-  return response?.data?.data;
+// Helper to extract data from SDK response (new SDK returns DTO directly)
+function extractData<T>(response: T): T {
+  return response;
 }
 
 /**
@@ -70,8 +70,8 @@ export const techSkillsRepository = {
 
   async searchLanguages(query: string, limit: number): Promise<ProgrammingLanguageDto[]> {
     const response = await skillsSearchLanguagesByName({
-      name: query,
-      limit,
+      q: query,
+      limit: String(limit),
     });
     const data = extractData(response) as unknown as {
       languages?: ProgrammingLanguageDto[];
@@ -100,7 +100,7 @@ export const techSkillsRepository = {
   async searchAll(query: string, limit: number): Promise<TechSkillsSearchResult> {
     // Parallel fetch for combined search
     const [languagesResponse, skillsResponse] = await Promise.all([
-      skillsSearchLanguagesByName({ name: query, limit }),
+      skillsSearchLanguagesByName({ q: query, limit: String(limit) }),
       techSkillsGetSkills(), // SDK doesn't have search for skills, get all and filter
     ]);
 
@@ -113,7 +113,7 @@ export const techSkillsRepository = {
 
     // Filter skills by query (client-side)
     const filteredSkills = (skillsData?.skills ?? [])
-      .filter((skill) => skill.name?.toLowerCase().includes(query.toLowerCase()))
+      .filter((skill) => skill.nameEn?.toLowerCase().includes(query.toLowerCase()))
       .slice(0, limit);
 
     return {

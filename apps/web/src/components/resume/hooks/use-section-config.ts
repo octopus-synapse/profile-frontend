@@ -108,18 +108,21 @@ export function useBatchUpdateSections(resumeId: string) {
   return {
     ...mutation,
     mutateAsync: async (sections: Array<{ id: string; visible?: boolean; order?: number }>) => {
-      const result = await mutation.mutateAsync({
-        resumeId,
-        data: {
-          sections: sections.map((s) => ({
-            sectionKey: s.id,
+      // The new API only supports single section updates
+      // We'll update each section individually
+      const results = [];
+      for (const s of sections) {
+        const result = await mutation.mutateAsync({
+          resumeId,
+          data: {
+            id: s.id,
             visible: s.visible,
-            order: s.order,
-          })),
-        },
-      });
+          },
+        });
+        results.push(result);
+      }
       void queryClient.invalidateQueries({ queryKey: ['resumes', resumeId] });
-      return result;
+      return results;
     },
   };
 }

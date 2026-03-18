@@ -115,7 +115,9 @@ export function GenericItemRenderer({
   styles,
   fieldStyles,
 }: GenericItemRendererProps) {
-  const content = item.content as Record<string, unknown>;
+  const content = (
+    typeof item.content === 'string' ? JSON.parse(item.content) : item.content
+  ) as Record<string, unknown>;
   const layout = getFieldLayout(content, semanticKind);
 
   // For simple items (like skills), just render the name

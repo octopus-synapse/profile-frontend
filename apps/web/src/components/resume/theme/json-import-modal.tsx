@@ -57,8 +57,8 @@ export function JsonImportModal({ isOpen, onClose, onImported }: Props) {
         styleConfig: parsed as Record<string, unknown>,
       });
 
-      // SDK response is nested: { data: { data: { theme: { id } } } }
-      const themeId = (themeResponse?.data?.data as { theme?: { id?: string } })?.theme?.id;
+      // SDK response is now directly the DTO: { theme: { id } }
+      const themeId = (themeResponse as unknown as { theme?: { id?: string } })?.theme?.id;
       if (themeId) {
         onImported?.(themeId);
       }

@@ -121,7 +121,7 @@ test.describe("Onboarding - Create Profile", () => {
           const body = await response.json().catch(() => ({}));
           console.log("ERROR:", JSON.stringify(body, null, 2));
           await page.screenshot({ path: "/tmp/create-error.png" });
-          expect.fail(`Create profile failed: ${response.status()} - ${JSON.stringify(body)}`);
+          throw new Error(`Create profile failed: ${response.status()} - ${JSON.stringify(body)}`);
         }
       }
 
@@ -130,7 +130,7 @@ test.describe("Onboarding - Create Profile", () => {
       const buttons = await page.locator("button").allTextContents();
       console.log("Buttons on page:", buttons);
       await page.screenshot({ path: "/tmp/no-create-btn.png" });
-      expect.fail("Create Profile button not visible");
+      throw new Error("Create Profile button not visible");
     }
 
     // 6. Verify success

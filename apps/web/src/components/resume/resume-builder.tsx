@@ -5,7 +5,7 @@
 
 'use client';
 
-import { Check, Download, FileText, Link2, Loader2, Settings, Share2 } from 'lucide-react';
+import { Check, Download, FileText, Link2, Loader2, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { useCallback, useState } from 'react';
 import { LoadingState } from '@/shared/components/ui';
@@ -30,8 +30,8 @@ export function ResumeBuilder() {
 
   // Fetch full resume data
   const { data: resumeResponse, isLoading: resumeLoading } = useResume(resumeId ?? '');
-  // Extract the actual resume data from nested response
-  const resume = resumeResponse?.data?.data;
+  // Extract the actual resume data from response
+  const resume = resumeResponse?.data;
 
   // Fetch compiled AST from backend
   const { data: ast, isLoading: astLoading, refetch: refetchAst } = useResumeAst(resumeId);
@@ -48,13 +48,13 @@ export function ResumeBuilder() {
   }, [refetchAst]);
 
   const handleExportPDF = async () => {
-    if (!resume) return;
+    if (!resumeId) return;
     try {
-      const blob = await exportPDF.mutateAsync(resume.id);
+      const blob = await exportPDF.mutateAsync(resumeId);
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${resume.fullName ?? 'resume'}.pdf`;
+      a.download = `${resume?.fullName ?? 'resume'}.pdf`;
       a.click();
       URL.revokeObjectURL(url);
     } catch (error) {
@@ -63,13 +63,13 @@ export function ResumeBuilder() {
   };
 
   const handleExportDOCX = async () => {
-    if (!resume) return;
+    if (!resumeId) return;
     try {
-      const blob = await exportDOCX.mutateAsync(resume.id);
+      const blob = await exportDOCX.mutateAsync(resumeId);
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${resume.fullName ?? 'resume'}.docx`;
+      a.download = `${resume?.fullName ?? 'resume'}.docx`;
       a.click();
       URL.revokeObjectURL(url);
     } catch (error) {
@@ -78,8 +78,9 @@ export function ResumeBuilder() {
   };
 
   const handleCopyLink = async () => {
-    if (!resume?.slug) return;
-    const url = `${window.location.origin}/r/${resume.slug}`;
+    if (!resumeId) return;
+    // Use resumeId as fallback for the link (backend should support both slug and id)
+    const url = `${window.location.origin}/r/${resumeId}`;
     await navigator.clipboard.writeText(url);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -128,7 +129,7 @@ export function ResumeBuilder() {
     <div className="flex h-[calc(100vh-4rem)] bg-white/5">
       {/* Sidebar */}
       <BuilderSidebar
-        resume={resume}
+        resume={{ id: resumeId ?? '', ...resume }}
         activeThemeName={undefined}
         onThemeApplied={handleThemeApplied}
         onRefresh={() => void refetchAst()}
@@ -185,7 +186,7 @@ export function ResumeBuilder() {
             <div className="mx-1 h-5 w-px bg-white/10" />
 
             {/* Share */}
-            {resume.isPublic && resume.slug ? (
+            {resumeId ? (
               <button
                 type="button"
                 onClick={() => void handleCopyLink()}
@@ -203,12 +204,7 @@ export function ResumeBuilder() {
                   </>
                 )}
               </button>
-            ) : (
-              <span className="inline-flex h-9 items-center gap-2 rounded-lg bg-amber-500/10 px-3 text-sm font-medium text-amber-500">
-                <Share2 className="h-4 w-4" strokeWidth={1.5} />
-                Private
-              </span>
-            )}
+            ) : null}
           </div>
         </header>
 

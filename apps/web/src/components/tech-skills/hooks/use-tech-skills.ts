@@ -97,7 +97,7 @@ export function useTechSkills() {
 export function useSearchTechSkills(query: string, limit = 20) {
   return useQuery({
     queryKey: techSkillsKeys.skillsSearch(query),
-    queryFn: () => techSkillsRepository.searchSkills(query, limit),
+    queryFn: () => techSkillsRepository.searchAll(query, limit),
     staleTime: 5 * 60 * 1000,
     enabled: query.length >= 1,
   });

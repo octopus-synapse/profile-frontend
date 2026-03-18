@@ -7,7 +7,6 @@
 
 import {
   getOnboardingGetSessionQueryKey,
-  type OnboardingSessionDto,
   type SectionProgressDto,
   type StepMetaDto,
   useOnboardingCompleteFromSession,
@@ -24,17 +23,15 @@ type SectionData = Omit<SectionProgressDto, 'items'> & { items: SectionItem[] };
 
 export function useOnboarding() {
   const qc = useQueryClient();
-  const q = useOnboardingGetSession({ query: { staleTime: 0, retry: 1 } });
+  const q = useOnboardingGetSession(undefined, { query: { staleTime: 0, retry: 1 } });
   const nextMut = useOnboardingNextStep();
   const prevMut = useOnboardingPreviousStep();
   const gotoMut = useOnboardingGotoStep();
   const saveMut = useOnboardingSaveStepData();
   const completeMut = useOnboardingCompleteFromSession();
 
-  // Response structure: { data: { success, data: OnboardingSessionDto }, status: 200 }
-  // Access the nested data correctly
-  const rawResponse = q.data?.status === 200 ? q.data.data : null;
-  const d = rawResponse?.success ? (rawResponse.data as OnboardingSessionDto) : null;
+  // Response structure: { data: OnboardingSessionDto, status: 200 }
+  const d = q.data?.status === 200 ? q.data.data : null;
 
   const invalidate = async () => {
     await qc.invalidateQueries({ queryKey: getOnboardingGetSessionQueryKey() });
@@ -51,7 +48,7 @@ export function useOnboarding() {
   };
 
   const goToPreviousStep = async () => {
-    await prevMut.mutateAsync();
+    await prevMut.mutateAsync({ data: {} });
     await invalidate();
   };
 
@@ -61,13 +58,13 @@ export function useOnboarding() {
   };
 
   const saveStepData = async (stepData: Record<string, unknown>) => {
-    // Send stepData directly in body
-    await saveMut.mutateAsync({ data: stepData });
+    // Send stepData as stringified JSON per the new API contract
+    await saveMut.mutateAsync({ data: { stepData: JSON.stringify(stepData) } });
     await invalidate();
   };
 
   const complete = async () => {
-    const r = await completeMut.mutateAsync();
+    const r = await completeMut.mutateAsync({ data: {} });
     await invalidate();
     return r;
   };

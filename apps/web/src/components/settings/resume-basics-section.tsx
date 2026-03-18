@@ -70,17 +70,12 @@ export function ResumeBasicsSection({
   onOpenSection,
 }: ResumeBasicsSectionProps) {
   const { data: resumeId, isLoading: isLoadingResumeId } = useCurrentResumeId();
-  const {
-    data: resumeResponse,
-    isLoading: isLoadingResume,
-    isError,
-    error,
-  } = useResume(resumeId ?? '');
+  const { data: resumeResponse, isLoading: isLoadingResume, isError } = useResume(resumeId ?? '');
   const updateResume = useUpdateResume(resumeId ?? '');
   const [formData, setFormData] = useState(createEmptyResumeBasicsForm);
   const [isDirty, setIsDirty] = useState(false);
 
-  const resume = (resumeResponse?.data?.data ?? null) as ResumeSettingsData | null;
+  const resume = (resumeResponse?.data ?? null) as ResumeSettingsData | null;
 
   useEffect(() => {
     if (!resume) return;
@@ -122,7 +117,7 @@ export function ResumeBasicsSection({
   if (isError) {
     return (
       <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-sm text-red-400">
-        Failed to load resume settings: {error instanceof Error ? error.message : 'Unknown error'}
+        Failed to load resume settings
       </div>
     );
   }
@@ -299,9 +294,7 @@ export function ResumeBasicsSection({
       {updateResume.isError && (
         <div className="flex items-center gap-2 text-sm text-red-500">
           <AlertCircle className="h-4 w-4" />
-          {updateResume.error instanceof Error
-            ? updateResume.error.message
-            : 'Failed to update resume'}
+          Failed to update resume
         </div>
       )}
     </div>

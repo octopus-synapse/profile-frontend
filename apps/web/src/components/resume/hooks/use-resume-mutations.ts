@@ -29,8 +29,8 @@ export function useCreateResume() {
 
   return {
     ...mutation,
-    mutateAsync: async () => {
-      const result = await mutation.mutateAsync();
+    mutateAsync: async (title: string = 'Untitled Resume') => {
+      const result = await mutation.mutateAsync({ data: { title } });
       void queryClient.invalidateQueries({ queryKey: resumeKeys.lists() });
       return result;
     },

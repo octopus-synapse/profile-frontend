@@ -93,7 +93,9 @@ function EvolutionCard({
 
 export function AutoPlayProductDemo({ t, compact = false }: AutoPlayProductDemoProps) {
   const scenes = createDemoScenes(t);
-  const selectedScenes = [scenes[0], scenes[2], scenes[3]];
+  const selectedScenes = [scenes[0], scenes[2], scenes[3]].filter(
+    (scene): scene is NonNullable<typeof scene> => scene !== undefined,
+  );
 
   return (
     <div className="relative w-full">

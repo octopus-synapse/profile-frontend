@@ -25,7 +25,7 @@ export function useResumeAst(
     query: {
       enabled: !!resumeId && (options?.enabled ?? true),
       staleTime: 1000 * 60 * 5, // 5 minutes
-      select: (response) => response.data?.data?.ast as ResumeAstDto | undefined,
+      select: (response) => response.data?.ast as ResumeAstDto | undefined,
     },
   });
 }
@@ -43,7 +43,7 @@ export function usePublicResumeAst(
     query: {
       enabled: !!slug && (options?.enabled ?? true),
       staleTime: 1000 * 60 * 5, // 5 minutes
-      select: (response) => response.data?.data?.ast as ResumeAstDto | undefined,
+      select: (response) => response.data?.ast as ResumeAstDto | undefined,
     },
   });
 }

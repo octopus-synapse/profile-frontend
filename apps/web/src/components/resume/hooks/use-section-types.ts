@@ -62,7 +62,7 @@ interface UseSectionTypesResult {
  * ```
  */
 export function useSectionTypes(resumeId: string): UseSectionTypesResult {
-  const { data, isLoading, error, refetch } = useResumesListTypes(resumeId, {
+  const { data, isLoading, error, refetch } = useResumesListTypes(resumeId, undefined, {
     query: {
       enabled: !!resumeId,
       staleTime: 5 * 60 * 1000, // Cache for 5 minutes
@@ -70,22 +70,26 @@ export function useSectionTypes(resumeId: string): UseSectionTypesResult {
   });
 
   // Extract section types from response
-  // Response shape: { data: { data: { sectionTypes: [...] } }, status, headers }
+  // Response shape: { data: { sectionTypes: [...] }, status, headers }
   const sectionTypes: SectionTypeMeta[] = [];
-  const typesData = data?.data?.data;
+  const typesData = data?.data;
 
   if (typesData?.sectionTypes) {
-    for (const st of typesData.sectionTypes) {
-      const record = st as Record<string, unknown>;
+    for (const key of typesData.sectionTypes) {
+      // The API now returns just section type keys as strings
+      // We create minimal metadata from the key
       sectionTypes.push({
-        key: (record.key as string) ?? '',
-        semanticKind: (record.semanticKind as string) ?? '',
-        title: (record.title as string) ?? '',
-        definition: record.definition as Record<string, unknown> | undefined,
-        renderHints: record.renderHints as RenderHints | undefined,
-        fieldStyles: record.fieldStyles as FieldStyles | undefined,
-        iconType: record.iconType as string | undefined,
-        icon: record.icon as string | undefined,
+        key: key,
+        semanticKind: key.toUpperCase().replace(/_V\d+$/, ''),
+        title: key
+          .replace(/_v\d+$/, '')
+          .replace(/_/g, ' ')
+          .replace(/\b\w/g, (c) => c.toUpperCase()),
+        definition: undefined,
+        renderHints: undefined,
+        fieldStyles: undefined,
+        iconType: undefined,
+        icon: undefined,
       });
     }
   }

@@ -1,7 +1,10 @@
-type ProfessionalProfileLike = {
-  jobTitle?: string;
-  summary?: string;
-} | null;
+type ProfessionalProfileLike =
+  | {
+      jobTitle?: string;
+      summary?: string;
+    }
+  | null
+  | undefined;
 
 export function isProfessionalProfileComplete(profile: ProfessionalProfileLike): boolean {
   return Boolean(profile?.jobTitle && profile?.summary);

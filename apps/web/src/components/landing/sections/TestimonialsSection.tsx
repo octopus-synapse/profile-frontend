@@ -224,13 +224,17 @@ export function TestimonialsSection() {
 
         {/* Testimonials Grid - Desktop */}
         <div className="hidden gap-6 lg:grid lg:grid-cols-3" role="list">
-          {getVisibleTestimonials().map((idx, position) => (
-            <TestimonialCard
-              key={TESTIMONIALS[idx].id}
-              testimonial={TESTIMONIALS[idx]}
-              isActive={position === 1}
-            />
-          ))}
+          {getVisibleTestimonials().map((idx, position) => {
+            const testimonial = TESTIMONIALS[idx];
+            if (!testimonial) return null;
+            return (
+              <TestimonialCard
+                key={testimonial.id}
+                testimonial={testimonial}
+                isActive={position === 1}
+              />
+            );
+          })}
         </div>
 
         {/* Testimonials - Mobile */}
@@ -243,7 +247,9 @@ export function TestimonialsSection() {
               exit={{ opacity: 0, x: -50 }}
               transition={{ duration: 0.3 }}
             >
-              <TestimonialCard testimonial={TESTIMONIALS[activeIndex]} isActive={true} />
+              {TESTIMONIALS[activeIndex] && (
+                <TestimonialCard testimonial={TESTIMONIALS[activeIndex]} isActive={true} />
+              )}
             </motion.div>
           </AnimatePresence>
         </div>

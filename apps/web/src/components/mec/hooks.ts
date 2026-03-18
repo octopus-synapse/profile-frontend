@@ -7,9 +7,9 @@
  */
 
 import {
-  useMecCourseSearchCoursesByName,
-  useMecInstitutionListCoursesByInstitutionCode,
-  useMecInstitutionSearchInstitutionsByName,
+  useMecCoursesSearchCoursesByName,
+  useMecInstitutionsListCoursesByInstitutionCode,
+  useMecInstitutionsSearchInstitutionsByName,
 } from '@profile/api-client';
 import type { MecCourse, MecInstitution } from './types';
 
@@ -19,7 +19,7 @@ import type { MecCourse, MecInstitution } from './types';
  * @param enabled - Whether the query is enabled
  */
 export function useSearchCourses(query: string, enabled: boolean = true) {
-  const result = useMecCourseSearchCoursesByName(
+  const result = useMecCoursesSearchCoursesByName(
     { q: query },
     {
       query: {
@@ -30,9 +30,9 @@ export function useSearchCourses(query: string, enabled: boolean = true) {
   );
 
   return {
-    data: result.data?.data?.data
+    data: result.data?.data?.courses
       ? {
-          data: (result.data.data.data.courses ?? []) as unknown as MecCourse[],
+          data: (result.data.data.courses ?? []) as unknown as MecCourse[],
         }
       : undefined,
     isLoading: result.isLoading,
@@ -45,7 +45,7 @@ export function useSearchCourses(query: string, enabled: boolean = true) {
  * @param query - Search query (minimum 2 characters)
  */
 export function useSearchInstitutions(query: string) {
-  const result = useMecInstitutionSearchInstitutionsByName(
+  const result = useMecInstitutionsSearchInstitutionsByName(
     { q: query },
     {
       query: {
@@ -56,9 +56,9 @@ export function useSearchInstitutions(query: string) {
   );
 
   return {
-    data: result.data?.data?.data
+    data: result.data?.data?.institutions
       ? {
-          data: (result.data.data.data.institutions ?? []) as unknown as MecInstitution[],
+          data: (result.data.data.institutions ?? []) as unknown as MecInstitution[],
         }
       : undefined,
     isLoading: result.isLoading,
@@ -71,7 +71,7 @@ export function useSearchInstitutions(query: string) {
  * @param institutionCode - Institution code (codigoIes)
  */
 export function useCoursesByInstitution(institutionCode: number | null) {
-  const result = useMecInstitutionListCoursesByInstitutionCode(institutionCode ?? 0, {
+  const result = useMecInstitutionsListCoursesByInstitutionCode(String(institutionCode ?? 0), {
     query: {
       enabled: institutionCode !== null && institutionCode > 0,
       staleTime: 1000 * 60 * 5, // 5 minutes
@@ -79,7 +79,7 @@ export function useCoursesByInstitution(institutionCode: number | null) {
   });
 
   return {
-    data: (result.data?.data?.data?.courses ?? []) as unknown as MecCourse[],
+    data: (result.data?.data?.courses ?? []) as unknown as MecCourse[],
     isLoading: result.isLoading,
     error: result.error,
   };

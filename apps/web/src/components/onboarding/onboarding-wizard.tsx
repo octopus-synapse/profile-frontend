@@ -30,7 +30,7 @@ export function OnboardingWizard() {
   const router = useRouter();
   const { data: authSession, isLoading: isAuthLoading } = useAuthSession();
   const { currentStep, isLoading, isError } = useOnboarding();
-  const user = authSession?.data?.data?.user;
+  const user = authSession?.data?.user;
   const mustRedirectCompletedUser = shouldRedirectCompletedOnboarding({
     hasCompletedOnboarding: user?.hasCompletedOnboarding,
     currentStep,

@@ -79,7 +79,7 @@ export function SignUpForm() {
       // Auto sign in after registration
       const loginResponse = await authLogin({ email, password });
 
-      if (loginResponse.status === 200) {
+      if (loginResponse.status === 201) {
         await queryClient.invalidateQueries({
           queryKey: getAuthSessionQueryKey(),
         });
