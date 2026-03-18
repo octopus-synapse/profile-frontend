@@ -77,6 +77,7 @@ RUN mkdir -p /app/profile-frontend/node_modules/@octopus-synapse && \
 
 # Build internal packages
 RUN bun --filter @profile/api-client build
+RUN bun --filter @profile/i18n build
 
 # Build Next.js app
 ENV NEXT_TELEMETRY_DISABLED=1
