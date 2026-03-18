@@ -10,6 +10,7 @@ WORKDIR /app
 
 # Handle Context Normalization and Sister Repositories
 # Supports both Monorepo Context (CI) and Project Root Context (CD)
+# Note: profile-contracts is no longer needed - we use orval SDK from profile-services
 RUN --mount=type=bind,target=/context \
     --mount=type=secret,id=github_token \
     if [ -s /run/secrets/github_token ]; then \
@@ -19,10 +20,6 @@ RUN --mount=type=bind,target=/context \
     if [ -f "/context/profile-frontend/package.json" ]; then \
         echo "Detected Monorepo Context" && \
         mkdir -p /app/profile-frontend && cp -a /context/profile-frontend/. /app/profile-frontend/; \
-        if [ -d "/context/profile-contracts" ] && [ -f "/context/profile-contracts/package.json" ]; then \
-            echo "Copying profile-contracts from context" && \
-            mkdir -p /app/profile-contracts && cp -a /context/profile-contracts/. /app/profile-contracts/; \
-        fi; \
         if [ -d "/context/profile-ui" ] && [ -f "/context/profile-ui/package.json" ]; then \
             echo "Copying profile-ui from context" && \
             mkdir -p /app/profile-ui && cp -a /context/profile-ui/. /app/profile-ui/; \
@@ -31,18 +28,14 @@ RUN --mount=type=bind,target=/context \
         echo "Detected Project Root Context" && \
         mkdir -p /app/profile-frontend && cp -a /context/. /app/profile-frontend/; \
     fi && \
-    # 2. Self-healing: Clone missing sister repositories if GITHUB_TOKEN is available
+    # 2. Self-healing: Clone missing profile-ui if GITHUB_TOKEN is available
     if [ -n "$GITHUB_TOKEN_VAL" ]; then \
-        if [ ! -f "/app/profile-contracts/package.json" ]; then \
-            echo "Cloning profile-contracts..." && rm -rf /app/profile-contracts && \
-            git clone https://x-access-token:${GITHUB_TOKEN_VAL}@github.com/octopus-synapse/profile-contracts.git /app/profile-contracts; \
-        fi && \
         if [ ! -f "/app/profile-ui/package.json" ]; then \
             echo "Cloning profile-ui..." && rm -rf /app/profile-ui && \
             git clone https://x-access-token:${GITHUB_TOKEN_VAL}@github.com/octopus-synapse/profile-ui.git /app/profile-ui; \
         fi; \
-    elif [ ! -f "/app/profile-contracts/package.json" ] || [ ! -f "/app/profile-ui/package.json" ]; then \
-        echo "ERROR: Sister repositories missing and no GITHUB_TOKEN for cloning" && exit 1; \
+    elif [ ! -f "/app/profile-ui/package.json" ]; then \
+        echo "ERROR: profile-ui missing and no GITHUB_TOKEN for cloning" && exit 1; \
     fi
 
 # Step 2: Install dependencies for all
@@ -52,9 +45,6 @@ RUN --mount=type=secret,id=github_token \
       echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN_VAL}" > ~/.npmrc && \
       echo "@octopus-synapse:registry=https://npm.pkg.github.com" >> ~/.npmrc; \
     fi && \
-    # Contracts
-    echo "Installing @octopus-synapse/profile-contracts..." && \
-    cd /app/profile-contracts && (bun install --frozen-lockfile || bun install) && \
     # UI
     echo "Installing @octopus-synapse/profile-ui..." && \
     cd /app/profile-ui && (bun install --frozen-lockfile || bun install) && \
@@ -74,9 +64,6 @@ WORKDIR /app
 COPY --from=deps /app /app
 
 # Build external dependencies first so they are available for frontend build
-WORKDIR /app/profile-contracts
-RUN bun run build
-
 WORKDIR /app/profile-ui
 RUN bun run build
 
@@ -85,9 +72,7 @@ WORKDIR /app/profile-frontend
 # Refresh symlinks and resolve sister-repo builds (crucial for type resolution)
 RUN bun install
 RUN mkdir -p /app/profile-frontend/node_modules/@octopus-synapse && \
-    rm -rf /app/profile-frontend/node_modules/@octopus-synapse/profile-contracts && \
     rm -rf /app/profile-frontend/node_modules/@octopus-synapse/profile-ui && \
-    ln -s /app/profile-contracts /app/profile-frontend/node_modules/@octopus-synapse/profile-contracts && \
     ln -s /app/profile-ui /app/profile-frontend/node_modules/@octopus-synapse/profile-ui
 
 # Build internal packages
