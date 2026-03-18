@@ -11,12 +11,12 @@ describe("Smoke: API Client SDK Exports", () => {
  describe("Generated API Functions", () => {
   it("should export auth functions", async () => {
    const auth =
-    await import("../../packages/api-client/src/generated/api/authentication/authentication");
+    await import("../../packages/api-client/src/generated/api/auth/auth");
 
    expect(auth.authLogin).toBeDefined();
    expect(auth.authLogout).toBeDefined();
    expect(auth.authRefresh).toBeDefined();
-   expect(auth.authSession).toBeDefined();
+   expect(auth.authGetSession).toBeDefined();
 
    // Hooks should also be exported
    expect(auth.useAuthLogin).toBeDefined();
@@ -26,7 +26,7 @@ describe("Smoke: API Client SDK Exports", () => {
 
   it("should export accounts functions", async () => {
    const accounts =
-    await import("../../packages/api-client/src/generated/api/account-lifecycle/account-lifecycle");
+    await import("../../packages/api-client/src/generated/api/accounts/accounts");
 
    expect(accounts.accountsSignup).toBeDefined();
    expect(accounts.useAccountsSignup).toBeDefined();
@@ -47,16 +47,16 @@ describe("Smoke: API Client SDK Exports", () => {
    const themes =
     await import("../../packages/api-client/src/generated/api/themes/themes");
 
-   expect(themes.publicThemeFindAllThemesWithPagination).toBeDefined();
-   expect(themes.publicThemeFindThemeById).toBeDefined();
-   expect(themes.publicThemeFindAllSystemThemes).toBeDefined();
+   expect(themes.themesFindAllThemesWithPagination).toBeDefined();
+   expect(themes.themesFindThemeById).toBeDefined();
+   expect(themes.themesFindAllSystemThemes).toBeDefined();
   });
 
   it("should export platform functions", async () => {
    const platform =
     await import("../../packages/api-client/src/generated/api/platform/platform");
 
-   expect(platform.platformStatsGetStatistics).toBeDefined();
+   expect(platform.platformGetStatistics).toBeDefined();
   });
  });
 
