@@ -12,6 +12,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { HelpTooltip } from '@/shared/components/ui';
 import { useDebounce } from '@/shared/hooks/use-debounce';
 import { useOnboarding } from '../hooks';
+import { OnboardingStepHeader } from '../step-header';
 import { StepNavigation } from '../step-navigation';
 
 /**
@@ -212,37 +213,29 @@ export function UsernameStep() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <div className="flex items-center gap-2">
-          <span className="font-mono text-sm text-cyan-400">{`>`}</span>
-          <h2 className="text-xl font-bold text-white">Choose Your Username</h2>
-        </div>
-        <p className="mt-1 font-mono text-xs text-zinc-400">This will be your public profile URL</p>
-      </div>
+      <OnboardingStepHeader
+        eyebrow="Step 2"
+        title="Choose your username"
+        description="This creates your public profile URL, so keep it simple and memorable."
+      />
 
-      {/* URL Preview */}
-      <div className="border border-white/10 bg-white/5 p-4">
-        <div className="flex items-center gap-2 font-mono text-sm">
+      <div className="rounded-2xl border border-white/10 bg-zinc-950/40 p-4">
+        <div className="flex items-center gap-2 text-sm">
           <ExternalLink className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
           <span className="text-zinc-400">profile.app/</span>
-          <span className="font-medium text-cyan-400">{inputValue || 'username'}</span>
+          <span className="font-medium text-blue-400">{inputValue || 'username'}</span>
         </div>
       </div>
 
-      {/* Code Comment */}
-      <div className="font-mono text-xs text-zinc-500">
-        <span className="text-gray-500">
-          <span className="opacity-60">{'//'}</span> Letters, numbers, and underscores only (3-30
-          chars)
-        </span>
+      <div className="rounded-2xl border border-white/10 bg-zinc-950/40 px-4 py-3 text-sm text-zinc-400">
+        Use 3 to 30 lowercase letters, numbers, or underscores.
       </div>
 
       {/* Username Input */}
       <div>
-        <label className="mb-1.5 flex items-center gap-2 font-mono text-sm text-white">
+        <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-white">
           <AtSign className="h-4 w-4" strokeWidth={1.5} />
-          username<span className="text-red-500">*</span>
+          Username<span className="text-red-500">*</span>
           <HelpTooltip content="Your unique identifier on PATCH. This cannot be changed later, so choose wisely!" />
         </label>
         <div className="relative">
@@ -253,7 +246,7 @@ export function UsernameStep() {
             onBlur={handleBlur}
             placeholder="johndoe"
             maxLength={MAX_LENGTH}
-            className={`w-full border border-white/10 bg-white/5 px-3 py-2 pr-10 font-mono text-sm text-white placeholder:text-zinc-500 focus:border-cyan-500 focus:outline-none ${
+            className={`w-full rounded-xl border border-white/10 bg-zinc-950/60 px-3 py-2.5 pr-10 text-sm text-white placeholder:text-zinc-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${
               touched && (!validation.valid || isAvailable === false)
                 ? 'border-red-500'
                 : isAvailable === true
@@ -267,7 +260,7 @@ export function UsernameStep() {
         {/* Status Message */}
         {statusMessage && (
           <div
-            className={`mt-1 flex items-center justify-between font-mono text-xs ${
+            className={`mt-1 flex items-center justify-between text-xs ${
               statusMessage.type === 'error'
                 ? 'text-red-500'
                 : statusMessage.type === 'success'
@@ -287,7 +280,7 @@ export function UsernameStep() {
               <button
                 type="button"
                 onClick={handleRetry}
-                className="flex items-center gap-1 text-cyan-400 transition-colors hover:text-cyan-300"
+                className="flex items-center gap-1 text-blue-400 transition-colors hover:text-blue-300"
               >
                 <RefreshCw className="h-3 w-3" />
                 Retry
@@ -298,25 +291,24 @@ export function UsernameStep() {
 
         {/* Character Count */}
         <div className="mt-2 flex justify-end">
-          <span className="font-mono text-xs text-zinc-500">
+          <span className="text-xs text-zinc-500">
             {inputValue.length}/{MAX_LENGTH}
           </span>
         </div>
       </div>
 
-      {/* Rules */}
-      <div className="space-y-1 border border-white/10 bg-white/5 p-3">
-        <p className="font-mono text-xs font-medium text-zinc-400">{'//'} Username rules:</p>
-        <ul className="space-y-1 font-mono text-xs text-zinc-500">
+      <div className="space-y-2 rounded-2xl border border-white/10 bg-zinc-950/40 p-4">
+        <p className="text-sm font-medium text-white">Username checklist</p>
+        <ul className="space-y-2 text-sm text-zinc-400">
           <li className="flex items-center gap-2">
             <span className={inputValue.length >= MIN_LENGTH ? 'text-emerald-500' : ''}>
-              {inputValue.length >= MIN_LENGTH ? '+' : '-'}
+              {inputValue.length >= MIN_LENGTH ? '•' : '–'}
             </span>
             At least {MIN_LENGTH} characters
           </li>
           <li className="flex items-center gap-2">
             <span className={inputValue.length <= MAX_LENGTH ? 'text-emerald-500' : ''}>
-              {inputValue.length <= MAX_LENGTH ? '+' : '-'}
+              {inputValue.length <= MAX_LENGTH ? '•' : '–'}
             </span>
             Maximum {MAX_LENGTH} characters
           </li>
@@ -324,13 +316,13 @@ export function UsernameStep() {
             <span
               className={!inputValue || USERNAME_REGEX.test(inputValue) ? 'text-emerald-500' : ''}
             >
-              {!inputValue || USERNAME_REGEX.test(inputValue) ? '+' : '-'}
+              {!inputValue || USERNAME_REGEX.test(inputValue) ? '•' : '–'}
             </span>
             Letters, numbers, and underscores only
           </li>
           <li className="flex items-center gap-2">
             <span className={isAvailable === true ? 'text-emerald-500' : ''}>
-              {isAvailable === true ? '+' : '-'}
+              {isAvailable === true ? '•' : '–'}
             </span>
             Must be unique
           </li>

@@ -115,6 +115,17 @@ void mock.module('@/features/i18n', () => ({
   }),
 }));
 
+// Mock @profile/i18n package for tests (used by step-navigation and other components)
+void mock.module('@profile/i18n', () => ({
+  useT: () => (key: string) => translationMap[key] ?? key,
+  useI18n: () => ({
+    locale: 'en',
+    t: (key: string) => translationMap[key] ?? key,
+  }),
+  I18nProvider: ({ children }: React.PropsWithChildren) =>
+    React.createElement(React.Fragment, null, children),
+}));
+
 // Mock @/lib/auth context for tests
 void mock.module('@/lib/auth', () => ({
   useAuth: () => ({
@@ -149,4 +160,5 @@ void mock.module('next/navigation', () => ({
   }),
   usePathname: () => '/',
   useSearchParams: () => new URLSearchParams(),
+  useParams: () => ({}),
 }));

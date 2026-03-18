@@ -45,7 +45,8 @@ export function useOnboarding() {
   // --- Commands ---
 
   const goToNextStep = async (stepData?: Record<string, unknown>) => {
-    await nextMut.mutateAsync({ data: { stepData } });
+    // Send stepData directly in body (SDK wraps it correctly)
+    await nextMut.mutateAsync({ data: stepData ?? {} });
     await invalidate();
   };
 
@@ -60,7 +61,8 @@ export function useOnboarding() {
   };
 
   const saveStepData = async (stepData: Record<string, unknown>) => {
-    await saveMut.mutateAsync({ data: { stepData } });
+    // Send stepData directly in body
+    await saveMut.mutateAsync({ data: stepData });
     await invalidate();
   };
 

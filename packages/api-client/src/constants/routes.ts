@@ -35,23 +35,6 @@ export const ACCOUNTS_ROUTES = {
   ACCOUNTS_SIGNUP: '/api/accounts',
 } as const;
 
-// Alias for E2E tests backward compatibility
-export const ACCOUNT_LIFECYCLE_ROUTES = ACCOUNTS_ROUTES;
-export const AUTHENTICATION_ROUTES = {
-  LOGIN: '/api/auth/login',
-  LOGOUT: '/api/auth/logout',
-  REFRESH: '/api/auth/refresh',
-  SESSION: '/api/auth/session',
-} as const;
-
-export const ADMIN_SECTION_TYPES_ROUTES = {
-  LIST: '/api/v1/admin/section-types',
-  GET: (key: string) => `/api/v1/admin/section-types/${key}`,
-  CREATE: '/api/v1/admin/section-types',
-  UPDATE: (key: string) => `/api/v1/admin/section-types/${key}`,
-  DELETE: (key: string) => `/api/v1/admin/section-types/${key}`,
-} as const;
-
 export const ATS_VALIDATION_ROUTES = {
   ATS_VALIDATION_VALIDATE_C_V: '/api/v1/ats/validate',
 } as const;

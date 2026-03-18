@@ -7,9 +7,14 @@
 
 'use client';
 
+import { useAuthSession } from '@profile/api-client';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { ROUTES } from '@/config/routes';
 import { LoadingState } from '@/shared/components/ui';
 import { isSectionStep, type SectionStep, useOnboarding } from './hooks';
 import { OnboardingShell } from './onboarding-shell';
+import { shouldRedirectCompletedOnboarding } from './onboarding-wizard.utils';
 import {
   CompleteStep,
   GenericSectionStep,
@@ -22,7 +27,19 @@ import {
 } from './steps';
 
 export function OnboardingWizard() {
+  const router = useRouter();
+  const { data: authSession, isLoading: isAuthLoading } = useAuthSession();
   const { currentStep, isLoading, isError } = useOnboarding();
+  const user = authSession?.data?.data?.user;
+  const mustRedirectCompletedUser = shouldRedirectCompletedOnboarding({
+    hasCompletedOnboarding: user?.hasCompletedOnboarding,
+    currentStep,
+  });
+
+  useEffect(() => {
+    if (!mustRedirectCompletedUser) return;
+    router.replace(ROUTES.PROTECTED.RESUME);
+  }, [mustRedirectCompletedUser, router]);
 
   const renderStep = () => {
     // Handle section steps generically
@@ -51,8 +68,19 @@ export function OnboardingWizard() {
     }
   };
 
+  if (mustRedirectCompletedUser) {
+    return (
+      <OnboardingShell>
+        <LoadingState
+          message="Onboarding already completed. Redirecting to your resume..."
+          minHeight="400px"
+        />
+      </OnboardingShell>
+    );
+  }
+
   // Show loading state while fetching progress from backend
-  if (isLoading && !isError && currentStep !== 'complete') {
+  if ((isLoading || isAuthLoading) && !isError && currentStep !== 'complete') {
     return (
       <OnboardingShell>
         <LoadingState message="Loading your progress..." minHeight="400px" />

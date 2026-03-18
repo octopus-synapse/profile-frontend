@@ -11,9 +11,9 @@
 'use client';
 
 import {
-  getGenericResumeSectionsListResumeSectionsQueryKey,
-  useGenericResumeSectionsListResumeSections,
-  useGenericResumeSectionsListTypes,
+  getResumesListResumeSectionsQueryKey,
+  useResumesListResumeSections,
+  useResumesListTypes,
 } from '@profile/api-client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type {
@@ -103,7 +103,7 @@ export function useGenericSectionCRUD({
   const queryClient = useQueryClient();
 
   // Fetch section types to get metadata
-  const typesQuery = useGenericResumeSectionsListTypes(resumeId, {
+  const typesQuery = useResumesListTypes(resumeId, {
     query: {
       enabled: enabled && !!resumeId,
       staleTime: 5 * 60 * 1000, // Types rarely change
@@ -111,7 +111,7 @@ export function useGenericSectionCRUD({
   });
 
   // Fetch all sections for the resume
-  const sectionsQuery = useGenericResumeSectionsListResumeSections(resumeId, {
+  const sectionsQuery = useResumesListResumeSections(resumeId, {
     query: {
       enabled: enabled && !!resumeId,
       staleTime: 30 * 1000, // Sections can change more frequently
@@ -141,7 +141,7 @@ export function useGenericSectionCRUD({
   // Invalidation helper
   const invalidateSections = () => {
     return queryClient.invalidateQueries({
-      queryKey: getGenericResumeSectionsListResumeSectionsQueryKey(resumeId),
+      queryKey: getResumesListResumeSectionsQueryKey(resumeId),
     });
   };
 

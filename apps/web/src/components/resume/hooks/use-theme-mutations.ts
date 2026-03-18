@@ -5,28 +5,53 @@
  */
 
 import {
-  useUserThemeApply,
-  useUserThemeCreateThemeForUser,
-  useUserThemeDeleteThemeForUser,
-  useUserThemeFork,
-  useUserThemeUpdateThemeForUser,
+  useThemesApply,
+  useThemesCreateThemeForUser,
+  useThemesDeleteThemeForUser,
+  useThemesFork,
+  useThemesReview,
+  useThemesSubmit,
+  useThemesUpdateThemeForUser,
 } from '@profile/api-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { themeKeys } from './theme-query-keys';
 
-// Note: The current SDK has incomplete theme API - create/update/fork/apply have no body params
-// These hooks wrap the SDK mutations with proper invalidation
+function serializeStyleConfig(styleConfig: unknown): string | undefined {
+  if (styleConfig == null) return undefined;
+  return typeof styleConfig === 'string' ? styleConfig : JSON.stringify(styleConfig);
+}
 
 export function useCreateTheme() {
   const queryClient = useQueryClient();
-  const mutation = useUserThemeCreateThemeForUser();
+  const mutation = useThemesCreateThemeForUser();
 
   return {
     ...mutation,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    mutateAsync: async (_input: any) => {
-      // SDK create has no body param - backend spec incomplete
-      const result = await mutation.mutateAsync();
+    mutateAsync: async ({
+      name,
+      category,
+      styleConfig,
+      description,
+      tags,
+      parentThemeId,
+    }: {
+      name: string;
+      category: string;
+      styleConfig: unknown;
+      description?: string;
+      tags?: string[];
+      parentThemeId?: string;
+    }) => {
+      const result = await mutation.mutateAsync({
+        data: {
+          name,
+          category,
+          description: description ?? '',
+          tags,
+          parentThemeId,
+          styleConfig: serializeStyleConfig(styleConfig) ?? '{}',
+        },
+      });
       void queryClient.invalidateQueries({ queryKey: themeKeys.mine() });
       return result;
     },
@@ -35,14 +60,33 @@ export function useCreateTheme() {
 
 export function useUpdateTheme() {
   const queryClient = useQueryClient();
-  const mutation = useUserThemeUpdateThemeForUser();
+  const mutation = useThemesUpdateThemeForUser();
 
   return {
     ...mutation,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    mutateAsync: async ({ id, input: _input }: { id: string; input: any }) => {
-      // SDK update only takes id - backend spec incomplete for body
-      const result = await mutation.mutateAsync({ id });
+    mutateAsync: async ({
+      id,
+      input,
+    }: {
+      id: string;
+      input: {
+        name?: string;
+        description?: string;
+        category?: string;
+        tags?: string[];
+        styleConfig?: unknown;
+      };
+    }) => {
+      const result = await mutation.mutateAsync({
+        id,
+        data: {
+          name: input.name ?? '',
+          description: input.description ?? '',
+          category: input.category,
+          tags: input.tags,
+          styleConfig: serializeStyleConfig(input.styleConfig),
+        },
+      });
       void queryClient.invalidateQueries({ queryKey: themeKeys.detail(id) });
       void queryClient.invalidateQueries({ queryKey: themeKeys.mine() });
       return result;
@@ -52,7 +96,7 @@ export function useUpdateTheme() {
 
 export function useDeleteTheme() {
   const queryClient = useQueryClient();
-  const mutation = useUserThemeDeleteThemeForUser();
+  const mutation = useThemesDeleteThemeForUser();
 
   return {
     ...mutation,
@@ -66,13 +110,26 @@ export function useDeleteTheme() {
 
 export function useForkTheme() {
   const queryClient = useQueryClient();
-  const mutation = useUserThemeFork();
+  const mutation = useThemesFork();
 
   return {
     ...mutation,
-    mutateAsync: async ({ themeId: _themeId, name: _name }: { themeId: string; name: string }) => {
-      // SDK fork has no params - backend spec incomplete
-      const result = await mutation.mutateAsync();
+    mutateAsync: async ({
+      themeId,
+      name,
+      description,
+    }: {
+      themeId: string;
+      name: string;
+      description?: string;
+    }) => {
+      const result = await mutation.mutateAsync({
+        data: {
+          themeId,
+          name,
+          description: description ?? '',
+        },
+      });
       void queryClient.invalidateQueries({ queryKey: themeKeys.mine() });
       return result;
     },
@@ -81,21 +138,27 @@ export function useForkTheme() {
 
 export function useApplyTheme() {
   const queryClient = useQueryClient();
-  const mutation = useUserThemeApply();
+  const mutation = useThemesApply();
 
   return {
     ...mutation,
     mutateAsync: async ({
       resumeId,
-      themeId: _themeId,
-      customizations: _customizations,
+      themeId,
+      customizations,
     }: {
       resumeId: string;
       themeId: string;
       customizations?: Record<string, unknown>;
     }) => {
-      // SDK apply has no params - backend spec incomplete
-      const result = await mutation.mutateAsync();
+      const result = await mutation.mutateAsync({
+        data: {
+          resumeId,
+          themeId,
+          customizations: customizations ? JSON.stringify(customizations) : undefined,
+        },
+      });
+      void queryClient.invalidateQueries({ queryKey: ['resumes', 'detail', resumeId] });
       void queryClient.invalidateQueries({ queryKey: ['resumes', resumeId] });
       return result;
     },
@@ -105,52 +168,60 @@ export function useApplyTheme() {
 // Approval workflow hooks - Not yet in SDK
 export function useSubmitForApproval() {
   const queryClient = useQueryClient();
+  const mutation = useThemesSubmit();
 
   return {
-    mutate: () => {
-      throw new Error('submitForApproval not available in SDK');
-    },
-    mutateAsync: async (_themeId: string) => {
-      throw new Error('submitForApproval not available in SDK');
-    },
-    isPending: false,
-    onSuccess: () => {
+    ...mutation,
+    mutateAsync: async (themeId: string, message?: string) => {
+      const result = await mutation.mutateAsync({
+        id: themeId,
+        data: { message },
+      });
       void queryClient.invalidateQueries({ queryKey: themeKeys.mine() });
+      return result;
     },
   };
 }
 
 export function useApproveTheme() {
   const queryClient = useQueryClient();
+  const mutation = useThemesReview();
 
   return {
-    mutate: () => {
-      throw new Error('approveTheme not available in SDK');
-    },
-    mutateAsync: async (_themeId: string) => {
-      throw new Error('approveTheme not available in SDK');
-    },
-    isPending: false,
-    onSuccess: () => {
+    ...mutation,
+    mutateAsync: async (themeId: string) => {
+      const result = await mutation.mutateAsync({
+        data: {
+          themeId,
+          approved: true,
+          feedback: '',
+          rejectionReason: '',
+        },
+      });
       void queryClient.invalidateQueries({ queryKey: themeKeys.pending() });
       void queryClient.invalidateQueries({ queryKey: themeKeys.all });
+      return result;
     },
   };
 }
 
 export function useRejectTheme() {
   const queryClient = useQueryClient();
+  const mutation = useThemesReview();
 
   return {
-    mutate: () => {
-      throw new Error('rejectTheme not available in SDK');
-    },
-    mutateAsync: async (_params: { themeId: string; reason: string }) => {
-      throw new Error('rejectTheme not available in SDK');
-    },
-    isPending: false,
-    onSuccess: () => {
+    ...mutation,
+    mutateAsync: async ({ themeId, reason }: { themeId: string; reason: string }) => {
+      const result = await mutation.mutateAsync({
+        data: {
+          themeId,
+          approved: false,
+          feedback: '',
+          rejectionReason: reason,
+        },
+      });
       void queryClient.invalidateQueries({ queryKey: themeKeys.pending() });
+      return result;
     },
   };
 }

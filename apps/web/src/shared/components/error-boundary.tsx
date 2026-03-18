@@ -40,20 +40,20 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       }
 
       return (
-        <div className="border-pf-border bg-pf-bg-secondary flex min-h-[200px] flex-col items-center justify-center rounded-lg border p-6">
-          <h3 className="text-pf-fg mb-2 text-lg font-semibold">Something went wrong</h3>
-          <p className="text-pf-fg-muted mb-4 text-sm">
+        <div className="border border-white/10 bg-[#0A0A0A]/80 flex min-h-[200px] flex-col items-center justify-center rounded-lg p-6">
+          <h3 className="text-white mb-2 text-lg font-semibold">Something went wrong</h3>
+          <p className="text-zinc-400 mb-4 text-sm">
             An error occurred while rendering this component.
           </p>
           <button
             type="button"
             onClick={() => this.setState({ hasError: false, error: null })}
-            className="bg-pf-fg text-pf-bg rounded-md px-4 py-2 text-sm font-medium transition-opacity hover:opacity-80"
+            className="bg-white text-black rounded-md px-4 py-2 text-sm font-medium transition-opacity hover:opacity-80"
           >
             Try again
           </button>
           {process.env.NODE_ENV === 'development' && this.state.error && (
-            <pre className="bg-pf-bg mt-4 max-w-full overflow-auto rounded p-2 text-xs text-red-400">
+            <pre className="bg-black/50 mt-4 max-w-full overflow-auto rounded p-2 text-xs text-red-400">
               {this.state.error.message}
             </pre>
           )}

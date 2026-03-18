@@ -50,13 +50,13 @@ describe("E2E: Platform API", () => {
  describe("Platform Statistics (Public)", () => {
   it("should return platform statistics", async () => {
    const response = await e2eFetch<PlatformStatsResponseDto>(
-    PLATFORM_ROUTES.PLATFORM_STATS_GET_STATISTICS,
+    PLATFORM_ROUTES.PLATFORM_GET_STATISTICS,
     { method: "GET" },
    );
 
-   // May return 401 if not authenticated - that's OK
+   // May return 401/403 if not authenticated - that's OK
    // We're testing the endpoint exists and responds
-   expect([200, 401]).toContain(response.status);
+   expect([200, 401, 403]).toContain(response.status);
   });
  });
 });

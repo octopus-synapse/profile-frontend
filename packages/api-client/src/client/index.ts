@@ -5,7 +5,7 @@
  */
 
 // Server-side session validation (with cookie forwarding)
-export { authSessionServer } from './auth-session-server';
+export { authSessionServer, authSessionServer as authSession } from './auth-session-server';
 export type { ApiError } from './fetcher';
 export {
   clearAuthToken,

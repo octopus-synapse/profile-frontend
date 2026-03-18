@@ -120,6 +120,7 @@ export {
  TECH_SKILLS_ROUTES,
  MEC_METADATA_ROUTES,
  ONBOARDING_ROUTES,
+ USERS_ROUTES,
 } from "../../packages/api-client/src/constants/routes";
 
 /**

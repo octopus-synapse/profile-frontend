@@ -1,16 +1,13 @@
 // Landing page components barrel export
-export { ClientHeroDemo } from './ClientHeroDemo';
-export { ConsentModal, useConsentModal } from './ConsentModal';
-export { DemoCommandPalette } from './DemoCommandPalette';
-export { DemoModal } from './DemoModal';
-export { DemoPreview } from './DemoPreview';
-export { GamificationDemo, ProgressRing } from './GamificationDemo';
 export { HeroActions } from './HeroActions';
-export { HeroFeaturesDemo } from './HeroFeaturesDemo';
 export { LandingNavbar } from './LandingNavbar';
 export { LanguageSelector } from './LanguageSelector';
-export { SparkCTA } from './SparkCTA';
-export { MatchScoreVisual, SwipeModeDemo } from './SwipeModeDemo';
+export { PatchLandingAtsPanel } from './PatchLandingAtsPanel';
+export { PatchLandingCurriculum } from './PatchLandingCurriculum';
+export { PatchLandingPricing } from './PatchLandingPricing';
+export { PatchLandingSocialProof } from './PatchLandingSocialProof';
+export { PatchLandingStatic } from './PatchLandingStatic';
+export { ScrollProgress } from './ScrollProgress';
 
 // Section components
 export * from './sections';

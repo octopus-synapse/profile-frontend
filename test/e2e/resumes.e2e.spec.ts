@@ -121,7 +121,7 @@ describe("E2E: Resumes API", () => {
     return;
    }
 
-   const response = await e2eFetch<ResumeResponseDto[]>(
+   const response = await e2eFetch<{ data: ResumeResponseDto[]; meta: unknown }>(
     RESUMES_ROUTES.RESUMES_CREATE_RESUME_FOR_USER,
     {
      method: "GET",
@@ -130,11 +130,13 @@ describe("E2E: Resumes API", () => {
    );
 
    expect(response.status).toBe(200);
-   expect(Array.isArray(response.data)).toBe(true);
+   // Backend returns paginated response: { data: [...], meta: {...} }
+   expect(response.data).toBeDefined();
+   expect(Array.isArray(response.data.data)).toBe(true);
 
    // Should contain the resume we just created
    if (createdResumeId) {
-    const found = response.data.find((r) => r.id === createdResumeId);
+    const found = response.data.data.find((r) => r.id === createdResumeId);
     expect(found).toBeDefined();
    }
   });

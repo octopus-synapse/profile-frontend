@@ -11,6 +11,7 @@
  */
 
 import {
+  type ResumesUpdateResumeForUserMutationBody,
   useResumesCreateResumeForUser,
   useResumesDeleteResumeForUser,
   useResumesUpdateResumeForUser,
@@ -42,8 +43,8 @@ export function useUpdateResume(resumeId: string) {
 
   return {
     ...mutation,
-    mutateAsync: async () => {
-      const result = await mutation.mutateAsync({ id: resumeId });
+    mutateAsync: async (data: ResumesUpdateResumeForUserMutationBody) => {
+      const result = await mutation.mutateAsync({ id: resumeId, data });
       void queryClient.invalidateQueries({
         queryKey: resumeKeys.detail(resumeId),
       });

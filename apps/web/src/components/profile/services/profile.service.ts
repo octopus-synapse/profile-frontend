@@ -11,6 +11,6 @@ import type { PublicProfile } from '../types';
  */
 export async function getPublicProfile(username: string): Promise<PublicProfile> {
   // The backend returns { user, resume } directly
-  const data = await httpClient.get<PublicProfile>(`/users/${username}/profile`);
+  const data = await httpClient.get<PublicProfile>(`/api/v1/users/${username}/profile`);
   return data;
 }

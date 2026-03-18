@@ -61,6 +61,7 @@ export function ThemeEditor({ theme, onSave, onCancel }: Props) {
       if (isNew) {
         const response = await createTheme.mutateAsync({
           name,
+          description: '',
           category: 'MODERN',
           styleConfig: config,
         });
@@ -70,17 +71,30 @@ export function ThemeEditor({ theme, onSave, onCancel }: Props) {
         const forkResponse = await forkTheme.mutateAsync({
           themeId: theme.id,
           name: `${name} (Custom)`,
+          description: theme.description ?? '',
         });
         saved = (forkResponse?.data as unknown as { theme: Theme })?.theme;
         const updateResponse = await updateTheme.mutateAsync({
           id: saved.id,
-          input: { styleConfig: config },
+          input: {
+            name: saved.name,
+            description: saved.description ?? '',
+            category: saved.category,
+            tags: saved.tags,
+            styleConfig: config,
+          },
         });
         saved = (updateResponse?.data as unknown as { theme: Theme })?.theme;
       } else {
         const response = await updateTheme.mutateAsync({
           id: theme.id,
-          input: { name, styleConfig: config },
+          input: {
+            name,
+            description: theme.description ?? '',
+            category: theme.category,
+            tags: theme.tags,
+            styleConfig: config,
+          },
         });
         saved = (response?.data as unknown as { theme: Theme })?.theme;
       }

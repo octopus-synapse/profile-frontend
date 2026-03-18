@@ -65,13 +65,10 @@ export default async function middleware(request: NextRequest) {
   // === Auth gate: Block /protected/* if not authenticated ===
   const path = stripLocale(pathname);
   if (isProtectedRoute(path)) {
-    const session = await authSession({
-      headers: {
-        cookie: request.headers.get('cookie') || '',
-      },
-    });
-    // session.data is AuthSession200 which contains { data: SessionResponseDto }
-    if (!session.data.data.authenticated) {
+    const cookieHeader = request.headers.get('cookie');
+    const session = await authSession(cookieHeader);
+
+    if (!session.data.authenticated) {
       const signInUrl = new URL(`/${locale}${ROUTES.AUTH.SIGN_IN}`, request.url);
       signInUrl.searchParams.set('callbackUrl', pathname);
       return NextResponse.redirect(signInUrl);

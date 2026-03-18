@@ -86,7 +86,7 @@ export function StepNavigation({
             onClick={handleBack}
             disabled={isLoading}
             leftIcon={<ArrowLeft className="h-4 w-4" strokeWidth={1.5} />}
-            className="font-mono"
+            className="rounded-xl text-zinc-400 hover:text-white"
           >
             {t('app.onboarding.step.back')}
           </Button>
@@ -103,7 +103,7 @@ export function StepNavigation({
             onClick={handleSkip}
             disabled={isLoading}
             rightIcon={<SkipForward className="h-4 w-4" strokeWidth={1.5} />}
-            className="font-mono text-zinc-500 hover:text-zinc-400"
+            className="rounded-xl text-zinc-500 hover:text-zinc-300"
           >
             {t('app.onboarding.step.skip')}
           </Button>
@@ -117,7 +117,7 @@ export function StepNavigation({
           disabled={!canProceed || isLoading}
           loading={isLoading}
           rightIcon={!isLoading ? <ArrowRight className="h-4 w-4" strokeWidth={1.5} /> : undefined}
-          className="font-mono"
+          className="rounded-xl bg-blue-600 text-white hover:bg-blue-500"
         >
           {isLoading
             ? t('app.onboarding.step.processing')

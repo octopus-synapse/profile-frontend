@@ -18,14 +18,14 @@ import {
   useResumeAst,
   useResumes,
 } from './hooks';
+import { extractResumeListItems } from './resume-builder.utils';
 
 export function ResumeBuilder() {
   const [copied, setCopied] = useState(false);
 
   // Fetch user's resumes list
   const { data: resumesResponse, isLoading: resumesListLoading } = useResumes();
-  // SDK response: { data: { data: { items: Resume[] } } } - access the nested structure
-  const resumesList = (resumesResponse?.data?.data as { items?: Array<{ id: string }> })?.items;
+  const resumesList = extractResumeListItems(resumesResponse);
   const resumeId = resumesList?.[0]?.id;
 
   // Fetch full resume data

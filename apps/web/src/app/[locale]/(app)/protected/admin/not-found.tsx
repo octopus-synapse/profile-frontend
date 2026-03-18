@@ -16,7 +16,7 @@ export default function AdminNotFound() {
           <div className="flex h-24 w-24 items-center justify-center border border-white/10 bg-white/5">
             <ShieldAlert className="h-12 w-12 text-zinc-400" strokeWidth={1.5} />
           </div>
-          <div className="bg-pf-danger-fg absolute -top-1 -right-1 h-4 w-4 animate-pulse rounded-full" />
+          <div className="bg-red-500 absolute -top-1 -right-1 h-4 w-4 animate-pulse rounded-full" />
         </div>
 
         {/* Badge + Error Code */}

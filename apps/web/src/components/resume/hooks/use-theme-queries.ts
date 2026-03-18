@@ -6,11 +6,11 @@
  */
 
 import {
-  usePublicThemeFindAllSystemThemes,
-  usePublicThemeFindAllThemesWithPagination,
-  usePublicThemeFindPopularThemes,
-  usePublicThemeFindThemeById,
-  useUserThemeGetAllThemesByUser,
+  useThemesFindAllSystemThemes,
+  useThemesFindAllThemesWithPagination,
+  useThemesFindPopularThemes,
+  useThemesFindThemeById,
+  useThemesGetAllThemesByUser,
 } from '@profile/api-client';
 import { useMemo } from 'react';
 import type { Theme } from '../services/theme.types';
@@ -34,7 +34,7 @@ function extractThemes(data: unknown): Theme[] {
 
 export function useThemes(_params?: ThemeQueryParams) {
   // SDK pagination is handled via request options, not query params
-  const query = usePublicThemeFindAllThemesWithPagination({
+  const query = useThemesFindAllThemesWithPagination({
     query: {
       queryKey: themeKeys.list({}),
     },
@@ -49,7 +49,7 @@ export function useThemes(_params?: ThemeQueryParams) {
 }
 
 export function useTheme(id: string | undefined) {
-  const query = usePublicThemeFindThemeById(id!, {
+  const query = useThemesFindThemeById(id!, {
     query: {
       queryKey: themeKeys.detail(id!),
       enabled: !!id,
@@ -71,7 +71,7 @@ export function useTheme(id: string | undefined) {
 }
 
 export function usePopularThemes(limit = 10) {
-  const query = usePublicThemeFindPopularThemes(
+  const query = useThemesFindPopularThemes(
     { limit },
     {
       query: {
@@ -89,7 +89,7 @@ export function usePopularThemes(limit = 10) {
 }
 
 export function useSystemThemes() {
-  const query = usePublicThemeFindAllSystemThemes({
+  const query = useThemesFindAllSystemThemes({
     query: {
       queryKey: themeKeys.system(),
     },
@@ -104,7 +104,7 @@ export function useSystemThemes() {
 }
 
 export function useMyThemes() {
-  const query = useUserThemeGetAllThemesByUser({
+  const query = useThemesGetAllThemesByUser({
     query: {
       queryKey: themeKeys.mine(),
     },

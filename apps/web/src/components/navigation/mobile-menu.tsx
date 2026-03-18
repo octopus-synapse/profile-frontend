@@ -9,7 +9,7 @@
 import { authLogout, getAuthSessionQueryKey, useAuthSession } from '@profile/api-client';
 import { useI18n } from '@profile/i18n';
 import { useQueryClient } from '@tanstack/react-query';
-import { Check, LogOut, Moon, Search, Sparkles, Sun, X } from 'lucide-react';
+import { Check, LogOut, Moon, Search, Sun, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect } from 'react';
 import { ROUTES } from '@/config/routes';
@@ -25,16 +25,9 @@ interface MobileMenuProps {
   /** Custom navigation items - for landing page traditional nav links */
   navItems?: NavItem[];
   onOpenCommandPalette?: () => void;
-  /** For Spark CTA landing - opens demo modal */
-  onOpenDemoModal?: () => void;
 }
 
-export function MobileMenu({
-  menu,
-  navItems,
-  onOpenCommandPalette,
-  onOpenDemoModal,
-}: MobileMenuProps) {
+export function MobileMenu({ menu, navItems, onOpenCommandPalette }: MobileMenuProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { data } = useAuthSession();
@@ -54,11 +47,6 @@ export function MobileMenu({
     menu.close();
     setTimeout(() => onOpenCommandPalette?.(), 100);
   }, [menu, onOpenCommandPalette]);
-
-  const handleOpenDemo = useCallback(() => {
-    menu.close();
-    setTimeout(() => onOpenDemoModal?.(), 100);
-  }, [menu, onOpenDemoModal]);
 
   // Lock body scroll when menu is open
   useEffect(() => {
@@ -111,24 +99,13 @@ export function MobileMenu({
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-4 sm:px-6">
-        {/* Navigation Links (for landing) or Search Button (for app) or Demo Button (for Spark landing) */}
+        {/* Navigation Links (for landing) or Search Button (for app) */}
         {hasCustomNavItems ? (
           <nav className="border-b border-white/5 py-4" aria-label="Main navigation">
             {navItems.map((item) => (
               <NavLink key={item.key} item={item} onClick={menu.close} variant="mobile" />
             ))}
           </nav>
-        ) : onOpenDemoModal ? (
-          <div className="border-b border-white/5 py-4">
-            <button
-              type="button"
-              onClick={handleOpenDemo}
-              className="flex w-full items-center gap-3 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-4 py-3 transition-all hover:border-cyan-500/50 hover:bg-cyan-500/20"
-            >
-              <Sparkles className="h-5 w-5 text-cyan-400" strokeWidth={1.5} />
-              <span className="text-sm font-medium text-white">Try the Demo</span>
-            </button>
-          </div>
         ) : (
           <div className="border-b border-white/5 py-4">
             <button

@@ -16,7 +16,7 @@ export default function ProtectedNotFound() {
           <div className="flex h-24 w-24 items-center justify-center border border-white/10 bg-white/5">
             <FileX className="h-12 w-12 text-zinc-400" strokeWidth={1.5} />
           </div>
-          <div className="bg-pf-attention-fg absolute -top-1 -right-1 h-4 w-4 animate-pulse rounded-full" />
+          <div className="bg-amber-500 absolute -top-1 -right-1 h-4 w-4 animate-pulse rounded-full" />
         </div>
 
         {/* Error Code */}
@@ -33,28 +33,28 @@ export default function ProtectedNotFound() {
         <div className="mb-8 grid w-full max-w-md grid-cols-2 gap-3">
           <Link
             href="/protected/profile"
-            className="hover:border-pf-border-emphasis flex items-center justify-center gap-2 border border-white/10 bg-[#0A0A0A]/95 px-4 py-3 font-mono text-xs text-white transition-all"
+            className="hover:border-white/20 flex items-center justify-center gap-2 border border-white/10 bg-[#0A0A0A]/95 px-4 py-3 font-mono text-xs text-white transition-all"
           >
             <User className="h-4 w-4" strokeWidth={1.5} />
             profile
           </Link>
           <Link
             href="/protected/resume"
-            className="hover:border-pf-border-emphasis flex items-center justify-center gap-2 border border-white/10 bg-[#0A0A0A]/95 px-4 py-3 font-mono text-xs text-white transition-all"
+            className="hover:border-white/20 flex items-center justify-center gap-2 border border-white/10 bg-[#0A0A0A]/95 px-4 py-3 font-mono text-xs text-white transition-all"
           >
             <FileText className="h-4 w-4" strokeWidth={1.5} />
             resume
           </Link>
           <Link
             href="/protected"
-            className="hover:border-pf-border-emphasis flex items-center justify-center gap-2 border border-white/10 bg-[#0A0A0A]/95 px-4 py-3 font-mono text-xs text-white transition-all"
+            className="hover:border-white/20 flex items-center justify-center gap-2 border border-white/10 bg-[#0A0A0A]/95 px-4 py-3 font-mono text-xs text-white transition-all"
           >
             <Home className="h-4 w-4" strokeWidth={1.5} />
             dashboard
           </Link>
           <Link
             href="/protected/settings"
-            className="hover:border-pf-border-emphasis flex items-center justify-center gap-2 border border-white/10 bg-[#0A0A0A]/95 px-4 py-3 font-mono text-xs text-white transition-all"
+            className="hover:border-white/20 flex items-center justify-center gap-2 border border-white/10 bg-[#0A0A0A]/95 px-4 py-3 font-mono text-xs text-white transition-all"
           >
             <Settings className="h-4 w-4" strokeWidth={1.5} />
             settings

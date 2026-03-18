@@ -120,7 +120,7 @@ export function Autocomplete({
             'ring-offset-[#030303]',
             'focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:outline-none',
             'disabled:cursor-not-allowed disabled:opacity-50',
-            error && 'border-pf-danger-emphasis',
+            error && 'border-red-500',
             className,
           )}
         >

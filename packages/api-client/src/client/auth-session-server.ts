@@ -9,6 +9,11 @@ import type { SessionResponseDto } from '../generated/models';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
 
+interface BackendResponse<T> {
+  success: boolean;
+  data: T;
+}
+
 /**
  * Server-side session validation
  *
@@ -35,6 +40,7 @@ export async function authSessionServer(
     };
   }
 
-  const data = await response.json();
-  return { data, status: response.status };
+  const json: BackendResponse<SessionResponseDto> = await response.json();
+  // Extract the actual session data from the backend wrapper
+  return { data: json.data, status: response.status };
 }

@@ -15,7 +15,7 @@ export default function NotFound() {
             <Terminal className="h-12 w-12 text-zinc-400" strokeWidth={1.5} />
           </div>
           {/* Status indicator */}
-          <div className="bg-pf-danger-fg absolute -top-1 -right-1 h-4 w-4 animate-pulse rounded-full" />
+          <div className="bg-red-500 absolute -top-1 -right-1 h-4 w-4 animate-pulse rounded-full" />
         </div>
 
         {/* 404 Number */}

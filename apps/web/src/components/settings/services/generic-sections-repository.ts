@@ -22,12 +22,17 @@ export interface SectionType {
   id: string;
   key: string;
   semanticKind: string;
-  displayName: string;
+  title: string; // Backend returns `title`, not `displayName`
+  label?: string; // Resolved translation label
+  description?: string;
   icon?: string;
+  iconType?: string;
   isActive: boolean;
+  isRepeatable?: boolean;
+  minItems?: number;
   maxItems: number | null;
   definition: {
-    kind: string;
+    kind?: string;
     fields: FieldDefinition[];
   } | null;
 }
@@ -66,28 +71,19 @@ export interface ResumeSection {
 }
 
 // ============================================================================
-// API Response Types
+// API Response Types (after httpClient extracts .data from wrapper)
 // ============================================================================
 
-interface SectionTypesResponse {
-  success: boolean;
-  data: {
-    sectionTypes: SectionType[];
-  };
+interface SectionTypesData {
+  sectionTypes: SectionType[];
 }
 
-interface ResumeSectionsResponse {
-  success: boolean;
-  data: {
-    sections: ResumeSection[];
-  };
+interface ResumeSectionsData {
+  sections: ResumeSection[];
 }
 
-interface SectionItemResponse {
-  success: boolean;
-  data: {
-    item: SectionItem;
-  };
+interface SectionItemData {
+  item: SectionItem;
 }
 
 // ============================================================================
@@ -97,7 +93,16 @@ interface SectionItemResponse {
 interface Resume {
   id: string;
   title: string;
-  userId: string;
+}
+
+interface ResumesListData {
+  data: Resume[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
 }
 
 let cachedResumeId: string | null = null;
@@ -105,10 +110,11 @@ let cachedResumeId: string | null = null;
 async function getResumeId(): Promise<string> {
   if (cachedResumeId) return cachedResumeId;
 
-  const resumes = await httpClient.get<Resume[]>('/resumes');
+  const response = await httpClient.get<ResumesListData>('/api/v1/resumes');
+  const resumes = response.data;
 
   if (!resumes || resumes.length === 0) {
-    const newResume = await httpClient.post<Resume>('/resumes', { title: 'My Resume' });
+    const newResume = await httpClient.post<Resume>('/api/v1/resumes', { title: 'My Resume' });
     cachedResumeId = newResume.id;
     return newResume.id;
   }
@@ -130,17 +136,17 @@ export const genericSectionsRepository = {
   /** List all available section types from backend */
   async getSectionTypes(): Promise<SectionType[]> {
     const resumeId = await getResumeId();
-    const response = await httpClient.get<SectionTypesResponse>(
-      `/v1/resumes/${resumeId}/sections/types`,
+    const response = await httpClient.get<SectionTypesData>(
+      `/api/v1/resumes/${resumeId}/sections/types`,
     );
-    return response.data.sectionTypes;
+    return response.sectionTypes;
   },
 
   /** List all sections with items for a resume */
   async getAllSections(resumeId?: string): Promise<ResumeSection[]> {
     const id = resumeId || (await getResumeId());
-    const response = await httpClient.get<ResumeSectionsResponse>(`/v1/resumes/${id}/sections`);
-    return response.data.sections;
+    const response = await httpClient.get<ResumeSectionsData>(`/api/v1/resumes/${id}/sections`);
+    return response.sections;
   },
 
   /** Get items for a specific section type */
@@ -159,11 +165,11 @@ export const genericSectionsRepository = {
     resumeId?: string,
   ): Promise<SectionItem> {
     const id = resumeId || (await getResumeId());
-    const response = await httpClient.post<SectionItemResponse>(
-      `/v1/resumes/${id}/sections/${sectionTypeKey}/items`,
+    const response = await httpClient.post<SectionItemData>(
+      `/api/v1/resumes/${id}/sections/${sectionTypeKey}/items`,
       { content },
     );
-    return response.data.item;
+    return response.item;
   },
 
   /** Update a section item */
@@ -174,16 +180,16 @@ export const genericSectionsRepository = {
     resumeId?: string,
   ): Promise<SectionItem> {
     const id = resumeId || (await getResumeId());
-    const response = await httpClient.patch<SectionItemResponse>(
-      `/v1/resumes/${id}/sections/${sectionTypeKey}/items/${itemId}`,
+    const response = await httpClient.patch<SectionItemData>(
+      `/api/v1/resumes/${id}/sections/${sectionTypeKey}/items/${itemId}`,
       { content },
     );
-    return response.data.item;
+    return response.item;
   },
 
   /** Delete a section item */
   async deleteItem(sectionTypeKey: string, itemId: string, resumeId?: string): Promise<void> {
     const id = resumeId || (await getResumeId());
-    await httpClient.delete(`/v1/resumes/${id}/sections/${sectionTypeKey}/items/${itemId}`);
+    await httpClient.delete(`/api/v1/resumes/${id}/sections/${sectionTypeKey}/items/${itemId}`);
   },
 };

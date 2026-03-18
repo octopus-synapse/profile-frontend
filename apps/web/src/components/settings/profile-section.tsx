@@ -5,33 +5,18 @@
 
 'use client';
 
-import {
-  AlertCircle,
-  Check,
-  Github,
-  Globe,
-  Linkedin,
-  Loader2,
-  MapPin,
-  Phone,
-  Save,
-  User,
-} from 'lucide-react';
+import { AlertCircle, Check, Github, Globe, Linkedin, Loader2, Save } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { HelpTooltip, PhoneInput } from '@/shared/components/ui';
+import { HelpTooltip } from '@/shared/components/ui';
 import { useProfile, useUpdateProfile } from './hooks';
 import type { UpdateProfilePayload } from './types';
 import { UsernameField } from './username-field';
 
 export function ProfileSection() {
-  const { data: profile, isLoading } = useProfile();
+  const { data: profile, isLoading, isError, error } = useProfile();
   const updateProfile = useUpdateProfile();
 
   const [formData, setFormData] = useState<UpdateProfilePayload>({
-    displayName: '',
-    bio: '',
-    location: '',
-    phone: '',
     website: '',
     linkedin: '',
     github: '',
@@ -43,10 +28,6 @@ export function ProfileSection() {
     if (profile) {
       queueMicrotask(() => {
         setFormData({
-          displayName: profile.displayName || profile.name || '',
-          bio: profile.bio || '',
-          location: profile.location || '',
-          phone: profile.phone || '',
           website: profile.website || '',
           linkedin: profile.linkedin || '',
           github: profile.github || '',
@@ -77,13 +58,28 @@ export function ProfileSection() {
     );
   }
 
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <AlertCircle className="h-8 w-8 text-red-500 mb-4" />
+        <h3 className="text-lg font-medium text-white mb-2">Failed to load profile</h3>
+        <p className="text-sm text-zinc-400 max-w-md">
+          {error instanceof Error
+            ? error.message
+            : 'An unexpected error occurred. Please try again.'}
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-white">Profile Information</h2>
-          <p className="mt-1 text-sm text-zinc-400">Your public profile details</p>
+          <h2 className="text-lg font-semibold text-white">Public profile</h2>
+          <p className="mt-1 text-sm text-zinc-400">
+            Keep account-level identity here. Resume identity lives in the Resume section.
+          </p>
         </div>
         {isDirty && (
           <button
@@ -102,73 +98,16 @@ export function ProfileSection() {
         )}
       </div>
 
-      {/* Username Field (separate from main form) */}
       <div className="rounded-xl border border-white/10 bg-white/5 p-6">
         <UsernameField />
       </div>
 
-      {/* Form */}
       <div className="space-y-5 rounded-xl border border-white/10 bg-white/5 p-6">
-        {/* Display Name */}
-        <div>
-          <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
-            <User className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
-            Display Name
-          </label>
-          <input
-            type="text"
-            value={formData.displayName}
-            onChange={(e) => handleChange('displayName', e.target.value)}
-            placeholder="John Doe"
-            className="w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
-          />
+        <div className="rounded-xl border border-blue-500/10 bg-blue-500/5 p-4 text-sm text-zinc-300">
+          Use <span className="font-medium text-white">Resume</span> to edit your name, contact
+          details, location and summary. Keep this area focused on your public profile links.
         </div>
 
-        {/* Bio */}
-        <div>
-          <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
-            Bio
-            <HelpTooltip content="A brief description visible on your public profile. Keep it concise and professional." />
-          </label>
-          <textarea
-            value={formData.bio}
-            onChange={(e) => handleChange('bio', e.target.value)}
-            placeholder="A brief description about yourself..."
-            rows={3}
-            className="w-full resize-none rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
-          />
-        </div>
-
-        {/* Location & Phone */}
-        <div className="grid gap-5 sm:grid-cols-2">
-          <div>
-            <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
-              <MapPin className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
-              Location
-            </label>
-            <input
-              type="text"
-              value={formData.location}
-              onChange={(e) => handleChange('location', e.target.value)}
-              placeholder="San Francisco, CA"
-              className="w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
-            />
-          </div>
-
-          <div>
-            <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
-              <Phone className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
-              Phone
-            </label>
-            <PhoneInput
-              value={formData.phone}
-              onChange={(value) => handleChange('phone', value)}
-              countryFormat="BR"
-            />
-          </div>
-        </div>
-
-        {/* Website */}
         <div>
           <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
             <Globe className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
@@ -183,7 +122,6 @@ export function ProfileSection() {
           />
         </div>
 
-        {/* Social Links */}
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
             <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">

@@ -77,6 +77,7 @@ export const app = {
   'app.settings.title': 'Settings',
   'app.settings.description': 'Manage your profile and preferences',
   'app.settings.backToDashboard': 'Back to Dashboard',
+  'app.settings.tabs.resume': 'Resume',
   'app.settings.tabs.profile': 'Profile',
   'app.settings.tabs.experience': 'Experience',
   'app.settings.tabs.education': 'Education',

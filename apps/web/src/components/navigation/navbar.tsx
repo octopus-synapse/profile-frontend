@@ -35,8 +35,6 @@ interface NavbarProps {
   rightSection?: ReactNode;
   /** Navbar variant for different styling */
   variant?: 'default' | 'landing';
-  /** Handler for mobile demo button (Spark CTA landing) */
-  onMobileDemo?: () => void;
 }
 
 export function Navbar({
@@ -45,7 +43,6 @@ export function Navbar({
   centerSection,
   rightSection,
   variant = 'default',
-  onMobileDemo,
 }: NavbarProps) {
   const { data, isLoading } = useAuthSession();
   const isAuthenticated = !!data?.data?.data?.user;
@@ -71,14 +68,21 @@ export function Navbar({
         className={cn(
           'z-50 w-full border-b border-white/5 bg-black/60 backdrop-blur-md transition-all duration-300',
           isLanding ? 'fixed top-0 right-0 left-0' : 'sticky top-0',
+          isLanding &&
+            'pointer-events-none border-transparent bg-transparent shadow-none backdrop-blur-none',
           scrolled && 'bg-black/80 shadow-lg shadow-black/20',
           className,
         )}
       >
         <nav
           className={cn(
-            'mx-auto flex items-center justify-between gap-4 px-4 sm:px-6 lg:px-8',
+            'mx-auto flex items-center justify-between gap-4 px-4 transition-all duration-500 sm:px-6 lg:px-8',
             isLanding ? 'h-16 max-w-7xl' : 'h-14 max-w-screen-xl',
+            isLanding && 'pointer-events-auto',
+            isLanding &&
+              (scrolled
+                ? 'mt-3 max-w-6xl rounded-full border border-white/10 bg-black/55 px-5 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-2xl'
+                : 'mt-0 border-transparent bg-transparent px-1'),
           )}
           aria-label="Main navigation"
         >
@@ -90,7 +94,7 @@ export function Navbar({
           {/* Center Section */}
           <div className="hidden flex-1 justify-center md:flex">
             {centerSection ? (
-              // Custom center section (e.g., SparkCTA for landing)
+              // Custom center section for landing-specific content
               centerSection
             ) : hasCustomNavItems ? (
               // Landing page: traditional nav links
@@ -158,7 +162,6 @@ export function Navbar({
         menu={mobileMenu}
         navItems={navItems}
         onOpenCommandPalette={hasCustomNavItems || centerSection ? undefined : commandPalette.open}
-        onOpenDemoModal={onMobileDemo}
       />
     </>
   );

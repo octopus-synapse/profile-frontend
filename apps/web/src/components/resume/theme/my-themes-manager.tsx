@@ -232,6 +232,7 @@ function CreateThemeModal({ onClose, onCreated }: { onClose: () => void; onCreat
   const handleCreate = async () => {
     await createTheme.mutateAsync({
       name,
+      description: '',
       category: 'MODERN',
       styleConfig: modernPreset as unknown as Record<string, unknown>,
     });

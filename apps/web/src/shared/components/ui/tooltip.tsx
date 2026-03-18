@@ -81,9 +81,9 @@ function HelpTooltip({ content, className, side = 'top' }: HelpTooltipProps) {
         type="button"
         className={cn(
           'inline-flex h-4 w-4 items-center justify-center rounded-full',
-          'bg-pf-canvas-inset text-pf-fg-subtle',
-          'hover:bg-pf-canvas-subtle hover:text-pf-fg-muted text-xs font-medium',
-          'focus:ring-pf-accent-fg transition-colors focus:ring-2 focus:outline-none',
+          'bg-white/10 text-zinc-400',
+          'hover:bg-white/20 hover:text-zinc-200 text-xs font-medium',
+          'focus:ring-2 focus:ring-blue-500/50 focus:outline-none transition-colors',
           className,
         )}
         aria-label="Help"

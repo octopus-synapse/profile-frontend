@@ -15,7 +15,7 @@
 
 'use client';
 
-import { useGenericResumeSectionsListTypes } from '@profile/api-client';
+import { useResumesListTypes } from '@profile/api-client';
 import type { FieldStyles, RenderHints } from '../utils/style-dsl-interpreter';
 
 /**
@@ -62,7 +62,7 @@ interface UseSectionTypesResult {
  * ```
  */
 export function useSectionTypes(resumeId: string): UseSectionTypesResult {
-  const { data, isLoading, error, refetch } = useGenericResumeSectionsListTypes(resumeId, {
+  const { data, isLoading, error, refetch } = useResumesListTypes(resumeId, {
     query: {
       enabled: !!resumeId,
       staleTime: 5 * 60 * 1000, // Cache for 5 minutes

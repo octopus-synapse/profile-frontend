@@ -9,9 +9,9 @@
  */
 
 import { describe, it, expect, beforeAll } from "bun:test";
-import { platformStatsGetStatistics } from "../../packages/api-client/src/generated/api/platform/platform";
-import { techSkillGetSkills } from "../../packages/api-client/src/generated/api/tech-skills/tech-skills";
-import { techAreaGetAreas } from "../../packages/api-client/src/generated/api/tech-areas/tech-areas";
+import { platformGetStatistics } from "../../packages/api-client/src/generated/api/platform/platform";
+import { techSkillsGetSkills } from "../../packages/api-client/src/generated/api/tech-skills/tech-skills";
+import { techAreasGetAreas } from "../../packages/api-client/src/generated/api/tech-areas/tech-areas";
 import { mecMetadataGetMecStatistics } from "../../packages/api-client/src/generated/api/mec-metadata/mec-metadata";
 import type {
  PlatformStatsResponseDto,
@@ -93,7 +93,7 @@ describe("E2E: SDK Generated Functions", () => {
  describe("Platform Statistics (SDK)", () => {
   it("should call platformGetStatistics and handle response", async () => {
    try {
-    const response = await platformStatsGetStatistics();
+    const response = await platformGetStatistics();
     // Success case
     expect(response.status).toBe(200);
     if (response.data !== undefined && response.data !== null) {
@@ -104,6 +104,7 @@ describe("E2E: SDK Generated Functions", () => {
     const code = getErrorCode(error);
     const validCodes = [
      "UNAUTHORIZED",
+     "FORBIDDEN",
      "NOT_FOUND",
      "INTERNAL_ERROR",
      "UNKNOWN",
@@ -116,7 +117,7 @@ describe("E2E: SDK Generated Functions", () => {
  describe("Tech Skills (SDK)", () => {
   it("should get skills and handle response", async () => {
    try {
-    const response = await techSkillGetSkills();
+    const response = await techSkillsGetSkills();
     expect(response.status).toBe(200);
     if (response.data !== undefined && response.data !== null) {
      expect(isTechSkillArray(response.data)).toBe(true);
@@ -137,7 +138,7 @@ describe("E2E: SDK Generated Functions", () => {
  describe("Tech Areas (SDK)", () => {
   it("should list all tech areas and handle response", async () => {
    try {
-    const response = await techAreaGetAreas();
+    const response = await techAreasGetAreas();
     expect(response.status).toBe(200);
     if (response.data !== undefined && response.data !== null) {
      expect(isTechAreaArray(response.data)).toBe(true);

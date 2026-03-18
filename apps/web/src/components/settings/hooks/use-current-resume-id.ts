@@ -6,7 +6,16 @@ import { httpClient } from '@/shared/lib/http-client';
 interface Resume {
   id: string;
   title: string;
-  userId: string;
+}
+
+interface ResumesListData {
+  data: Resume[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
 }
 
 export const currentResumeKeys = {
@@ -15,10 +24,11 @@ export const currentResumeKeys = {
 };
 
 async function fetchCurrentResumeId(): Promise<string> {
-  const resumes = await httpClient.get<Resume[]>('/v1/resumes');
+  const response = await httpClient.get<ResumesListData>('/api/v1/resumes');
+  const resumes = response.data;
 
   if (!resumes || resumes.length === 0) {
-    const created = await httpClient.post<Resume>('/v1/resumes', { title: 'My Resume' });
+    const created = await httpClient.post<Resume>('/api/v1/resumes', { title: 'My Resume' });
     return created.id;
   }
 

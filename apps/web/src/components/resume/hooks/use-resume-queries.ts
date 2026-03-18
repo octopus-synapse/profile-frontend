@@ -17,15 +17,12 @@ import { resumeKeys } from './query-keys';
  * Get all resumes for current user
  */
 export function useResumes() {
-  return useResumesGetAllUserResumes(
-    { page: 1, limit: 100 },
-    {
-      query: {
-        queryKey: resumeKeys.list(),
-        staleTime: 1 * 60 * 1000, // 1 minute
-      },
+  return useResumesGetAllUserResumes({
+    query: {
+      queryKey: resumeKeys.list(),
+      staleTime: 1 * 60 * 1000, // 1 minute
     },
-  );
+  });
 }
 
 /**

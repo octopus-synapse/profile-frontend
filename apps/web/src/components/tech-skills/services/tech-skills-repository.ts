@@ -4,15 +4,14 @@
  */
 
 import {
-  techAreaGetAreas,
-  techAreaGetNichesByArea,
-  techNicheGetNiches,
-  techNicheGetSkillsByNiche,
-  techSkillGetSkills,
-  techSkillGetSkillsByType,
-  techSkillSearchSkills,
-  techSkillsQueryGetLanguages,
-  techSkillsQuerySearchLanguages,
+  skillsFindAllActiveLanguages,
+  skillsSearchLanguagesByName,
+  techAreasGetAreas,
+  techAreasGetNichesByArea,
+  techNichesGetNiches,
+  techNichesGetSkillsByNiche,
+  techSkillsGetSkills,
+  techSkillsGetSkillsByType,
 } from '@profile/api-client';
 
 // Re-export types from local types
@@ -44,25 +43,25 @@ function extractData<T>(response: { data?: { data?: T } }): T | undefined {
  */
 export const techSkillsRepository = {
   async getAreas(): Promise<TechAreaDto[]> {
-    const response = await techAreaGetAreas();
+    const response = await techAreasGetAreas();
     const data = extractData(response) as unknown as { areas?: TechAreaDto[] };
     return data?.areas ?? [];
   },
 
   async getNiches(): Promise<TechNicheDto[]> {
-    const response = await techNicheGetNiches();
+    const response = await techNichesGetNiches();
     const data = extractData(response) as unknown as { niches?: TechNicheDto[] };
     return data?.niches ?? [];
   },
 
   async getNichesByArea(areaType: TechAreaType): Promise<TechNicheDto[]> {
-    const response = await techAreaGetNichesByArea(areaType);
+    const response = await techAreasGetNichesByArea(areaType);
     const data = extractData(response) as unknown as { niches?: TechNicheDto[] };
     return data?.niches ?? [];
   },
 
   async getLanguages(): Promise<ProgrammingLanguageDto[]> {
-    const response = await techSkillsQueryGetLanguages();
+    const response = await skillsFindAllActiveLanguages();
     const data = extractData(response) as unknown as {
       languages?: ProgrammingLanguageDto[];
     };
@@ -70,9 +69,9 @@ export const techSkillsRepository = {
   },
 
   async searchLanguages(query: string, limit: number): Promise<ProgrammingLanguageDto[]> {
-    const response = await techSkillsQuerySearchLanguages({
-      q: query,
-      limit: String(limit),
+    const response = await skillsSearchLanguagesByName({
+      name: query,
+      limit,
     });
     const data = extractData(response) as unknown as {
       languages?: ProgrammingLanguageDto[];
@@ -81,28 +80,19 @@ export const techSkillsRepository = {
   },
 
   async getSkills(): Promise<TechSkillDto[]> {
-    const response = await techSkillGetSkills();
-    const data = extractData(response) as unknown as { skills?: TechSkillDto[] };
-    return data?.skills ?? [];
-  },
-
-  async searchSkills(query: string, limit: number): Promise<TechSkillDto[]> {
-    const response = await techSkillSearchSkills({
-      q: query,
-      limit: String(limit),
-    });
+    const response = await techSkillsGetSkills();
     const data = extractData(response) as unknown as { skills?: TechSkillDto[] };
     return data?.skills ?? [];
   },
 
   async getSkillsByNiche(nicheSlug: string): Promise<TechSkillDto[]> {
-    const response = await techNicheGetSkillsByNiche(nicheSlug);
+    const response = await techNichesGetSkillsByNiche(nicheSlug);
     const data = extractData(response) as unknown as { skills?: TechSkillDto[] };
     return data?.skills ?? [];
   },
 
   async getSkillsByType(type: string): Promise<TechSkillDto[]> {
-    const response = await techSkillGetSkillsByType(type, { limit: '100' });
+    const response = await techSkillsGetSkillsByType(type, { limit: '100' });
     const data = extractData(response) as unknown as { skills?: TechSkillDto[] };
     return data?.skills ?? [];
   },
@@ -110,8 +100,8 @@ export const techSkillsRepository = {
   async searchAll(query: string, limit: number): Promise<TechSkillsSearchResult> {
     // Parallel fetch for combined search
     const [languagesResponse, skillsResponse] = await Promise.all([
-      techSkillsQuerySearchLanguages({ q: query, limit: String(limit) }),
-      techSkillSearchSkills({ q: query, limit: String(limit) }),
+      skillsSearchLanguagesByName({ name: query, limit }),
+      techSkillsGetSkills(), // SDK doesn't have search for skills, get all and filter
     ]);
 
     const languagesData = extractData(languagesResponse) as unknown as {
@@ -121,9 +111,14 @@ export const techSkillsRepository = {
       skills?: TechSkillDto[];
     };
 
+    // Filter skills by query (client-side)
+    const filteredSkills = (skillsData?.skills ?? [])
+      .filter((skill) => skill.name?.toLowerCase().includes(query.toLowerCase()))
+      .slice(0, limit);
+
     return {
       languages: languagesData?.languages ?? [],
-      skills: skillsData?.skills ?? [],
+      skills: filteredSkills,
     };
   },
 };

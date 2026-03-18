@@ -28,8 +28,8 @@ export * from './generated/api';
 // ============================================================================
 
 export {
-  useAuthGetSession as useAuthSession,
   getAuthGetSessionQueryKey as getAuthSessionQueryKey,
+  useAuthGetSession as useAuthSession,
 } from './generated/api/auth/auth';
 
 // ============================================================================
@@ -44,6 +44,7 @@ export * from './repositories';
 
 export type { ApiError, authSessionServer } from './client';
 export {
+  authSession,
   clearAuthToken,
   customFetch,
   getApiLocale,

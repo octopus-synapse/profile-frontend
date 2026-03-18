@@ -9,6 +9,7 @@
 
 import { Clock, Code, Shield, Sparkles } from 'lucide-react';
 import { useOnboarding } from '../hooks';
+import { OnboardingStepHeader } from '../step-header';
 import { StepNavigation } from '../step-navigation';
 
 export function WelcomeStep() {
@@ -20,80 +21,49 @@ export function WelcomeStep() {
 
   return (
     <div className="space-y-8">
-      {/* Hero */}
-      <div className="text-center">
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center bg-cyan-500/10 text-cyan-400">
+      <div className="rounded-2xl border border-white/10 bg-zinc-950/40 p-8 text-center">
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-400">
           <Sparkles className="h-8 w-8" strokeWidth={1.5} />
         </div>
-
-        <h1 className="text-2xl font-bold text-white">Welcome to PATCH</h1>
-        <p className="mt-2 font-mono text-sm text-zinc-400">
-          Your career, patched. Let&apos;s get started.
-        </p>
+        <OnboardingStepHeader
+          eyebrow="Welcome"
+          title="Welcome to PATCH"
+          description="We’ll guide you through a focused setup to build a polished, recruiter-ready profile."
+        />
       </div>
 
-      {/* Code Block */}
-      <div className="rounded-lg border border-white/10 bg-[#0A0A0A] p-4 font-mono text-sm">
-        <div className="mb-2 text-xs text-zinc-500">
-          <span className="opacity-60">{'//'}</span> initialization
-        </div>
-        <div className="space-y-1">
-          <div>
-            <span className="text-purple-400">const</span>
-            <span className="text-blue-300"> developer</span>
-            <span className="text-zinc-300"> = </span>
-            <span className="text-green-400">&quot;you&quot;</span>
-            <span className="text-zinc-300">;</span>
-          </div>
-          <div>
-            <span className="text-purple-400">const</span>
-            <span className="text-blue-300"> profile</span>
-            <span className="text-zinc-300"> = </span>
-            <span className="text-purple-400">await</span>
-            <span className="text-yellow-300"> createProfile</span>
-            <span className="text-zinc-300">(</span>
-            <span className="text-blue-300">developer</span>
-            <span className="text-zinc-300">);</span>
-          </div>
-          <div className="mt-2">
-            <span className="text-zinc-500">
-              <span className="opacity-60">{'//'}</span> Output: ✨ Professional resume ready!
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Features */}
       <div className="grid gap-4 sm:grid-cols-3">
         <FeatureCard
           icon={<Code className="h-5 w-5" strokeWidth={1.5} />}
-          title="Built for Tech"
-          description="Built by tech, for tech. Clean, intentional design."
+          title="Built for tech talent"
+          description="A clean profile structure designed for modern resumes and hiring flows."
         />
         <FeatureCard
           icon={<Clock className="h-5 w-5" strokeWidth={1.5} />}
-          title="5-Minute Setup"
-          description="Quick wizard with smart defaults. No time wasted."
+          title="Fast to complete"
+          description="Finish the essentials now and refine details later from your dashboard."
         />
         <FeatureCard
           icon={<Shield className="h-5 w-5" strokeWidth={1.5} />}
-          title="Your Data"
-          description="Export anytime. Your profile, your control."
+          title="You stay in control"
+          description="Your information stays editable, portable, and ready for export at any time."
         />
       </div>
 
-      {/* Info Box */}
-      <div className="border border-white/10 bg-white/5 p-4">
+      <div className="rounded-2xl border border-white/10 bg-zinc-950/40 p-5">
         <div className="flex items-start gap-3">
-          <span className="font-mono text-sm text-cyan-400">i</span>
-          <div className="font-mono text-xs text-zinc-400">
+          <span className="mt-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-blue-500/10 text-sm text-blue-400">
+            i
+          </span>
+          <div className="text-sm text-zinc-400">
             <p>PATCH will compile your career into the optimal format for each opportunity.</p>
-            <p className="mt-1">
-              <span className="text-white">Required:</span> Personal info, Professional profile,
-              Skills, Theme
+            <p className="mt-2">
+              <span className="font-medium text-white">Required:</span> Personal info, username,
+              professional profile, and theme.
             </p>
             <p>
-              <span className="text-white">Optional:</span> Experience, Education, Languages
+              <span className="font-medium text-white">Optional:</span> Experience, education, and
+              languages.
             </p>
           </div>
         </div>
@@ -115,10 +85,10 @@ function FeatureCard({
   description: string;
 }) {
   return (
-    <div className="border border-white/10 bg-white/5 p-4">
-      <div className="mb-2 text-cyan-400">{icon}</div>
-      <h3 className="font-mono text-sm font-semibold text-white">{title}</h3>
-      <p className="mt-1 font-mono text-xs text-zinc-400">{description}</p>
+    <div className="rounded-2xl border border-white/10 bg-zinc-950/40 p-5">
+      <div className="mb-3 text-blue-400">{icon}</div>
+      <h3 className="text-sm font-semibold text-white">{title}</h3>
+      <p className="mt-1 text-sm leading-6 text-zinc-400">{description}</p>
     </div>
   );
 }

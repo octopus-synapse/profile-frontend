@@ -9,6 +9,7 @@
 import { Check, Palette } from 'lucide-react';
 import { useCallback } from 'react';
 import { type TemplateSelection, useOnboarding } from '../hooks';
+import { OnboardingStepHeader } from '../step-header';
 import { StepNavigation } from '../step-navigation';
 
 // Color palettes for the professional template
@@ -109,24 +110,18 @@ export function TemplateStep() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <div className="flex items-center gap-2">
-          <span className="font-mono text-sm text-cyan-400">{`>`}</span>
-          <h2 className="text-xl font-bold text-white">Choose Your Theme</h2>
-        </div>
-        <p className="mt-1 font-mono text-xs text-zinc-400">
-          Select a color palette for your professional resume
-        </p>
-      </div>
+      <OnboardingStepHeader
+        eyebrow="Step 4"
+        title="Choose your theme"
+        description="Pick a visual direction for your resume. You can still change it later."
+      />
 
-      {/* Template Info */}
-      <div className="border border-white/10 bg-white/5 p-4">
+      <div className="rounded-2xl border border-white/10 bg-zinc-950/40 p-5">
         <div className="flex items-start gap-3">
-          <Palette className="mt-0.5 h-5 w-5 text-cyan-400" strokeWidth={1.5} />
+          <Palette className="mt-0.5 h-5 w-5 text-blue-400" strokeWidth={1.5} />
           <div>
-            <h3 className="font-mono text-sm font-semibold text-white">Professional Template</h3>
-            <p className="mt-1 font-mono text-xs text-zinc-400">
+            <h3 className="text-sm font-semibold text-white">Professional template</h3>
+            <p className="mt-1 text-sm leading-6 text-zinc-400">
               Clean, modern layout optimized for ATS systems and recruiters. You can change this
               later in settings.
             </p>
@@ -146,8 +141,8 @@ export function TemplateStep() {
               onClick={() => handleSelectPalette(palette.id)}
               className={`border p-4 text-left transition-all ${
                 isSelected
-                  ? 'border-cyan-500 bg-cyan-500/10'
-                  : 'border-white/10 hover:border-cyan-500/50'
+                  ? 'rounded-2xl border-blue-500 bg-blue-500/10'
+                  : 'rounded-2xl border-white/10 hover:border-blue-500/40'
               } `}
             >
               {/* Color Preview */}
@@ -216,8 +211,8 @@ export function TemplateStep() {
               </div>
 
               {/* Palette Info */}
-              <h4 className="font-mono text-sm font-semibold text-white">{palette.name}</h4>
-              <p className="mt-0.5 font-mono text-xs text-zinc-400">{palette.description}</p>
+              <h4 className="text-sm font-semibold text-white">{palette.name}</h4>
+              <p className="mt-0.5 text-xs text-zinc-400">{palette.description}</p>
 
               {/* Color Swatches */}
               <div className="mt-2 flex gap-1">
@@ -235,7 +230,7 @@ export function TemplateStep() {
 
       {/* Selection Indicator */}
       {templateSelection?.colorScheme && (
-        <div className="flex items-center gap-2 font-mono text-xs text-emerald-500">
+        <div className="flex items-center gap-2 text-sm text-emerald-500">
           <Check className="h-4 w-4" strokeWidth={2} />
           Selected: {PALETTES.find((p) => p.id === templateSelection.colorScheme)?.name}
         </div>
