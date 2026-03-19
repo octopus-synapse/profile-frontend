@@ -6,6 +6,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
+import { CACHE_TIMES } from '@/shared/constants/cache-times';
 import { userRepository } from '../services/user-repository';
 import type { AdminUserFilters } from '../types';
 import { userKeys } from './query-keys';
@@ -17,7 +18,7 @@ export function useMe() {
   return useQuery({
     queryKey: userKeys.me(),
     queryFn: () => userRepository.getMe(),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: CACHE_TIMES.MEDIUM,
   });
 }
 
@@ -28,7 +29,7 @@ export function useMyStats() {
   return useQuery({
     queryKey: userKeys.myStats(),
     queryFn: () => userRepository.getMyStats(),
-    staleTime: 1 * 60 * 1000, // 1 minute
+    staleTime: 60_000,
   });
 }
 
@@ -40,7 +41,7 @@ export function usePublicProfile(username: string) {
     queryKey: userKeys.profile(username),
     queryFn: () => userRepository.getByUsername(username),
     enabled: !!username,
-    staleTime: 10 * 60 * 1000, // 10 minutes
+    staleTime: CACHE_TIMES.LONG,
   });
 }
 
@@ -52,7 +53,7 @@ export function useCheckUsername(username: string) {
     queryKey: userKeys.checkUsername(username),
     queryFn: () => userRepository.checkUsername(username),
     enabled: !!username && username.length >= 3,
-    staleTime: 30 * 1000, // 30 seconds
+    staleTime: CACHE_TIMES.SHORT, // 30 seconds
   });
 }
 
@@ -66,8 +67,8 @@ export function useCheckUsername(username: string) {
 export function useAdminUsers(filters?: AdminUserFilters) {
   return useQuery({
     queryKey: userKeys.admin.list(filters as Record<string, unknown> | undefined),
-    queryFn: () => userRepository.adminGetUsers(filters),
-    staleTime: 30 * 1000, // 30 seconds
+    queryFn: () => userRepository.getUsers(filters),
+    staleTime: CACHE_TIMES.SHORT,
   });
 }
 
@@ -77,8 +78,8 @@ export function useAdminUsers(filters?: AdminUserFilters) {
 export function useAdminUser(userId: string) {
   return useQuery({
     queryKey: userKeys.admin.detail(userId),
-    queryFn: () => userRepository.adminGetUser(userId),
+    queryFn: () => userRepository.getUserById(userId),
     enabled: !!userId,
-    staleTime: 1 * 60 * 1000, // 1 minute
+    staleTime: 60_000,
   });
 }

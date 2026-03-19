@@ -6,6 +6,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
+import { CACHE_TIMES } from '@/shared/constants/cache-times';
 import { techSkillsRepository } from '../services/tech-skills-repository';
 import type { TechAreaType } from '../types';
 
@@ -30,7 +31,7 @@ export function useTechAreas() {
   return useQuery({
     queryKey: techSkillsKeys.areas(),
     queryFn: () => techSkillsRepository.getAreas(),
-    staleTime: 24 * 60 * 60 * 1000, // 24 hours
+    staleTime: CACHE_TIMES.STATIC,
   });
 }
 
@@ -41,7 +42,7 @@ export function useTechNiches() {
   return useQuery({
     queryKey: techSkillsKeys.niches(),
     queryFn: () => techSkillsRepository.getNiches(),
-    staleTime: 24 * 60 * 60 * 1000,
+    staleTime: CACHE_TIMES.STATIC,
   });
 }
 
@@ -52,7 +53,7 @@ export function useTechNichesByArea(areaType: TechAreaType) {
   return useQuery({
     queryKey: techSkillsKeys.nichesByArea(areaType),
     queryFn: () => techSkillsRepository.getNichesByArea(areaType),
-    staleTime: 24 * 60 * 60 * 1000,
+    staleTime: CACHE_TIMES.STATIC,
     enabled: !!areaType,
   });
 }
@@ -64,7 +65,7 @@ export function useProgrammingLanguages() {
   return useQuery({
     queryKey: techSkillsKeys.languages(),
     queryFn: () => techSkillsRepository.getLanguages(),
-    staleTime: 24 * 60 * 60 * 1000,
+    staleTime: CACHE_TIMES.STATIC,
   });
 }
 
@@ -75,7 +76,7 @@ export function useSearchLanguages(query: string, limit = 20) {
   return useQuery({
     queryKey: techSkillsKeys.languagesSearch(query),
     queryFn: () => techSkillsRepository.searchLanguages(query, limit),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: CACHE_TIMES.MEDIUM,
     enabled: query.length >= 1,
   });
 }
@@ -87,7 +88,7 @@ export function useTechSkills() {
   return useQuery({
     queryKey: techSkillsKeys.skills(),
     queryFn: () => techSkillsRepository.getSkills(),
-    staleTime: 24 * 60 * 60 * 1000,
+    staleTime: CACHE_TIMES.STATIC,
   });
 }
 
@@ -98,7 +99,7 @@ export function useSearchTechSkills(query: string, limit = 20) {
   return useQuery({
     queryKey: techSkillsKeys.skillsSearch(query),
     queryFn: () => techSkillsRepository.searchAll(query, limit),
-    staleTime: 5 * 60 * 1000,
+    staleTime: CACHE_TIMES.MEDIUM,
     enabled: query.length >= 1,
   });
 }
@@ -110,7 +111,7 @@ export function useSkillsByNiche(nicheSlug: string) {
   return useQuery({
     queryKey: techSkillsKeys.skillsByNiche(nicheSlug),
     queryFn: () => techSkillsRepository.getSkillsByNiche(nicheSlug),
-    staleTime: 24 * 60 * 60 * 1000,
+    staleTime: CACHE_TIMES.STATIC,
     enabled: !!nicheSlug,
   });
 }
@@ -122,7 +123,7 @@ export function useSkillsByType(type: string) {
   return useQuery({
     queryKey: techSkillsKeys.skillsByType(type),
     queryFn: () => techSkillsRepository.getSkillsByType(type),
-    staleTime: 24 * 60 * 60 * 1000,
+    staleTime: CACHE_TIMES.STATIC,
     enabled: !!type,
   });
 }
@@ -134,7 +135,7 @@ export function useSearchAllTechSkills(query: string, limit = 20) {
   return useQuery({
     queryKey: techSkillsKeys.searchAll(query),
     queryFn: () => techSkillsRepository.searchAll(query, limit),
-    staleTime: 5 * 60 * 1000,
+    staleTime: CACHE_TIMES.MEDIUM,
     enabled: query.length >= 1,
   });
 }

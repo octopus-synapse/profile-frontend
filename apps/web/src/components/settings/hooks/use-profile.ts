@@ -6,8 +6,10 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { CACHE_TIMES } from '@/shared/constants/cache-times';
+import { userRepository } from '../../users/services/user-repository';
 import { profileRepository } from '../services/settings-repository';
-import type { UpdateProfilePayload } from '../types';
+import type { UpdateProfilePayload, UserProfile } from '../types';
 
 export const profileKeys = {
   all: ['profile'] as const,
@@ -18,8 +20,11 @@ export const profileKeys = {
 export function useProfile() {
   return useQuery({
     queryKey: profileKeys.detail(),
-    queryFn: () => profileRepository.getProfile(),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    queryFn: async () => {
+      const user = await userRepository.getMe();
+      return user as unknown as UserProfile | null;
+    },
+    staleTime: CACHE_TIMES.MEDIUM,
   });
 }
 
@@ -37,9 +42,9 @@ export function useUpdateProfile() {
 export function useCheckUsernameAvailability(username: string) {
   return useQuery({
     queryKey: profileKeys.usernameCheck(username),
-    queryFn: () => profileRepository.checkUsernameAvailability(username),
+    queryFn: () => userRepository.checkUsername(username),
     enabled: !!username && username.length >= 3,
-    staleTime: 30 * 1000, // 30 seconds
+    staleTime: CACHE_TIMES.SHORT,
   });
 }
 

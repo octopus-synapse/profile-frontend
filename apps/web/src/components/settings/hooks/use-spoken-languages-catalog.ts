@@ -6,6 +6,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
+import { CACHE_TIMES } from '@/shared/constants/cache-times';
 import { spokenLanguagesCatalogRepository } from '../services/settings-repository';
 
 export const spokenLanguagesCatalogKeys = {
@@ -18,7 +19,7 @@ export function useSpokenLanguagesCatalog() {
   return useQuery({
     queryKey: spokenLanguagesCatalogKeys.list(),
     queryFn: () => spokenLanguagesCatalogRepository.getAll(),
-    staleTime: 24 * 60 * 60 * 1000, // 24 hours - this data rarely changes
+    staleTime: CACHE_TIMES.STATIC,
   });
 }
 
@@ -26,7 +27,7 @@ export function useSearchSpokenLanguages(query: string) {
   return useQuery({
     queryKey: spokenLanguagesCatalogKeys.search(query),
     queryFn: () => spokenLanguagesCatalogRepository.search(query),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: CACHE_TIMES.MEDIUM,
     enabled: true, // Always enabled, will show all if query is empty
   });
 }

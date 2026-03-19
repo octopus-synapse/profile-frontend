@@ -1,66 +1,76 @@
 /**
  * Admin Repository
  *
- * Stub implementations for admin dashboard functionality.
- * TODO: Replace with actual SDK calls when backend implements admin endpoints.
+ * Wired to backend SDK for admin dashboard functionality.
  */
 
+import { apiFetch, PLATFORM_ROUTES } from '@profile/api-client';
+import type { PaginatedResponse } from '@/shared/types/api-responses';
 import type { AdminStats, AdminUser, RecentActivity, SystemHealth } from '../types';
 
-// Re-export types for backward compatibility
 export type { AdminStats, AdminUser, RecentActivity, SystemHealth };
 
-/**
- * Admin repository with stub implementations
- * Returns placeholder data until backend admin API is implemented
- */
+interface PlatformStatsData {
+  totalUsers: number;
+  totalResumes: number;
+  totalViews: number;
+  activeUsersToday: number;
+  activeUsersWeek: number;
+  updatedAt: string;
+}
+
+interface HealthCheckData {
+  status: string;
+  info?: Record<string, { status: string }>;
+  error?: Record<string, { status: string }>;
+}
+
 export const adminRepository = {
-  /**
-   * Get admin dashboard statistics
-   * @stub Returns placeholder stats
-   */
-  getStats: async (): Promise<AdminStats> => {
-    console.warn('[STUB] adminRepository.getStats: Backend not implemented');
+  async getStats(): Promise<AdminStats> {
+    const stats = await apiFetch.get<PlatformStatsData>(PLATFORM_ROUTES.PLATFORM_GET_STATISTICS);
     return {
-      totalUsers: 0,
-      activeUsers: 0,
-      totalResumes: 0,
-      publicProfiles: 0,
-      newUsersToday: 0,
-      newUsersThisWeek: 0,
-      newUsersThisMonth: 0,
+      totalUsers: stats.totalUsers,
+      activeUsers: stats.activeUsersToday,
+      totalResumes: stats.totalResumes,
+      publicProfiles: 0, // Not tracked by platform stats yet
+      newUsersToday: stats.activeUsersToday,
+      newUsersThisWeek: stats.activeUsersWeek,
+      newUsersThisMonth: 0, // Not tracked yet
     };
   },
 
-  /**
-   * Get recent activity
-   * @stub Returns empty array
-   */
-  getRecentActivity: async (_limit: number): Promise<RecentActivity[]> => {
-    console.warn('[STUB] adminRepository.getRecentActivity: Backend not implemented');
+  async getRecentActivity(_limit: number): Promise<RecentActivity[]> {
+    // Backend doesn't have a dedicated activity feed endpoint for admin yet
+    // Will be wired when analytics bounded context exposes admin activity
     return [];
   },
 
-  /**
-   * Get system health status
-   * @stub Returns all healthy
-   */
-  getSystemHealth: async (): Promise<SystemHealth> => {
-    console.warn('[STUB] adminRepository.getSystemHealth: Backend not implemented');
+  async getSystemHealth(): Promise<SystemHealth> {
+    const [db, redis, storage] = await Promise.allSettled([
+      apiFetch.get<HealthCheckData>('/api/v1/health/database'),
+      apiFetch.get<HealthCheckData>('/api/v1/health/redis'),
+      apiFetch.get<HealthCheckData>('/api/v1/health/storage'),
+    ]);
+
+    const toStatus = (
+      result: PromiseSettledResult<HealthCheckData>,
+    ): 'healthy' | 'degraded' | 'down' => {
+      if (result.status === 'rejected') return 'down';
+      return result.value.status === 'ok' ? 'healthy' : 'degraded';
+    };
+
     return {
-      database: 'healthy',
-      api: 'healthy',
-      storage: 'healthy',
+      database: toStatus(db),
+      api: toStatus(redis),
+      storage: toStatus(storage),
       lastChecked: new Date().toISOString(),
     };
   },
 
-  /**
-   * Get recent users
-   * @stub Returns empty array
-   */
-  getRecentUsers: async (_limit: number): Promise<AdminUser[]> => {
-    console.warn('[STUB] adminRepository.getRecentUsers: Backend not implemented');
-    return [];
+  async getRecentUsers(limit: number): Promise<AdminUser[]> {
+    const response = await apiFetch.get<PaginatedResponse<AdminUser>>(
+      `/api/v1/users/manage?limit=${limit}&page=1`,
+    );
+    return response.data;
   },
 };
