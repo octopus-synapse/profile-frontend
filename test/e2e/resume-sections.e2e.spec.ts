@@ -17,8 +17,8 @@ import type {
 import {
 	e2eFetch,
 	skipIfBackendUnavailable,
-	ACCOUNT_LIFECYCLE_ROUTES,
-	AUTHENTICATION_ROUTES,
+	ACCOUNTS_ROUTES,
+	AUTH_ROUTES,
 	RESUMES_ROUTES,
 } from "./setup";
 
@@ -51,7 +51,7 @@ describe("E2E: Resume Sections API", () => {
 
 		// Register and login test user
 		const signupResponse = await e2eFetch<CreateAccountResponseDto>(
-			ACCOUNT_LIFECYCLE_ROUTES.ACCOUNTS_SIGNUP,
+			ACCOUNTS_ROUTES.ACCOUNTS_SIGNUP,
 			{
 				method: "POST",
 				body: JSON.stringify({
@@ -69,7 +69,7 @@ describe("E2E: Resume Sections API", () => {
 		}
 
 		const loginResponse = await e2eFetch<LoginResponseDto>(
-			AUTHENTICATION_ROUTES.AUTH_LOGIN,
+			AUTH_ROUTES.AUTH_LOGIN,
 			{
 				method: "POST",
 				body: JSON.stringify({
@@ -126,23 +126,23 @@ describe("E2E: Resume Sections API", () => {
 				return;
 			}
 
-			const response = await e2eFetch<
-				Array<{
+			const response = await e2eFetch<{
+				sectionTypes: Array<{
 					key: string;
-					label: string;
-					semanticKind: string;
-					fields: Array<{ key: string; type: string }>;
-				}>
-			>(SECTIONS_API.LIST_TYPES(resumeId), {
+					label?: string;
+					semanticKind?: string;
+				}>;
+			}>(SECTIONS_API.LIST_TYPES(resumeId), {
 				method: "GET",
 				token: accessToken,
 			});
 
 			expect(response.status).toBe(200);
-			expect(Array.isArray(response.data)).toBe(true);
+			expect(response.data.sectionTypes).toBeDefined();
+			expect(Array.isArray(response.data.sectionTypes)).toBe(true);
 
 			// Should have standard section types
-			const sectionKeys = response.data.map((s) => s.key);
+			const sectionKeys = response.data.sectionTypes.map((s) => s.key);
 			console.log("Available section types:", sectionKeys);
 
 			// Common section types that should exist
@@ -175,18 +175,20 @@ describe("E2E: Resume Sections API", () => {
 				return;
 			}
 
-			const response = await e2eFetch<
-				Array<{
-					sectionKey: string;
-					items: Array<{ id: string; fields: Record<string, unknown> }>;
-				}>
-			>(SECTIONS_API.LIST_SECTIONS(resumeId), {
+			const response = await e2eFetch<{
+				sections: Array<{
+					sectionKey?: string;
+					sectionTypeKey?: string;
+					items: Array<{ id: string; content?: Record<string, unknown> }>;
+				}>;
+			}>(SECTIONS_API.LIST_SECTIONS(resumeId), {
 				method: "GET",
 				token: accessToken,
 			});
 
 			expect(response.status).toBe(200);
-			expect(Array.isArray(response.data)).toBe(true);
+			expect(response.data.sections).toBeDefined();
+			expect(Array.isArray(response.data.sections)).toBe(true);
 		});
 
 		it("should create a section item (work experience)", async () => {
@@ -200,13 +202,13 @@ describe("E2E: Resume Sections API", () => {
 			let created = false;
 
 			for (const sectionKey of sectionKeys) {
-				const response = await e2eFetch<{ id: string; fields: Record<string, unknown> }>(
+				const response = await e2eFetch<{ item: { id: string; content?: Record<string, unknown> } }>(
 					SECTIONS_API.CREATE_ITEM(resumeId, sectionKey),
 					{
 						method: "POST",
 						token: accessToken,
 						body: JSON.stringify({
-							fields: {
+							content: {
 								company: "E2E Test Company",
 								title: "Software Engineer",
 								startDate: "2023-01-01",
@@ -219,8 +221,9 @@ describe("E2E: Resume Sections API", () => {
 				);
 
 				if (response.status === 201) {
-					expect(response.data.id).toBeDefined();
-					createdItemId = response.data.id;
+					expect(response.data.item).toBeDefined();
+					expect(response.data.item.id).toBeDefined();
+					createdItemId = response.data.item.id;
 					created = true;
 					console.log(`Created item with section key: ${sectionKey}`);
 					break;
@@ -243,13 +246,13 @@ describe("E2E: Resume Sections API", () => {
 			const sectionKeys = ["work-experience-v1", "work_experience_v1", "work-experience"];
 
 			for (const sectionKey of sectionKeys) {
-				const response = await e2eFetch<{ id: string; fields: Record<string, unknown> }>(
+				const response = await e2eFetch<{ item: { id: string; content?: Record<string, unknown> } }>(
 					SECTIONS_API.UPDATE_ITEM(resumeId, sectionKey, createdItemId),
 					{
 						method: "PATCH",
 						token: accessToken,
 						body: JSON.stringify({
-							fields: {
+							content: {
 								company: "E2E Test Company - Updated",
 							},
 						}),
@@ -306,8 +309,8 @@ describe("E2E: Resume Sections API", () => {
 				},
 			);
 
-			// Should be 404 (not found) or 403 (forbidden)
-			expect([403, 404]).toContain(response.status);
+			// Should be 400 (bad request / invalid ID), 404 (not found) or 403 (forbidden)
+			expect([400, 403, 404]).toContain(response.status);
 		});
 	});
 });

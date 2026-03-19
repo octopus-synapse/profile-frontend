@@ -9,9 +9,9 @@
 
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import {
- ACCOUNT_LIFECYCLE_ROUTES,
+ ACCOUNTS_ROUTES,
  ADMIN_SECTION_TYPES_ROUTES,
- AUTHENTICATION_ROUTES,
+ AUTH_ROUTES,
  E2E_CONFIG,
  e2eFetch,
  skipIfBackendUnavailable,
@@ -59,8 +59,8 @@ const ADMIN_USER = {
  password: "Admin123!@#",
 };
 
-// Test key for created section types (will be cleaned up)
-const TEST_SECTION_KEY = "test_custom_section_v1";
+// Test key for created section types (unique per run, cleaned up after)
+const TEST_SECTION_KEY = `test_custom_section_${Date.now()}_v1`;
 
 describe("Admin Section Types API E2E", () => {
  let adminToken: string;
@@ -71,7 +71,7 @@ describe("Admin Section Types API E2E", () => {
 
   // Login as admin
   const loginResult = await e2eFetch<AuthTokens>(
-   AUTHENTICATION_ROUTES.AUTH_LOGIN,
+   AUTH_ROUTES.AUTH_LOGIN,
    {
     method: "POST",
     body: JSON.stringify({
@@ -96,7 +96,7 @@ describe("Admin Section Types API E2E", () => {
    try {
     await e2eFetch(
      ADMIN_SECTION_TYPES_ROUTES.ADMIN_SECTION_TYPES_DELETE.replace(
-      ":key",
+      ":id",
       createdSectionKey
      ),
      {
@@ -131,14 +131,14 @@ describe("Admin Section Types API E2E", () => {
    };
 
    // Register
-   await e2eFetch(ACCOUNT_LIFECYCLE_ROUTES.ACCOUNTS_SIGNUP, {
+   await e2eFetch(ACCOUNTS_ROUTES.ACCOUNTS_SIGNUP, {
     method: "POST",
     body: JSON.stringify(regularUser),
    });
 
    // Login
    const loginResult = await e2eFetch<AuthTokens>(
-    AUTHENTICATION_ROUTES.AUTH_LOGIN,
+    AUTH_ROUTES.AUTH_LOGIN,
     {
      method: "POST",
      body: JSON.stringify({
@@ -242,7 +242,7 @@ describe("Admin Section Types API E2E", () => {
   it("should get a section type by key", async () => {
    const result = await e2eFetch<SectionType>(
     ADMIN_SECTION_TYPES_ROUTES.ADMIN_SECTION_TYPES_GET.replace(
-     ":key",
+     ":id",
      "work_experience_v1"
     ),
     { token: adminToken }
@@ -260,7 +260,7 @@ describe("Admin Section Types API E2E", () => {
   it("should return 404 for non-existent key", async () => {
    const result = await e2eFetch<unknown>(
     ADMIN_SECTION_TYPES_ROUTES.ADMIN_SECTION_TYPES_GET.replace(
-     ":key",
+     ":id",
      "non_existent_section_v999"
     ),
     { token: adminToken }
@@ -272,7 +272,7 @@ describe("Admin Section Types API E2E", () => {
   it("should include translations in response", async () => {
    const result = await e2eFetch<SectionType>(
     ADMIN_SECTION_TYPES_ROUTES.ADMIN_SECTION_TYPES_GET.replace(
-     ":key",
+     ":id",
      "work_experience_v1"
     ),
     { token: adminToken }
@@ -290,7 +290,7 @@ describe("Admin Section Types API E2E", () => {
   it("should include icon in response", async () => {
    const result = await e2eFetch<SectionType>(
     ADMIN_SECTION_TYPES_ROUTES.ADMIN_SECTION_TYPES_GET.replace(
-     ":key",
+     ":id",
      "work_experience_v1"
     ),
     { token: adminToken }
@@ -306,7 +306,7 @@ describe("Admin Section Types API E2E", () => {
   it("should create a new custom section type", async () => {
    const newSectionType = {
     key: TEST_SECTION_KEY,
-    slug: "test-custom-section", // kebab-case as required by backend
+    slug: `test-custom-section-${Date.now()}`, // unique kebab-case per run
     version: 1,
     semanticKind: "CUSTOM",
     title: "Test Custom Section",
@@ -423,7 +423,7 @@ describe("Admin Section Types API E2E", () => {
 
    const result = await e2eFetch<SectionType>(
     ADMIN_SECTION_TYPES_ROUTES.ADMIN_SECTION_TYPES_UPDATE.replace(
-     ":key",
+     ":id",
      createdSectionKey
     ),
     {
@@ -451,7 +451,7 @@ describe("Admin Section Types API E2E", () => {
 
    const result = await e2eFetch<SectionType>(
     ADMIN_SECTION_TYPES_ROUTES.ADMIN_SECTION_TYPES_UPDATE.replace(
-     ":key",
+     ":id",
      "work_experience_v1"
     ),
     {
@@ -467,7 +467,7 @@ describe("Admin Section Types API E2E", () => {
    // Restore original
    await e2eFetch(
     ADMIN_SECTION_TYPES_ROUTES.ADMIN_SECTION_TYPES_UPDATE.replace(
-     ":key",
+     ":id",
      "work_experience_v1"
     ),
     {
@@ -486,7 +486,7 @@ describe("Admin Section Types API E2E", () => {
 
    const result = await e2eFetch<unknown>(
     ADMIN_SECTION_TYPES_ROUTES.ADMIN_SECTION_TYPES_UPDATE.replace(
-     ":key",
+     ":id",
      "work_experience_v1"
     ),
     {
@@ -502,7 +502,7 @@ describe("Admin Section Types API E2E", () => {
   it("should return 404 for non-existent key", async () => {
    const result = await e2eFetch<unknown>(
     ADMIN_SECTION_TYPES_ROUTES.ADMIN_SECTION_TYPES_UPDATE.replace(
-     ":key",
+     ":id",
      "non_existent_v999"
     ),
     {
@@ -519,9 +519,10 @@ describe("Admin Section Types API E2E", () => {
  describe("Delete Section Type", () => {
   it("should delete an unused custom section type", async () => {
    // Create a section to delete
+   const deleteKey = `to_delete_${Date.now()}_v1`;
    const toDelete = {
-    key: "to_delete_section_v1",
-    slug: "to-delete-section", // kebab-case
+    key: deleteKey,
+    slug: `to-delete-section-${Date.now()}`,
     version: 1,
     semanticKind: "CUSTOM",
     title: "Section To Delete",
@@ -542,8 +543,8 @@ describe("Admin Section Types API E2E", () => {
    // Delete it
    const deleteResult = await e2eFetch<unknown>(
     ADMIN_SECTION_TYPES_ROUTES.ADMIN_SECTION_TYPES_DELETE.replace(
-     ":key",
-     "to_delete_section_v1"
+     ":id",
+     deleteKey
     ),
     {
      method: "DELETE",
@@ -556,8 +557,8 @@ describe("Admin Section Types API E2E", () => {
    // Verify it's gone
    const getResult = await e2eFetch<unknown>(
     ADMIN_SECTION_TYPES_ROUTES.ADMIN_SECTION_TYPES_GET.replace(
-     ":key",
-     "to_delete_section_v1"
+     ":id",
+     deleteKey
     ),
     { token: adminToken }
    );
@@ -568,7 +569,7 @@ describe("Admin Section Types API E2E", () => {
   it("should reject deletion of system types", async () => {
    const result = await e2eFetch<unknown>(
     ADMIN_SECTION_TYPES_ROUTES.ADMIN_SECTION_TYPES_DELETE.replace(
-     ":key",
+     ":id",
      "work_experience_v1"
     ),
     {
@@ -583,7 +584,7 @@ describe("Admin Section Types API E2E", () => {
   it("should return 404 for non-existent key", async () => {
    const result = await e2eFetch<unknown>(
     ADMIN_SECTION_TYPES_ROUTES.ADMIN_SECTION_TYPES_DELETE.replace(
-     ":key",
+     ":id",
      "non_existent_v999"
     ),
     {
@@ -600,7 +601,7 @@ describe("Admin Section Types API E2E", () => {
   it("should return translations for all supported locales", async () => {
    const result = await e2eFetch<SectionType>(
     ADMIN_SECTION_TYPES_ROUTES.ADMIN_SECTION_TYPES_GET.replace(
-     ":key",
+     ":id",
      "education_v1"
     ),
     { token: adminToken }
@@ -628,7 +629,7 @@ describe("Admin Section Types API E2E", () => {
   it("should have correct translations for work experience", async () => {
    const result = await e2eFetch<SectionType>(
     ADMIN_SECTION_TYPES_ROUTES.ADMIN_SECTION_TYPES_GET.replace(
-     ":key",
+     ":id",
      "work_experience_v1"
     ),
     { token: adminToken }
@@ -649,7 +650,7 @@ describe("Admin Section Types API E2E", () => {
   it("should support emoji icons", async () => {
    const result = await e2eFetch<SectionType>(
     ADMIN_SECTION_TYPES_ROUTES.ADMIN_SECTION_TYPES_GET.replace(
-     ":key",
+     ":id",
      "work_experience_v1"
     ),
     { token: adminToken }

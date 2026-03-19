@@ -35,6 +35,15 @@ export const ACCOUNTS_ROUTES = {
   ACCOUNTS_SIGNUP: '/api/accounts',
 } as const;
 
+export const ADMIN_SECTION_TYPES_ROUTES = {
+  ADMIN_SECTION_TYPES_LIST: '/api/v1/admin/section-types',
+  ADMIN_SECTION_TYPES_CREATE: '/api/v1/admin/section-types',
+  ADMIN_SECTION_TYPES_GET: '/api/v1/admin/section-types/:id',
+  ADMIN_SECTION_TYPES_UPDATE: '/api/v1/admin/section-types/:id',
+  ADMIN_SECTION_TYPES_DELETE: '/api/v1/admin/section-types/:id',
+  ADMIN_SECTION_TYPES_SEMANTIC_KINDS: '/api/v1/admin/section-types/semantic-kinds',
+} as const;
+
 export const ATS_VALIDATION_ROUTES = {
   ATS_VALIDATION_VALIDATE_C_V: '/api/v1/ats/validate',
 } as const;
@@ -99,7 +108,12 @@ export const ONBOARDING_ROUTES = {
   ONBOARDING_COMPLETE_ONBOARDING: '/api/v1/onboarding',
   ONBOARDING_GET_PROGRESS: '/api/v1/onboarding/progress',
   ONBOARDING_SAVE_PROGRESS: '/api/v1/onboarding/progress',
+  ONBOARDING_GET_SESSION: '/api/v1/onboarding/session',
   ONBOARDING_COMPLETE_FROM_SESSION: '/api/v1/onboarding/session/complete',
+  ONBOARDING_GOTO_STEP: '/api/v1/onboarding/session/goto',
+  ONBOARDING_NEXT_STEP: '/api/v1/onboarding/session/next',
+  ONBOARDING_PREVIOUS_STEP: '/api/v1/onboarding/session/previous',
+  ONBOARDING_SAVE_STEP_DATA: '/api/v1/onboarding/session/save',
 } as const;
 
 export const PLATFORM_ROUTES = {
@@ -183,6 +197,7 @@ export const USERS_ROUTES = {
   USERS_UPDATE_PROFILE: '/api/v1/users/profile',
   USERS_UPDATE_USERNAME: '/api/v1/users/username',
   USERS_VALIDATE_USERNAME: '/api/v1/users/username/validate',
+  USERS_CHECK_USERNAME_AVAILABILITY: '/api/v1/users/username/check',
 } as const;
 
 // ============================================================================
