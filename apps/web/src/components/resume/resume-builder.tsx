@@ -5,23 +5,20 @@
 
 'use client';
 
-import { Check, Download, FileText, Link2, Loader2, Settings } from 'lucide-react';
+import { Check, Download, FileText, Link2, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { useCallback, useState } from 'react';
 import { LoadingState } from '@/shared/components/ui';
+import { showToast } from '@/shared/components/ui/toast';
 import { ASTRenderer } from './ast-renderer';
 import { BuilderSidebar } from './builder/builder-sidebar';
-import {
-  useExportResumeDOCX,
-  useExportResumePDF,
-  useResume,
-  useResumeAst,
-  useResumes,
-} from './hooks';
+import { ExportDialog } from './export/export-dialog';
+import { useResume, useResumeAst, useResumes } from './hooks';
 import { extractResumeListItems } from './resume-builder.utils';
 
 export function ResumeBuilder() {
   const [copied, setCopied] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
 
   // Fetch user's resumes list
   const { data: resumesResponse, isLoading: resumesListLoading } = useResumes();
@@ -32,6 +29,8 @@ export function ResumeBuilder() {
   const { data: resumeResponse, isLoading: resumeLoading } = useResume(resumeId ?? '');
   // Extract the actual resume data from response
   const resume = resumeResponse?.data;
+  // activeThemeId may be present at runtime even if not typed in the generated DTO
+  const activeThemeId = (resume as Record<string, unknown> | undefined)?.activeThemeId as string | undefined;
 
   // Fetch compiled AST from backend
   const { data: ast, isLoading: astLoading, refetch: refetchAst } = useResumeAst(resumeId);
@@ -39,51 +38,20 @@ export function ResumeBuilder() {
   // Combined loading state
   const isLoading = resumesListLoading || resumeLoading || (resumeId && astLoading);
 
-  // Export mutations
-  const exportPDF = useExportResumePDF();
-  const exportDOCX = useExportResumeDOCX();
-
   const handleThemeApplied = useCallback(() => {
     void refetchAst();
   }, [refetchAst]);
 
-  const handleExportPDF = async () => {
-    if (!resumeId) return;
-    try {
-      const blob = await exportPDF.mutateAsync(resumeId);
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${resume?.fullName ?? 'resume'}.pdf`;
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Failed to export PDF:', error);
-    }
-  };
-
-  const handleExportDOCX = async () => {
-    if (!resumeId) return;
-    try {
-      const blob = await exportDOCX.mutateAsync(resumeId);
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${resume?.fullName ?? 'resume'}.docx`;
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Failed to export DOCX:', error);
-    }
-  };
-
   const handleCopyLink = async () => {
     if (!resumeId) return;
-    // Use resumeId as fallback for the link (backend should support both slug and id)
     const url = `${window.location.origin}/r/${resumeId}`;
-    await navigator.clipboard.writeText(url);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      showToast.error('Failed to copy link');
+    }
   };
 
   // Loading state
@@ -129,7 +97,7 @@ export function ResumeBuilder() {
     <div className="flex h-[calc(100vh-4rem)] bg-white/5">
       {/* Sidebar */}
       <BuilderSidebar
-        resume={{ id: resumeId ?? '', ...resume }}
+        resume={{ id: resumeId ?? '', activeThemeId, ...resume }}
         activeThemeName={undefined}
         onThemeApplied={handleThemeApplied}
         onRefresh={() => void refetchAst()}
@@ -152,34 +120,14 @@ export function ResumeBuilder() {
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Export PDF */}
+            {/* Export */}
             <button
               type="button"
-              onClick={() => void handleExportPDF()}
-              disabled={exportPDF.isPending}
-              className="inline-flex h-9 items-center gap-2 rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-3.5 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50"
+              onClick={() => setExportOpen(true)}
+              className="inline-flex h-9 items-center gap-2 rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-3.5 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/5 hover:text-white"
             >
-              {exportPDF.isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.5} />
-              ) : (
-                <Download className="h-4 w-4" strokeWidth={1.5} />
-              )}
-              PDF
-            </button>
-
-            {/* Export DOCX */}
-            <button
-              type="button"
-              onClick={() => void handleExportDOCX()}
-              disabled={exportDOCX.isPending}
-              className="inline-flex h-9 items-center gap-2 rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-3.5 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50"
-            >
-              {exportDOCX.isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.5} />
-              ) : (
-                <FileText className="h-4 w-4" strokeWidth={1.5} />
-              )}
-              DOCX
+              <Download className="h-4 w-4" strokeWidth={1.5} />
+              Export
             </button>
 
             {/* Divider */}
@@ -221,6 +169,8 @@ export function ResumeBuilder() {
           </div>
         </div>
       </main>
+
+      <ExportDialog resumeId={resumeId ?? ''} open={exportOpen} onOpenChange={setExportOpen} />
     </div>
   );
 }

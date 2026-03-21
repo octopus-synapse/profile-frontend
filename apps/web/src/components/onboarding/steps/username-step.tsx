@@ -9,50 +9,21 @@
 import { useAuthSession } from '@profile/api-client';
 import { AlertCircle, AtSign, Check, ExternalLink, Loader2, RefreshCw, X } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { APP_URL } from '@/config';
 import { HelpTooltip } from '@/shared/components/ui';
 import { useDebounce } from '@/shared/hooks/use-debounce';
 import { useOnboarding } from '../hooks';
 import { OnboardingStepHeader } from '../step-header';
 import { StepNavigation } from '../step-navigation';
-
-/**
- * Username validation constants.
- * Server-side validation is authoritative - these exist only for UX feedback.
- */
-const MIN_LENGTH = 3;
-const MAX_LENGTH = 30;
-const USERNAME_REGEX = /^[a-z0-9_]+$/;
-
-interface ValidationResult {
-  valid: boolean;
-  message: string;
-}
-
-/**
- * Client-side validation for immediate UX feedback.
- * Server validates authoritatively on submit.
- */
-function validateUsername(value: string): ValidationResult {
-  if (!value) {
-    return { valid: false, message: 'Username is required' };
-  }
-  if (value.length < MIN_LENGTH) {
-    return { valid: false, message: `Must be at least ${MIN_LENGTH} characters` };
-  }
-  if (value.length > MAX_LENGTH) {
-    return { valid: false, message: `Must be at most ${MAX_LENGTH} characters` };
-  }
-  if (!USERNAME_REGEX.test(value)) {
-    return {
-      valid: false,
-      message: 'Only lowercase letters, numbers, and underscores',
-    };
-  }
-  return { valid: true, message: '' };
-}
+import { UsernameChecklist } from './username-checklist';
+import {
+  USERNAME_MAX_LENGTH,
+  normalizeUsername,
+  validateUsername,
+} from './username-validation';
 
 export function UsernameStep() {
-  const { username, goToNextStep } = useOnboarding();
+  const { username, goToNextStep, currentStepIndex, allSteps } = useOnboarding();
   const { data, isLoading } = useAuthSession();
   const isAuthenticated = !!data?.data?.user;
 
@@ -63,8 +34,6 @@ export function UsernameStep() {
   const [touched, setTouched] = useState(false);
 
   const debouncedUsername = useDebounce(inputValue, 500);
-
-  // Local validation
   const validation = useMemo(() => validateUsername(inputValue), [inputValue]);
 
   // Check availability when debounced value changes
@@ -75,19 +44,14 @@ export function UsernameStep() {
       return;
     }
 
-    // Skip check if it's the same as already saved username
     if (debouncedUsername === username) {
       setIsAvailable(true);
       setApiError(null);
       return;
     }
 
-    // Wait for auth to load
-    if (isLoading) {
-      return;
-    }
+    if (isLoading) return;
 
-    // Must be authenticated (cookie is sent automatically)
     if (!isAuthenticated) {
       setApiError('Not authenticated. Please sign in again.');
       setIsAvailable(null);
@@ -102,10 +66,8 @@ export function UsernameStep() {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/username/check?username=${encodeURIComponent(debouncedUsername)}`,
           {
-            headers: {
-              Accept: 'application/json',
-            },
-            credentials: 'include', // Send httpOnly session cookie
+            headers: { Accept: 'application/json' },
+            credentials: 'include',
           },
         );
 
@@ -138,15 +100,9 @@ export function UsernameStep() {
   }, [debouncedUsername, validation.valid, username, isLoading, isAuthenticated]);
 
   const handleChange = (value: string) => {
-    // Normalize to lowercase and remove invalid characters
-    const normalized = value.toLowerCase().replace(/[^a-z0-9_]/g, '');
-    setInputValue(normalized);
+    setInputValue(normalizeUsername(value));
     setIsAvailable(null);
     setApiError(null);
-  };
-
-  const handleBlur = () => {
-    setTouched(true);
   };
 
   const handleRetry = () => {
@@ -158,63 +114,23 @@ export function UsernameStep() {
 
   const handleNext = useCallback(async () => {
     setTouched(true);
-
-    if (!validation.valid || !isAvailable) {
-      return;
-    }
-
+    if (!validation.valid || !isAvailable) return;
     await goToNextStep({ username: inputValue });
   }, [validation.valid, isAvailable, inputValue, goToNextStep]);
 
   const canProceed = validation.valid && isAvailable === true && !apiError;
 
-  const getStatusIcon = () => {
-    if (isLoading || isChecking) {
-      return <Loader2 className="h-4 w-4 animate-spin text-zinc-400" />;
-    }
-    if (apiError) {
-      return <AlertCircle className="h-4 w-4 text-amber-500" />;
-    }
-    if (!validation.valid && touched) {
-      return <X className="h-4 w-4 text-red-500" />;
-    }
-    if (isAvailable === true) {
-      return <Check className="h-4 w-4 text-emerald-500" />;
-    }
-    if (isAvailable === false) {
-      return <X className="h-4 w-4 text-red-500" />;
-    }
-    return null;
-  };
+  const statusIcon = getStatusIcon({ isLoading, isChecking, apiError, validation, touched, isAvailable });
+  const statusMessage = getStatusMessage({ isLoading, isChecking, apiError, validation, touched, isAvailable });
 
-  const getStatusMessage = () => {
-    if (isLoading) {
-      return { text: 'Loading session...', type: 'muted' };
-    }
-    if (isChecking) {
-      return { text: 'Checking availability...', type: 'muted' };
-    }
-    if (apiError) {
-      return { text: apiError, type: 'warning' };
-    }
-    if (!validation.valid && touched) {
-      return { text: validation.message, type: 'error' };
-    }
-    if (isAvailable === true) {
-      return { text: 'Username is available!', type: 'success' };
-    }
-    if (isAvailable === false) {
-      return { text: 'This username is already taken', type: 'error' };
-    }
-    return null;
-  };
-
-  const statusMessage = getStatusMessage();
+  const appDomain = useMemo(() => {
+    try { return new URL(APP_URL).host; } catch { return 'profile.app'; }
+  }, []);
 
   return (
     <div className="space-y-6">
       <OnboardingStepHeader
-        eyebrow="Step 2"
+        eyebrow={`Step ${currentStepIndex + 1} of ${allSteps.length}`}
         title="Choose your username"
         description="This creates your public profile URL, so keep it simple and memorable."
       />
@@ -222,7 +138,7 @@ export function UsernameStep() {
       <div className="rounded-2xl border border-white/10 bg-zinc-950/40 p-4">
         <div className="flex items-center gap-2 text-sm">
           <ExternalLink className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
-          <span className="text-zinc-400">profile.app/</span>
+          <span className="text-zinc-400">{appDomain}/</span>
           <span className="font-medium text-blue-400">{inputValue || 'username'}</span>
         </div>
       </div>
@@ -243,9 +159,9 @@ export function UsernameStep() {
             type="text"
             value={inputValue}
             onChange={(e) => handleChange(e.target.value)}
-            onBlur={handleBlur}
+            onBlur={() => setTouched(true)}
             placeholder="johndoe"
-            maxLength={MAX_LENGTH}
+            maxLength={USERNAME_MAX_LENGTH}
             className={`w-full rounded-xl border border-white/10 bg-zinc-950/60 px-3 py-2.5 pr-10 text-sm text-white placeholder:text-zinc-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${
               touched && (!validation.valid || isAvailable === false)
                 ? 'border-red-500'
@@ -254,83 +170,95 @@ export function UsernameStep() {
                   : ''
             }`}
           />
-          <div className="absolute top-1/2 right-3 -translate-y-1/2">{getStatusIcon()}</div>
+          <div className="absolute top-1/2 right-3 -translate-y-1/2">{statusIcon}</div>
         </div>
 
-        {/* Status Message */}
         {statusMessage && (
-          <div
-            className={`mt-1 flex items-center justify-between text-xs ${
-              statusMessage.type === 'error'
-                ? 'text-red-500'
-                : statusMessage.type === 'success'
-                  ? 'text-emerald-500'
-                  : statusMessage.type === 'warning'
-                    ? 'text-amber-500'
-                    : 'text-zinc-400'
-            }`}
-          >
-            <p className="flex items-center gap-1">
-              {statusMessage.type === 'error' && <AlertCircle className="h-3 w-3" />}
-              {statusMessage.type === 'success' && <Check className="h-3 w-3" />}
-              {statusMessage.type === 'warning' && <AlertCircle className="h-3 w-3" />}
-              {statusMessage.text}
-            </p>
-            {apiError && (
-              <button
-                type="button"
-                onClick={handleRetry}
-                className="flex items-center gap-1 text-blue-400 transition-colors hover:text-blue-300"
-              >
-                <RefreshCw className="h-3 w-3" />
-                Retry
-              </button>
-            )}
-          </div>
+          <StatusMessage message={statusMessage} apiError={apiError} onRetry={handleRetry} />
         )}
 
-        {/* Character Count */}
         <div className="mt-2 flex justify-end">
           <span className="text-xs text-zinc-500">
-            {inputValue.length}/{MAX_LENGTH}
+            {inputValue.length}/{USERNAME_MAX_LENGTH}
           </span>
         </div>
       </div>
 
-      <div className="space-y-2 rounded-2xl border border-white/10 bg-zinc-950/40 p-4">
-        <p className="text-sm font-medium text-white">Username checklist</p>
-        <ul className="space-y-2 text-sm text-zinc-400">
-          <li className="flex items-center gap-2">
-            <span className={inputValue.length >= MIN_LENGTH ? 'text-emerald-500' : ''}>
-              {inputValue.length >= MIN_LENGTH ? '•' : '–'}
-            </span>
-            At least {MIN_LENGTH} characters
-          </li>
-          <li className="flex items-center gap-2">
-            <span className={inputValue.length <= MAX_LENGTH ? 'text-emerald-500' : ''}>
-              {inputValue.length <= MAX_LENGTH ? '•' : '–'}
-            </span>
-            Maximum {MAX_LENGTH} characters
-          </li>
-          <li className="flex items-center gap-2">
-            <span
-              className={!inputValue || USERNAME_REGEX.test(inputValue) ? 'text-emerald-500' : ''}
-            >
-              {!inputValue || USERNAME_REGEX.test(inputValue) ? '•' : '–'}
-            </span>
-            Letters, numbers, and underscores only
-          </li>
-          <li className="flex items-center gap-2">
-            <span className={isAvailable === true ? 'text-emerald-500' : ''}>
-              {isAvailable === true ? '•' : '–'}
-            </span>
-            Must be unique
-          </li>
-        </ul>
-      </div>
+      <UsernameChecklist inputValue={inputValue} isAvailable={isAvailable} />
 
-      {/* Navigation */}
       <StepNavigation onNext={handleNext} canProceed={canProceed} />
+    </div>
+  );
+}
+
+// --- Private helpers (collocated for cohesion) ---
+
+interface StatusState {
+  isLoading: boolean;
+  isChecking: boolean;
+  apiError: string | null;
+  validation: { valid: boolean; message: string };
+  touched: boolean;
+  isAvailable: boolean | null;
+}
+
+interface StatusMessageData {
+  text: string;
+  type: 'error' | 'success' | 'warning' | 'muted';
+}
+
+function getStatusIcon(s: StatusState) {
+  if (s.isLoading || s.isChecking) return <Loader2 className="h-4 w-4 animate-spin text-zinc-400" />;
+  if (s.apiError) return <AlertCircle className="h-4 w-4 text-amber-500" />;
+  if (!s.validation.valid && s.touched) return <X className="h-4 w-4 text-red-500" />;
+  if (s.isAvailable === true) return <Check className="h-4 w-4 text-emerald-500" />;
+  if (s.isAvailable === false) return <X className="h-4 w-4 text-red-500" />;
+  return null;
+}
+
+function getStatusMessage(s: StatusState): StatusMessageData | null {
+  if (s.isLoading) return { text: 'Loading session...', type: 'muted' };
+  if (s.isChecking) return { text: 'Checking availability...', type: 'muted' };
+  if (s.apiError) return { text: s.apiError, type: 'warning' };
+  if (!s.validation.valid && s.touched) return { text: s.validation.message, type: 'error' };
+  if (s.isAvailable === true) return { text: 'Username is available!', type: 'success' };
+  if (s.isAvailable === false) return { text: 'This username is already taken', type: 'error' };
+  return null;
+}
+
+const STATUS_COLOR_MAP: Record<StatusMessageData['type'], string> = {
+  error: 'text-red-500',
+  success: 'text-emerald-500',
+  warning: 'text-amber-500',
+  muted: 'text-zinc-400',
+};
+
+function StatusMessage({
+  message,
+  apiError,
+  onRetry,
+}: {
+  message: StatusMessageData;
+  apiError: string | null;
+  onRetry: () => void;
+}) {
+  return (
+    <div className={`mt-1 flex items-center justify-between text-xs ${STATUS_COLOR_MAP[message.type]}`}>
+      <p className="flex items-center gap-1">
+        {(message.type === 'error' || message.type === 'warning') && <AlertCircle className="h-3 w-3" />}
+        {message.type === 'success' && <Check className="h-3 w-3" />}
+        {message.text}
+      </p>
+      {apiError && (
+        <button
+          type="button"
+          onClick={onRetry}
+          className="flex items-center gap-1 text-blue-400 transition-colors hover:text-blue-300"
+        >
+          <RefreshCw className="h-3 w-3" />
+          Retry
+        </button>
+      )}
     </div>
   );
 }

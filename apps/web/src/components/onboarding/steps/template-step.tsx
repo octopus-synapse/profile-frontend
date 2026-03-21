@@ -89,7 +89,7 @@ const PALETTES = [
 ];
 
 export function TemplateStep() {
-  const { templateSelection, saveStepData, goToNextStep } = useOnboarding();
+  const { templateSelection, saveStepData, goToNextStep, currentStepIndex, allSteps } = useOnboarding();
 
   const handleSelectPalette = useCallback(
     async (paletteId: string) => {
@@ -111,7 +111,7 @@ export function TemplateStep() {
   return (
     <div className="space-y-6">
       <OnboardingStepHeader
-        eyebrow="Step 4"
+        eyebrow={`Step ${currentStepIndex + 1} of ${allSteps.length}`}
         title="Choose your theme"
         description="Pick a visual direction for your resume. You can still change it later."
       />

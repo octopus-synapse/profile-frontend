@@ -16,7 +16,9 @@ import {
   useResumesDeleteResumeForUser,
   useResumesUpdateResumeForUser,
 } from '@profile/api-client';
+import { apiFetch } from '@profile/api-client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { showToast } from '@/shared/components/ui/toast';
 import { resumeKeys } from './query-keys';
 
 // ============================================================================
@@ -70,35 +72,48 @@ export function useDeleteResume() {
 
 export function useDuplicateResume() {
   const queryClient = useQueryClient();
+  const createMutation = useResumesCreateResumeForUser();
+
   return useMutation({
-    mutationFn: async (_resumeId: string) => {
-      // TODO: Implement when duplicate endpoint is available
-      throw new Error('Duplicate resume not yet implemented');
+    mutationFn: async (resumeId: string) => {
+      // Fetch full original resume to copy all fields
+      const original = await apiFetch.get<{
+        title?: string;
+        summary?: string;
+        isPublic?: boolean;
+        fullName?: string;
+        jobTitle?: string;
+        phone?: string;
+        emailContact?: string;
+        email?: string;
+        location?: string;
+        linkedin?: string;
+        github?: string;
+        website?: string;
+        template?: string;
+      }>(`/api/v1/resumes/${resumeId}`);
+
+      const result = await createMutation.mutateAsync({
+        data: {
+          title: `${original.title ?? 'Untitled'} (Copy)`,
+          summary: original.summary,
+          isPublic: false,
+          fullName: original.fullName,
+          jobTitle: original.jobTitle,
+          phone: original.phone,
+          emailContact: original.emailContact ?? original.email,
+          location: original.location,
+          linkedin: original.linkedin,
+          github: original.github,
+          website: original.website,
+          template: original.template,
+        },
+      });
+      return result;
     },
     onSuccess: () => {
+      showToast.success('Resume duplicated successfully');
       void queryClient.invalidateQueries({ queryKey: resumeKeys.lists() });
-    },
-  });
-}
-
-// ============================================================================
-// Export - Stubs
-// ============================================================================
-
-export function useExportResumePDF() {
-  return useMutation({
-    mutationFn: async (_resumeId: string) => {
-      // TODO: Implement when export endpoint is available in SDK
-      throw new Error('Export PDF not yet implemented');
-    },
-  });
-}
-
-export function useExportResumeDOCX() {
-  return useMutation({
-    mutationFn: async (_resumeId: string) => {
-      // TODO: Implement when export endpoint is available in SDK
-      throw new Error('Export DOCX not yet implemented');
     },
   });
 }

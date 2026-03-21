@@ -20,6 +20,7 @@ type ViewMode = 'preview' | 'themes' | 'editor';
  */
 interface ResumeForSidebar {
   id: string;
+  activeThemeId?: string;
   sections?: Array<{ sectionTypeKey?: string; items?: unknown[] }>;
   resumeSections?: Array<{ sectionTypeKey?: string; items?: unknown[] }>;
 }
@@ -156,7 +157,7 @@ export function BuilderSidebar({
           <div className="p-4">
             <ThemePicker
               resumeId={resume.id}
-              activeThemeId={undefined}
+              activeThemeId={resume.activeThemeId ?? null}
               onThemeApplied={handleThemeApplied}
               onEditTheme={handleEditTheme}
             />

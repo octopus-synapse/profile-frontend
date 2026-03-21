@@ -6,6 +6,7 @@
 
 'use client';
 
+import { useI18n } from '@profile/i18n';
 import { AlertCircle, Mail, MapPin, Phone, User } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
 import { PhoneInput } from '@/shared/components/ui';
@@ -66,7 +67,10 @@ function validateLocation(value: string): ValidationResult {
 }
 
 export function PersonalInfoStep() {
-  const { personalInfo, goToNextStep } = useOnboarding();
+  const { personalInfo, goToNextStep, currentStepIndex, allSteps } = useOnboarding();
+
+  const { language } = useI18n();
+  const phoneCountryFormat = language === 'pt-BR' ? 'BR' : 'US';
 
   const [formData, setFormData] = useState({
     fullName: personalInfo?.fullName || '',
@@ -144,7 +148,7 @@ export function PersonalInfoStep() {
   return (
     <div className="space-y-6">
       <OnboardingStepHeader
-        eyebrow="Step 1"
+        eyebrow={`Step ${currentStepIndex + 1} of ${allSteps.length}`}
         title="Personal information"
         description="Add the core details recruiters need to identify and contact you."
       />
@@ -208,7 +212,7 @@ export function PersonalInfoStep() {
           <PhoneInput
             value={formData.phone}
             onChange={(value) => handleChange('phone', value)}
-            countryFormat="BR"
+            countryFormat={phoneCountryFormat as 'BR' | 'US' | 'auto'}
             className="bg-white/5"
           />
         </div>

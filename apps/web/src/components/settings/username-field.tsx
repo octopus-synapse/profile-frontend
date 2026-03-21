@@ -5,64 +5,28 @@
 
 'use client';
 
-import { addDays, formatDistanceToNow, isAfter } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns';
 import { AlertCircle, AtSign, Calendar, Check, ExternalLink, Loader2, Lock, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import { APP_URL } from '@/config';
 import { useDebounce } from '@/shared/hooks/use-debounce';
+import { showToast } from '@/shared/components/ui/toast';
 import { useProfile, useUpdateUsername } from './hooks';
-import { profileRepository } from './services/settings-repository';
-
-/**
- * Username validation constants.
- * Server-side validation is authoritative - these exist only for UX feedback.
- */
-const MIN_LENGTH = 3;
-const MAX_LENGTH = 30;
-const USERNAME_REGEX = /^[a-z0-9_]+$/;
-const RESTRICTION_DAYS = 30;
-
-interface ValidationResult {
-  valid: boolean;
-  message: string;
-}
-
-/**
- * Client-side validation for immediate UX feedback.
- * Server validates authoritatively on submit.
- */
-function validateUsername(value: string): ValidationResult {
-  if (!value) {
-    return { valid: false, message: 'Username is required' };
-  }
-  if (value.length < MIN_LENGTH) {
-    return { valid: false, message: `Must be at least ${MIN_LENGTH} characters` };
-  }
-  if (value.length > MAX_LENGTH) {
-    return { valid: false, message: `Must be at most ${MAX_LENGTH} characters` };
-  }
-  if (!USERNAME_REGEX.test(value)) {
-    return {
-      valid: false,
-      message: 'Only lowercase letters, numbers, and underscores',
-    };
-  }
-  return { valid: true, message: '' };
-}
-
-function getNextChangeDate(usernameUpdatedAt: string | null): Date | null {
-  if (!usernameUpdatedAt) return null;
-  return addDays(new Date(usernameUpdatedAt), RESTRICTION_DAYS);
-}
-
-function canChangeUsername(usernameUpdatedAt: string | null): boolean {
-  const nextDate = getNextChangeDate(usernameUpdatedAt);
-  if (!nextDate) return true;
-  return isAfter(new Date(), nextDate);
-}
+import { userRepository } from '../users/services/user-repository';
+import {
+  MAX_LENGTH,
+  canChangeUsername,
+  getNextChangeDate,
+  validateUsername,
+} from './username-field.utils';
 
 export function UsernameField() {
   const { data: profile, isLoading: profileLoading } = useProfile();
   const updateUsername = useUpdateUsername();
+
+  const appDomain = useMemo(() => {
+    try { return new URL(APP_URL).host; } catch { return 'profile.app'; }
+  }, []);
 
   const [inputValue, setInputValue] = useState('');
   const [isEditing, setIsEditing] = useState(false);
@@ -99,8 +63,8 @@ export function UsernameField() {
     const checkAvailability = async () => {
       setIsChecking(true);
       try {
-        const result = await profileRepository.checkUsernameAvailability(debouncedUsername);
-        setIsAvailable(result.available);
+        const result = await userRepository.checkUsername(debouncedUsername);
+        setIsAvailable(result?.available ?? null);
       } catch {
         setIsAvailable(null);
       } finally {
@@ -143,7 +107,7 @@ export function UsernameField() {
       setIsEditing(false);
       setTouched(false);
     } catch (error) {
-      console.error('Failed to update username:', error);
+      showToast.error('Failed to update username');
     }
   };
 
@@ -281,7 +245,7 @@ export function UsernameField() {
         {profile?.username && (
           <p className="mt-2 text-xs text-zinc-400">
             Your profile URL:{' '}
-            <span className="text-white">profile.app/{inputValue || profile.username}</span>
+            <span className="text-white">{appDomain}/{inputValue || profile.username}</span>
           </p>
         )}
       </div>

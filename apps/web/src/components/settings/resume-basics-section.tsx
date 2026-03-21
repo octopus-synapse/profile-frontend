@@ -1,62 +1,20 @@
 'use client';
 
 import type { ResumeFullResponseDto, ResumeResponseDto } from '@profile/api-client';
-import {
-  AlertCircle,
-  Award,
-  BookOpen,
-  Briefcase,
-  Check,
-  Code,
-  FileText,
-  FolderOpen,
-  GraduationCap,
-  Heart,
-  Languages,
-  Loader2,
-  MessageSquare,
-  Mic,
-  Save,
-  ShieldCheck,
-  Sparkles,
-  Trophy,
-  Zap,
-} from 'lucide-react';
+import { AlertCircle, Check, FileText, Loader2, Save, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { showToast } from '@/shared/components/ui/toast';
 import { useResume, useUpdateResume } from '@/components/resume/hooks';
 import { ThemePicker } from '@/components/resume/theme';
 import { useCurrentResumeId } from './hooks/use-current-resume-id';
+import { LabeledField } from './labeled-field';
 import {
   createEmptyResumeBasicsForm,
   toResumeBasicsForm,
   toUpdateResumePayload,
 } from './resume-basics-section.utils';
+import { ResumeSectionsCard } from './resume-sections-card';
 import type { DynamicSettingsNavItem } from './settings-page.utils';
-
-const SECTION_ICONS: Record<string, typeof Briefcase> = {
-  // Core resume sections
-  work_experience_v1: Briefcase,
-  education_v1: GraduationCap,
-  skill_set_v1: Zap,
-  language_v1: Languages,
-  // Summary & Profile
-  summary_v1: FileText,
-  // Achievements & Awards
-  achievements: Trophy,
-  awards: Award,
-  certs: ShieldCheck,
-  // Projects & Portfolio
-  projects: FolderOpen,
-  'open source': Code,
-  'bug bounty': ShieldCheck,
-  hackathons: Code,
-  // Professional
-  publications: BookOpen,
-  talks: Mic,
-  recommendation_v1: MessageSquare,
-  // Personal
-  interest_v1: Heart,
-};
 
 type ResumeSettingsData = Partial<ResumeFullResponseDto> & Partial<ResumeResponseDto>;
 
@@ -76,6 +34,8 @@ export function ResumeBasicsSection({
   const [isDirty, setIsDirty] = useState(false);
 
   const resume = (resumeResponse?.data ?? null) as ResumeSettingsData | null;
+  // activeThemeId may be present at runtime even if not typed in the generated DTO
+  const activeThemeId = (resume as Record<string, unknown> | null)?.activeThemeId as string | undefined;
 
   useEffect(() => {
     if (!resume) return;
@@ -94,8 +54,12 @@ export function ResumeBasicsSection({
   const handleSave = async () => {
     if (!resumeId) return;
 
-    await updateResume.mutateAsync(toUpdateResumePayload(formData));
-    setIsDirty(false);
+    try {
+      await updateResume.mutateAsync(toUpdateResumePayload(formData));
+      setIsDirty(false);
+    } catch {
+      showToast.error('Failed to save resume settings');
+    }
   };
 
   if (isLoadingResumeId || isLoadingResume) {
@@ -106,18 +70,18 @@ export function ResumeBasicsSection({
     );
   }
 
-  if (!resumeId || !resume) {
-    return (
-      <div className="rounded-xl border border-white/10 bg-white/5 p-6 text-sm text-zinc-400">
-        We could not load your resume settings yet.
-      </div>
-    );
-  }
-
   if (isError) {
     return (
       <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-sm text-red-400">
         Failed to load resume settings
+      </div>
+    );
+  }
+
+  if (!resumeId || !resume) {
+    return (
+      <div className="rounded-xl border border-white/10 bg-white/5 p-6 text-sm text-zinc-400">
+        We could not load your resume settings yet.
       </div>
     );
   }
@@ -210,66 +174,7 @@ export function ResumeBasicsSection({
         </label>
       </div>
 
-      <div className="space-y-4 rounded-xl border border-white/10 bg-white/5 p-6">
-        <div>
-          <h3 className="text-base font-semibold text-white">Resume sections</h3>
-          <p className="mt-1 text-sm text-zinc-400">
-            Build your profile by adding experiences, education, skills, and more.
-          </p>
-        </div>
-        {dynamicSections.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-white/10 p-6 text-center">
-            <p className="text-sm text-zinc-500">Loading section types...</p>
-          </div>
-        ) : (
-          <div className="grid gap-3 sm:grid-cols-2">
-            {dynamicSections.map((section) => {
-              const Icon = SECTION_ICONS[section.key] ?? FileText;
-              return (
-                <button
-                  key={section.key}
-                  type="button"
-                  onClick={() => onOpenSection?.(section.key)}
-                  className="group rounded-xl border border-white/10 bg-[#0A0A0A]/60 p-4 text-left transition-all hover:border-blue-500/40 hover:bg-white/5"
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">
-                      <Icon className="h-4 w-4" strokeWidth={1.5} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2">
-                        <p className="text-sm font-medium text-white truncate">{section.label}</p>
-                        {section.count > 0 && (
-                          <span className="shrink-0 rounded-full bg-blue-500/15 px-2 py-0.5 text-xs font-medium text-blue-300">
-                            {section.count}
-                          </span>
-                        )}
-                      </div>
-                      <p className="mt-1 text-sm text-zinc-500">
-                        {section.count > 0
-                          ? `${section.count} ${section.count === 1 ? 'entry' : 'entries'}`
-                          : 'Not added yet'}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="mt-3 flex items-center text-xs font-medium text-blue-400 transition-colors group-hover:text-blue-300">
-                    <span>{section.count > 0 ? 'Manage' : 'Add'}</span>
-                    <svg
-                      className="ml-1 h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        )}
-      </div>
+      <ResumeSectionsCard dynamicSections={dynamicSections} onOpenSection={onOpenSection} />
 
       <div className="space-y-4 rounded-xl border border-white/10 bg-white/5 p-6">
         <div>
@@ -281,7 +186,7 @@ export function ResumeBasicsSection({
             Apply a different visual style without changing your resume content.
           </p>
         </div>
-        <ThemePicker resumeId={resumeId} activeThemeId={undefined} />
+        <ThemePicker resumeId={resumeId} activeThemeId={activeThemeId ?? null} />
       </div>
 
       {updateResume.isSuccess && !isDirty && (
@@ -298,32 +203,5 @@ export function ResumeBasicsSection({
         </div>
       )}
     </div>
-  );
-}
-
-function LabeledField({
-  label,
-  value,
-  onChange,
-  placeholder,
-  type = 'text',
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  placeholder: string;
-  type?: 'text' | 'email';
-}) {
-  return (
-    <label className="block">
-      <span className="mb-2 block text-sm font-medium text-white">{label}</span>
-      <input
-        type={type}
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        placeholder={placeholder}
-        className="w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
-      />
-    </label>
   );
 }
