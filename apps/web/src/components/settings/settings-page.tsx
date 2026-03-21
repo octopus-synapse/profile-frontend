@@ -10,68 +10,34 @@ import { type DictionaryKey, useI18n } from '@profile/i18n';
 import { useQuery } from '@tanstack/react-query';
 import {
   ArrowLeft,
-  Award,
-  BookOpen,
-  Briefcase,
-  Code,
   FileText,
-  FolderOpen,
-  GraduationCap,
-  Heart,
-  Languages,
   Loader2,
-  MessageSquare,
-  Mic,
   Settings,
   ShieldCheck,
-  Trophy,
   User,
-  Zap,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { GenericSectionEditor } from '@/components/resume/generic';
+import { DangerZone } from './account/danger-zone';
 import { useCurrentResumeId } from './hooks/use-current-resume-id';
 import { PreferencesSection } from './preferences-section';
 import { ProfileSection } from './profile-section';
 import { ResumeBasicsSection } from './resume-basics-section';
 import { genericSectionsRepository } from './services/generic-sections-repository';
+import { SECTION_ICONS, SECTION_ICON_FALLBACK } from './section-icons';
 import { buildDynamicSettingsNavItems } from './settings-page.utils';
+import { TwoFactorSettings } from './two-factor-settings';
 
-type StaticTab = 'resume' | 'profile' | 'preferences';
+type StaticTab = 'resume' | 'profile' | 'preferences' | 'account';
 type ActiveTab = StaticTab | string;
 
 const STATIC_TABS: { id: StaticTab; labelKey: DictionaryKey; icon: typeof FileText }[] = [
   { id: 'resume', labelKey: 'app.settings.tabs.resume', icon: FileText },
   { id: 'profile', labelKey: 'app.settings.tabs.profile', icon: User },
   { id: 'preferences', labelKey: 'app.settings.tabs.preferences', icon: Settings },
+  { id: 'account', labelKey: 'app.settings.tabs.account', icon: ShieldCheck },
 ];
-
-const SECTION_ICONS: Record<string, typeof Briefcase> = {
-  // Core resume sections
-  work_experience_v1: Briefcase,
-  education_v1: GraduationCap,
-  skill_set_v1: Zap,
-  language_v1: Languages,
-  // Summary & Profile
-  summary_v1: FileText,
-  // Achievements & Awards
-  achievements: Trophy,
-  awards: Award,
-  certs: ShieldCheck,
-  // Projects & Portfolio
-  projects: FolderOpen,
-  'open source': Code,
-  'bug bounty': ShieldCheck,
-  hackathons: Code,
-  // Professional
-  publications: BookOpen,
-  talks: Mic,
-  recommendation_v1: MessageSquare,
-  // Personal
-  interest_v1: Heart,
-  // Fallback icon defined via ?? FileText in render
-};
 
 export function SettingsPage() {
   const { t } = useI18n();
@@ -109,6 +75,13 @@ export function SettingsPage() {
         return <ProfileSection />;
       case 'preferences':
         return <PreferencesSection />;
+      case 'account':
+        return (
+          <div className="space-y-8">
+            <TwoFactorSettings />
+            <DangerZone />
+          </div>
+        );
       default: {
         if (!resumeId) {
           return (
@@ -173,7 +146,7 @@ export function SettingsPage() {
                   </div>
                 ) : (
                   activeSectionTypes.map((section) => {
-                    const SectionIcon = SECTION_ICONS[section.key] ?? FileText;
+                    const SectionIcon = SECTION_ICONS[section.key] ?? SECTION_ICON_FALLBACK;
                     return (
                       <SettingsNavButton
                         key={section.key}

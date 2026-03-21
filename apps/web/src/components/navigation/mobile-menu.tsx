@@ -48,18 +48,6 @@ export function MobileMenu({ menu, navItems, onOpenCommandPalette }: MobileMenuP
     setTimeout(() => onOpenCommandPalette?.(), 100);
   }, [menu, onOpenCommandPalette]);
 
-  // Lock body scroll when menu is open
-  useEffect(() => {
-    if (menu.isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [menu.isOpen]);
-
   // Close on Escape
   useEffect(() => {
     if (!menu.isOpen) return;

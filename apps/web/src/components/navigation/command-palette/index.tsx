@@ -6,6 +6,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Search } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useBodyScrollLock } from '@/shared/hooks/use-body-scroll-lock';
 import { useThemeOptional } from '@/shared/providers/theme-provider';
 import { cn } from '@/shared/utils';
 import { buildCommandGroups } from './build-command-groups';
@@ -164,17 +165,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, flatItems, selectedIndex, handleSelect, onClose]);
 
-  // Lock body scroll
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isOpen]);
+  useBodyScrollLock(isOpen);
 
   if (!isOpen) return null;
 
