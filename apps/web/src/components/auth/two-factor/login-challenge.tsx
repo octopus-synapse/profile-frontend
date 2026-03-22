@@ -1,0 +1,112 @@
+'use client';
+
+/**
+ * Two-Factor Login Challenge
+ *
+ * Shown after successful password login when 2FA is enabled.
+ * Supports TOTP code and backup code entry.
+ */
+
+import { KeyRound, ShieldAlert } from 'lucide-react';
+import { useState } from 'react';
+import { Button, Input } from '@/shared/components/ui';
+import { showToast } from '@/shared/components/ui/toast';
+import { useVerifyLogin2FA } from '../hooks/use-2fa';
+
+interface LoginChallengeProps {
+  userId: string;
+  onVerified: () => void;
+}
+
+export function TwoFactorLoginChallenge({ userId, onVerified }: LoginChallengeProps) {
+  const [mode, setMode] = useState<'totp' | 'backup'>('totp');
+  const [totpCode, setTotpCode] = useState('');
+  const [backupCode, setBackupCode] = useState('');
+  const verify = useVerifyLogin2FA();
+
+  const code = mode === 'totp' ? totpCode : backupCode;
+  const isValid = mode === 'totp' ? totpCode.length === 6 : backupCode.length >= 6;
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!isValid) return;
+
+    try {
+      await verify.mutateAsync({ userId, code });
+      onVerified();
+    } catch {
+      showToast.error(
+        'Verification failed',
+        mode === 'totp'
+          ? 'Invalid authenticator code. Please try again.'
+          : 'Invalid backup code. Please try again.',
+      );
+    }
+  }
+
+  function toggleMode() {
+    setMode((m) => (m === 'totp' ? 'backup' : 'totp'));
+    setTotpCode('');
+    setBackupCode('');
+    verify.reset();
+  }
+
+  return (
+    <div className="mx-auto flex w-full max-w-sm flex-col items-center gap-6">
+      <div className="flex flex-col items-center gap-2">
+        <div className="bg-pf-canvas-subtle flex h-14 w-14 items-center justify-center rounded-full">
+          <ShieldAlert className="text-pf-fg-muted h-7 w-7" />
+        </div>
+        <h2 className="text-pf-fg-default text-xl font-semibold">Two-Factor Authentication</h2>
+        <p className="text-pf-fg-muted text-center text-sm">
+          {mode === 'totp'
+            ? 'Enter the 6-digit code from your authenticator app.'
+            : 'Enter one of your backup codes.'}
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="flex w-full flex-col gap-4">
+        {mode === 'totp' ? (
+          <Input
+            type="text"
+            inputMode="numeric"
+            maxLength={6}
+            placeholder="000000"
+            value={totpCode}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setTotpCode(e.target.value.replace(/\D/g, '').slice(0, 6))
+            }
+            className="text-center text-2xl tracking-[0.3em] font-mono"
+            disabled={verify.isPending}
+            autoFocus
+          />
+        ) : (
+          <Input
+            type="text"
+            placeholder="Backup code"
+            value={backupCode}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setBackupCode(e.target.value.trim())
+            }
+            className="text-center font-mono"
+            disabled={verify.isPending}
+            autoFocus
+          />
+        )}
+
+        <Button type="submit" disabled={!isValid || verify.isPending} className="w-full gap-2">
+          <KeyRound className="h-4 w-4" />
+          {verify.isPending ? 'Verifying…' : 'Verify'}
+        </Button>
+      </form>
+
+      <button
+        type="button"
+        onClick={toggleMode}
+        className="text-pf-fg-muted hover:text-pf-fg-default text-sm underline-offset-4 hover:underline"
+      >
+        {mode === 'totp' ? 'Use a backup code instead' : 'Use authenticator app instead'}
+      </button>
+    </div>
+  );
+}

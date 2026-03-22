@@ -16,6 +16,7 @@ import { ROUTES } from '@/config/routes';
 import { LocalizedLink } from '@/shared/components/localized-link';
 import { Button, Input, Spinner } from '@/shared/components/ui';
 import { Label } from '@/shared/components/ui/label';
+import { TwoFactorLoginChallenge } from './two-factor/login-challenge';
 
 function SignInFormContent() {
   const t = useT();
@@ -30,6 +31,17 @@ function SignInFormContent() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  // 2FA challenge state
+  const [twoFactorRequired, setTwoFactorRequired] = useState(false);
+  const [twoFactorUserId, setTwoFactorUserId] = useState('');
+
+  const completeLogin = async () => {
+    await queryClient.invalidateQueries({
+      queryKey: getAuthSessionQueryKey(),
+    });
+    router.push(callbackUrl);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -38,12 +50,24 @@ function SignInFormContent() {
     try {
       const response = await authLogin({ email, password });
 
-      if (response.status === 201) {
-        // Invalidate session cache to refetch user data
-        await queryClient.invalidateQueries({
-          queryKey: getAuthSessionQueryKey(),
-        });
-        router.push(callbackUrl);
+      const status = response.status as number;
+      if (status === 200 || status === 201) {
+        // Backend wraps responses as { success, data: LoginResponseDto }
+        // while the SDK type expects LoginResponseDto directly
+        const raw = response.data as unknown as {
+          data?: { twoFactorRequired?: boolean; userId?: string };
+          twoFactorRequired?: boolean;
+          userId?: string;
+        };
+        const loginData = raw?.data ?? raw;
+
+        if (loginData?.twoFactorRequired) {
+          setTwoFactorUserId(loginData.userId ?? '');
+          setTwoFactorRequired(true);
+          return;
+        }
+
+        await completeLogin();
       } else {
         setError(t('auth.error.invalidCredentials'));
       }
@@ -53,6 +77,18 @@ function SignInFormContent() {
       setIsLoading(false);
     }
   };
+
+  if (twoFactorRequired) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.4 }}
+      >
+        <TwoFactorLoginChallenge userId={twoFactorUserId} onVerified={() => void completeLogin()} />
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div
