@@ -4,13 +4,13 @@
  * Provides unified CRUD operations for any section type using the generic sections API.
  * This replaces section-specific hooks (useExperiences, useEducation, etc.)
  *
- * NOTE: Uses direct API calls because orval doesn't generate body params for mutations.
- * Will migrate to pure SDK once backend swagger spec is updated.
+ * Uses apiFetch (SDK utility) for mutations with auth, locale, and error handling.
  */
 
 'use client';
 
 import {
+  apiFetch,
   getResumesListResumeSectionsQueryKey,
   useResumesListResumeSections,
   useResumesListTypes,
@@ -74,27 +74,6 @@ export const genericSectionKeys = {
     [...genericSectionKeys.all, 'section', resumeId, sectionTypeKey] as const,
 };
 
-/**
- * Direct API helper (temporary until SDK is updated)
- */
-async function apiRequest<T>(method: string, path: string, body?: unknown): Promise<T> {
-  const res = await fetch(`/api${path}`, {
-    method,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-    body: body ? JSON.stringify(body) : undefined,
-  });
-
-  if (!res.ok) {
-    const error = await res.json().catch(() => ({ message: res.statusText }));
-    throw new Error(error.message || `API Error: ${res.status}`);
-  }
-
-  return res.json();
-}
-
 export function useGenericSectionCRUD({
   resumeId,
   sectionTypeKey,
@@ -145,42 +124,39 @@ export function useGenericSectionCRUD({
     });
   };
 
-  // Create mutation (direct API until SDK updated)
+  // Create mutation
   const createMutation = useMutation({
     mutationFn: async (content: GenericSectionContent) => {
-      const response = await apiRequest<{ data: { item: Record<string, unknown> } }>(
-        'POST',
-        `/v1/resumes/${resumeId}/sections/${sectionTypeKey}/items`,
+      const response = await apiFetch.post<{ item: Record<string, unknown> }>(
+        `/api/v1/resumes/${resumeId}/sections/${sectionTypeKey}/items`,
         { content },
       );
-      return parseSectionItem(response.data.item);
+      return parseSectionItem(response.item);
     },
     onSuccess: () => {
       void invalidateSections();
     },
   });
 
-  // Update mutation (direct API until SDK updated)
+  // Update mutation
   const updateMutation = useMutation({
     mutationFn: async ({ itemId, content }: { itemId: string; content: GenericSectionContent }) => {
-      const response = await apiRequest<{ data: { item: Record<string, unknown> } }>(
-        'PATCH',
-        `/v1/resumes/${resumeId}/sections/${sectionTypeKey}/items/${itemId}`,
+      const response = await apiFetch.patch<{ item: Record<string, unknown> }>(
+        `/api/v1/resumes/${resumeId}/sections/${sectionTypeKey}/items/${itemId}`,
         { content },
       );
-      return parseSectionItem(response.data.item);
+      return parseSectionItem(response.item);
     },
     onSuccess: () => {
       void invalidateSections();
     },
   });
 
-  // Delete mutation (direct API until SDK updated)
+  // Delete mutation
   const deleteMutation = useMutation({
     mutationFn: async (itemId: string) => {
-      await apiRequest<{ success: boolean }>(
-        'DELETE',
-        `/v1/resumes/${resumeId}/sections/${sectionTypeKey}/items/${itemId}`,
+      await apiFetch.delete(
+        `/api/v1/resumes/${resumeId}/sections/${sectionTypeKey}/items/${itemId}`,
       );
     },
     onSuccess: () => {

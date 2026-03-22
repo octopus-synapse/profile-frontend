@@ -6,9 +6,10 @@
 
 'use client';
 
-import { useAuthSession } from '@profile/api-client';
+import { apiFetch, isApiError, useAuthSession } from '@profile/api-client';
+import { useQuery } from '@tanstack/react-query';
 import { AlertCircle, AtSign, Check, ExternalLink, Loader2, RefreshCw, X } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { APP_URL } from '@/config';
 import { HelpTooltip } from '@/shared/components/ui';
 import { useDebounce } from '@/shared/hooks/use-debounce';
@@ -16,11 +17,7 @@ import { useOnboarding } from '../hooks';
 import { OnboardingStepHeader } from '../step-header';
 import { StepNavigation } from '../step-navigation';
 import { UsernameChecklist } from './username-checklist';
-import {
-  USERNAME_MAX_LENGTH,
-  normalizeUsername,
-  validateUsername,
-} from './username-validation';
+import { normalizeUsername, USERNAME_MAX_LENGTH, validateUsername } from './username-validation';
 
 export function UsernameStep() {
   const { username, goToNextStep, currentStepIndex, allSteps } = useOnboarding();
@@ -28,88 +25,66 @@ export function UsernameStep() {
   const isAuthenticated = !!data?.data?.user;
 
   const [inputValue, setInputValue] = useState(username || '');
-  const [isChecking, setIsChecking] = useState(false);
-  const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
-  const [apiError, setApiError] = useState<string | null>(null);
   const [touched, setTouched] = useState(false);
 
   const debouncedUsername = useDebounce(inputValue, 500);
   const validation = useMemo(() => validateUsername(inputValue), [inputValue]);
 
-  // Check availability when debounced value changes
-  useEffect(() => {
-    if (!debouncedUsername || !validation.valid) {
-      setIsAvailable(null);
-      setApiError(null);
-      return;
+  const shouldCheck =
+    !!debouncedUsername &&
+    validation.valid &&
+    debouncedUsername !== username &&
+    isAuthenticated &&
+    !isLoading;
+
+  const availabilityQuery = useQuery({
+    queryKey: ['username-availability', debouncedUsername],
+    queryFn: () =>
+      apiFetch.get<{ available: boolean; username: string }>(
+        `/api/v1/users/username/check?username=${encodeURIComponent(debouncedUsername)}`,
+      ),
+    enabled: shouldCheck,
+    retry: false,
+  });
+
+  const isChecking = availabilityQuery.isFetching;
+
+  const isAvailable = useMemo(() => {
+    if (inputValue !== debouncedUsername) return null;
+    if (!debouncedUsername || !validation.valid) return null;
+    if (debouncedUsername === username) return true;
+    if (!shouldCheck) return null;
+    if (availabilityQuery.isSuccess) return availabilityQuery.data?.available ?? null;
+    return null;
+  }, [
+    inputValue,
+    debouncedUsername,
+    validation.valid,
+    username,
+    shouldCheck,
+    availabilityQuery.isSuccess,
+    availabilityQuery.data,
+  ]);
+
+  const apiError = useMemo(() => {
+    if (!isAuthenticated && !isLoading) return 'Not authenticated. Please sign in again.';
+    if (inputValue !== debouncedUsername) return null;
+    const err = availabilityQuery.error;
+    if (!err) return null;
+    if (isApiError(err)) {
+      if (err.statusCode === 401) return 'Session expired. Please refresh the page.';
+      if (err.statusCode === 429) return 'Too many requests. Wait a moment.';
+      return 'Could not verify. Try again.';
     }
-
-    if (debouncedUsername === username) {
-      setIsAvailable(true);
-      setApiError(null);
-      return;
-    }
-
-    if (isLoading) return;
-
-    if (!isAuthenticated) {
-      setApiError('Not authenticated. Please sign in again.');
-      setIsAvailable(null);
-      return;
-    }
-
-    const checkAvailability = async () => {
-      setIsChecking(true);
-      setApiError(null);
-
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/username/check?username=${encodeURIComponent(debouncedUsername)}`,
-          {
-            headers: { Accept: 'application/json' },
-            credentials: 'include',
-          },
-        );
-
-        if (!response.ok) {
-          if (response.status === 401) {
-            setApiError('Session expired. Please refresh the page.');
-          } else if (response.status === 429) {
-            setApiError('Too many requests. Wait a moment.');
-          } else {
-            setApiError('Could not verify. Try again.');
-          }
-          setIsAvailable(null);
-          return;
-        }
-
-        const result = (await response.json()) as {
-          success: boolean;
-          data: { available: boolean };
-        };
-        setIsAvailable(result.data.available);
-      } catch {
-        setApiError('Connection error. Check your internet.');
-        setIsAvailable(null);
-      } finally {
-        setIsChecking(false);
-      }
-    };
-
-    void checkAvailability();
-  }, [debouncedUsername, validation.valid, username, isLoading, isAuthenticated]);
+    return 'Connection error. Check your internet.';
+  }, [inputValue, debouncedUsername, availabilityQuery.error, isAuthenticated, isLoading]);
 
   const handleChange = (value: string) => {
     setInputValue(normalizeUsername(value));
-    setIsAvailable(null);
-    setApiError(null);
   };
 
   const handleRetry = () => {
-    setApiError(null);
-    const current = inputValue;
-    setInputValue('');
-    setTimeout(() => setInputValue(current), 10);
+    void availabilityQuery.refetch();
   };
 
   const handleNext = useCallback(async () => {
@@ -120,11 +95,29 @@ export function UsernameStep() {
 
   const canProceed = validation.valid && isAvailable === true && !apiError;
 
-  const statusIcon = getStatusIcon({ isLoading, isChecking, apiError, validation, touched, isAvailable });
-  const statusMessage = getStatusMessage({ isLoading, isChecking, apiError, validation, touched, isAvailable });
+  const statusIcon = getStatusIcon({
+    isLoading,
+    isChecking,
+    apiError,
+    validation,
+    touched,
+    isAvailable,
+  });
+  const statusMessage = getStatusMessage({
+    isLoading,
+    isChecking,
+    apiError,
+    validation,
+    touched,
+    isAvailable,
+  });
 
   const appDomain = useMemo(() => {
-    try { return new URL(APP_URL).host; } catch { return 'profile.app'; }
+    try {
+      return new URL(APP_URL).host;
+    } catch {
+      return 'profile.app';
+    }
   }, []);
 
   return (
@@ -208,7 +201,8 @@ interface StatusMessageData {
 }
 
 function getStatusIcon(s: StatusState) {
-  if (s.isLoading || s.isChecking) return <Loader2 className="h-4 w-4 animate-spin text-zinc-400" />;
+  if (s.isLoading || s.isChecking)
+    return <Loader2 className="h-4 w-4 animate-spin text-zinc-400" />;
   if (s.apiError) return <AlertCircle className="h-4 w-4 text-amber-500" />;
   if (!s.validation.valid && s.touched) return <X className="h-4 w-4 text-red-500" />;
   if (s.isAvailable === true) return <Check className="h-4 w-4 text-emerald-500" />;
@@ -243,9 +237,13 @@ function StatusMessage({
   onRetry: () => void;
 }) {
   return (
-    <div className={`mt-1 flex items-center justify-between text-xs ${STATUS_COLOR_MAP[message.type]}`}>
+    <div
+      className={`mt-1 flex items-center justify-between text-xs ${STATUS_COLOR_MAP[message.type]}`}
+    >
       <p className="flex items-center gap-1">
-        {(message.type === 'error' || message.type === 'warning') && <AlertCircle className="h-3 w-3" />}
+        {(message.type === 'error' || message.type === 'warning') && (
+          <AlertCircle className="h-3 w-3" />
+        )}
         {message.type === 'success' && <Check className="h-3 w-3" />}
         {message.text}
       </p>
