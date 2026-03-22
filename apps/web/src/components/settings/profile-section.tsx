@@ -5,9 +5,21 @@
 
 'use client';
 
-import { AlertCircle, Check, Github, Globe, Linkedin, Loader2, Save } from 'lucide-react';
+import {
+  AlertCircle,
+  Check,
+  Github,
+  Globe,
+  Linkedin,
+  Loader2,
+  MapPin,
+  Phone,
+  Save,
+  User,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { HelpTooltip } from '@/shared/components/ui';
+import { showToast } from '@/shared/components/ui/toast';
 import { useProfile, useUpdateProfile } from './hooks';
 import type { UpdateProfilePayload } from './types';
 import { UsernameField } from './username-field';
@@ -17,6 +29,10 @@ export function ProfileSection() {
   const updateProfile = useUpdateProfile();
 
   const [formData, setFormData] = useState<UpdateProfilePayload>({
+    displayName: '',
+    bio: '',
+    location: '',
+    phone: '',
     website: '',
     linkedin: '',
     github: '',
@@ -28,6 +44,10 @@ export function ProfileSection() {
     if (profile) {
       queueMicrotask(() => {
         setFormData({
+          displayName: profile.displayName || '',
+          bio: profile.bio || '',
+          location: profile.location || '',
+          phone: profile.phone || '',
           website: profile.website || '',
           linkedin: profile.linkedin || '',
           github: profile.github || '',
@@ -46,7 +66,7 @@ export function ProfileSection() {
       await updateProfile.mutateAsync(formData);
       setIsDirty(false);
     } catch (error) {
-      console.error('Failed to update profile:', error);
+      showToast.error('Failed to update profile');
     }
   };
 
@@ -102,12 +122,73 @@ export function ProfileSection() {
         <UsernameField />
       </div>
 
+      {/* Identity & Contact */}
       <div className="space-y-5 rounded-xl border border-white/10 bg-white/5 p-6">
-        <div className="rounded-xl border border-blue-500/10 bg-blue-500/5 p-4 text-sm text-zinc-300">
-          Use <span className="font-medium text-white">Resume</span> to edit your name, contact
-          details, location and summary. Keep this area focused on your public profile links.
+        <div>
+          <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
+            <User className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
+            Display Name
+          </label>
+          <input
+            type="text"
+            value={formData.displayName}
+            onChange={(e) => handleChange('displayName', e.target.value)}
+            placeholder="How you want to be known"
+            className="w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
+          />
         </div>
 
+        <div>
+          <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
+            Bio
+            <span className="ml-auto text-xs font-normal text-zinc-500">
+              {formData.bio?.length ?? 0}/300
+            </span>
+          </label>
+          <textarea
+            value={formData.bio}
+            onChange={(e) => {
+              if (e.target.value.length <= 300) handleChange('bio', e.target.value);
+            }}
+            placeholder="A short summary about yourself"
+            rows={3}
+            className="w-full resize-none rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
+          />
+        </div>
+
+        <div className="grid gap-5 sm:grid-cols-2">
+          <div>
+            <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
+              <MapPin className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
+              Location
+            </label>
+            <input
+              type="text"
+              value={formData.location}
+              onChange={(e) => handleChange('location', e.target.value)}
+              placeholder="City, Country"
+              className="w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
+              <Phone className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
+              Phone
+            </label>
+            <input
+              type="tel"
+              value={formData.phone}
+              onChange={(e) => handleChange('phone', e.target.value)}
+              placeholder="+1 (555) 000-0000"
+              className="w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Social Links */}
+      <div className="space-y-5 rounded-xl border border-white/10 bg-white/5 p-6">
         <div>
           <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
             <Globe className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />

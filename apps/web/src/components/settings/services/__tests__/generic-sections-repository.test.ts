@@ -1,14 +1,18 @@
 import { beforeEach, describe, expect, it, mock } from 'bun:test';
+import { API_CLIENT_MOCK_BASE } from '@/__test-utils__/api-client-mock-base';
 
-const httpClientMock = {
+const apiFetchMock = {
   get: mock(),
   post: mock(),
   patch: mock(),
+  put: mock(),
   delete: mock(),
 };
 
-void mock.module('@/shared/lib/http-client', () => ({
-  httpClient: httpClientMock,
+void mock.module('@profile/api-client', () => ({
+  ...API_CLIENT_MOCK_BASE,
+  apiFetch: apiFetchMock,
+  customFetch: mock(),
 }));
 
 const repoModule = await import('../generic-sections-repository');
@@ -17,14 +21,14 @@ const { clearResumeCacheGeneric, genericSectionsRepository } = repoModule;
 describe('genericSectionsRepository', () => {
   beforeEach(() => {
     clearResumeCacheGeneric();
-    httpClientMock.get.mockReset();
-    httpClientMock.post.mockReset();
-    httpClientMock.patch.mockReset();
-    httpClientMock.delete.mockReset();
+    apiFetchMock.get.mockReset();
+    apiFetchMock.post.mockReset();
+    apiFetchMock.patch.mockReset();
+    apiFetchMock.delete.mockReset();
   });
 
   it('reuses the existing resume when the resumes API returns paginated data', async () => {
-    httpClientMock.get.mockImplementation((url: string) => {
+    apiFetchMock.get.mockImplementation((url: string) => {
       if (url === '/api/v1/resumes') {
         return Promise.resolve({
           data: [{ id: 'resume-1', title: 'Primary Resume' }],
@@ -43,7 +47,7 @@ describe('genericSectionsRepository', () => {
 
     await genericSectionsRepository.getSectionTypes();
 
-    expect(httpClientMock.post).not.toHaveBeenCalled();
-    expect(httpClientMock.get).toHaveBeenCalledWith('/api/v1/resumes/resume-1/sections/types');
+    expect(apiFetchMock.post).not.toHaveBeenCalled();
+    expect(apiFetchMock.get).toHaveBeenCalledWith('/api/v1/resumes/resume-1/sections/types');
   });
 });

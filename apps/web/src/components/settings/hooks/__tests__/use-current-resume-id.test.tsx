@@ -2,14 +2,20 @@ import React, { type PropsWithChildren } from 'react';
 import { beforeEach, describe, expect, it, mock } from 'bun:test';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
+import { API_CLIENT_MOCK_BASE } from '@/__test-utils__/api-client-mock-base';
 
-const httpClientMock = {
+const apiFetchMock = {
   get: mock(),
   post: mock(),
+  patch: mock(),
+  put: mock(),
+  delete: mock(),
 };
 
-void mock.module('@/shared/lib/http-client', () => ({
-  httpClient: httpClientMock,
+void mock.module('@profile/api-client', () => ({
+  ...API_CLIENT_MOCK_BASE,
+  apiFetch: apiFetchMock,
+  customFetch: mock(),
 }));
 
 const { useCurrentResumeId } = await import('../use-current-resume-id');
@@ -44,12 +50,12 @@ function ResumeIdProbe() {
 
 describe('useCurrentResumeId', () => {
   beforeEach(() => {
-    httpClientMock.get.mockReset();
-    httpClientMock.post.mockReset();
+    apiFetchMock.get.mockReset();
+    apiFetchMock.post.mockReset();
   });
 
   it('uses the existing resume id when the backend returns paginated data', async () => {
-    httpClientMock.get.mockResolvedValue({
+    apiFetchMock.get.mockResolvedValue({
       data: [{ id: 'resume-1', title: 'Primary Resume' }],
       meta: { total: 1, page: 1, limit: 50, totalPages: 1 },
     });
@@ -62,6 +68,6 @@ describe('useCurrentResumeId', () => {
       expect(screen.getByText('resume-1')).not.toBeNull();
     });
 
-    expect(httpClientMock.post).not.toHaveBeenCalled();
+    expect(apiFetchMock.post).not.toHaveBeenCalled();
   });
 });
