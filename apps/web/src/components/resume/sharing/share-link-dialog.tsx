@@ -16,6 +16,7 @@ import {
   Label,
   Switch,
 } from '@/shared/components/ui';
+import { useCopyFeedback } from '@/shared/hooks/use-copy-feedback';
 import { showToast } from '@/shared/components/ui/toast';
 
 import { type ShareLink, buildFullUrl } from './share-utils';
@@ -55,19 +56,17 @@ interface CreatedLinkViewProps {
 }
 
 function CreatedLinkView({ shareLink }: CreatedLinkViewProps) {
-  const [copied, setCopied] = useState(false);
+  const { copied, copy } = useCopyFeedback();
   const fullUrl = buildFullUrl(shareLink.publicUrl);
 
   const handleCopy = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(fullUrl);
-      setCopied(true);
+    const success = await copy(fullUrl);
+    if (success) {
       showToast.success('Link copied to clipboard');
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
+    } else {
       showToast.error('Failed to copy link');
     }
-  }, [fullUrl]);
+  }, [fullUrl, copy]);
 
   return (
     <div className="space-y-3">

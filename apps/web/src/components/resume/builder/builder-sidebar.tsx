@@ -5,7 +5,19 @@
 
 'use client';
 
-import { ChevronRight, Eye, Layers, Palette, RotateCcw, Settings } from 'lucide-react';
+import {
+  BarChart3,
+  ChevronRight,
+  Eye,
+  FileUp,
+  History,
+  Layers,
+  Palette,
+  RotateCcw,
+  Settings,
+  Share2,
+  Shield,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { cn } from '@/shared/utils';
@@ -30,6 +42,11 @@ interface BuilderSidebarProps {
   activeThemeName?: string;
   onThemeApplied: () => void;
   onRefresh: () => void;
+  onImportOpen: () => void;
+  onHistoryOpen: () => void;
+  onShareOpen: () => void;
+  onAnalyticsOpen: () => void;
+  onAtsOpen: () => void;
 }
 
 export function BuilderSidebar({
@@ -37,6 +54,11 @@ export function BuilderSidebar({
   activeThemeName,
   onThemeApplied,
   onRefresh,
+  onImportOpen,
+  onHistoryOpen,
+  onShareOpen,
+  onAnalyticsOpen,
+  onAtsOpen,
 }: BuilderSidebarProps) {
   const [viewMode, setViewMode] = useState<ViewMode>('preview');
   const [editingTheme, setEditingTheme] = useState<Theme | null>(null);
@@ -148,6 +170,31 @@ export function BuilderSidebar({
                   <RotateCcw className="text-pf-fg-subtle h-4 w-4" strokeWidth={1.5} />
                   Refresh Preview
                 </button>
+              </div>
+            </Section>
+
+            {/* Tools */}
+            <Section title="Tools">
+              <div className="space-y-2">
+                {(
+                  [
+                    { icon: FileUp, label: 'Import Resume', onClick: onImportOpen },
+                    { icon: History, label: 'Version History', onClick: onHistoryOpen },
+                    { icon: Share2, label: 'Share Links', onClick: onShareOpen },
+                    { icon: BarChart3, label: 'Analytics', onClick: onAnalyticsOpen },
+                    { icon: Shield, label: 'ATS Check', onClick: onAtsOpen },
+                  ] as const
+                ).map(({ icon: Icon, label, onClick }) => (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={onClick}
+                    className="border-pf-border-default text-pf-fg-muted hover:bg-pf-canvas-subtle hover:text-pf-fg-default flex w-full items-center gap-3 rounded-lg border p-3 text-sm font-medium transition-colors"
+                  >
+                    <Icon className="text-pf-fg-subtle h-4 w-4" strokeWidth={1.5} />
+                    {label}
+                  </button>
+                ))}
               </div>
             </Section>
           </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { apiFetch } from '@profile/api-client';
 import {
   useQuery,
@@ -24,6 +24,7 @@ import {
   CardTitle,
   Skeleton,
 } from '@/shared/components/ui';
+import { useCopyFeedback } from '@/shared/hooks/use-copy-feedback';
 import { showToast } from '@/shared/components/ui/toast';
 
 import { type ShareLink, buildFullUrl } from './share-utils';
@@ -113,22 +114,20 @@ interface ShareLinkItemProps {
 }
 
 function ShareLinkItem({ share, onDelete, isDeleting }: ShareLinkItemProps) {
-  const [copied, setCopied] = useState(false);
+  const { copied, copy } = useCopyFeedback();
   const fullUrl = buildFullUrl(share.publicUrl);
 
   const isExpired =
     share.expiresAt !== null && new Date(share.expiresAt) < new Date();
 
   const handleCopy = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(fullUrl);
-      setCopied(true);
+    const success = await copy(fullUrl);
+    if (success) {
       showToast.success('Link copied');
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
+    } else {
       showToast.error('Failed to copy');
     }
-  }, [fullUrl]);
+  }, [fullUrl, copy]);
 
   return (
     <div className="flex items-center gap-3 rounded-lg border border-neutral-800 p-3">

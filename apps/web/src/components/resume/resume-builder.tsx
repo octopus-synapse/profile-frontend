@@ -9,16 +9,34 @@ import { Check, Download, FileText, Link2, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { useCallback, useState } from 'react';
 import { LoadingState } from '@/shared/components/ui';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/shared/components/ui/dialog';
 import { showToast } from '@/shared/components/ui/toast';
+import { useCopyFeedback } from '@/shared/hooks/use-copy-feedback';
+import { AnalyticsDashboard } from './analytics/analytics-dashboard';
 import { ASTRenderer } from './ast-renderer';
+import { AtsScorePanel } from './ats/ats-score-panel';
 import { BuilderSidebar } from './builder/builder-sidebar';
 import { ExportDialog } from './export/export-dialog';
 import { useResume, useResumeAst, useResumes } from './hooks';
+import { ImportWizard } from './import/import-wizard';
 import { extractResumeListItems } from './resume-builder.utils';
+import { ShareLinksManager } from './sharing/share-links-manager';
+import { VersionHistorySidebar } from './versions/version-history-sidebar';
 
 export function ResumeBuilder() {
-  const [copied, setCopied] = useState(false);
+  const { copied, copy } = useCopyFeedback();
   const [exportOpen, setExportOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [analyticsOpen, setAnalyticsOpen] = useState(false);
+  const [atsOpen, setAtsOpen] = useState(false);
 
   // Fetch user's resumes list
   const { data: resumesResponse, isLoading: resumesListLoading } = useResumes();
@@ -30,7 +48,9 @@ export function ResumeBuilder() {
   // Extract the actual resume data from response
   const resume = resumeResponse?.data;
   // activeThemeId may be present at runtime even if not typed in the generated DTO
-  const activeThemeId = (resume as Record<string, unknown> | undefined)?.activeThemeId as string | undefined;
+  const activeThemeId = (resume as Record<string, unknown> | undefined)?.activeThemeId as
+    | string
+    | undefined;
 
   // Fetch compiled AST from backend
   const { data: ast, isLoading: astLoading, refetch: refetchAst } = useResumeAst(resumeId);
@@ -45,13 +65,8 @@ export function ResumeBuilder() {
   const handleCopyLink = async () => {
     if (!resumeId) return;
     const url = `${window.location.origin}/r/${resumeId}`;
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      showToast.error('Failed to copy link');
-    }
+    const success = await copy(url);
+    if (!success) showToast.error('Failed to copy link');
   };
 
   // Loading state
@@ -101,6 +116,11 @@ export function ResumeBuilder() {
         activeThemeName={undefined}
         onThemeApplied={handleThemeApplied}
         onRefresh={() => void refetchAst()}
+        onImportOpen={() => setImportOpen(true)}
+        onHistoryOpen={() => setHistoryOpen(true)}
+        onShareOpen={() => setShareOpen(true)}
+        onAnalyticsOpen={() => setAnalyticsOpen(true)}
+        onAtsOpen={() => setAtsOpen(true)}
       />
 
       {/* Main Content */}
@@ -171,6 +191,44 @@ export function ResumeBuilder() {
       </main>
 
       <ExportDialog resumeId={resumeId ?? ''} open={exportOpen} onOpenChange={setExportOpen} />
+
+      <ImportWizard open={importOpen} onOpenChange={setImportOpen} />
+
+      <VersionHistorySidebar
+        resumeId={resumeId ?? ''}
+        open={historyOpen}
+        onOpenChange={setHistoryOpen}
+      />
+
+      <Dialog open={shareOpen} onOpenChange={setShareOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Share Links</DialogTitle>
+            <DialogDescription>Manage share links for your resume</DialogDescription>
+          </DialogHeader>
+          <ShareLinksManager resumeId={resumeId ?? ''} />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={analyticsOpen} onOpenChange={setAnalyticsOpen}>
+        <DialogContent className="max-h-[85vh] max-w-4xl overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Analytics</DialogTitle>
+            <DialogDescription>Resume performance and insights</DialogDescription>
+          </DialogHeader>
+          <AnalyticsDashboard resumeId={resumeId ?? ''} />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={atsOpen} onOpenChange={setAtsOpen}>
+        <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>ATS Compatibility Check</DialogTitle>
+            <DialogDescription>Validate your resume against ATS systems</DialogDescription>
+          </DialogHeader>
+          <AtsScorePanel resumeId={resumeId ?? ''} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

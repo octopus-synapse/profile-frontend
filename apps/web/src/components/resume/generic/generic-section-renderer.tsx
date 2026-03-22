@@ -111,8 +111,8 @@ function HeaderSectionRenderer({ section }: { section: PlacedSectionDto }) {
         {location && <div>{location}</div>}
         {links && links.length > 0 && (
           <div>
-            {links.map((link, idx) => (
-              <a key={idx} href={link.url} style={{ marginRight: '16px' }}>
+            {links.map((link) => (
+              <a key={link.url} href={link.url} style={{ marginRight: '16px' }}>
                 {link.label}
               </a>
             ))}
