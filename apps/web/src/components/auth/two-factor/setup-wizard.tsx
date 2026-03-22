@@ -6,11 +6,10 @@
  * Multi-step flow: QR code → TOTP verification → backup codes display.
  */
 
-import { useState } from 'react';
-import Image from 'next/image';
 import { Copy, KeyRound, QrCode, ShieldCheck } from 'lucide-react';
+import Image from 'next/image';
+import { useState } from 'react';
 import { Button, Input } from '@/shared/components/ui';
-import { copyToClipboard } from '@/shared/lib/clipboard';
 import {
   Dialog,
   DialogContent,
@@ -20,6 +19,7 @@ import {
   DialogTitle,
 } from '@/shared/components/ui/dialog';
 import { showToast } from '@/shared/components/ui/toast';
+import { copyToClipboard } from '@/shared/lib/clipboard';
 import { useSetup2FA, useVerify2FA } from '../hooks/use-2fa';
 
 type Step = 'qr' | 'verify' | 'backup';
@@ -89,7 +89,9 @@ export function TwoFactorSetupWizard({ open, onOpenChange }: SetupWizardProps) {
           </DialogDescription>
         </DialogHeader>
 
-        {step === 'qr' && <QrStep qrCode={setup.data?.qrCode} manualKey={setup.data?.manualEntryKey} />}
+        {step === 'qr' && (
+          <QrStep qrCode={setup.data?.qrCode} manualKey={setup.data?.manualEntryKey} />
+        )}
         {step === 'verify' && (
           <VerifyStep code={totpCode} onChange={setTotpCode} isPending={verify.isPending} />
         )}
@@ -106,9 +108,7 @@ export function TwoFactorSetupWizard({ open, onOpenChange }: SetupWizardProps) {
               {verify.isPending ? 'Verifying…' : 'Verify & Enable'}
             </Button>
           )}
-          {step === 'backup' && (
-            <Button onClick={() => handleOpen(false)}>Done</Button>
-          )}
+          {step === 'backup' && <Button onClick={() => handleOpen(false)}>Done</Button>}
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -121,7 +121,14 @@ function QrStep({ qrCode, manualKey }: { qrCode?: string; manualKey?: string }) 
   return (
     <div className="flex flex-col items-center gap-4 py-4">
       {qrCode ? (
-        <Image src={qrCode} alt="2FA QR Code" width={192} height={192} className="h-48 w-48 rounded-lg" unoptimized />
+        <Image
+          src={qrCode}
+          alt="2FA QR Code"
+          width={192}
+          height={192}
+          className="h-48 w-48 rounded-lg"
+          unoptimized
+        />
       ) : (
         <div className="bg-pf-canvas-subtle flex h-48 w-48 items-center justify-center rounded-lg">
           <QrCode className="text-pf-fg-muted h-12 w-12 animate-pulse" />
@@ -157,7 +164,9 @@ function VerifyStep({
         maxLength={6}
         placeholder="000000"
         value={code}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value.replace(/\D/g, '').slice(0, 6))}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          onChange(e.target.value.replace(/\D/g, '').slice(0, 6))
+        }
         className="text-center text-2xl tracking-[0.3em] font-mono max-w-[200px]"
         disabled={isPending}
         autoFocus

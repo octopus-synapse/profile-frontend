@@ -2,18 +2,11 @@
 
 import { ArrowRight, ShieldCheck } from 'lucide-react';
 
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  Skeleton,
-} from '@/shared/components/ui';
+import { Badge, Button, Card, CardContent, CardHeader, Skeleton } from '@/shared/components/ui';
 
 import {
-  getScoreBarColor,
   getScoreBadgeVariant,
+  getScoreBarColor,
   getScoreGaugeColor,
   getScoreLabel,
 } from '../ats/score-utils';
@@ -144,10 +137,7 @@ export function AtsScoreWidget({ resumeId, onViewFullAnalysis }: AtsScoreWidgetP
               <p className="text-xs font-medium text-zinc-400">Top Recommendations</p>
               <ul className="space-y-1.5">
                 {topRecommendations.map((rec, idx) => (
-                  <li
-                    key={idx}
-                    className="flex items-start gap-2 text-sm text-zinc-300"
-                  >
+                  <li key={idx} className="flex items-start gap-2 text-sm text-zinc-300">
                     <span className="mt-1 block h-1 w-1 shrink-0 rounded-full bg-cyan-400" />
                     {rec}
                   </li>

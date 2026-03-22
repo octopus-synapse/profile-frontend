@@ -3,14 +3,7 @@
 import { Briefcase, Search, Sparkles } from 'lucide-react';
 import { useCallback, useState } from 'react';
 
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  Skeleton,
-} from '@/shared/components/ui';
+import { Badge, Button, Card, CardContent, CardHeader, Skeleton } from '@/shared/components/ui';
 import { Textarea } from '@/shared/components/ui/textarea';
 import { showToast } from '@/shared/components/ui/toast';
 
@@ -43,10 +36,7 @@ function MatchScoreDisplay({ score }: { score: number }) {
     <div className={`flex flex-col items-center gap-2 rounded-xl border p-6 ${bgColor}`}>
       <span className={`text-4xl font-bold ${color}`}>{score}</span>
       <span className="text-xs text-zinc-400">/ 100</span>
-      <Badge
-        variant={getScoreBadgeVariant(score)}
-        size="sm"
-      >
+      <Badge variant={getScoreBadgeVariant(score)} size="sm">
         {label}
       </Badge>
     </div>
@@ -127,10 +117,7 @@ export function JobMatchTool({ resumeId }: JobMatchToolProps) {
       <CardContent>
         <div className="space-y-4">
           <div className="space-y-2">
-            <label
-              htmlFor="job-description"
-              className="text-xs font-medium text-zinc-400"
-            >
+            <label htmlFor="job-description" className="text-xs font-medium text-zinc-400">
               Paste a job description
             </label>
             <Textarea
@@ -148,9 +135,7 @@ export function JobMatchTool({ resumeId }: JobMatchToolProps) {
             disabled={!jobDescription.trim() || isPending}
             loading={isPending}
             onClick={handleAnalyze}
-            leftIcon={
-              isPending ? undefined : <Search className="h-4 w-4" />
-            }
+            leftIcon={isPending ? undefined : <Search className="h-4 w-4" />}
           >
             {isPending ? 'Analyzing…' : 'Analyze Match'}
           </Button>

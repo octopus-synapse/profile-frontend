@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { copyToClipboard } from '@/shared/lib/clipboard';
 
 const FEEDBACK_DURATION_MS = 2000;

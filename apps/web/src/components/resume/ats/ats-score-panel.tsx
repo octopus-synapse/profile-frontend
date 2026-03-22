@@ -1,6 +1,15 @@
 'use client';
 
-import { AlertCircle, AlertTriangle, CheckCircle2, FileUp, Info, RefreshCw, ShieldCheck, Upload } from 'lucide-react';
+import {
+  AlertCircle,
+  AlertTriangle,
+  CheckCircle2,
+  FileUp,
+  Info,
+  RefreshCw,
+  ShieldCheck,
+  Upload,
+} from 'lucide-react';
 import { type DragEvent, useCallback, useRef, useState } from 'react';
 
 import { Badge, Button, Card, CardContent, CardHeader } from '@/shared/components/ui';
@@ -9,9 +18,14 @@ import { showToast } from '@/shared/components/ui/toast';
 import { useAtsValidation } from '../hooks/use-ats-validation';
 import { getScoreBadgeVariant, getScoreGaugeColor } from './score-utils';
 
-const ACCEPTED_TYPES = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+const ACCEPTED_TYPES = [
+  'application/pdf',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+];
 
-interface AtsScorePanelProps { resumeId: string }
+interface AtsScorePanelProps {
+  resumeId: string;
+}
 
 type IssueSeverity = 'error' | 'warning' | 'info';
 
@@ -173,7 +187,12 @@ export function AtsScorePanel({ resumeId: _resumeId }: AtsScorePanelProps) {
                         className="rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2"
                       >
                         <div className="flex items-start gap-2">
-                          <Icon className="mt-0.5 h-4 w-4 shrink-0" style={{ color: `var(--color-${issue.severity === 'error' ? 'red' : issue.severity === 'warning' ? 'amber' : 'blue'}-400, currentColor)` }} />
+                          <Icon
+                            className="mt-0.5 h-4 w-4 shrink-0"
+                            style={{
+                              color: `var(--color-${issue.severity === 'error' ? 'red' : issue.severity === 'warning' ? 'amber' : 'blue'}-400, currentColor)`,
+                            }}
+                          />
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-2">
                               <Badge variant={config.badgeVariant} size="xs">
@@ -284,9 +303,7 @@ export function AtsScorePanel({ resumeId: _resumeId }: AtsScorePanelProps) {
             disabled={!selectedFile || isPending}
             loading={isPending}
             onClick={handleValidate}
-            leftIcon={
-              isPending ? undefined : <ShieldCheck className="h-4 w-4" />
-            }
+            leftIcon={isPending ? undefined : <ShieldCheck className="h-4 w-4" />}
           >
             {isPending ? 'Analyzing…' : 'Validate Resume'}
           </Button>

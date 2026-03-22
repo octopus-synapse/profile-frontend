@@ -1,9 +1,9 @@
 'use client';
 
-import { useCallback, useState } from 'react';
 import { apiFetch, RESUMES_ROUTES } from '@profile/api-client';
 import { useMutation } from '@tanstack/react-query';
 import { Check, Copy, Loader2 } from 'lucide-react';
+import { useCallback, useState } from 'react';
 import {
   Button,
   Dialog,
@@ -16,10 +16,10 @@ import {
   Label,
   Switch,
 } from '@/shared/components/ui';
-import { useCopyFeedback } from '@/shared/hooks/use-copy-feedback';
 import { showToast } from '@/shared/components/ui/toast';
+import { useCopyFeedback } from '@/shared/hooks/use-copy-feedback';
 
-import { type ShareLink, buildFullUrl } from './share-utils';
+import { buildFullUrl, type ShareLink } from './share-utils';
 
 // --- Types ---
 
@@ -31,19 +31,12 @@ interface CreateShareResponse {
 
 function useCreateShareLink() {
   return useMutation({
-    mutationFn: async (params: {
-      resumeId: string;
-      password?: string;
-      expiresAt?: string;
-    }) => {
-      const result = await apiFetch.post<CreateShareResponse>(
-        RESUMES_ROUTES.RESUMES_CREATE_SHARE,
-        {
-          resumeId: params.resumeId,
-          password: params.password || undefined,
-          expiresAt: params.expiresAt || undefined,
-        },
-      );
+    mutationFn: async (params: { resumeId: string; password?: string; expiresAt?: string }) => {
+      const result = await apiFetch.post<CreateShareResponse>(RESUMES_ROUTES.RESUMES_CREATE_SHARE, {
+        resumeId: params.resumeId,
+        password: params.password || undefined,
+        expiresAt: params.expiresAt || undefined,
+      });
       return result.share;
     },
   });
@@ -70,29 +63,21 @@ function CreatedLinkView({ shareLink }: CreatedLinkViewProps) {
 
   return (
     <div className="space-y-3">
-      <p className="text-sm text-neutral-300">
-        Your share link is ready:
-      </p>
+      <p className="text-sm text-neutral-300">Your share link is ready:</p>
       <div className="flex items-center gap-2">
         <Input
           readOnly
           value={fullUrl}
           className="flex-1 text-xs"
-          onClick={(e: React.MouseEvent<HTMLInputElement>) => (e.target as HTMLInputElement).select()}
+          onClick={(e: React.MouseEvent<HTMLInputElement>) =>
+            (e.target as HTMLInputElement).select()
+          }
         />
         <Button type="button" variant="outline" onClick={handleCopy}>
-          {copied ? (
-            <Check className="h-4 w-4 text-emerald-400" />
-          ) : (
-            <Copy className="h-4 w-4" />
-          )}
+          {copied ? <Check className="h-4 w-4 text-emerald-400" /> : <Copy className="h-4 w-4" />}
         </Button>
       </div>
-      {shareLink.hasPassword && (
-        <p className="text-xs text-neutral-500">
-          🔒 Password protected
-        </p>
-      )}
+      {shareLink.hasPassword && <p className="text-xs text-neutral-500">🔒 Password protected</p>}
       {shareLink.expiresAt && (
         <p className="text-xs text-neutral-500">
           Expires: {new Date(shareLink.expiresAt).toLocaleDateString()}
@@ -111,12 +96,7 @@ interface ShareLinkDialogProps {
   onCreated?: () => void;
 }
 
-export function ShareLinkDialog({
-  resumeId,
-  open,
-  onOpenChange,
-  onCreated,
-}: ShareLinkDialogProps) {
+export function ShareLinkDialog({ resumeId, open, onOpenChange, onCreated }: ShareLinkDialogProps) {
   const [usePassword, setUsePassword] = useState(false);
   const [password, setPassword] = useState('');
   const [expiresAt, setExpiresAt] = useState('');
@@ -164,9 +144,7 @@ export function ShareLinkDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Create Share Link</DialogTitle>
-          <DialogDescription>
-            Generate a link to share your resume publicly.
-          </DialogDescription>
+          <DialogDescription>Generate a link to share your resume publicly.</DialogDescription>
         </DialogHeader>
 
         {createdLink ? (
@@ -175,11 +153,7 @@ export function ShareLinkDialog({
           <div className="space-y-4 py-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="use-password">Password protection</Label>
-              <Switch
-                id="use-password"
-                checked={usePassword}
-                onCheckedChange={setUsePassword}
-              />
+              <Switch id="use-password" checked={usePassword} onCheckedChange={setUsePassword} />
             </div>
 
             {usePassword && (
@@ -206,10 +180,7 @@ export function ShareLinkDialog({
 
         <DialogFooter>
           {createdLink ? (
-            <Button
-              type="button"
-              onClick={() => handleOpenChange(false)}
-            >
+            <Button type="button" onClick={() => handleOpenChange(false)}>
               Done
             </Button>
           ) : (

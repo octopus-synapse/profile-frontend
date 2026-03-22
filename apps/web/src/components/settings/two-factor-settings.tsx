@@ -6,8 +6,14 @@
  * Displays 2FA status and provides enable/disable/regenerate actions.
  */
 
-import { useState } from 'react';
 import { Copy, KeyRound, ShieldCheck, ShieldOff } from 'lucide-react';
+import { useState } from 'react';
+import {
+  use2FAStatus,
+  useDisable2FA,
+  useRegenerateBackupCodes,
+} from '@/components/auth/hooks/use-2fa';
+import { TwoFactorSetupWizard } from '@/components/auth/two-factor/setup-wizard';
 import {
   Badge,
   Button,
@@ -26,12 +32,6 @@ import {
   DialogTitle,
 } from '@/shared/components/ui/dialog';
 import { showToast } from '@/shared/components/ui/toast';
-import {
-  use2FAStatus,
-  useDisable2FA,
-  useRegenerateBackupCodes,
-} from '@/components/auth/hooks/use-2fa';
-import { TwoFactorSetupWizard } from '@/components/auth/two-factor/setup-wizard';
 
 export function TwoFactorSettings() {
   const { data: status, isLoading } = use2FAStatus();
@@ -65,9 +65,7 @@ export function TwoFactorSettings() {
                 <ShieldCheck className="h-5 w-5" />
                 Two-Factor Authentication
               </CardTitle>
-              <CardDescription>
-                Add an extra layer of security to your account.
-              </CardDescription>
+              <CardDescription>Add an extra layer of security to your account.</CardDescription>
             </div>
             <Badge variant={status?.enabled ? 'default' : 'secondary'}>
               {status?.enabled ? 'Enabled' : 'Disabled'}
@@ -152,19 +150,15 @@ function DisableConfirmDialog({
         <DialogHeader>
           <DialogTitle>Disable Two-Factor Authentication?</DialogTitle>
           <DialogDescription>
-            This will remove the extra security layer from your account. You can re-enable it
-            at any time.
+            This will remove the extra security layer from your account. You can re-enable it at any
+            time.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button
-            variant="destructive"
-            onClick={handleDisable}
-            disabled={disable.isPending}
-          >
+          <Button variant="destructive" onClick={handleDisable} disabled={disable.isPending}>
             {disable.isPending ? 'Disabling…' : 'Disable 2FA'}
           </Button>
         </DialogFooter>
@@ -217,7 +211,9 @@ function RegenerateCodesDialog({
           <div className="flex flex-col gap-3">
             <div className="bg-pf-canvas-subtle grid grid-cols-2 gap-2 rounded-lg p-4">
               {regen.data.backupCodes.map((code) => (
-                <code key={code} className="text-sm font-mono text-center">{code}</code>
+                <code key={code} className="text-sm font-mono text-center">
+                  {code}
+                </code>
               ))}
             </div>
             <Button variant="outline" onClick={copyBackupCodes} className="gap-2">
@@ -231,7 +227,9 @@ function RegenerateCodesDialog({
             <Button onClick={() => onOpenChange(false)}>Done</Button>
           ) : (
             <>
-              <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => onOpenChange(false)}>
+                Cancel
+              </Button>
               <Button onClick={handleRegenerate} disabled={regen.isPending}>
                 {regen.isPending ? 'Generating…' : 'Regenerate'}
               </Button>

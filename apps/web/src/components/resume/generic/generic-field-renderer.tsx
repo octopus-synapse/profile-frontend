@@ -73,7 +73,11 @@ function renderObjectValue(value: Record<string, unknown>) {
       {entries.map(([key, val]) => (
         <div key={key} style={{ display: 'flex', gap: '4px', marginBottom: '2px' }}>
           <dt style={{ fontWeight: 500, color: '#888' }}>{humanizeFieldKey(key)}:</dt>
-          <dd style={{ margin: 0 }}>{typeof val === 'object' && val !== null ? JSON.stringify(val, null, 2) : String(val ?? '')}</dd>
+          <dd style={{ margin: 0 }}>
+            {typeof val === 'object' && val !== null
+              ? JSON.stringify(val, null, 2)
+              : String(val ?? '')}
+          </dd>
         </div>
       ))}
     </dl>
@@ -96,7 +100,8 @@ function renderValue(value: unknown): React.ReactNode {
  */
 function itemKey(item: unknown, index: number): string {
   if (typeof item === 'string') return `${item}-${index}`;
-  if (typeof item === 'object' && item !== null && 'id' in item) return String((item as { id: unknown }).id);
+  if (typeof item === 'object' && item !== null && 'id' in item)
+    return String((item as { id: unknown }).id);
   return String(index);
 }
 
@@ -135,9 +140,7 @@ export function GenericFieldRenderer({
       fontSize: `${(styles.content?.fontSizePx ?? 14) + 2}px`,
     };
 
-    return (
-      <div style={headerStyle}>{renderValue(value)}</div>
-    );
+    return <div style={headerStyle}>{renderValue(value)}</div>;
   }
 
   // Date style (muted, smaller)
@@ -175,11 +178,7 @@ export function GenericFieldRenderer({
       );
     }
 
-    return (
-      <p style={{ ...bodyStyle, margin: '8px 0' }}>
-        {renderValue(value)}
-      </p>
-    );
+    return <p style={{ ...bodyStyle, margin: '8px 0' }}>{renderValue(value)}</p>;
   }
 
   // Default: show label and value
