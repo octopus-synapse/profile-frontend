@@ -25,8 +25,8 @@ import { PreferencesSection } from './preferences-section';
 import { ProfileSection } from './profile-section';
 import { ResumeBasicsSection } from './resume-basics-section';
 import { genericSectionsRepository } from './services/generic-sections-repository';
-import { SECTION_ICONS, SECTION_ICON_FALLBACK } from './section-icons';
 import { buildDynamicSettingsNavItems } from './settings-page.utils';
+import { SectionIcon } from '@/shared/components/section-icon';
 import { TwoFactorSettings } from './two-factor-settings';
 
 type StaticTab = 'resume' | 'profile' | 'preferences' | 'account';
@@ -146,12 +146,11 @@ export function SettingsPage() {
                   </div>
                 ) : (
                   activeSectionTypes.map((section) => {
-                    const SectionIcon = SECTION_ICONS[section.key] ?? SECTION_ICON_FALLBACK;
                     return (
                       <SettingsNavButton
                         key={section.key}
                         label={section.label}
-                        icon={<SectionIcon className="h-4 w-4" strokeWidth={1.5} />}
+                        icon={<SectionIcon iconType={section.iconType} icon={section.icon} size={16} />}
                         active={activeTab === section.key}
                         badge={section.count > 0 ? String(section.count) : undefined}
                         onClick={() => setActiveTab(section.key)}

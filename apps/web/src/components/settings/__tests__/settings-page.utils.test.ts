@@ -53,12 +53,16 @@ describe('buildDynamicSettingsNavItems', () => {
         key: 'work_experience_v1',
         label: 'Work Experience',
         description: 'Your professional experience',
+        iconType: 'emoji',
+        icon: '📄',
         count: 1,
       },
       {
         key: 'education_v1',
         label: 'Education',
         description: 'Your educational background',
+        iconType: 'emoji',
+        icon: '📄',
         count: 0,
       },
     ]);

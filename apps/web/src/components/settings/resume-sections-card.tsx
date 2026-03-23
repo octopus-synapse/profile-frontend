@@ -1,5 +1,5 @@
 import type { DynamicSettingsNavItem } from './settings-page.utils';
-import { SECTION_ICONS, SECTION_ICON_FALLBACK } from './section-icons';
+import { SectionIcon } from '@/shared/components/section-icon';
 
 interface ResumeSectionsCardProps {
   dynamicSections: DynamicSettingsNavItem[];
@@ -25,7 +25,6 @@ export function ResumeSectionsCard({
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">
           {dynamicSections.map((section) => {
-            const Icon = SECTION_ICONS[section.key] ?? SECTION_ICON_FALLBACK;
             return (
               <button
                 key={section.key}
@@ -35,7 +34,7 @@ export function ResumeSectionsCard({
               >
                 <div className="flex items-start gap-3">
                   <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">
-                    <Icon className="h-4 w-4" strokeWidth={1.5} />
+                    <SectionIcon iconType={section.iconType} icon={section.icon} size={16} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">

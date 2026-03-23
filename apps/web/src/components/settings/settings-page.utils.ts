@@ -5,6 +5,8 @@ export interface DynamicSettingsNavItem {
   label: string;
   description?: string;
   count: number;
+  iconType: string;
+  icon: string;
 }
 
 export function buildDynamicSettingsNavItems(
@@ -15,8 +17,10 @@ export function buildDynamicSettingsNavItems(
     .filter((sectionType) => sectionType.isActive)
     .map((sectionType) => ({
       key: sectionType.key,
-      label: sectionType.title, // Use title as display name (e.g., "Education", "Work Experience")
+      label: sectionType.title,
       description: sectionType.description,
+      iconType: sectionType.iconType ?? 'emoji',
+      icon: sectionType.icon ?? '📄',
       count:
         sections.find(
           (section) =>
