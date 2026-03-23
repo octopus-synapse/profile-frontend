@@ -81,4 +81,43 @@ export const auth = {
 
   // Password requirements
   'auth.signUp.passwordHint': 'Mínimo de 8 caracteres',
+
+  // Password strength
+  'auth.signUp.passwordStrength.weak': 'Fraco',
+  'auth.signUp.passwordStrength.fair': 'Razoável',
+  'auth.signUp.passwordStrength.good': 'Bom',
+  'auth.signUp.passwordStrength.strong': 'Forte',
+
+  // 2FA
+  'auth.2fa.title': 'Autenticação de Dois Fatores',
+  'auth.2fa.totpPrompt': 'Digite o código de 6 dígitos do seu aplicativo autenticador.',
+  'auth.2fa.backupPrompt': 'Digite um dos seus códigos de backup.',
+  'auth.2fa.verify': 'Verificar',
+  'auth.2fa.verifying': 'Verificando…',
+  'auth.2fa.useBackup': 'Usar um código de backup',
+  'auth.2fa.useAuthenticator': 'Usar aplicativo autenticador',
+  'auth.2fa.verificationFailed': 'Verificação falhou',
+  'auth.2fa.invalidTotp': 'Código do autenticador inválido. Por favor, tente novamente.',
+  'auth.2fa.invalidBackup': 'Código de backup inválido. Por favor, tente novamente.',
+  'auth.2fa.enabled': 'Autenticação de dois fatores ativada',
+  'auth.2fa.invalidCode': 'Código inválido',
+  'auth.2fa.checkApp': 'Por favor, verifique seu aplicativo autenticador e tente novamente.',
+  'auth.2fa.backupCopied': 'Códigos de backup copiados',
+  'auth.2fa.backupCopyFailed': 'Falha ao copiar códigos de backup',
+  'auth.2fa.scanQr': 'Escanear QR Code',
+  'auth.2fa.verifyCode': 'Verificar Código',
+  'auth.2fa.backupCodes': 'Códigos de Backup',
+  'auth.2fa.scanDescription': 'Escaneie este QR code com seu aplicativo autenticador.',
+  'auth.2fa.verifyDescription': 'Digite o código de 6 dígitos do seu aplicativo autenticador.',
+  'auth.2fa.backupDescription': 'Salve estes códigos de backup em um local seguro.',
+  'auth.2fa.verifyAndEnable': 'Verificar e Ativar',
+  'auth.2fa.done': 'Concluído',
+  'auth.2fa.manualKey': 'Chave de entrada manual',
+  'auth.2fa.copyAll': 'Copiar todos os códigos',
+  'auth.2fa.backupWarning': 'Cada código de backup pode ser usado apenas uma vez. Guarde-os com segurança.',
+  'auth.2fa.qrAlt': 'QR Code 2FA',
+  'auth.2fa.backupPlaceholder': 'Código de backup',
+
+  // Loading
+  'auth.loading.generic': 'Carregando...',
 } as const;

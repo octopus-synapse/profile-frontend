@@ -5,6 +5,7 @@
  * Clean, professional design
  */
 
+import { useT } from '@profile/i18n';
 import { CheckCircle2, FileText, Globe, UserCheck, Users } from 'lucide-react';
 import {
   RecentActivityWidget,
@@ -18,6 +19,7 @@ import {
 } from '@/components/admin';
 
 export default function AdminDashboardPage() {
+  const t = useT();
   const { data: stats, isLoading: statsLoading } = useAdminStats();
   const { data: health, isLoading: healthLoading } = useSystemHealth();
   const { data: recentUsers, isLoading: usersLoading } = useRecentUsers(5);
@@ -27,9 +29,9 @@ export default function AdminDashboardPage() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-pf-fg-default text-2xl font-semibold tracking-tight">Dashboard</h1>
+        <h1 className="text-pf-fg-default text-2xl font-semibold tracking-tight">{t('admin.dashboard.title')}</h1>
         <p className="text-pf-fg-muted mt-1 text-sm">
-          Overview of your platform&apos;s key metrics and activity
+          {t('admin.dashboard.subtitle')}
         </p>
       </div>
 
@@ -39,9 +41,9 @@ export default function AdminDashboardPage() {
           <CheckCircle2 className="text-pf-success-fg h-5 w-5" strokeWidth={2} />
         </div>
         <div>
-          <p className="text-pf-fg-default text-sm font-medium">All systems operational</p>
+          <p className="text-pf-fg-default text-sm font-medium">{t('admin.dashboard.allOperational')}</p>
           <p className="text-pf-fg-muted text-xs">
-            Services are running smoothly. Last checked just now.
+            {t('admin.dashboard.servicesRunning')}
           </p>
         </div>
       </div>
@@ -49,7 +51,7 @@ export default function AdminDashboardPage() {
       {/* Stats Grid */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          label="Total Users"
+          label={t('admin.dashboard.totalUsers')}
           value={stats?.totalUsers ?? 0}
           icon={Users}
           trend={`+${stats?.newUsersThisWeek ?? 0} this week`}
@@ -57,19 +59,19 @@ export default function AdminDashboardPage() {
           loading={statsLoading}
         />
         <StatCard
-          label="Active Users"
+          label={t('admin.dashboard.activeUsers')}
           value={stats?.activeUsers ?? 0}
           icon={UserCheck}
           loading={statsLoading}
         />
         <StatCard
-          label="Resumes Created"
+          label={t('admin.dashboard.resumesCreated')}
           value={stats?.totalResumes ?? 0}
           icon={FileText}
           loading={statsLoading}
         />
         <StatCard
-          label="Public Profiles"
+          label={t('admin.dashboard.publicProfiles')}
           value={stats?.publicProfiles ?? 0}
           icon={Globe}
           loading={statsLoading}

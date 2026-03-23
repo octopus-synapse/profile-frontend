@@ -5,6 +5,7 @@
  * Ultra Premium Version - Inspired by Linear, Vercel & Cursor
  */
 
+import { type ResetPasswordDto, usersHandle as usersResetPasswordWithToken } from '@profile/api-client';
 import { useT } from '@profile/i18n';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle, CheckCircle2, ChevronRight, Eye, EyeOff, Lock } from 'lucide-react';
@@ -14,7 +15,6 @@ import { VALIDATION } from '@/config/constants';
 import { ROUTES } from '@/config/routes';
 import { Button, Input, Spinner } from '@/shared/components/ui';
 import { Label } from '@/shared/components/ui/label';
-import { apiClient } from '@/shared/lib/api-client';
 
 function ResetPasswordFormContent() {
   const t = useT();
@@ -65,8 +65,9 @@ function ResetPasswordFormContent() {
     setIsLoading(true);
 
     try {
-      // Use shared api-client
-      await apiClient.auth.resetPassword({ token, newPassword: password });
+      // Use SDK directly
+      const dto: ResetPasswordDto = { token, newPassword: password };
+      await usersResetPasswordWithToken(dto);
       setSuccess(true);
       // Redirect to sign in after 2 seconds
       setTimeout(() => {
@@ -234,11 +235,11 @@ function ResetPasswordFormContent() {
         <div className="mt-4 flex items-center justify-center gap-4 font-mono text-[10px] tracking-tighter text-zinc-600 uppercase">
           <div className="flex items-center gap-1">
             <div className="h-1 w-1 rounded-full bg-cyan-500" />
-            <span>Secure</span>
+            <span>{t('auth.security.secure')}</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="h-1 w-1 rounded-full bg-cyan-500" />
-            <span>Encrypted</span>
+            <span>{t('auth.security.encrypted')}</span>
           </div>
         </div>
       </form>
@@ -246,18 +247,21 @@ function ResetPasswordFormContent() {
   );
 }
 
+function ResetPasswordFallback() {
+  const t = useT();
+  return (
+    <div className="flex flex-col items-center justify-center gap-4 py-12">
+      <Spinner size="lg" />
+      <span className="font-mono text-xs tracking-widest text-zinc-500 uppercase">
+        {t('auth.loading.generic')}
+      </span>
+    </div>
+  );
+}
+
 export function ResetPasswordForm() {
   return (
-    <Suspense
-      fallback={
-        <div className="flex flex-col items-center justify-center gap-4 py-12">
-          <Spinner size="lg" />
-          <span className="font-mono text-xs tracking-widest text-zinc-500 uppercase">
-            Loading...
-          </span>
-        </div>
-      }
-    >
+    <Suspense fallback={<ResetPasswordFallback />}>
       <ResetPasswordFormContent />
     </Suspense>
   );

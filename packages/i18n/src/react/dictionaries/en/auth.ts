@@ -79,4 +79,43 @@ export const auth = {
 
   // Password requirements
   'auth.signUp.passwordHint': 'Minimum 8 characters',
+
+  // Password strength
+  'auth.signUp.passwordStrength.weak': 'Weak',
+  'auth.signUp.passwordStrength.fair': 'Fair',
+  'auth.signUp.passwordStrength.good': 'Good',
+  'auth.signUp.passwordStrength.strong': 'Strong',
+
+  // 2FA
+  'auth.2fa.title': 'Two-Factor Authentication',
+  'auth.2fa.totpPrompt': 'Enter the 6-digit code from your authenticator app.',
+  'auth.2fa.backupPrompt': 'Enter one of your backup codes.',
+  'auth.2fa.verify': 'Verify',
+  'auth.2fa.verifying': 'Verifying…',
+  'auth.2fa.useBackup': 'Use a backup code instead',
+  'auth.2fa.useAuthenticator': 'Use authenticator app instead',
+  'auth.2fa.verificationFailed': 'Verification failed',
+  'auth.2fa.invalidTotp': 'Invalid authenticator code. Please try again.',
+  'auth.2fa.invalidBackup': 'Invalid backup code. Please try again.',
+  'auth.2fa.enabled': 'Two-factor authentication enabled',
+  'auth.2fa.invalidCode': 'Invalid code',
+  'auth.2fa.checkApp': 'Please check your authenticator app and try again.',
+  'auth.2fa.backupCopied': 'Backup codes copied to clipboard',
+  'auth.2fa.backupCopyFailed': 'Failed to copy backup codes',
+  'auth.2fa.scanQr': 'Scan QR Code',
+  'auth.2fa.verifyCode': 'Verify Code',
+  'auth.2fa.backupCodes': 'Backup Codes',
+  'auth.2fa.scanDescription': 'Scan this QR code with your authenticator app.',
+  'auth.2fa.verifyDescription': 'Enter the 6-digit code from your authenticator app.',
+  'auth.2fa.backupDescription': 'Save these backup codes in a safe place.',
+  'auth.2fa.verifyAndEnable': 'Verify & Enable',
+  'auth.2fa.done': 'Done',
+  'auth.2fa.manualKey': 'Manual entry key',
+  'auth.2fa.copyAll': 'Copy all codes',
+  'auth.2fa.backupWarning': 'Each backup code can only be used once. Store them securely.',
+  'auth.2fa.qrAlt': '2FA QR Code',
+  'auth.2fa.backupPlaceholder': 'Backup code',
+
+  // Loading
+  'auth.loading.generic': 'Loading...',
 } as const;

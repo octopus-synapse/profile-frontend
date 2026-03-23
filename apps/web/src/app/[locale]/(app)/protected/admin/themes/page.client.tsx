@@ -5,10 +5,12 @@
  * Clean, professional design
  */
 
+import { useT } from '@profile/i18n';
 import { Check, Clock, Palette, X } from 'lucide-react';
 import { ThemeApprovalQueue, usePendingThemes } from '@/components/resume';
 
 export default function ThemeApprovalsClient() {
+  const t = useT();
   const { data: pendingThemes } = usePendingThemes();
   const pendingCount = pendingThemes?.length ?? 0;
 
@@ -16,9 +18,9 @@ export default function ThemeApprovalsClient() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-white text-2xl font-semibold tracking-tight">Theme Approvals</h1>
+        <h1 className="text-white text-2xl font-semibold tracking-tight">{t('admin.themes.title')}</h1>
         <p className="text-zinc-400 mt-1 text-sm">
-          Review and approve user-submitted themes for public use
+          {t('admin.themes.subtitle')}
         </p>
       </div>
 
@@ -30,10 +32,10 @@ export default function ThemeApprovalsClient() {
           </div>
           <div>
             <p className="text-white text-sm font-medium">
-              {pendingCount} theme{pendingCount !== 1 ? 's' : ''} awaiting review
+              {t('admin.themes.pendingCount').replace('{count}', String(pendingCount))}
             </p>
             <p className="text-zinc-400 text-xs">
-              Review submissions to make them available for all users
+              {t('admin.themes.reviewPrompt')}
             </p>
           </div>
         </div>
@@ -43,24 +45,24 @@ export default function ThemeApprovalsClient() {
             <Check className="text-emerald-400 h-5 w-5" strokeWidth={2} />
           </div>
           <div>
-            <p className="text-white text-sm font-medium">All caught up!</p>
-            <p className="text-zinc-400 text-xs">No themes pending review at the moment</p>
+            <p className="text-white text-sm font-medium">{t('admin.themes.allCaughtUp')}</p>
+            <p className="text-zinc-400 text-xs">{t('admin.themes.noPending')}</p>
           </div>
         </div>
       )}
 
       {/* Stats Overview */}
       <div className="grid gap-4 md:grid-cols-3">
-        <StatsCard label="Pending Review" value={pendingCount} icon={Clock} variant="attention" />
-        <StatsCard label="Approved Today" value={0} icon={Check} variant="success" />
-        <StatsCard label="Rejected Today" value={0} icon={X} variant="danger" />
+        <StatsCard label={t('admin.themes.pendingReview')} value={pendingCount} icon={Clock} variant="attention" />
+        <StatsCard label={t('admin.themes.approvedToday')} value={0} icon={Check} variant="success" />
+        <StatsCard label={t('admin.themes.rejectedToday')} value={0} icon={X} variant="danger" />
       </div>
 
       {/* Approval Queue */}
       <div className="border-white/10 bg-[#0A0A0A]/80 rounded-xl border">
         <div className="border-white/10 flex items-center gap-2 border-b px-6 py-4">
           <Palette className="text-zinc-400 h-5 w-5" strokeWidth={1.5} />
-          <span className="text-white text-sm font-semibold">Pending Reviews</span>
+          <span className="text-white text-sm font-semibold">{t('admin.themes.pendingReviews')}</span>
         </div>
         <div className="p-6">
           <ThemeApprovalQueue />

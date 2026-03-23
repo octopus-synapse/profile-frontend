@@ -201,7 +201,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
             type="text"
             value={query}
             onChange={(e) => handleQueryChange(e.target.value)}
-            placeholder="Search..."
+            placeholder={t('nav.search.commandPlaceholder')}
             className="flex-1 bg-transparent text-sm text-white placeholder:text-zinc-500 focus:outline-none"
             aria-label="Search commands"
           />
@@ -213,7 +213,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
         {/* Results */}
         <div className="max-h-[60vh] overflow-y-auto py-2">
           {filteredGroups.length === 0 ? (
-            <p className="px-4 py-8 text-center text-sm text-zinc-500">No results found.</p>
+            <p className="px-4 py-8 text-center text-sm text-zinc-500">{t('nav.search.noResults')}</p>
           ) : (
             filteredGroups.map((group) => (
               <CommandGroup key={group.id} label={group.label}>

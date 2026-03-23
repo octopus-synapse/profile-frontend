@@ -1,5 +1,6 @@
 'use client';
 
+import { useT } from '@profile/i18n';
 import { Search } from 'lucide-react';
 import { cn } from '@/shared/utils';
 
@@ -9,6 +10,7 @@ interface SearchTriggerProps {
 }
 
 export function SearchTrigger({ onClick, className }: SearchTriggerProps) {
+  const t = useT();
   return (
     <button
       type="button"
@@ -24,7 +26,7 @@ export function SearchTrigger({ onClick, className }: SearchTriggerProps) {
       aria-label="Open command palette"
     >
       <Search className="h-4 w-4 shrink-0 text-zinc-500" strokeWidth={1.5} />
-      <span className="flex-1 text-left text-sm text-zinc-500">Search anything...</span>
+      <span className="flex-1 text-left text-sm text-zinc-500">{t('nav.search.placeholder')}</span>
       <kbd
         className={cn(
           'hidden items-center gap-1 rounded-md px-2 py-0.5 sm:flex',

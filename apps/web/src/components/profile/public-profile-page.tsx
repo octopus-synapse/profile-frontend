@@ -5,6 +5,7 @@
 
 'use client';
 
+import { useT } from '@profile/i18n';
 import { LoadingState } from '@/shared/components/ui';
 import { usePublicProfile } from './hooks';
 import { PublicProfileHeader } from './public-profile-header';
@@ -16,12 +17,13 @@ interface PublicProfilePageProps {
 }
 
 export function PublicProfilePage({ username }: PublicProfilePageProps) {
+  const t = useT();
   const { data: profile, isLoading, error } = usePublicProfile(username);
 
   if (isLoading) {
     return (
       <div className="bg-pf-canvas-default min-h-screen">
-        <LoadingState message="Loading profile..." minHeight="100vh" />
+        <LoadingState message={t('social.profile.loading')} minHeight="100vh" />
       </div>
     );
   }

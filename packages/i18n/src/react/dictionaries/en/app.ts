@@ -73,6 +73,19 @@ export const app = {
   'app.skills.level.advanced': 'Advanced',
   'app.skills.level.expert': 'Expert',
 
+  // Dashboard extended
+  'app.dashboard.editProfileFn': 'edit_profile()',
+  'app.dashboard.editProfileFnDesc': 'View and edit your professional profile',
+  'app.dashboard.manageResumeFn': 'manage_resume()',
+  'app.dashboard.manageResumeFnDesc': 'Manage and export your resume',
+  'app.dashboard.configureFn': 'configure()',
+  'app.dashboard.configureFnDesc': 'Configure your account preferences',
+  'app.dashboard.execute': 'execute',
+  'app.dashboard.terminalHelp': 'Available commands:',
+  'app.dashboard.helpEdit': 'Edit your profile',
+  'app.dashboard.helpExport': 'Export resume to PDF',
+  'app.dashboard.helpPublish': 'Make profile public',
+
   // Settings Page
   'app.settings.title': 'Settings',
   'app.settings.description': 'Manage your profile and preferences',
@@ -84,4 +97,5 @@ export const app = {
   'app.settings.tabs.skills': 'Skills',
   'app.settings.tabs.languages': 'Languages',
   'app.settings.tabs.preferences': 'Preferences',
+  'app.settings.tabs.account': 'Account & Security',
 } as const;

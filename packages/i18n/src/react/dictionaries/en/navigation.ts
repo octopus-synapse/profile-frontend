@@ -12,6 +12,9 @@ export const navigation = {
   'nav.settings': 'Settings',
   'nav.templates': 'Templates',
   'nav.contact': 'Contact',
+  'nav.chat': 'Chat',
+  'nav.feed': 'Feed',
+  'nav.search': 'Search',
 
   // Auth nav
   'nav.signIn': 'Sign in',
@@ -57,4 +60,12 @@ export const navigation = {
   'nav.features': 'Features',
   'nav.howItWorks': 'How it Works',
   'nav.pricing': 'Pricing',
+
+  // Search
+  'nav.search.placeholder': 'Search anything...',
+  'nav.search.commandPlaceholder': 'Search...',
+  'nav.search.noResults': 'No results found.',
+
+  // User menu extras
+  'nav.userMenu.adminLabel': 'Admin',
 } as const;

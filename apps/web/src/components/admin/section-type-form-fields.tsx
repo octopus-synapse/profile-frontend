@@ -4,6 +4,7 @@
  * Section Type Form Fields — sub-components for the form dialog.
  */
 
+import { useT } from '@profile/i18n';
 import { Input, Label } from '@/shared/components/ui';
 import { Checkbox } from '@/shared/components/ui/checkbox';
 import {
@@ -74,11 +75,12 @@ export interface CoreFieldsSectionProps {
 }
 
 export function CoreFieldsSection(props: CoreFieldsSectionProps) {
+  const t = useT();
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label required>Key</Label>
+          <Label required>{t('admin.sectionTypes.form.key')}</Label>
           <Input
             placeholder="work_experience_v1"
             value={props.keyValue}
@@ -87,7 +89,7 @@ export function CoreFieldsSection(props: CoreFieldsSectionProps) {
           />
         </div>
         <div className="space-y-2">
-          <Label required>Title</Label>
+          <Label required>{t('admin.sectionTypes.form.title')}</Label>
           <Input
             placeholder="Work Experience"
             value={props.title}
@@ -99,9 +101,9 @@ export function CoreFieldsSection(props: CoreFieldsSectionProps) {
       </div>
 
       <div className="space-y-2">
-        <Label>Description</Label>
+        <Label>{t('admin.sectionTypes.form.description')}</Label>
         <Textarea
-          placeholder="Describe this section type..."
+          placeholder={t('admin.sectionTypes.form.description')}
           value={props.description}
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
             props.onDescriptionChange(e.target.value)
@@ -112,7 +114,7 @@ export function CoreFieldsSection(props: CoreFieldsSectionProps) {
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label required>Semantic Kind</Label>
+          <Label required>{t('admin.sectionTypes.form.semanticKind')}</Label>
           <Input
             placeholder="experience"
             value={props.semanticKind}
@@ -123,7 +125,7 @@ export function CoreFieldsSection(props: CoreFieldsSectionProps) {
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label>Icon Type</Label>
+            <Label>{t('admin.sectionTypes.form.iconType')}</Label>
             <Select value={props.iconType} onValueChange={props.onIconTypeChange}>
               <SelectTrigger>
                 <SelectValue />
@@ -135,7 +137,7 @@ export function CoreFieldsSection(props: CoreFieldsSectionProps) {
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Icon</Label>
+            <Label>{t('admin.sectionTypes.form.icon')}</Label>
             <Input
               placeholder={props.iconType === 'emoji' ? '💼' : 'briefcase'}
               value={props.icon}
@@ -149,7 +151,7 @@ export function CoreFieldsSection(props: CoreFieldsSectionProps) {
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label>Min Items</Label>
+          <Label>{t('admin.sectionTypes.form.minItems')}</Label>
           <Input
             type="number"
             min={0}
@@ -160,7 +162,7 @@ export function CoreFieldsSection(props: CoreFieldsSectionProps) {
           />
         </div>
         <div className="space-y-2">
-          <Label>Max Items</Label>
+          <Label>{t('admin.sectionTypes.form.maxItems')}</Label>
           <Input
             type="number"
             min={0}
@@ -180,7 +182,7 @@ export function CoreFieldsSection(props: CoreFieldsSectionProps) {
             checked={props.isActive}
             onCheckedChange={(v) => props.onIsActiveChange(v === true)}
           />
-          <Label htmlFor="is-active">Active</Label>
+          <Label htmlFor="is-active">{t('admin.sectionTypes.form.active')}</Label>
         </div>
         <div className="flex items-center gap-2">
           <Checkbox
@@ -188,7 +190,7 @@ export function CoreFieldsSection(props: CoreFieldsSectionProps) {
             checked={props.isRepeatable}
             onCheckedChange={(v) => props.onIsRepeatableChange(v === true)}
           />
-          <Label htmlFor="is-repeatable">Repeatable</Label>
+          <Label htmlFor="is-repeatable">{t('admin.sectionTypes.form.repeatable')}</Label>
         </div>
       </div>
     </div>
@@ -207,11 +209,12 @@ interface TranslationsSectionProps {
 }
 
 export function TranslationsSection(props: TranslationsSectionProps) {
+  const t = useT();
   const current = props.translations[props.activeLocale];
 
   return (
     <div className="space-y-4">
-      <Label>Translations</Label>
+      <Label>{t('admin.sectionTypes.form.translations')}</Label>
       <div className="flex gap-1">
         {LOCALES.map((locale) => (
           <button
@@ -232,9 +235,9 @@ export function TranslationsSection(props: TranslationsSectionProps) {
       <div className="space-y-3">
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label>Title</Label>
+            <Label>{t('admin.sectionTypes.form.title')}</Label>
             <Input
-              placeholder="Section title"
+              placeholder={t('admin.sectionTypes.form.title')}
               value={current.title}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 props.onFieldChange('title', e.target.value)
@@ -242,9 +245,9 @@ export function TranslationsSection(props: TranslationsSectionProps) {
             />
           </div>
           <div className="space-y-2">
-            <Label>Label</Label>
+            <Label>{t('admin.sectionTypes.form.label')}</Label>
             <Input
-              placeholder="Short label"
+              placeholder={t('admin.sectionTypes.form.label')}
               value={current.label}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 props.onFieldChange('label', e.target.value)
@@ -253,9 +256,9 @@ export function TranslationsSection(props: TranslationsSectionProps) {
           </div>
         </div>
         <div className="space-y-2">
-          <Label>Description</Label>
+          <Label>{t('admin.sectionTypes.form.description')}</Label>
           <Input
-            placeholder="Section description"
+            placeholder={t('admin.sectionTypes.form.description')}
             value={current.description}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               props.onFieldChange('description', e.target.value)
@@ -264,9 +267,9 @@ export function TranslationsSection(props: TranslationsSectionProps) {
         </div>
         <div className="grid grid-cols-3 gap-4">
           <div className="space-y-2">
-            <Label>No Data Label</Label>
+            <Label>{t('admin.sectionTypes.form.noDataLabel')}</Label>
             <Input
-              placeholder="No items yet"
+              placeholder={t('admin.sectionTypes.form.noDataLabel')}
               value={current.noDataLabel}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 props.onFieldChange('noDataLabel', e.target.value)
@@ -274,9 +277,9 @@ export function TranslationsSection(props: TranslationsSectionProps) {
             />
           </div>
           <div className="space-y-2">
-            <Label>Placeholder</Label>
+            <Label>{t('admin.sectionTypes.form.placeholder')}</Label>
             <Input
-              placeholder="Add your..."
+              placeholder={t('admin.sectionTypes.form.placeholder')}
               value={current.placeholder}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 props.onFieldChange('placeholder', e.target.value)
@@ -284,9 +287,9 @@ export function TranslationsSection(props: TranslationsSectionProps) {
             />
           </div>
           <div className="space-y-2">
-            <Label>Add Label</Label>
+            <Label>{t('admin.sectionTypes.form.addLabel')}</Label>
             <Input
-              placeholder="+ Add item"
+              placeholder={t('admin.sectionTypes.form.addLabel')}
               value={current.addLabel}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 props.onFieldChange('addLabel', e.target.value)

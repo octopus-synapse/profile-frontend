@@ -6,6 +6,7 @@
  * Displays 2FA status and provides enable/disable/regenerate actions.
  */
 
+import { useI18n } from '@profile/i18n';
 import { Copy, KeyRound, ShieldCheck, ShieldOff } from 'lucide-react';
 import { useState } from 'react';
 import {
@@ -34,6 +35,7 @@ import {
 import { showToast } from '@/shared/components/ui/toast';
 
 export function TwoFactorSettings() {
+  const { t } = useI18n();
   const { data: status, isLoading } = use2FAStatus();
   const [setupOpen, setSetupOpen] = useState(false);
   const [disableOpen, setDisableOpen] = useState(false);
@@ -45,7 +47,7 @@ export function TwoFactorSettings() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <ShieldCheck className="h-5 w-5" />
-            Two-Factor Authentication
+            {t('settings.twoFactor.title')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -63,12 +65,12 @@ export function TwoFactorSettings() {
             <div>
               <CardTitle className="flex items-center gap-2">
                 <ShieldCheck className="h-5 w-5" />
-                Two-Factor Authentication
+                {t('settings.twoFactor.title')}
               </CardTitle>
-              <CardDescription>Add an extra layer of security to your account.</CardDescription>
+              <CardDescription>{t('settings.twoFactor.description')}</CardDescription>
             </div>
             <Badge variant={status?.enabled ? 'default' : 'secondary'}>
-              {status?.enabled ? 'Enabled' : 'Disabled'}
+              {status?.enabled ? t('settings.twoFactor.enabled') : t('settings.twoFactor.disabled')}
             </Badge>
           </div>
         </CardHeader>
@@ -82,7 +84,7 @@ export function TwoFactorSettings() {
           ) : (
             <Button onClick={() => setSetupOpen(true)} className="gap-2 self-start">
               <ShieldCheck className="h-4 w-4" />
-              Enable 2FA
+              {t('settings.twoFactor.enable')}
             </Button>
           )}
         </CardContent>
@@ -106,19 +108,21 @@ function EnabledView({
   onDisable: () => void;
   onRegenerate: () => void;
 }) {
+  const { t } = useI18n();
+
   return (
     <>
       <p className="text-pf-fg-muted text-sm">
-        Backup codes remaining: <strong>{backupCodesRemaining}</strong>
+        {t('settings.twoFactor.backupCodesRemaining')} <strong>{backupCodesRemaining}</strong>
       </p>
       <div className="flex gap-2">
         <Button variant="outline" onClick={onRegenerate} className="gap-2">
           <KeyRound className="h-4 w-4" />
-          Regenerate Backup Codes
+          {t('settings.twoFactor.regenerateBackup')}
         </Button>
         <Button variant="outline" onClick={onDisable} className="gap-2 text-red-600">
           <ShieldOff className="h-4 w-4" />
-          Disable 2FA
+          {t('settings.twoFactor.disable')}
         </Button>
       </div>
     </>
@@ -132,15 +136,16 @@ function DisableConfirmDialog({
   open: boolean;
   onOpenChange: (v: boolean) => void;
 }) {
+  const { t } = useI18n();
   const disable = useDisable2FA();
 
   async function handleDisable() {
     try {
       await disable.mutateAsync();
-      showToast.success('Two-factor authentication disabled');
+      showToast.success(t('settings.twoFactor.disableSuccess'));
       onOpenChange(false);
     } catch {
-      showToast.error('Failed to disable 2FA');
+      showToast.error(t('settings.twoFactor.disableError'));
     }
   }
 
@@ -148,18 +153,17 @@ function DisableConfirmDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Disable Two-Factor Authentication?</DialogTitle>
+          <DialogTitle>{t('settings.twoFactor.disableDialogTitle')}</DialogTitle>
           <DialogDescription>
-            This will remove the extra security layer from your account. You can re-enable it at any
-            time.
+            {t('settings.twoFactor.disableDialogDesc')}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            {t('action.cancel')}
           </Button>
           <Button variant="destructive" onClick={handleDisable} disabled={disable.isPending}>
-            {disable.isPending ? 'Disabling…' : 'Disable 2FA'}
+            {disable.isPending ? t('settings.twoFactor.disabling') : t('settings.twoFactor.disable')}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -174,14 +178,15 @@ function RegenerateCodesDialog({
   open: boolean;
   onOpenChange: (v: boolean) => void;
 }) {
+  const { t } = useI18n();
   const regen = useRegenerateBackupCodes();
 
   async function handleRegenerate() {
     try {
       await regen.mutateAsync();
-      showToast.success('New backup codes generated');
+      showToast.success(t('settings.twoFactor.regenSuccess'));
     } catch {
-      showToast.error('Failed to regenerate backup codes');
+      showToast.error(t('settings.twoFactor.regenError'));
     }
   }
 
@@ -190,9 +195,9 @@ function RegenerateCodesDialog({
     const { copyToClipboard } = await import('@/shared/lib/clipboard');
     const success = await copyToClipboard(regen.data.backupCodes.join('\n'));
     if (success) {
-      showToast.success('Backup codes copied to clipboard');
+      showToast.success(t('settings.twoFactor.copySuccess'));
     } else {
-      showToast.error('Failed to copy backup codes');
+      showToast.error(t('settings.twoFactor.copyError'));
     }
   }
 
@@ -200,11 +205,11 @@ function RegenerateCodesDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Regenerate Backup Codes</DialogTitle>
+          <DialogTitle>{t('settings.twoFactor.regenDialogTitle')}</DialogTitle>
           <DialogDescription>
             {regen.data
-              ? 'Save these new backup codes. Previous codes are now invalid.'
-              : 'This will invalidate all existing backup codes.'}
+              ? t('settings.twoFactor.regenDialogDescAfter')
+              : t('settings.twoFactor.regenDialogDescBefore')}
           </DialogDescription>
         </DialogHeader>
         {regen.data ? (
@@ -218,20 +223,20 @@ function RegenerateCodesDialog({
             </div>
             <Button variant="outline" onClick={copyBackupCodes} className="gap-2">
               <Copy className="h-4 w-4" />
-              Copy all codes
+              {t('settings.twoFactor.copyAllCodes')}
             </Button>
           </div>
         ) : null}
         <DialogFooter>
           {regen.data ? (
-            <Button onClick={() => onOpenChange(false)}>Done</Button>
+            <Button onClick={() => onOpenChange(false)}>{t('settings.twoFactor.done')}</Button>
           ) : (
             <>
               <Button variant="outline" onClick={() => onOpenChange(false)}>
-                Cancel
+                {t('action.cancel')}
               </Button>
               <Button onClick={handleRegenerate} disabled={regen.isPending}>
-                {regen.isPending ? 'Generating…' : 'Regenerate'}
+                {regen.isPending ? t('settings.twoFactor.generating') : t('settings.twoFactor.regenerate')}
               </Button>
             </>
           )}

@@ -7,6 +7,7 @@
  * Sub-components extracted to section-types-table-parts.tsx.
  */
 
+import { useT } from '@profile/i18n';
 import { Layers, Plus, Search } from 'lucide-react';
 import { useState } from 'react';
 import { Button, Card, Input } from '@/shared/components/ui';
@@ -33,6 +34,7 @@ import type { SectionTypeData, SectionTypeListParams } from './types/section-typ
 const PAGE_SIZE = 10;
 
 export function SectionTypesTable() {
+  const t = useT();
   const [search, setSearch] = useState('');
   const [semanticKindFilter, setSemanticKindFilter] = useState<string>('all');
   const [activeFilter, setActiveFilter] = useState<string>('all');
@@ -72,10 +74,10 @@ export function SectionTypesTable() {
 
     try {
       await deleteMutation.mutateAsync(deleteTarget.key);
-      showToast.success('Section type deleted');
+      showToast.success(t('admin.sectionTypes.deleted'));
       setDeleteTarget(null);
     } catch {
-      showToast.error('Failed to delete section type');
+      showToast.error(t('admin.sectionTypes.deleteFailed'));
     }
   };
 
@@ -87,7 +89,7 @@ export function SectionTypesTable() {
           <div className="relative max-w-sm flex-1">
             <Search className="text-pf-fg-muted absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
             <Input
-              placeholder="Search section types..."
+              placeholder={t('admin.sectionTypes.search')}
               value={search}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 setSearch(e.target.value);
@@ -107,7 +109,7 @@ export function SectionTypesTable() {
               <SelectValue placeholder="Semantic kind" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Kinds</SelectItem>
+              <SelectItem value="all">{t('admin.sectionTypes.allKinds')}</SelectItem>
               {(semanticKinds ?? []).map((kind: string) => (
                 <SelectItem key={kind} value={kind}>
                   {kind}
@@ -126,15 +128,15 @@ export function SectionTypesTable() {
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="inactive">Inactive</SelectItem>
+              <SelectItem value="all">{t('admin.sectionTypes.statusAll')}</SelectItem>
+              <SelectItem value="active">{t('admin.sectionTypes.active')}</SelectItem>
+              <SelectItem value="inactive">{t('admin.sectionTypes.inactive')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <Button size="sm" onClick={handleCreate}>
           <Plus className="mr-2 h-4 w-4" />
-          New Section Type
+          {t('admin.sectionTypes.new')}
         </Button>
       </div>
 
@@ -151,11 +153,11 @@ export function SectionTypesTable() {
                   <td colSpan={6} className="px-4 py-12">
                     <EmptyState
                       icon={Layers}
-                      title="No section types found"
+                      title={t('admin.sectionTypes.notFound')}
                       description={
                         search
-                          ? 'Try adjusting your search or filters'
-                          : 'Section types will appear here once created'
+                          ? t('admin.sectionTypes.adjustSearch')
+                          : t('admin.sectionTypes.willAppear')
                       }
                     />
                   </td>

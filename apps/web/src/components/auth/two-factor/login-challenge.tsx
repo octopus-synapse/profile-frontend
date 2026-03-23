@@ -7,6 +7,7 @@
  * Supports TOTP code and backup code entry.
  */
 
+import { useT } from '@profile/i18n';
 import { KeyRound, ShieldAlert } from 'lucide-react';
 import { useState } from 'react';
 import { Button, Input } from '@/shared/components/ui';
@@ -19,6 +20,7 @@ interface LoginChallengeProps {
 }
 
 export function TwoFactorLoginChallenge({ userId, onVerified }: LoginChallengeProps) {
+  const t = useT();
   const [mode, setMode] = useState<'totp' | 'backup'>('totp');
   const [totpCode, setTotpCode] = useState('');
   const [backupCode, setBackupCode] = useState('');
@@ -36,10 +38,10 @@ export function TwoFactorLoginChallenge({ userId, onVerified }: LoginChallengePr
       onVerified();
     } catch {
       showToast.error(
-        'Verification failed',
+        t('auth.2fa.verificationFailed'),
         mode === 'totp'
-          ? 'Invalid authenticator code. Please try again.'
-          : 'Invalid backup code. Please try again.',
+          ? t('auth.2fa.invalidTotp')
+          : t('auth.2fa.invalidBackup'),
       );
     }
   }
@@ -57,11 +59,11 @@ export function TwoFactorLoginChallenge({ userId, onVerified }: LoginChallengePr
         <div className="bg-pf-canvas-subtle flex h-14 w-14 items-center justify-center rounded-full">
           <ShieldAlert className="text-pf-fg-muted h-7 w-7" />
         </div>
-        <h2 className="text-pf-fg-default text-xl font-semibold">Two-Factor Authentication</h2>
+        <h2 className="text-pf-fg-default text-xl font-semibold">{t('auth.2fa.title')}</h2>
         <p className="text-pf-fg-muted text-center text-sm">
           {mode === 'totp'
-            ? 'Enter the 6-digit code from your authenticator app.'
-            : 'Enter one of your backup codes.'}
+            ? t('auth.2fa.totpPrompt')
+            : t('auth.2fa.backupPrompt')}
         </p>
       </div>
 
@@ -83,7 +85,7 @@ export function TwoFactorLoginChallenge({ userId, onVerified }: LoginChallengePr
         ) : (
           <Input
             type="text"
-            placeholder="Backup code"
+            placeholder={t('auth.2fa.backupPlaceholder')}
             value={backupCode}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setBackupCode(e.target.value.trim())
@@ -96,7 +98,7 @@ export function TwoFactorLoginChallenge({ userId, onVerified }: LoginChallengePr
 
         <Button type="submit" disabled={!isValid || verify.isPending} className="w-full gap-2">
           <KeyRound className="h-4 w-4" />
-          {verify.isPending ? 'Verifying…' : 'Verify'}
+          {verify.isPending ? t('auth.2fa.verifying') : t('auth.2fa.verify')}
         </Button>
       </form>
 
@@ -105,7 +107,7 @@ export function TwoFactorLoginChallenge({ userId, onVerified }: LoginChallengePr
         onClick={toggleMode}
         className="text-pf-fg-muted hover:text-pf-fg-default text-sm underline-offset-4 hover:underline"
       >
-        {mode === 'totp' ? 'Use a backup code instead' : 'Use authenticator app instead'}
+        {mode === 'totp' ? t('auth.2fa.useBackup') : t('auth.2fa.useAuthenticator')}
       </button>
     </div>
   );

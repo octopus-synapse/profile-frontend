@@ -20,6 +20,7 @@ import {
 import { useEffect, useState } from 'react';
 import { HelpTooltip } from '@/shared/components/ui';
 import { showToast } from '@/shared/components/ui/toast';
+import { useI18n } from '@profile/i18n';
 import { useProfile, useUpdateProfile } from './hooks';
 import type { UpdateProfilePayload } from './types';
 import { UsernameField } from './username-field';
@@ -27,6 +28,7 @@ import { UsernameField } from './username-field';
 export function ProfileSection() {
   const { data: profile, isLoading, isError, error } = useProfile();
   const updateProfile = useUpdateProfile();
+  const { t } = useI18n();
 
   const [formData, setFormData] = useState<UpdateProfilePayload>({
     displayName: '',
@@ -66,7 +68,7 @@ export function ProfileSection() {
       await updateProfile.mutateAsync(formData);
       setIsDirty(false);
     } catch (error) {
-      showToast.error('Failed to update profile');
+      showToast.error(t('settings.profile.failedUpdate'));
     }
   };
 
@@ -82,11 +84,11 @@ export function ProfileSection() {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
         <AlertCircle className="h-8 w-8 text-red-500 mb-4" />
-        <h3 className="text-lg font-medium text-white mb-2">Failed to load profile</h3>
+        <h3 className="text-lg font-medium text-white mb-2">{t('settings.profile.failedLoad')}</h3>
         <p className="text-sm text-zinc-400 max-w-md">
           {error instanceof Error
             ? error.message
-            : 'An unexpected error occurred. Please try again.'}
+            : t('settings.profile.unexpectedError')}
         </p>
       </div>
     );
@@ -96,9 +98,9 @@ export function ProfileSection() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-white">Public profile</h2>
+          <h2 className="text-lg font-semibold text-white">{t('settings.profile.title')}</h2>
           <p className="mt-1 text-sm text-zinc-400">
-            Keep account-level identity here. Resume identity lives in the Resume section.
+            {t('settings.profile.description')}
           </p>
         </div>
         {isDirty && (
@@ -113,7 +115,7 @@ export function ProfileSection() {
             ) : (
               <Save className="h-4 w-4" strokeWidth={1.5} />
             )}
-            Save Changes
+            {t('settings.profile.saveChanges')}
           </button>
         )}
       </div>
@@ -127,20 +129,20 @@ export function ProfileSection() {
         <div>
           <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
             <User className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
-            Display Name
+            {t('settings.profile.displayName')}
           </label>
           <input
             type="text"
             value={formData.displayName}
             onChange={(e) => handleChange('displayName', e.target.value)}
-            placeholder="How you want to be known"
+            placeholder={t('settings.profile.displayNamePlaceholder')}
             className="w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
           />
         </div>
 
         <div>
           <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
-            Bio
+            {t('settings.profile.bio')}
             <span className="ml-auto text-xs font-normal text-zinc-500">
               {formData.bio?.length ?? 0}/300
             </span>
@@ -150,7 +152,7 @@ export function ProfileSection() {
             onChange={(e) => {
               if (e.target.value.length <= 300) handleChange('bio', e.target.value);
             }}
-            placeholder="A short summary about yourself"
+            placeholder={t('settings.profile.bioPlaceholder')}
             rows={3}
             className="w-full resize-none rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
           />
@@ -160,13 +162,13 @@ export function ProfileSection() {
           <div>
             <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
               <MapPin className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
-              Location
+              {t('settings.profile.location')}
             </label>
             <input
               type="text"
               value={formData.location}
               onChange={(e) => handleChange('location', e.target.value)}
-              placeholder="City, Country"
+              placeholder={t('settings.profile.locationPlaceholder')}
               className="w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
             />
           </div>
@@ -174,7 +176,7 @@ export function ProfileSection() {
           <div>
             <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
               <Phone className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
-              Phone
+              {t('settings.profile.phone')}
             </label>
             <input
               type="tel"
@@ -192,7 +194,7 @@ export function ProfileSection() {
         <div>
           <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
             <Globe className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
-            Website
+            {t('settings.profile.website')}
           </label>
           <input
             type="url"
@@ -207,8 +209,8 @@ export function ProfileSection() {
           <div>
             <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
               <Linkedin className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
-              LinkedIn
-              <HelpTooltip content="Link to your LinkedIn profile. Visible as a social link on your public profile." />
+              {t('settings.profile.linkedin')}
+              <HelpTooltip content={t('settings.profile.linkedinTooltip')} />
             </label>
             <input
               type="url"
@@ -222,8 +224,8 @@ export function ProfileSection() {
           <div>
             <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
               <Github className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
-              GitHub
-              <HelpTooltip content="Link to your GitHub profile. Great for showcasing your open source contributions." />
+              {t('settings.profile.github')}
+              <HelpTooltip content={t('settings.profile.githubTooltip')} />
             </label>
             <input
               type="url"
@@ -240,14 +242,14 @@ export function ProfileSection() {
       {updateProfile.isSuccess && !isDirty && (
         <div className="flex items-center gap-2 text-sm text-emerald-500">
           <Check className="h-4 w-4" />
-          Changes saved successfully
+          {t('settings.profile.savedSuccess')}
         </div>
       )}
 
       {updateProfile.isError && (
         <div className="flex items-center gap-2 text-sm text-red-500">
           <AlertCircle className="h-4 w-4" />
-          Failed to save changes
+          {t('settings.profile.failedSave')}
         </div>
       )}
     </div>

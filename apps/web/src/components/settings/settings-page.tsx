@@ -138,7 +138,7 @@ export function SettingsPage() {
             {activeSectionTypes.length > 0 && (
               <div className="space-y-1">
                 <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
-                  Sections
+                  {t('settings.nav.sections')}
                 </p>
                 {isLoadingNavigation ? (
                   <div className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-500">
@@ -165,7 +165,7 @@ export function SettingsPage() {
             {/* Account */}
             <div className="space-y-1">
               <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
-                Account
+                {t('settings.nav.account')}
               </p>
               {STATIC_TABS.filter((tab) => tab.id !== 'resume').map(
                 ({ id, labelKey, icon: Icon }) => (

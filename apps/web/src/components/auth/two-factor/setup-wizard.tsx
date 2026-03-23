@@ -6,6 +6,7 @@
  * Multi-step flow: QR code → TOTP verification → backup codes display.
  */
 
+import { useT } from '@profile/i18n';
 import { Copy, KeyRound, QrCode, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -30,6 +31,7 @@ interface SetupWizardProps {
 }
 
 export function TwoFactorSetupWizard({ open, onOpenChange }: SetupWizardProps) {
+  const t = useT();
   const [step, setStep] = useState<Step>('qr');
   const [totpCode, setTotpCode] = useState('');
   const [backupCodes, setBackupCodes] = useState<string[]>([]);
@@ -57,18 +59,18 @@ export function TwoFactorSetupWizard({ open, onOpenChange }: SetupWizardProps) {
       const result = await verify.mutateAsync({ token: totpCode });
       setBackupCodes(result.backupCodes);
       setStep('backup');
-      showToast.success('Two-factor authentication enabled');
+      showToast.success(t('auth.2fa.enabled'));
     } catch {
-      showToast.error('Invalid code', 'Please check your authenticator app and try again.');
+      showToast.error(t('auth.2fa.invalidCode'), t('auth.2fa.checkApp'));
     }
   }
 
   async function copyBackupCodes() {
     const success = await copyToClipboard(backupCodes.join('\n'));
     if (success) {
-      showToast.success('Backup codes copied to clipboard');
+      showToast.success(t('auth.2fa.backupCopied'));
     } else {
-      showToast.error('Failed to copy backup codes');
+      showToast.error(t('auth.2fa.backupCopyFailed'));
     }
   }
 
@@ -78,14 +80,14 @@ export function TwoFactorSetupWizard({ open, onOpenChange }: SetupWizardProps) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <ShieldCheck className="h-5 w-5" />
-            {step === 'qr' && 'Scan QR Code'}
-            {step === 'verify' && 'Verify Code'}
-            {step === 'backup' && 'Backup Codes'}
+            {step === 'qr' && t('auth.2fa.scanQr')}
+            {step === 'verify' && t('auth.2fa.verifyCode')}
+            {step === 'backup' && t('auth.2fa.backupCodes')}
           </DialogTitle>
           <DialogDescription>
-            {step === 'qr' && 'Scan this QR code with your authenticator app.'}
-            {step === 'verify' && 'Enter the 6-digit code from your authenticator app.'}
-            {step === 'backup' && 'Save these backup codes in a safe place.'}
+            {step === 'qr' && t('auth.2fa.scanDescription')}
+            {step === 'verify' && t('auth.2fa.verifyDescription')}
+            {step === 'backup' && t('auth.2fa.backupDescription')}
           </DialogDescription>
         </DialogHeader>
 
@@ -100,15 +102,15 @@ export function TwoFactorSetupWizard({ open, onOpenChange }: SetupWizardProps) {
         <DialogFooter>
           {step === 'qr' && (
             <Button onClick={() => setStep('verify')} disabled={!setup.data}>
-              Next
+              {t('action.next')}
             </Button>
           )}
           {step === 'verify' && (
             <Button onClick={handleVerify} disabled={totpCode.length !== 6 || verify.isPending}>
-              {verify.isPending ? 'Verifying…' : 'Verify & Enable'}
+              {verify.isPending ? t('auth.2fa.verifying') : t('auth.2fa.verifyAndEnable')}
             </Button>
           )}
-          {step === 'backup' && <Button onClick={() => handleOpen(false)}>Done</Button>}
+          {step === 'backup' && <Button onClick={() => handleOpen(false)}>{t('auth.2fa.done')}</Button>}
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -118,12 +120,13 @@ export function TwoFactorSetupWizard({ open, onOpenChange }: SetupWizardProps) {
 // ── Sub-components ─────────────────────────────────────
 
 function QrStep({ qrCode, manualKey }: { qrCode?: string; manualKey?: string }) {
+  const t = useT();
   return (
     <div className="flex flex-col items-center gap-4 py-4">
       {qrCode ? (
         <Image
           src={qrCode}
-          alt="2FA QR Code"
+          alt={t('auth.2fa.qrAlt')}
           width={192}
           height={192}
           className="h-48 w-48 rounded-lg"
@@ -136,7 +139,7 @@ function QrStep({ qrCode, manualKey }: { qrCode?: string; manualKey?: string }) 
       )}
       {manualKey && (
         <div className="text-center">
-          <p className="text-pf-fg-muted mb-1 text-xs">Manual entry key</p>
+          <p className="text-pf-fg-muted mb-1 text-xs">{t('auth.2fa.manualKey')}</p>
           <code className="bg-pf-canvas-subtle rounded px-2 py-1 text-sm font-mono">
             {manualKey}
           </code>
@@ -176,6 +179,7 @@ function VerifyStep({
 }
 
 function BackupStep({ codes, onCopy }: { codes: string[]; onCopy: () => void }) {
+  const t = useT();
   return (
     <div className="flex flex-col gap-4 py-4">
       <div className="bg-pf-canvas-subtle grid grid-cols-2 gap-2 rounded-lg p-4">
@@ -187,10 +191,10 @@ function BackupStep({ codes, onCopy }: { codes: string[]; onCopy: () => void }) 
       </div>
       <Button variant="outline" onClick={onCopy} className="gap-2">
         <Copy className="h-4 w-4" />
-        Copy all codes
+        {t('auth.2fa.copyAll')}
       </Button>
       <p className="text-pf-fg-muted text-xs text-center">
-        Each backup code can only be used once. Store them securely.
+        {t('auth.2fa.backupWarning')}
       </p>
     </div>
   );

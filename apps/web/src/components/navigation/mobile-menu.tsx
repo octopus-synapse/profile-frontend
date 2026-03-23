@@ -102,7 +102,7 @@ export function MobileMenu({ menu, navItems, onOpenCommandPalette }: MobileMenuP
               className="flex w-full items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3 transition-all hover:border-white/20 hover:bg-white/10"
             >
               <Search className="h-5 w-5 text-zinc-500" strokeWidth={1.5} />
-              <span className="text-sm text-zinc-500">Search anything...</span>
+              <span className="text-sm text-zinc-500">{t('nav.search.placeholder')}</span>
             </button>
           </div>
         )}

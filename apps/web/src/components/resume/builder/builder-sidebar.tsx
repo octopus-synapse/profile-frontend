@@ -6,6 +6,7 @@
 'use client';
 
 import {
+  ArrowUpDown,
   BarChart3,
   ChevronRight,
   Eye,
@@ -17,9 +18,11 @@ import {
   Settings,
   Share2,
   Shield,
+  Tag,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useI18n } from '@profile/i18n';
 import { cn } from '@/shared/utils';
 import type { Theme } from '../services/theme.types';
 import { ThemeEditor, ThemePicker } from '../theme';
@@ -47,6 +50,8 @@ interface BuilderSidebarProps {
   onShareOpen: () => void;
   onAnalyticsOpen: () => void;
   onAtsOpen: () => void;
+  onSkillsOpen: () => void;
+  onReorderOpen: () => void;
 }
 
 export function BuilderSidebar({
@@ -59,7 +64,10 @@ export function BuilderSidebar({
   onShareOpen,
   onAnalyticsOpen,
   onAtsOpen,
+  onSkillsOpen,
+  onReorderOpen,
 }: BuilderSidebarProps) {
+  const { t } = useI18n();
   const [viewMode, setViewMode] = useState<ViewMode>('preview');
   const [editingTheme, setEditingTheme] = useState<Theme | null>(null);
 
@@ -90,10 +98,10 @@ export function BuilderSidebar({
     allSections.find((s) => s.sectionTypeKey === key)?.items?.length ?? 0;
 
   const stats = [
-    { label: 'Experience', value: getSectionCount('work_experience_v1') },
-    { label: 'Education', value: getSectionCount('education_v1') },
-    { label: 'Skills', value: getSectionCount('skill_set_v1') },
-    { label: 'Languages', value: getSectionCount('language_v1') },
+    { label: t('resume.sidebar.stats.experience'), value: getSectionCount('work_experience_v1') },
+    { label: t('resume.sidebar.stats.education'), value: getSectionCount('education_v1') },
+    { label: t('resume.sidebar.stats.skills'), value: getSectionCount('skill_set_v1') },
+    { label: t('resume.sidebar.stats.languages'), value: getSectionCount('language_v1') },
   ];
 
   return (
@@ -104,13 +112,13 @@ export function BuilderSidebar({
           active={viewMode === 'preview'}
           onClick={() => setViewMode('preview')}
           icon={<Eye className="h-4 w-4" strokeWidth={1.5} />}
-          label="Overview"
+          label={t('resume.sidebar.tabs.overview')}
         />
         <TabButton
           active={viewMode === 'themes' || viewMode === 'editor'}
           onClick={() => setViewMode('themes')}
           icon={<Palette className="h-4 w-4" strokeWidth={1.5} />}
-          label="Themes"
+          label={t('resume.sidebar.tabs.themes')}
         />
       </div>
 
@@ -119,7 +127,7 @@ export function BuilderSidebar({
         {viewMode === 'preview' && (
           <div className="p-4">
             {/* Current Theme */}
-            <Section title="Active Theme">
+            <Section title={t('resume.sidebar.activeTheme')}>
               <button
                 type="button"
                 onClick={() => setViewMode('themes')}
@@ -130,7 +138,7 @@ export function BuilderSidebar({
                     <Layers className="text-pf-fg-muted h-4 w-4" strokeWidth={1.5} />
                   </div>
                   <span className="text-pf-fg-default text-sm font-medium">
-                    {activeThemeName ?? 'Modern'}
+                    {activeThemeName ?? t('resume.sidebar.defaultTheme')}
                   </span>
                 </div>
                 <ChevronRight
@@ -141,7 +149,7 @@ export function BuilderSidebar({
             </Section>
 
             {/* Stats */}
-            <Section title="Resume Stats">
+            <Section title={t('resume.sidebar.stats.title')}>
               <div className="grid grid-cols-2 gap-2">
                 {stats.map((stat) => (
                   <div key={stat.label} className="bg-pf-canvas-subtle rounded-lg p-3">
@@ -153,14 +161,14 @@ export function BuilderSidebar({
             </Section>
 
             {/* Quick Actions */}
-            <Section title="Quick Actions">
+            <Section title={t('resume.sidebar.quickActions')}>
               <div className="space-y-2">
                 <Link
                   href="/protected/settings"
                   className="border-pf-border-default text-pf-fg-muted hover:bg-pf-canvas-subtle hover:text-pf-fg-default flex w-full items-center gap-3 rounded-lg border p-3 text-sm font-medium transition-colors"
                 >
                   <Settings className="text-pf-fg-subtle h-4 w-4" strokeWidth={1.5} />
-                  Edit Content
+                  {t('resume.sidebar.editContent')}
                 </Link>
                 <button
                   type="button"
@@ -168,23 +176,23 @@ export function BuilderSidebar({
                   className="border-pf-border-default text-pf-fg-muted hover:bg-pf-canvas-subtle hover:text-pf-fg-default flex w-full items-center gap-3 rounded-lg border p-3 text-sm font-medium transition-colors"
                 >
                   <RotateCcw className="text-pf-fg-subtle h-4 w-4" strokeWidth={1.5} />
-                  Refresh Preview
+                  {t('resume.sidebar.refreshPreview')}
                 </button>
               </div>
             </Section>
 
             {/* Tools */}
-            <Section title="Tools">
+            <Section title={t('resume.sidebar.tools')}>
               <div className="space-y-2">
-                {(
-                  [
-                    { icon: FileUp, label: 'Import Resume', onClick: onImportOpen },
-                    { icon: History, label: 'Version History', onClick: onHistoryOpen },
-                    { icon: Share2, label: 'Share Links', onClick: onShareOpen },
-                    { icon: BarChart3, label: 'Analytics', onClick: onAnalyticsOpen },
-                    { icon: Shield, label: 'ATS Check', onClick: onAtsOpen },
-                  ] as const
-                ).map(({ icon: Icon, label, onClick }) => (
+                {[
+                    { icon: FileUp, label: t('resume.sidebar.tool.import'), onClick: onImportOpen },
+                    { icon: History, label: t('resume.sidebar.tool.versionHistory'), onClick: onHistoryOpen },
+                    { icon: Share2, label: t('resume.sidebar.tool.shareLinks'), onClick: onShareOpen },
+                    { icon: BarChart3, label: t('resume.sidebar.tool.analytics'), onClick: onAnalyticsOpen },
+                    { icon: Shield, label: t('resume.sidebar.tool.atsCheck'), onClick: onAtsOpen },
+                    { icon: Tag, label: t('resume.sidebar.tool.skills'), onClick: onSkillsOpen },
+                    { icon: ArrowUpDown, label: t('resume.sidebar.tool.reorderSections'), onClick: onReorderOpen },
+                  ].map(({ icon: Icon, label, onClick }) => (
                   <button
                     key={label}
                     type="button"

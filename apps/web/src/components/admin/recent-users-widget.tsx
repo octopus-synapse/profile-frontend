@@ -5,6 +5,7 @@
  * Clean, professional design
  */
 
+import { useT } from '@profile/i18n';
 import { ChevronRight, Users } from 'lucide-react';
 import Link from 'next/link';
 import { Avatar, Card, CardContent, CardHeader, CardTitle, Skeleton } from '@/shared/components/ui';
@@ -18,13 +19,14 @@ interface RecentUsersWidgetProps {
 }
 
 export function RecentUsersWidget({ users, loading }: RecentUsersWidgetProps) {
+  const t = useT();
   if (loading) {
     return (
       <Card className="rounded-xl">
         <CardHeader>
           <div className="flex items-center gap-2">
             <Users className="text-pf-fg-muted h-4 w-4" strokeWidth={1.5} />
-            <span className="text-pf-fg-default text-sm font-semibold">Recent Users</span>
+            <span className="text-pf-fg-default text-sm font-semibold">{t('admin.recentUsers.title')}</span>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -47,13 +49,13 @@ export function RecentUsersWidget({ users, loading }: RecentUsersWidgetProps) {
       <CardHeader className="flex flex-row items-center justify-between">
         <div className="flex items-center gap-2">
           <Users className="text-pf-fg-muted h-4 w-4" strokeWidth={1.5} />
-          <CardTitle className="text-sm font-semibold">Recent Users</CardTitle>
+          <CardTitle className="text-sm font-semibold">{t('admin.recentUsers.title')}</CardTitle>
         </div>
         <Link
           href="/admin/users"
           className="text-pf-fg-muted hover:text-pf-fg-default flex items-center gap-1 text-xs font-medium transition-colors"
         >
-          View all
+          {t('admin.recentUsers.viewAll')}
           <ChevronRight className="h-3.5 w-3.5" strokeWidth={1.5} />
         </Link>
       </CardHeader>
@@ -61,8 +63,8 @@ export function RecentUsersWidget({ users, loading }: RecentUsersWidgetProps) {
         {!users || users.length === 0 ? (
           <EmptyState
             icon={Users}
-            title="No users yet"
-            description="Users will appear here once they sign up"
+            title={t('admin.recentUsers.noUsers')}
+            description={t('admin.recentUsers.noUsersDesc')}
             className="py-8"
           />
         ) : (
@@ -79,7 +81,7 @@ export function RecentUsersWidget({ users, loading }: RecentUsersWidgetProps) {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <p className="text-pf-fg-default truncate text-sm font-medium">
-                      {user.name ?? 'Unnamed User'}
+                      {user.name ?? t('admin.users.unnamedUser')}
                     </p>
                     {user.role === 'ADMIN' && (
                       <span className="bg-pf-accent-subtle text-pf-accent-fg rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase">

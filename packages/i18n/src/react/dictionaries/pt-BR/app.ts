@@ -74,6 +74,19 @@ export const app = {
   'app.skills.level.advanced': 'Avançado',
   'app.skills.level.expert': 'Especialista',
 
+  // Dashboard extended
+  'app.dashboard.editProfileFn': 'editar_perfil()',
+  'app.dashboard.editProfileFnDesc': 'Veja e edite seu perfil profissional',
+  'app.dashboard.manageResumeFn': 'gerenciar_curriculo()',
+  'app.dashboard.manageResumeFnDesc': 'Gerencie e exporte seu currículo',
+  'app.dashboard.configureFn': 'configurar()',
+  'app.dashboard.configureFnDesc': 'Configure suas preferências de conta',
+  'app.dashboard.execute': 'executar',
+  'app.dashboard.terminalHelp': 'Comandos disponíveis:',
+  'app.dashboard.helpEdit': 'Editar seu perfil',
+  'app.dashboard.helpExport': 'Exportar currículo para PDF',
+  'app.dashboard.helpPublish': 'Tornar perfil público',
+
   // Settings Page
   'app.settings.title': 'Configurações',
   'app.settings.description': 'Gerencie seu perfil e preferências',
@@ -85,4 +98,5 @@ export const app = {
   'app.settings.tabs.skills': 'Habilidades',
   'app.settings.tabs.languages': 'Idiomas',
   'app.settings.tabs.preferences': 'Preferências',
+  'app.settings.tabs.account': 'Conta & Segurança',
 } as const;

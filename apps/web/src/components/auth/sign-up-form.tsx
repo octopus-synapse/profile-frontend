@@ -21,9 +21,15 @@ import { ROUTES } from '@/config/routes';
 import { Button, Input } from '@/shared/components/ui';
 import { Label } from '@/shared/components/ui/label';
 
+type PasswordStrengthKey =
+  | 'auth.signUp.passwordStrength.weak'
+  | 'auth.signUp.passwordStrength.fair'
+  | 'auth.signUp.passwordStrength.good'
+  | 'auth.signUp.passwordStrength.strong';
+
 function getPasswordStrength(password: string): {
   score: number;
-  label: string;
+  labelKey: PasswordStrengthKey;
   color: string;
 } {
   let score = 0;
@@ -33,10 +39,10 @@ function getPasswordStrength(password: string): {
   if (/[0-9]/.test(password)) score++;
   if (/[^A-Za-z0-9]/.test(password)) score++;
 
-  if (score <= 1) return { score, label: 'Weak', color: 'bg-red-500' };
-  if (score <= 2) return { score, label: 'Fair', color: 'bg-amber-500' };
-  if (score <= 3) return { score, label: 'Good', color: 'bg-cyan-500' };
-  return { score, label: 'Strong', color: 'bg-emerald-500' };
+  if (score <= 1) return { score, labelKey: 'auth.signUp.passwordStrength.weak', color: 'bg-red-500' };
+  if (score <= 2) return { score, labelKey: 'auth.signUp.passwordStrength.fair', color: 'bg-amber-500' };
+  if (score <= 3) return { score, labelKey: 'auth.signUp.passwordStrength.good', color: 'bg-cyan-500' };
+  return { score, labelKey: 'auth.signUp.passwordStrength.strong', color: 'bg-emerald-500' };
 }
 
 export function SignUpForm() {
@@ -79,7 +85,8 @@ export function SignUpForm() {
       // Auto sign in after registration
       const loginResponse = await authLogin({ email, password });
 
-      if (loginResponse.status === 201) {
+      const loginStatus = loginResponse.status as number;
+      if (loginStatus === 200 || loginStatus === 201) {
         await queryClient.invalidateQueries({
           queryKey: getAuthSessionQueryKey(),
         });
@@ -226,7 +233,7 @@ export function SignUpForm() {
                       : 'text-emerald-400'
               }`}
             >
-              {getPasswordStrength(password).label}
+              {t(getPasswordStrength(password).labelKey)}
             </p>
           </div>
         )}

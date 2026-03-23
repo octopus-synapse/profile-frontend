@@ -4,35 +4,10 @@
  * Admin Users Table Component
  */
 
-import {
-  ChevronLeft,
-  ChevronRight,
-  Download,
-  MoreVertical,
-  Search,
-  Shield,
-  Trash2,
-  User,
-  Users,
-} from 'lucide-react';
+import { useT } from '@profile/i18n';
+import { ChevronLeft, ChevronRight, Download, Search } from 'lucide-react';
 import { useState } from 'react';
-import { Avatar, Badge, Button, Card, Input, Skeleton } from '@/shared/components/ui';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/shared/components/ui/dialog';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/shared/components/ui/dropdown-menu';
-import { EmptyState } from '@/shared/components/ui/empty-state';
+import { Button, Card, Input } from '@/shared/components/ui';
 import {
   Select,
   SelectContent,
@@ -41,17 +16,22 @@ import {
   SelectValue,
 } from '@/shared/components/ui/select';
 import { showToast } from '@/shared/components/ui/toast';
-import { formatDate, formatDistanceToNow } from '@/shared/utils/date';
 import {
   type UsersListUsersParams,
   useUsersDeleteUser,
   useUsersListUsers,
   useUsersUpdateUser,
 } from './hooks';
-
-type UserRole = 'ADMIN' | 'USER';
+import type { UserRole } from '../users/types';
+import {
+  DeleteUserDialog,
+  UsersTableEmptyRow,
+  UsersTableRow,
+  UsersTableSkeletonRows,
+} from './users-table-parts';
 
 export function UsersTable() {
+  const t = useT();
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const [page, setPage] = useState(1);
@@ -73,19 +53,19 @@ export function UsersTable() {
 
     try {
       await deleteUser.mutateAsync(deleteUserId);
-      showToast.success('User deleted successfully');
+      showToast.success(t('admin.users.deleteSuccess'));
       setDeleteUserId(null);
     } catch {
-      showToast.error('Failed to delete user');
+      showToast.error(t('admin.users.deleteFailed'));
     }
   };
 
   const handleRoleChange = async (userId: string, newRole: UserRole) => {
     try {
       await updateUser.mutateAsync({ id: userId, data: { role: newRole } });
-      showToast.success('User role updated');
+      showToast.success(t('admin.users.roleUpdated'));
     } catch {
-      showToast.error('Failed to update role');
+      showToast.error(t('admin.users.roleUpdateFailed'));
     }
   };
 
@@ -97,7 +77,7 @@ export function UsersTable() {
           <div className="relative max-w-sm flex-1">
             <Search className="text-pf-fg-muted absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
             <Input
-              placeholder="Search users..."
+              placeholder={t('admin.users.search')}
               value={search}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 setSearch(e.target.value);
@@ -117,15 +97,15 @@ export function UsersTable() {
               <SelectValue placeholder="Filter by role" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Roles</SelectItem>
-              <SelectItem value="USER">User</SelectItem>
-              <SelectItem value="ADMIN">Admin</SelectItem>
+              <SelectItem value="all">{t('admin.users.filterAllRoles')}</SelectItem>
+              <SelectItem value="USER">{t('admin.role.user')}</SelectItem>
+              <SelectItem value="ADMIN">{t('admin.role.admin')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <Button variant="outline" size="sm">
           <Download className="mr-2 h-4 w-4" />
-          Export
+          {t('action.export')}
         </Button>
       </div>
 
@@ -135,130 +115,33 @@ export function UsersTable() {
           <table className="w-full">
             <thead className="bg-pf-canvas-subtle border-pf-border-default border-b">
               <tr>
-                <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">User</th>
-                <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">Role</th>
+                <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">{t('admin.users.table.user')}</th>
+                <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">{t('admin.users.table.role')}</th>
                 <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">
-                  Resumes
+                  {t('admin.users.table.resumes')}
                 </th>
-                <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">Joined</th>
+                <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">{t('admin.users.table.joined')}</th>
                 <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">
-                  Last Login
+                  {t('admin.users.table.lastLogin')}
                 </th>
                 <th className="text-pf-fg-muted px-4 py-3 text-right text-sm font-medium">
-                  Actions
+                  {t('admin.users.table.actions')}
                 </th>
               </tr>
             </thead>
             <tbody className="divide-pf-border-muted divide-y">
               {isLoading ? (
-                Array.from({ length: 5 }).map((_, i) => (
-                  <tr key={i}>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <Skeleton className="h-10 w-10 rounded-full" />
-                        <div className="space-y-2">
-                          <Skeleton className="h-4 w-32" />
-                          <Skeleton className="h-3 w-40" />
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <Skeleton className="h-6 w-16" />
-                    </td>
-                    <td className="px-4 py-3">
-                      <Skeleton className="h-4 w-8" />
-                    </td>
-                    <td className="px-4 py-3">
-                      <Skeleton className="h-4 w-24" />
-                    </td>
-                    <td className="px-4 py-3">
-                      <Skeleton className="h-4 w-24" />
-                    </td>
-                    <td className="px-4 py-3">
-                      <Skeleton className="ml-auto h-8 w-8" />
-                    </td>
-                  </tr>
-                ))
+                <UsersTableSkeletonRows />
               ) : !data?.users || data.users.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-4 py-12">
-                    <EmptyState
-                      icon={Users}
-                      title="No users found"
-                      description={
-                        search
-                          ? 'Try adjusting your search or filters'
-                          : 'Users will appear here once they sign up'
-                      }
-                    />
-                  </td>
-                </tr>
+                <UsersTableEmptyRow search={search} />
               ) : (
                 data.users.map((user) => (
-                  <tr key={user.id} className="hover:bg-pf-canvas-subtle/50 transition-colors">
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <Avatar
-                          src={user.image}
-                          alt={user.name ?? 'User'}
-                          fallback={getInitials(user.name ?? user.email)}
-                          size="md"
-                        />
-                        <div>
-                          <p className="text-pf-fg-default text-sm font-medium">
-                            {user.name ?? 'No name'}
-                          </p>
-                          <p className="text-pf-fg-muted text-xs">{user.email}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <Badge variant={user.role === 'ADMIN' ? 'warning' : 'secondary'}>
-                        {user.role}
-                      </Badge>
-                    </td>
-                    <td className="text-pf-fg-muted px-4 py-3 text-sm">{user.resumeCount}</td>
-                    <td className="text-pf-fg-muted px-4 py-3 text-sm">
-                      {formatDate(new Date(user.createdAt))}
-                    </td>
-                    <td className="text-pf-fg-muted px-4 py-3 text-sm">
-                      {user.lastLoginAt ? formatDistanceToNow(new Date(user.lastLoginAt)) : 'Never'}
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm">
-                            <MoreVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            onClick={() =>
-                              void handleRoleChange(
-                                user.id,
-                                user.role === 'ADMIN' ? 'USER' : 'ADMIN',
-                              )
-                            }
-                          >
-                            <Shield className="mr-2 h-4 w-4" />
-                            {user.role === 'ADMIN' ? 'Remove Admin' : 'Make Admin'}
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <User className="mr-2 h-4 w-4" />
-                            View Profile
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            onClick={() => setDeleteUserId(user.id)}
-                            className="text-pf-danger-fg focus:text-pf-danger-fg"
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete User
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </td>
-                  </tr>
+                  <UsersTableRow
+                    key={user.id}
+                    user={user}
+                    onRoleChange={(id, role) => void handleRoleChange(id, role)}
+                    onDeleteRequest={setDeleteUserId}
+                  />
                 ))
               )}
             </tbody>
@@ -297,39 +180,12 @@ export function UsersTable() {
         )}
       </Card>
 
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={!!deleteUserId} onOpenChange={() => setDeleteUserId(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete User</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete this user? This action cannot be undone. All their
-              data will be permanently removed.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteUserId(null)}>
-              Cancel
-            </Button>
-            <Button
-              variant="danger"
-              onClick={() => void handleDeleteUser()}
-              loading={deleteUser.isPending}
-            >
-              Delete
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <DeleteUserDialog
+        open={!!deleteUserId}
+        isPending={deleteUser.isPending}
+        onClose={() => setDeleteUserId(null)}
+        onConfirm={() => void handleDeleteUser()}
+      />
     </div>
   );
-}
-
-function getInitials(name: string): string {
-  return name
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
 }

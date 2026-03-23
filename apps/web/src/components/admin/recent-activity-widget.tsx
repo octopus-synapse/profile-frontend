@@ -5,6 +5,8 @@
  * Clean, professional design
  */
 
+import { useT } from '@profile/i18n';
+import type { DictionaryKey } from '@profile/i18n';
 import { Activity, FileText, LogIn, User, UserPlus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, Skeleton } from '@/shared/components/ui';
 import { EmptyState } from '@/shared/components/ui/empty-state';
@@ -21,36 +23,37 @@ const activityConfig = {
     icon: UserPlus,
     color: 'text-pf-success-fg',
     bgColor: 'bg-pf-success-subtle',
-    label: 'signed up',
+    labelKey: 'admin.recentActivity.signedUp' as DictionaryKey,
   },
   USER_LOGIN: {
     icon: LogIn,
     color: 'text-pf-accent-fg',
     bgColor: 'bg-pf-accent-subtle',
-    label: 'logged in',
+    labelKey: 'admin.recentActivity.loggedIn' as DictionaryKey,
   },
   RESUME_CREATED: {
     icon: FileText,
     color: 'text-pf-done-fg',
     bgColor: 'bg-pf-done-subtle',
-    label: 'created a resume',
+    labelKey: 'admin.recentActivity.createdResume' as DictionaryKey,
   },
   PROFILE_UPDATED: {
     icon: User,
     color: 'text-pf-attention-fg',
     bgColor: 'bg-pf-attention-subtle',
-    label: 'updated profile',
+    labelKey: 'admin.recentActivity.updatedProfile' as DictionaryKey,
   },
 };
 
 export function RecentActivityWidget({ activities, loading }: RecentActivityWidgetProps) {
+  const t = useT();
   if (loading) {
     return (
       <Card className="rounded-xl">
         <CardHeader>
           <div className="flex items-center gap-2">
             <Activity className="text-pf-fg-muted h-4 w-4" strokeWidth={1.5} />
-            <span className="text-pf-fg-default text-sm font-semibold">Recent Activity</span>
+            <span className="text-pf-fg-default text-sm font-semibold">{t('admin.recentActivity.title')}</span>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -73,15 +76,15 @@ export function RecentActivityWidget({ activities, loading }: RecentActivityWidg
       <CardHeader>
         <div className="flex items-center gap-2">
           <Activity className="text-pf-fg-muted h-4 w-4" strokeWidth={1.5} />
-          <CardTitle className="text-sm font-semibold">Recent Activity</CardTitle>
+          <CardTitle className="text-sm font-semibold">{t('admin.recentActivity.title')}</CardTitle>
         </div>
       </CardHeader>
       <CardContent>
         {!activities || activities.length === 0 ? (
           <EmptyState
             icon={Activity}
-            title="No activity yet"
-            description="User activity will appear here"
+            title={t('admin.recentActivity.noActivity')}
+            description={t('admin.recentActivity.noActivityDesc')}
             className="py-8"
           />
         ) : (
@@ -103,7 +106,7 @@ export function RecentActivityWidget({ activities, loading }: RecentActivityWidg
                   <div className="min-w-0 flex-1">
                     <p className="text-pf-fg-default text-sm">
                       <span className="font-medium">{activity.userName}</span>{' '}
-                      <span className="text-pf-fg-muted">{config.label}</span>
+                      <span className="text-pf-fg-muted">{t(config.labelKey)}</span>
                     </p>
                     <p className="text-pf-fg-subtle mt-0.5 text-xs">
                       {formatDistanceToNow(new Date(activity.timestamp))}

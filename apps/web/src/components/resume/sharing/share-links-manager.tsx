@@ -1,6 +1,7 @@
 'use client';
 
 import { apiFetch } from '@profile/api-client';
+import { useI18n } from '@profile/i18n';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Check, Copy, ExternalLink, Lock, Share2, Trash2 } from 'lucide-react';
 import { useCallback } from 'react';
@@ -46,6 +47,7 @@ function useShareLinks(resumeId: string) {
 }
 
 function useDeleteShareLink(resumeId: string) {
+  const { t } = useI18n();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -56,10 +58,10 @@ function useDeleteShareLink(resumeId: string) {
       queryClient.invalidateQueries({
         queryKey: shareLinkKeys.byResume(resumeId),
       });
-      showToast.success('Share link deleted');
+      showToast.success(t('resume.share.deleted'));
     },
     onError: () => {
-      showToast.error('Failed to delete share link');
+      showToast.error(t('resume.share.failedDelete'));
     },
   });
 }
@@ -80,12 +82,14 @@ function ShareLinkSkeleton() {
 }
 
 function EmptyShareLinks() {
+  const { t } = useI18n();
+
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center">
       <Share2 className="mb-3 h-10 w-10 text-neutral-400" />
-      <p className="text-sm font-medium text-neutral-300">No share links</p>
+      <p className="text-sm font-medium text-neutral-300">{t('resume.share.noLinks')}</p>
       <p className="mt-1 text-xs text-neutral-500">
-        Create a share link to share your resume publicly
+        {t('resume.share.noLinksDesc')}
       </p>
     </div>
   );
@@ -98,6 +102,7 @@ interface ShareLinkItemProps {
 }
 
 function ShareLinkItem({ share, onDelete, isDeleting }: ShareLinkItemProps) {
+  const { t } = useI18n();
   const { copied, copy } = useCopyFeedback();
   const fullUrl = buildFullUrl(share.publicUrl);
 
@@ -106,11 +111,11 @@ function ShareLinkItem({ share, onDelete, isDeleting }: ShareLinkItemProps) {
   const handleCopy = useCallback(async () => {
     const success = await copy(fullUrl);
     if (success) {
-      showToast.success('Link copied');
+      showToast.success(t('resume.share.copied'));
     } else {
-      showToast.error('Failed to copy');
+      showToast.error(t('resume.share.failedCopy'));
     }
-  }, [fullUrl, copy]);
+  }, [fullUrl, copy, t]);
 
   return (
     <div className="flex items-center gap-3 rounded-lg border border-neutral-800 p-3">
@@ -121,12 +126,12 @@ function ShareLinkItem({ share, onDelete, isDeleting }: ShareLinkItemProps) {
         <div className="mt-1 flex flex-wrap items-center gap-2">
           {share.hasPassword && (
             <Badge variant="outline" className="gap-1 text-xs">
-              <Lock className="h-3 w-3" /> Password
+              <Lock className="h-3 w-3" /> {t('resume.share.password')}
             </Badge>
           )}
           {isExpired ? (
             <Badge variant="destructive" className="text-xs">
-              Expired
+              {t('resume.share.expired')}
             </Badge>
           ) : share.expiresAt ? (
             <span className="text-xs text-neutral-500">
@@ -140,7 +145,7 @@ function ShareLinkItem({ share, onDelete, isDeleting }: ShareLinkItemProps) {
       </div>
 
       <div className="flex shrink-0 items-center gap-1">
-        <Button type="button" variant="ghost" size="icon" onClick={handleCopy} title="Copy link">
+        <Button type="button" variant="ghost" size="icon" onClick={handleCopy} title={t('resume.share.copyLink')}>
           {copied ? <Check className="h-4 w-4 text-emerald-400" /> : <Copy className="h-4 w-4" />}
         </Button>
         <Button
@@ -149,7 +154,7 @@ function ShareLinkItem({ share, onDelete, isDeleting }: ShareLinkItemProps) {
           size="icon"
           onClick={() => onDelete(share.id)}
           disabled={isDeleting}
-          title="Delete share link"
+          title={t('resume.share.deleteLink')}
         >
           <Trash2 className="h-4 w-4 text-red-400" />
         </Button>
@@ -165,6 +170,7 @@ interface ShareLinksManagerProps {
 }
 
 export function ShareLinksManager({ resumeId }: ShareLinksManagerProps) {
+  const { t } = useI18n();
   const { data: shares, isLoading } = useShareLinks(resumeId);
   const deleteShare = useDeleteShareLink(resumeId);
 
@@ -178,7 +184,7 @@ export function ShareLinksManager({ resumeId }: ShareLinksManagerProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Share Links</CardTitle>
+        <CardTitle className="text-base">{t('resume.share.title')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
         {isLoading ? (

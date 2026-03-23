@@ -145,7 +145,7 @@ export function UserMenu() {
               <div className="mx-1 border-t border-white/10" />
               <div className="p-1">
                 <p className="px-3 py-1.5 text-[11px] font-medium tracking-wider text-zinc-500 uppercase">
-                  Admin
+                  {t('nav.userMenu.adminLabel')}
                 </p>
                 {ADMIN_MENU_ITEMS.map((item) => (
                   <LocalizedLink
@@ -237,7 +237,7 @@ export function UserMenu() {
               role="menuitem"
             >
               <LogOut className="h-4 w-4" strokeWidth={1.5} />
-              Sign out
+              {t('nav.signOut')}
             </button>
           </div>
         </div>

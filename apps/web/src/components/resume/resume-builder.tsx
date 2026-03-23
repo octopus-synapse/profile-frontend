@@ -5,6 +5,7 @@
 
 'use client';
 
+import { useI18n } from '@profile/i18n';
 import { Check, Download, FileText, Link2, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { useCallback, useState } from 'react';
@@ -22,21 +23,45 @@ import { AnalyticsDashboard } from './analytics/analytics-dashboard';
 import { ASTRenderer } from './ast-renderer';
 import { AtsScorePanel } from './ats/ats-score-panel';
 import { BuilderSidebar } from './builder/builder-sidebar';
+import { SectionReorderPanel } from './config/section-reorder-panel';
+import type { SectionItem } from './config/section-reorder-panel';
 import { ExportDialog } from './export/export-dialog';
-import { useResume, useResumeAst, useResumes } from './hooks';
+import { useResume, useResumeAst, useResumes, useToggleSection, useReorderSection, useBatchUpdateSections } from './hooks';
 import { ImportWizard } from './import/import-wizard';
 import { extractResumeListItems } from './resume-builder.utils';
 import { ShareLinksManager } from './sharing/share-links-manager';
+import { SkillsEditor } from './skills/skills-editor';
 import { VersionHistorySidebar } from './versions/version-history-sidebar';
+
+interface RawSection {
+  id?: string;
+  sectionTypeKey?: string;
+  order?: number;
+  visible?: boolean;
+  sectionType?: { key?: string; title?: string };
+}
+
+function deriveSectionItems(resume: Record<string, unknown>): SectionItem[] {
+  const raw = (resume.resumeSections ?? resume.sections ?? []) as RawSection[];
+  return raw.map((s, i) => ({
+    id: s.id ?? s.sectionTypeKey ?? `section-${i}`,
+    label: s.sectionType?.title ?? s.sectionTypeKey ?? `Section ${i + 1}`,
+    visible: s.visible ?? true,
+    order: s.order ?? i,
+  }));
+}
 
 export function ResumeBuilder() {
   const { copied, copy } = useCopyFeedback();
+  const { t } = useI18n();
   const [exportOpen, setExportOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [analyticsOpen, setAnalyticsOpen] = useState(false);
   const [atsOpen, setAtsOpen] = useState(false);
+  const [skillsOpen, setSkillsOpen] = useState(false);
+  const [reorderOpen, setReorderOpen] = useState(false);
 
   // Fetch user's resumes list
   const { data: resumesResponse, isLoading: resumesListLoading } = useResumes();
@@ -55,6 +80,13 @@ export function ResumeBuilder() {
   // Fetch compiled AST from backend
   const { data: ast, isLoading: astLoading, refetch: refetchAst } = useResumeAst(resumeId);
 
+  // Section config mutations
+  const toggleSection = useToggleSection(resumeId ?? '');
+  const reorderSection = useReorderSection(resumeId ?? '');
+  const batchUpdate = useBatchUpdateSections(resumeId ?? '');
+
+  const sectionItems = resume ? deriveSectionItems(resume as unknown as Record<string, unknown>) : [];
+
   // Combined loading state
   const isLoading = resumesListLoading || resumeLoading || (resumeId && astLoading);
 
@@ -66,14 +98,14 @@ export function ResumeBuilder() {
     if (!resumeId) return;
     const url = `${window.location.origin}/r/${resumeId}`;
     const success = await copy(url);
-    if (!success) showToast.error('Failed to copy link');
+    if (!success) showToast.error(t('resume.builder.failedCopyLink'));
   };
 
   // Loading state
   if (isLoading) {
     return (
       <div className="min-h-[80vh] bg-white/5">
-        <LoadingState message="Loading resume..." minHeight="80vh" />
+        <LoadingState message={t('resume.builder.loading')} minHeight="80vh" />
       </div>
     );
   }
@@ -85,23 +117,23 @@ export function ResumeBuilder() {
         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/5">
           <FileText className="h-8 w-8 text-zinc-500" strokeWidth={1.5} />
         </div>
-        <h2 className="mt-6 text-lg font-semibold text-white">No Resume Yet</h2>
+        <h2 className="mt-6 text-lg font-semibold text-white">{t('resume.builder.noResume.title')}</h2>
         <p className="mt-2 max-w-sm text-center text-sm text-zinc-400">
-          Complete the onboarding to create your resume, or add information manually.
+          {t('resume.builder.noResume.description')}
         </p>
         <div className="mt-8 flex items-center gap-3">
           <Link
             href="/protected/onboarding"
             className="inline-flex h-10 items-center rounded-lg bg-white px-5 text-sm font-medium text-black transition-opacity hover:opacity-90"
           >
-            Get Started
+            {t('resume.builder.noResume.getStarted')}
           </Link>
           <Link
             href="/protected/settings"
             className="inline-flex h-10 items-center gap-2 rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/5 hover:text-white"
           >
             <Settings className="h-4 w-4" strokeWidth={1.5} />
-            Settings
+            {t('app.settings.title')}
           </Link>
         </div>
       </div>
@@ -121,6 +153,8 @@ export function ResumeBuilder() {
         onShareOpen={() => setShareOpen(true)}
         onAnalyticsOpen={() => setAnalyticsOpen(true)}
         onAtsOpen={() => setAtsOpen(true)}
+        onSkillsOpen={() => setSkillsOpen(true)}
+        onReorderOpen={() => setReorderOpen(true)}
       />
 
       {/* Main Content */}
@@ -133,9 +167,9 @@ export function ResumeBuilder() {
             </div>
             <div>
               <h1 className="text-sm font-semibold text-white">
-                {resume.fullName ?? 'Untitled Resume'}
+                {resume.fullName ?? t('resume.builder.untitledResume')}
               </h1>
-              <p className="text-xs text-zinc-500">Preview</p>
+              <p className="text-xs text-zinc-500">{t('resume.builder.preview')}</p>
             </div>
           </div>
 
@@ -147,7 +181,7 @@ export function ResumeBuilder() {
               className="inline-flex h-9 items-center gap-2 rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-3.5 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/5 hover:text-white"
             >
               <Download className="h-4 w-4" strokeWidth={1.5} />
-              Export
+              {t('action.export')}
             </button>
 
             {/* Divider */}
@@ -163,12 +197,12 @@ export function ResumeBuilder() {
                 {copied ? (
                   <>
                     <Check className="h-4 w-4" strokeWidth={1.5} />
-                    Copied
+                    {t('resume.builder.copied')}
                   </>
                 ) : (
                   <>
                     <Link2 className="h-4 w-4" strokeWidth={1.5} />
-                    Share
+                    {t('resume.builder.share')}
                   </>
                 )}
               </button>
@@ -183,7 +217,7 @@ export function ResumeBuilder() {
               {ast ? (
                 <ASTRenderer ast={ast} />
               ) : (
-                <div className="p-8 text-center text-gray-400">No AST data</div>
+                <div className="p-8 text-center text-gray-400">{t('resume.builder.noAstData')}</div>
               )}
             </div>
           </div>
@@ -203,8 +237,8 @@ export function ResumeBuilder() {
       <Dialog open={shareOpen} onOpenChange={setShareOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Share Links</DialogTitle>
-            <DialogDescription>Manage share links for your resume</DialogDescription>
+            <DialogTitle>{t('resume.builder.dialog.shareLinks.title')}</DialogTitle>
+            <DialogDescription>{t('resume.builder.dialog.shareLinks.description')}</DialogDescription>
           </DialogHeader>
           <ShareLinksManager resumeId={resumeId ?? ''} />
         </DialogContent>
@@ -213,8 +247,8 @@ export function ResumeBuilder() {
       <Dialog open={analyticsOpen} onOpenChange={setAnalyticsOpen}>
         <DialogContent className="max-h-[85vh] max-w-4xl overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Analytics</DialogTitle>
-            <DialogDescription>Resume performance and insights</DialogDescription>
+            <DialogTitle>{t('resume.builder.dialog.analytics.title')}</DialogTitle>
+            <DialogDescription>{t('resume.builder.dialog.analytics.description')}</DialogDescription>
           </DialogHeader>
           <AnalyticsDashboard resumeId={resumeId ?? ''} />
         </DialogContent>
@@ -223,10 +257,42 @@ export function ResumeBuilder() {
       <Dialog open={atsOpen} onOpenChange={setAtsOpen}>
         <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>ATS Compatibility Check</DialogTitle>
-            <DialogDescription>Validate your resume against ATS systems</DialogDescription>
+            <DialogTitle>{t('resume.builder.dialog.ats.title')}</DialogTitle>
+            <DialogDescription>{t('resume.builder.dialog.ats.description')}</DialogDescription>
           </DialogHeader>
           <AtsScorePanel resumeId={resumeId ?? ''} />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={skillsOpen} onOpenChange={setSkillsOpen}>
+        <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{t('resume.builder.dialog.skills.title')}</DialogTitle>
+            <DialogDescription>{t('resume.builder.dialog.skills.description')}</DialogDescription>
+          </DialogHeader>
+          <SkillsEditor resumeId={resumeId ?? ''} />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={reorderOpen} onOpenChange={setReorderOpen}>
+        <DialogContent className="max-h-[85vh] max-w-lg overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{t('resume.builder.dialog.reorder.title')}</DialogTitle>
+            <DialogDescription>{t('resume.builder.dialog.reorder.description')}</DialogDescription>
+          </DialogHeader>
+          <SectionReorderPanel
+            resumeId={resumeId ?? ''}
+            sections={sectionItems}
+            onToggleVisibility={async (sectionId, visible) => {
+              await toggleSection.mutateAsync({ sectionId, visible });
+            }}
+            onReorder={async (sectionId, newOrder) => {
+              await reorderSection.mutateAsync({ sectionId, order: newOrder });
+            }}
+            onBatchUpdate={async (sections) => {
+              await batchUpdate.mutateAsync(sections);
+            }}
+          />
         </DialogContent>
       </Dialog>
     </div>
