@@ -7,6 +7,7 @@
 
 'use client';
 
+import { useI18n } from '@profile/i18n';
 import type { StepFieldDto } from '@profile/api-client';
 import { CheckCircle2, Plus, X } from 'lucide-react';
 import { nanoid } from 'nanoid';
@@ -25,6 +26,7 @@ interface GenericSectionStepProps {
 
 export function GenericSectionStep({ stepId }: GenericSectionStepProps) {
   const { getSection, goToNextStep, isSaving, currentStepMeta } = useOnboarding();
+  const { t } = useI18n();
 
   const sectionTypeKey = getSectionTypeFromStep(stepId);
   const sectionData = getSection(sectionTypeKey);
@@ -169,7 +171,7 @@ export function GenericSectionStep({ stepId }: GenericSectionStepProps) {
 
       {/* Empty state */}
       {!noData && items.length === 0 && (
-        <p className="py-4 text-center font-mono text-sm text-zinc-500">No items added yet</p>
+        <p className="py-4 text-center font-mono text-sm text-zinc-500">{t('onboarding.section.noItemsYet')}</p>
       )}
 
       {/* Item count */}
@@ -177,7 +179,9 @@ export function GenericSectionStep({ stepId }: GenericSectionStepProps) {
         <div className="flex items-center gap-2 text-emerald-500">
           <CheckCircle2 className="h-4 w-4" />
           <span className="font-mono text-sm">
-            {items.length} {items.length === 1 ? 'item' : 'items'} added
+            {items.length === 1
+              ? t('onboarding.section.itemAdded', { count: items.length })
+              : t('onboarding.section.itemsAdded', { count: items.length })}
           </span>
         </div>
       )}
@@ -186,7 +190,7 @@ export function GenericSectionStep({ stepId }: GenericSectionStepProps) {
         onNext={handleNext}
         canProceed={canProceed}
         isLoading={isSaving}
-        nextLabel="Continue"
+        nextLabel={t('onboarding.section.continue')}
       />
     </div>
   );
@@ -205,6 +209,7 @@ function FieldInput({
   onChange: (v: string) => void;
   showPlaceholder?: boolean;
 }) {
+  const { t } = useI18n();
   const strVal = String(value ?? '');
   const inputType = field.widget === 'textarea' ? 'textarea' : field.type;
   const placeholder = showPlaceholder ? `Enter ${field.label.toLowerCase()}...` : undefined;
@@ -229,7 +234,7 @@ function FieldInput({
           onChange={(e) => onChange(e.target.value)}
           className="border-white/10 bg-zinc-900 w-full rounded border px-3 py-2 font-mono text-sm text-white focus:border-cyan-500 focus:outline-none"
         >
-          <option value="">Select...</option>
+          <option value="">{t('onboarding.section.select')}</option>
           {field.options.map((opt) => (
             <option key={opt} value={opt}>
               {opt}

@@ -6,6 +6,7 @@
 
 'use client';
 
+import { useI18n } from '@profile/i18n';
 import { AlertCircle, Briefcase, FileText, Globe, Linkedin } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
 import { type ProfessionalProfile, useGitHubUser, useOnboarding } from '../hooks';
@@ -21,6 +22,7 @@ import {
 
 export function ProfessionalProfileStep() {
   const { professionalProfile, goToNextStep, currentStepIndex, allSteps } = useOnboarding();
+  const { t } = useI18n();
 
   const initialGithub = extractGitHubUsername(professionalProfile?.github ?? '');
 
@@ -46,14 +48,14 @@ export function ProfessionalProfileStep() {
     const newErrors: Record<string, string> = {};
 
     if (touched.jobTitle && formData.jobTitle.length < 2) {
-      newErrors.jobTitle = 'Job title must be at least 2 characters';
+      newErrors.jobTitle = t('onboarding.professionalProfile.jobTitleMinLength');
     }
 
     if (touched.summary) {
       if (summaryLength < SUMMARY_MIN) {
-        newErrors.summary = `Summary must be at least ${SUMMARY_MIN} characters`;
+        newErrors.summary = t('onboarding.professionalProfile.summaryMinLength', { min: SUMMARY_MIN });
       } else if (summaryLength > SUMMARY_MAX) {
-        newErrors.summary = `Summary must be less than ${SUMMARY_MAX} characters`;
+        newErrors.summary = t('onboarding.professionalProfile.summaryMaxLength', { max: SUMMARY_MAX });
       }
     }
 
@@ -63,7 +65,7 @@ export function ProfessionalProfileStep() {
         try {
           new URL(formData[field]);
         } catch {
-          newErrors[field] = 'Invalid URL format';
+          newErrors[field] = t('onboarding.professionalProfile.invalidUrl');
         }
       }
     });
@@ -107,7 +109,7 @@ export function ProfessionalProfileStep() {
         try {
           new URL(formData[field]);
         } catch {
-          urlErrors[field] = 'Invalid URL format';
+          urlErrors[field] = t('onboarding.professionalProfile.invalidUrl');
         }
       }
     });
@@ -136,9 +138,9 @@ export function ProfessionalProfileStep() {
   return (
     <div className="space-y-6">
       <OnboardingStepHeader
-        eyebrow={`Step ${currentStepIndex + 1} of ${allSteps.length}`}
-        title="Professional profile"
-        description="Summarize your role, your strengths, and the links that support your profile."
+        eyebrow={t('onboarding.shell.stepOf', { current: currentStepIndex + 1, total: allSteps.length })}
+        title={t('onboarding.professionalProfile.title')}
+        description={t('onboarding.professionalProfile.description')}
       />
 
       <div className="space-y-4">
@@ -146,14 +148,14 @@ export function ProfessionalProfileStep() {
         <div>
           <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-white">
             <Briefcase className="h-4 w-4" strokeWidth={1.5} />
-            Job title<span className="text-red-500">*</span>
+            {t('onboarding.professionalProfile.jobTitleLabel')}<span className="text-red-500">*</span>
           </label>
           <input
             type="text"
             value={formData.jobTitle}
             onChange={(e) => handleChange('jobTitle', e.target.value)}
             onBlur={() => handleBlur('jobTitle')}
-            placeholder="Senior Software Engineer"
+            placeholder={t('onboarding.professionalProfile.jobTitlePlaceholder')}
             className={`w-full rounded-xl border border-white/10 bg-zinc-950/60 px-3 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${errors.jobTitle ? 'border-red-500' : ''} `}
           />
           {errors.jobTitle && (
@@ -168,13 +170,13 @@ export function ProfessionalProfileStep() {
         <div>
           <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-white">
             <FileText className="h-4 w-4" strokeWidth={1.5} />
-            Summary<span className="text-red-500">*</span>
+            {t('onboarding.professionalProfile.summaryLabel')}<span className="text-red-500">*</span>
           </label>
           <textarea
             value={formData.summary}
             onChange={(e) => handleChange('summary', e.target.value)}
             onBlur={() => handleBlur('summary')}
-            placeholder="Passionate full-stack developer with 5+ years of experience building scalable web applications. Specialized in React, Node.js, and cloud infrastructure..."
+            placeholder={t('onboarding.professionalProfile.summaryPlaceholder')}
             rows={4}
             className={`w-full resize-none rounded-xl border border-white/10 bg-zinc-950/60 px-3 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${errors.summary ? 'border-red-500' : ''} `}
           />
@@ -185,7 +187,7 @@ export function ProfessionalProfileStep() {
                 {errors.summary}
               </p>
             ) : (
-              <span className="text-xs text-zinc-500">Minimum {SUMMARY_MIN} characters</span>
+              <span className="text-xs text-zinc-500">{t('onboarding.professionalProfile.minimumChars', { min: SUMMARY_MIN })}</span>
             )}
             <span
               className={`text-xs ${
@@ -202,21 +204,21 @@ export function ProfessionalProfileStep() {
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-zinc-950/40 px-4 py-3 text-sm text-zinc-400">
-          Social links are optional, but they help make your profile more credible.
+          {t('onboarding.professionalProfile.socialLinksHint')}
         </div>
 
         {/* LinkedIn */}
         <div>
           <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-white">
             <Linkedin className="h-4 w-4" strokeWidth={1.5} />
-            LinkedIn
+            {t('onboarding.professionalProfile.linkedinLabel')}
           </label>
           <input
             type="url"
             value={formData.linkedin}
             onChange={(e) => handleChange('linkedin', e.target.value)}
             onBlur={() => handleBlur('linkedin')}
-            placeholder="https://linkedin.com/in/username"
+            placeholder={t('onboarding.professionalProfile.linkedinPlaceholder')}
             className={`w-full rounded-xl border border-white/10 bg-zinc-950/60 px-3 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${errors.linkedin ? 'border-red-500' : ''} `}
           />
           {errors.linkedin && (
@@ -241,14 +243,14 @@ export function ProfessionalProfileStep() {
         <div>
           <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-white">
             <Globe className="h-4 w-4" strokeWidth={1.5} />
-            Website
+            {t('onboarding.professionalProfile.websiteLabel')}
           </label>
           <input
             type="url"
             value={formData.website}
             onChange={(e) => handleChange('website', e.target.value)}
             onBlur={() => handleBlur('website')}
-            placeholder="https://yoursite.dev"
+            placeholder={t('onboarding.professionalProfile.websitePlaceholder')}
             className={`w-full rounded-xl border border-white/10 bg-zinc-950/60 px-3 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${errors.website ? 'border-red-500' : ''} `}
           />
           {errors.website && (

@@ -6,6 +6,7 @@
 
 'use client';
 
+import { useI18n, type DictionaryKey } from '@profile/i18n';
 import { apiFetch, isApiError, useAuthSession } from '@profile/api-client';
 import { useQuery } from '@tanstack/react-query';
 import { AlertCircle, AtSign, Check, ExternalLink, Loader2, RefreshCw, X } from 'lucide-react';
@@ -22,6 +23,7 @@ import { normalizeUsername, USERNAME_MAX_LENGTH, validateUsername } from './user
 export function UsernameStep() {
   const { username, goToNextStep, currentStepIndex, allSteps } = useOnboarding();
   const { data, isLoading } = useAuthSession();
+  const { t } = useI18n();
   const isAuthenticated = !!data?.data?.user;
 
   const [inputValue, setInputValue] = useState(username || '');
@@ -67,16 +69,16 @@ export function UsernameStep() {
   ]);
 
   const apiError = useMemo(() => {
-    if (!isAuthenticated && !isLoading) return 'Not authenticated. Please sign in again.';
+    if (!isAuthenticated && !isLoading) return t('onboarding.username.notAuthenticated');
     if (inputValue !== debouncedUsername) return null;
     const err = availabilityQuery.error;
     if (!err) return null;
     if (isApiError(err)) {
-      if (err.statusCode === 401) return 'Session expired. Please refresh the page.';
-      if (err.statusCode === 429) return 'Too many requests. Wait a moment.';
-      return 'Could not verify. Try again.';
+      if (err.statusCode === 401) return t('onboarding.username.sessionExpired');
+      if (err.statusCode === 429) return t('onboarding.username.tooManyRequests');
+      return t('onboarding.username.couldNotVerify');
     }
-    return 'Connection error. Check your internet.';
+    return t('onboarding.username.connectionError');
   }, [inputValue, debouncedUsername, availabilityQuery.error, isAuthenticated, isLoading]);
 
   const handleChange = (value: string) => {
@@ -110,6 +112,7 @@ export function UsernameStep() {
     validation,
     touched,
     isAvailable,
+    t,
   });
 
   const appDomain = useMemo(() => {
@@ -123,29 +126,29 @@ export function UsernameStep() {
   return (
     <div className="space-y-6">
       <OnboardingStepHeader
-        eyebrow={`Step ${currentStepIndex + 1} of ${allSteps.length}`}
-        title="Choose your username"
-        description="This creates your public profile URL, so keep it simple and memorable."
+        eyebrow={t('onboarding.shell.stepOf', { current: currentStepIndex + 1, total: allSteps.length })}
+        title={t('onboarding.username.title')}
+        description={t('onboarding.username.description')}
       />
 
       <div className="rounded-2xl border border-white/10 bg-zinc-950/40 p-4">
         <div className="flex items-center gap-2 text-sm">
           <ExternalLink className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
           <span className="text-zinc-400">{appDomain}/</span>
-          <span className="font-medium text-blue-400">{inputValue || 'username'}</span>
+          <span className="font-medium text-blue-400">{inputValue || t('onboarding.username.preview')}</span>
         </div>
       </div>
 
       <div className="rounded-2xl border border-white/10 bg-zinc-950/40 px-4 py-3 text-sm text-zinc-400">
-        Use 3 to 30 lowercase letters, numbers, or underscores.
+        {t('onboarding.username.hint')}
       </div>
 
       {/* Username Input */}
       <div>
         <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-white">
           <AtSign className="h-4 w-4" strokeWidth={1.5} />
-          Username<span className="text-red-500">*</span>
-          <HelpTooltip content="Your unique identifier on PATCH. This cannot be changed later, so choose wisely!" />
+          {t('onboarding.username.label')}<span className="text-red-500">*</span>
+          <HelpTooltip content={t('onboarding.username.tooltip')} />
         </label>
         <div className="relative">
           <input
@@ -153,7 +156,7 @@ export function UsernameStep() {
             value={inputValue}
             onChange={(e) => handleChange(e.target.value)}
             onBlur={() => setTouched(true)}
-            placeholder="johndoe"
+            placeholder={t('onboarding.username.placeholder')}
             maxLength={USERNAME_MAX_LENGTH}
             className={`w-full rounded-xl border border-white/10 bg-zinc-950/60 px-3 py-2.5 pr-10 text-sm text-white placeholder:text-zinc-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${
               touched && (!validation.valid || isAvailable === false)
@@ -210,13 +213,13 @@ function getStatusIcon(s: StatusState) {
   return null;
 }
 
-function getStatusMessage(s: StatusState): StatusMessageData | null {
-  if (s.isLoading) return { text: 'Loading session...', type: 'muted' };
-  if (s.isChecking) return { text: 'Checking availability...', type: 'muted' };
+function getStatusMessage(s: StatusState & { t: (key: DictionaryKey) => string }): StatusMessageData | null {
+  if (s.isLoading) return { text: s.t('onboarding.username.loadingSession'), type: 'muted' };
+  if (s.isChecking) return { text: s.t('onboarding.username.checkingAvailability'), type: 'muted' };
   if (s.apiError) return { text: s.apiError, type: 'warning' };
   if (!s.validation.valid && s.touched) return { text: s.validation.message, type: 'error' };
-  if (s.isAvailable === true) return { text: 'Username is available!', type: 'success' };
-  if (s.isAvailable === false) return { text: 'This username is already taken', type: 'error' };
+  if (s.isAvailable === true) return { text: s.t('onboarding.username.available'), type: 'success' };
+  if (s.isAvailable === false) return { text: s.t('onboarding.username.taken'), type: 'error' };
   return null;
 }
 
@@ -236,6 +239,7 @@ function StatusMessage({
   apiError: string | null;
   onRetry: () => void;
 }) {
+  const { t } = useI18n();
   return (
     <div
       className={`mt-1 flex items-center justify-between text-xs ${STATUS_COLOR_MAP[message.type]}`}
@@ -254,7 +258,7 @@ function StatusMessage({
           className="flex items-center gap-1 text-blue-400 transition-colors hover:text-blue-300"
         >
           <RefreshCw className="h-3 w-3" />
-          Retry
+          {t('onboarding.username.retry')}
         </button>
       )}
     </div>

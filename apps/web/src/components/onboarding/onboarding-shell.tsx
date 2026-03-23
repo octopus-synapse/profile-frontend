@@ -7,6 +7,7 @@
 
 'use client';
 
+import { useI18n } from '@profile/i18n';
 import { Check, ChevronRight } from 'lucide-react';
 import { type OnboardingStep, useOnboarding } from './hooks';
 
@@ -15,6 +16,7 @@ interface OnboardingShellProps {
 }
 
 export function OnboardingShell({ children }: OnboardingShellProps) {
+  const { t } = useI18n();
   const { currentStep, currentStepIndex, completedSteps, allSteps, goToStep } = useOnboarding();
   const currentStepInfo = allSteps[currentStepIndex];
 
@@ -36,9 +38,9 @@ export function OnboardingShell({ children }: OnboardingShellProps) {
             <div className="mb-5 border-b border-zinc-800/80 pb-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-sm font-semibold text-white">Setup progress</h2>
+                  <h2 className="text-sm font-semibold text-white">{t('onboarding.shell.progress')}</h2>
                   <p className="mt-1 text-xs text-zinc-500">
-                    {completedCount} of {totalRequired} required steps completed
+                    {t('onboarding.shell.stepsCompleted', { completed: completedCount, total: totalRequired })}
                   </p>
                 </div>
                 <span className="text-xs tabular-nums text-zinc-500">
@@ -85,7 +87,7 @@ export function OnboardingShell({ children }: OnboardingShellProps) {
                     type="button"
                     key={step.id}
                     aria-current={isCurrent ? 'step' : undefined}
-                    aria-label={`Go to ${step.label}`}
+                    aria-label={t('onboarding.shell.goToStep', { step: step.label })}
                     disabled={!isAccessible || isCurrent}
                     onClick={() => {
                       if (!isAccessible || isCurrent) return;
@@ -121,7 +123,7 @@ export function OnboardingShell({ children }: OnboardingShellProps) {
                     {/* Step label */}
                     <span className="flex flex-1 flex-col">
                       <span>{step.label}</span>
-                      {!step.required && <span className="text-xs text-zinc-600">Optional</span>}
+                      {!step.required && <span className="text-xs text-zinc-600">{t('onboarding.shell.optional')}</span>}
                     </span>
 
                     {/* Current indicator */}
@@ -142,7 +144,7 @@ export function OnboardingShell({ children }: OnboardingShellProps) {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-zinc-500">
-                  Step {currentStepIndex + 1} of {allSteps.length}
+                  {t('onboarding.shell.stepOf', { current: currentStepIndex + 1, total: allSteps.length })}
                 </p>
                 <p className="mt-0.5 font-medium text-white">{currentStepInfo?.label}</p>
               </div>

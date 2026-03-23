@@ -6,6 +6,7 @@
 
 'use client';
 
+import { useI18n } from '@profile/i18n';
 import { getAuthSessionQueryKey, useAuthSession } from '@profile/api-client';
 import { useQueryClient } from '@tanstack/react-query';
 import confetti from 'canvas-confetti';
@@ -22,6 +23,7 @@ export function CompleteStep() {
   const { data } = useAuthSession();
   const user = data?.data?.user;
   const { personalInfo } = useOnboarding();
+  const { t } = useI18n();
   const [showContent, setShowContent] = useState(false);
   const [countdown, setCountdown] = useState(5);
 
@@ -105,7 +107,7 @@ export function CompleteStep() {
   }, [user, refreshSession, router]);
 
   const handleGoToDashboard = () => {
-    // No action needed - React Query handles state
+    void refreshSession();
   };
 
   return (
@@ -126,15 +128,14 @@ export function CompleteStep() {
         className={`transition-all duration-500 ${showContent ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}
       >
         <h2 className="text-2xl font-bold text-white">
-          Welcome, {personalInfo?.fullName?.split(' ')[0]}! 🎉
+          {t('onboarding.complete.welcomeUser', { name: personalInfo?.fullName?.split(' ')[0] ?? '' })}
         </h2>
         <p className="mt-2 font-mono text-sm text-zinc-400">
-          Your professional profile has been created successfully
+          {t('onboarding.complete.successMessage')}
         </p>
         {countdown > 0 && (
           <p className="mt-2 font-mono text-xs text-cyan-400">
-            Redirecting to your resume in {countdown} second
-            {countdown !== 1 ? 's' : ''}...
+            {t('onboarding.complete.redirectCountdown', { count: countdown, suffix: countdown !== 1 ? 's' : '' })}
           </p>
         )}
       </div>
@@ -188,23 +189,23 @@ export function CompleteStep() {
       <div
         className={`border border-white/10 p-4 text-left transition-all delay-500 duration-700 ${showContent ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}
       >
-        <h3 className="font-mono text-sm font-semibold text-white">What&apos;s next?</h3>
+        <h3 className="font-mono text-sm font-semibold text-white">{t('onboarding.complete.whatsNext')}</h3>
         <ul className="mt-3 space-y-2 font-mono text-xs text-zinc-400">
           <li className="flex items-center gap-2">
             <span className="text-emerald-500">→</span>
-            View and customize your resume
+            {t('onboarding.complete.nextCustomize')}
           </li>
           <li className="flex items-center gap-2">
             <span className="text-emerald-500">→</span>
-            Export to PDF or DOCX
+            {t('onboarding.complete.nextExport')}
           </li>
           <li className="flex items-center gap-2">
             <span className="text-emerald-500">→</span>
-            Share your public profile link
+            {t('onboarding.complete.nextShare')}
           </li>
           <li className="flex items-center gap-2">
             <span className="text-emerald-500">→</span>
-            Add more details anytime in settings
+            {t('onboarding.complete.nextSettings')}
           </li>
         </ul>
       </div>
@@ -218,7 +219,7 @@ export function CompleteStep() {
           onClick={handleGoToDashboard}
           className="inline-flex items-center justify-center gap-2 bg-white px-6 py-3 font-mono text-sm text-black transition-opacity hover:opacity-90"
         >
-          View My Resume
+          {t('onboarding.complete.viewResume')}
           <ArrowRight className="h-4 w-4" strokeWidth={1.5} />
         </Link>
 
@@ -227,21 +228,17 @@ export function CompleteStep() {
           onClick={handleGoToDashboard}
           className="inline-flex items-center justify-center gap-2 border border-white/10 px-6 py-3 font-mono text-sm text-white transition-colors hover:bg-white/5"
         >
-          Go to Dashboard
+          {t('onboarding.complete.goToDashboard')}
           <ExternalLink className="h-4 w-4" strokeWidth={1.5} />
         </Link>
       </div>
 
       {/* Footer */}
       <p className="font-mono text-xs text-zinc-500">
-        Need help? Check our{' '}
-        <Link href="#" className="text-cyan-400 hover:underline">
-          documentation
-        </Link>{' '}
-        or{' '}
-        <Link href="#" className="text-cyan-400 hover:underline">
-          contact support
-        </Link>
+        {t('onboarding.complete.helpPrefix')}
+        <span className="text-cyan-400">{t('onboarding.complete.helpDocs')}</span>
+        {t('onboarding.complete.helpOr')}
+        <span className="text-cyan-400">{t('onboarding.complete.helpSupport')}</span>
       </p>
     </div>
   );

@@ -6,6 +6,7 @@
 
 'use client';
 
+import { useI18n } from '@profile/i18n';
 import { Check, Palette } from 'lucide-react';
 import { useCallback } from 'react';
 import { type TemplateSelection, useOnboarding } from '../hooks';
@@ -90,6 +91,18 @@ const PALETTES = [
 
 export function TemplateStep() {
   const { templateSelection, saveStepData, goToNextStep, currentStepIndex, allSteps } = useOnboarding();
+  const { t } = useI18n();
+
+  const paletteDescriptions: Record<string, string> = {
+    ocean: t('onboarding.template.paletteOcean'),
+    forest: t('onboarding.template.paletteForest'),
+    sunset: t('onboarding.template.paletteSunset'),
+    lavender: t('onboarding.template.paletteLavender'),
+    rose: t('onboarding.template.paletteRose'),
+    monochrome: t('onboarding.template.paletteMonochrome'),
+    midnight: t('onboarding.template.paletteMidnight'),
+    coral: t('onboarding.template.paletteCoral'),
+  };
 
   const handleSelectPalette = useCallback(
     async (paletteId: string) => {
@@ -111,19 +124,18 @@ export function TemplateStep() {
   return (
     <div className="space-y-6">
       <OnboardingStepHeader
-        eyebrow={`Step ${currentStepIndex + 1} of ${allSteps.length}`}
-        title="Choose your theme"
-        description="Pick a visual direction for your resume. You can still change it later."
+        eyebrow={t('onboarding.shell.stepOf', { current: currentStepIndex + 1, total: allSteps.length })}
+        title={t('onboarding.template.title')}
+        description={t('onboarding.template.description')}
       />
 
       <div className="rounded-2xl border border-white/10 bg-zinc-950/40 p-5">
         <div className="flex items-start gap-3">
           <Palette className="mt-0.5 h-5 w-5 text-blue-400" strokeWidth={1.5} />
           <div>
-            <h3 className="text-sm font-semibold text-white">Professional template</h3>
+            <h3 className="text-sm font-semibold text-white">{t('onboarding.template.professionalTemplate')}</h3>
             <p className="mt-1 text-sm leading-6 text-zinc-400">
-              Clean, modern layout optimized for ATS systems and recruiters. You can change this
-              later in settings.
+              {t('onboarding.template.professionalDescription')}
             </p>
           </div>
         </div>
@@ -212,7 +224,7 @@ export function TemplateStep() {
 
               {/* Palette Info */}
               <h4 className="text-sm font-semibold text-white">{palette.name}</h4>
-              <p className="mt-0.5 text-xs text-zinc-400">{palette.description}</p>
+              <p className="mt-0.5 text-xs text-zinc-400">{paletteDescriptions[palette.id] ?? palette.description}</p>
 
               {/* Color Swatches */}
               <div className="mt-2 flex gap-1">
@@ -232,7 +244,7 @@ export function TemplateStep() {
       {templateSelection?.colorScheme && (
         <div className="flex items-center gap-2 text-sm text-emerald-500">
           <Check className="h-4 w-4" strokeWidth={2} />
-          Selected: {PALETTES.find((p) => p.id === templateSelection.colorScheme)?.name}
+          {t('onboarding.template.selected', { name: PALETTES.find((p) => p.id === templateSelection.colorScheme)?.name ?? '' })}
         </div>
       )}
 

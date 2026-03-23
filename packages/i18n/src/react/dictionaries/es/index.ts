@@ -1,5 +1,5 @@
 /**
- * Portuguese (Brazil) dictionary - aggregates all pt-BR modules
+ * Spanish (Latin America) dictionary - aggregates all es modules
  */
 
 import { admin } from './admin';
@@ -13,7 +13,7 @@ import { resume } from './resume';
 import { settings } from './settings';
 import { social } from './social';
 
-export const ptBR = {
+export const es = {
   ...common,
   ...navigation,
   ...auth,
