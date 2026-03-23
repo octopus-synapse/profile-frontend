@@ -35,7 +35,7 @@ const nextConfig: NextConfig = {
   output: 'standalone',
 
   // Transpile local packages
-  transpilePackages: ['@octopus-synapse/profile-ui', '@profile/api-client', '@profile/stores'],
+  transpilePackages: ['@octopus-synapse/profile-ui', '@profile/api-client'],
 
   // Security headers
   headers() {

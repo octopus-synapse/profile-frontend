@@ -2,6 +2,8 @@
  * Admin Types
  */
 
+import type { UserRole } from '../../users/types';
+
 export interface AdminStats {
   totalUsers: number;
   activeUsers: number;
@@ -17,7 +19,7 @@ export interface AdminUser {
   email: string;
   name: string | null;
   username: string | null;
-  role: 'USER' | 'ADMIN';
+  role: UserRole;
   createdAt: string;
   lastLoginAt: string | null;
   hasCompletedOnboarding: boolean;

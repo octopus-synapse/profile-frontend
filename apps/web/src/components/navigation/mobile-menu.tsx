@@ -70,7 +70,7 @@ export function MobileMenu({ menu, navItems, onOpenCommandPalette }: MobileMenuP
       className="fixed inset-0 z-50 flex flex-col bg-black"
       role="dialog"
       aria-modal="true"
-      aria-label="Navigation menu"
+      aria-label={t('nav.aria.navigationMenu')}
     >
       {/* Header */}
       <header className="flex h-14 items-center justify-between border-b border-white/5 px-4 sm:px-6">
@@ -79,7 +79,7 @@ export function MobileMenu({ menu, navItems, onOpenCommandPalette }: MobileMenuP
           type="button"
           onClick={menu.close}
           className="-mr-2 flex h-10 w-10 items-center justify-center rounded-md text-zinc-400 transition-colors duration-150 hover:text-white"
-          aria-label="Close menu"
+          aria-label={t('nav.aria.closeMenu')}
         >
           <X className="h-5 w-5" strokeWidth={1.5} />
         </button>
@@ -89,7 +89,7 @@ export function MobileMenu({ menu, navItems, onOpenCommandPalette }: MobileMenuP
       <div className="flex-1 overflow-y-auto px-4 sm:px-6">
         {/* Navigation Links (for landing) or Search Button (for app) */}
         {hasCustomNavItems ? (
-          <nav className="border-b border-white/5 py-4" aria-label="Main navigation">
+          <nav className="border-b border-white/5 py-4" aria-label={t('nav.aria.mainNavigation')}>
             {navItems.map((item) => (
               <NavLink key={item.key} item={item} onClick={menu.close} variant="mobile" />
             ))}
@@ -124,7 +124,7 @@ export function MobileMenu({ menu, navItems, onOpenCommandPalette }: MobileMenuP
                   'flex h-9 w-9 items-center justify-center rounded-md transition-colors duration-150',
                   themeContext?.theme === 'light' ? 'bg-zinc-800 text-white' : 'text-zinc-500',
                 )}
-                aria-label="Light theme"
+                aria-label={t('nav.aria.lightTheme')}
                 aria-pressed={themeContext?.theme === 'light'}
               >
                 <Sun className="h-[18px] w-[18px]" strokeWidth={1.5} />
@@ -136,7 +136,7 @@ export function MobileMenu({ menu, navItems, onOpenCommandPalette }: MobileMenuP
                   'flex h-9 w-9 items-center justify-center rounded-md transition-colors duration-150',
                   themeContext?.theme === 'dark' ? 'bg-zinc-800 text-white' : 'text-zinc-500',
                 )}
-                aria-label="Dark theme"
+                aria-label={t('nav.aria.darkTheme')}
                 aria-pressed={themeContext?.theme === 'dark'}
               >
                 <Moon className="h-[18px] w-[18px]" strokeWidth={1.5} />

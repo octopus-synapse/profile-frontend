@@ -26,8 +26,8 @@ import type {
 import {
  e2eFetch,
  skipIfBackendUnavailable,
- ACCOUNT_LIFECYCLE_ROUTES,
- AUTHENTICATION_ROUTES,
+ ACCOUNTS_ROUTES,
+ AUTH_ROUTES,
  ENUMS_ROUTES,
  ONBOARDING_ROUTES,
 } from "./setup";
@@ -50,7 +50,7 @@ describe("E2E: Onboarding API", () => {
 
   // Register and login test user
   const signupResponse = await e2eFetch<CreateAccountResponseDto>(
-   ACCOUNT_LIFECYCLE_ROUTES.ACCOUNTS_SIGNUP,
+   ACCOUNTS_ROUTES.ACCOUNTS_SIGNUP,
    {
     method: "POST",
     body: JSON.stringify({
@@ -68,7 +68,7 @@ describe("E2E: Onboarding API", () => {
   }
 
   const loginResponse = await e2eFetch<LoginResponseDto>(
-   AUTHENTICATION_ROUTES.AUTH_LOGIN,
+   AUTH_ROUTES.AUTH_LOGIN,
    {
     method: "POST",
     body: JSON.stringify({

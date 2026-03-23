@@ -5,6 +5,7 @@
  * Clean, professional design
  */
 
+import { useT } from '@profile/i18n';
 import {
   Activity,
   FileText,
@@ -19,46 +20,47 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/shared/utils/cn';
 
-const navItems = [
+const NAV_ITEMS = [
   {
-    label: 'Dashboard',
+    labelKey: 'admin.sidebar.dashboard' as const,
     href: '/protected/admin',
     icon: LayoutDashboard,
     exact: true,
   },
   {
-    label: 'Users',
+    labelKey: 'admin.sidebar.users' as const,
     href: '/protected/admin/users',
     icon: Users,
   },
   {
-    label: 'Section Types',
+    labelKey: 'admin.sidebar.sectionTypes' as const,
     href: '/protected/admin/section-types',
     icon: Layers,
   },
   {
-    label: 'Resumes',
+    labelKey: 'admin.sidebar.resumes' as const,
     href: '/protected/admin/resumes',
     icon: FileText,
   },
   {
-    label: 'Themes',
+    labelKey: 'admin.sidebar.themes' as const,
     href: '/protected/admin/themes',
     icon: Palette,
   },
   {
-    label: 'Activity',
+    labelKey: 'admin.sidebar.activity' as const,
     href: '/protected/admin/activity',
     icon: Activity,
   },
   {
-    label: 'Settings',
+    labelKey: 'admin.sidebar.settings' as const,
     href: '/protected/admin/settings',
     icon: Settings,
   },
 ];
 
 export function AdminSidebar() {
+  const t = useT();
   const pathname = usePathname();
 
   return (
@@ -70,14 +72,14 @@ export function AdminSidebar() {
             <Shield className="h-5 w-5" strokeWidth={1.5} />
           </div>
           <div>
-            <p className="text-pf-fg-default text-sm font-semibold">Admin Panel</p>
-            <p className="text-pf-fg-muted text-xs">Manage your platform</p>
+            <p className="text-pf-fg-default text-sm font-semibold">{t('admin.sidebar.title')}</p>
+            <p className="text-pf-fg-muted text-xs">{t('admin.sidebar.subtitle')}</p>
           </div>
         </div>
 
         {/* Navigation */}
         <nav className="flex-1 space-y-1 p-3">
-          {navItems.map((item) => {
+          {NAV_ITEMS.map((item) => {
             const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
 
             return (
@@ -92,7 +94,7 @@ export function AdminSidebar() {
                 )}
               >
                 <item.icon className="h-4 w-4" strokeWidth={1.5} />
-                {item.label}
+                {t(item.labelKey)}
               </Link>
             );
           })}
@@ -100,7 +102,7 @@ export function AdminSidebar() {
 
         {/* Footer */}
         <div className="border-pf-border-default border-t px-5 py-4">
-          <p className="text-pf-fg-subtle text-xs">Profile Platform v2.0</p>
+          <p className="text-pf-fg-subtle text-xs">{t('admin.sidebar.version')}</p>
         </div>
       </div>
     </aside>

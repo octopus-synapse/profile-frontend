@@ -1,14 +1,37 @@
 /**
  * Dynamic Sitemap Generation
- * Generates sitemap.xml for search engine crawlers
+ * Fetches public profiles from the backend to include in sitemap.xml
  */
 
 import type { MetadataRoute } from 'next';
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://profile.octopus-synapse.com';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  // Static routes
+interface SearchResult {
+  username: string;
+  updatedAt?: string;
+}
+
+interface SearchResponse {
+  success: boolean;
+  data: { results: SearchResult[]; total: number };
+}
+
+async function fetchPublicProfiles(): Promise<SearchResult[]> {
+  try {
+    const res = await fetch(`${API_URL}/api/search?limit=1000`, {
+      next: { revalidate: 3600 },
+    });
+    if (!res.ok) return [];
+    const body = (await res.json()) as SearchResponse;
+    return body.data?.results ?? [];
+  } catch {
+    return [];
+  }
+}
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: BASE_URL,
@@ -30,14 +53,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  // TODO: Fetch public profiles from API for dynamic routes
-  // const publicProfiles = await fetchPublicProfiles();
-  // const profileRoutes = publicProfiles.map((profile) => ({
-  //   url: `${BASE_URL}/${profile.username}`,
-  //   lastModified: profile.updatedAt,
-  //   changeFrequency: "weekly" as const,
-  //   priority: 0.8,
-  // }));
+  const profiles = await fetchPublicProfiles();
+  const profileRoutes: MetadataRoute.Sitemap = profiles.map((profile) => ({
+    url: `${BASE_URL}/${profile.username}`,
+    lastModified: profile.updatedAt ? new Date(profile.updatedAt) : new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.8,
+  }));
 
-  return [...staticRoutes];
+  return [...staticRoutes, ...profileRoutes];
 }

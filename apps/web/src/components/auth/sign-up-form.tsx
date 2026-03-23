@@ -141,7 +141,7 @@ export function SignUpForm() {
             type="text"
             value={name}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
-            placeholder="John Doe"
+            placeholder={t('auth.signUp.namePlaceholder')}
             required
             autoComplete="name"
             className="h-11 border-white/10 bg-white/[0.02] pl-10 transition-all focus:border-cyan-500/50 focus:bg-white/[0.05] focus:ring-cyan-500/20"

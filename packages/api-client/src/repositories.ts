@@ -37,6 +37,7 @@ import {
 
 import {
   themesCreateThemeForUser,
+  themesDeleteThemeForUser,
   themesFindAllThemesWithPagination,
   themesGetAllThemesByUser,
   themesUpdateThemeForUser,
@@ -295,8 +296,11 @@ export const themeRepository = {
     return response.data;
   },
 
-  async remove(_id: string): Promise<void> {
-    console.warn('Theme deletion not implemented in SDK');
+  async remove(id: string): Promise<void> {
+    const response = await themesDeleteThemeForUser(id);
+    if (!isSuccess(response.status)) {
+      throw new Error('Failed to delete theme');
+    }
   },
 };
 
@@ -321,30 +325,3 @@ export const dslRepository = {
     return response.data;
   },
 };
-
-// ============================================================================
-// STUB REPOSITORIES
-// These warn when used - frontend should use SDK hooks directly
-// ============================================================================
-
-const createStubRepository = (name: string) => {
-  const handler = {
-    get(_target: unknown, prop: string) {
-      return async () => {
-        console.warn(`${name}.${prop} is not implemented. Use SDK hooks directly.`);
-        return null;
-      };
-    },
-  };
-  return new Proxy({}, handler);
-};
-
-export const experienceRepository = createStubRepository('experienceRepository');
-export const educationRepository = createStubRepository('educationRepository');
-export const skillRepository = createStubRepository('skillRepository');
-export const languageRepository = createStubRepository('languageRepository');
-export const projectRepository = createStubRepository('projectRepository');
-export const certificationRepository = createStubRepository('certificationRepository');
-export const publicationRepository = createStubRepository('publicationRepository');
-export const awardRepository = createStubRepository('awardRepository');
-export const referenceRepository = createStubRepository('referenceRepository');

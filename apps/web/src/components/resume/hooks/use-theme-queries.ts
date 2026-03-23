@@ -11,6 +11,7 @@ import {
   useThemesFindPopularThemes,
   useThemesFindThemeById,
   useThemesGetAllThemesByUser,
+  useThemesGetPending,
 } from '@profile/api-client';
 import { useMemo } from 'react';
 import type { Theme } from '../services/theme.types';
@@ -118,12 +119,14 @@ export function useMyThemes() {
   };
 }
 
-// Admin/Approver queries - Not yet in SDK
+// Admin/Approver queries — wired to SDK
 export function usePendingThemes() {
-  // No pending approvals endpoint in current SDK
+  const query = useThemesGetPending();
+  const themes: Theme[] = ((query.data?.data as unknown as { themes?: Theme[] })?.themes ?? []);
+
   return {
-    data: [] as Theme[],
-    isLoading: false,
-    error: null,
+    data: themes,
+    isLoading: query.isLoading,
+    error: query.error,
   };
 }

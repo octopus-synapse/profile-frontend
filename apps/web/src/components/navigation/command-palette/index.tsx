@@ -176,7 +176,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       className="fixed inset-0 z-[100] flex items-start justify-center pt-[15vh]"
       role="dialog"
       aria-modal="true"
-      aria-label="Command palette"
+      aria-label={t('nav.aria.commandPalette')}
     >
       {/* Backdrop */}
       <div
@@ -203,7 +203,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
             onChange={(e) => handleQueryChange(e.target.value)}
             placeholder={t('nav.search.commandPlaceholder')}
             className="flex-1 bg-transparent text-sm text-white placeholder:text-zinc-500 focus:outline-none"
-            aria-label="Search commands"
+            aria-label={t('nav.aria.searchCommands')}
           />
           <kbd className="rounded bg-white/10 px-1.5 py-0.5 text-[10px] font-medium text-zinc-500">
             ESC

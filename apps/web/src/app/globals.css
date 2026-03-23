@@ -314,6 +314,7 @@
   --color-background: var(--pf-canvas-default);
   --color-foreground: var(--pf-fg-default);
   --font-sans: var(--font-inter);
+  --font-display: var(--font-syne);
   --font-mono:
     ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 
@@ -1502,4 +1503,44 @@ html.landing-scrollbar::-webkit-scrollbar-thumb {
     animation-iteration-count: 1;
     transition-duration: 0.01ms;
   }
+}
+
+/* ========================================
+ * Landing Page Animations
+ * ======================================== */
+
+@keyframes gridDrift {
+  from { background-position: 0 0; }
+  to { background-position: 40px 40px; }
+}
+
+@keyframes orbFloat {
+  from { transform: translate(0, 0); }
+  to { transform: translate(40px, 60px); }
+}
+
+@keyframes scanning {
+  0% { top: 0%; }
+  50% { top: 100%; }
+  100% { top: 0%; }
+}
+
+@keyframes confettiFall {
+  0% { opacity: 1; transform: translateY(-100%) rotate(0deg); }
+  100% { opacity: 0; transform: translateY(200px) rotate(720deg); }
+}
+
+@keyframes jobAppear {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideOutRight {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(100%); }
+}
+
+@keyframes errorPulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
+  50% { box-shadow: 0 0 25px rgba(239, 68, 68, 0.6); }
 }

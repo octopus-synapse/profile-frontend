@@ -89,25 +89,4 @@ export function trackEvent(event: AnalyticsEvent, payload?: AnalyticsPayload): v
   }
 }
 
-/**
- * Track page view
- */
-export function trackPageView(page: string, locale?: string): void {
-  trackEvent(AnalyticsEvent.PAGE_VIEW, {
-    page,
-    locale,
-  });
-}
 
-/**
- * Get all tracked events from session (for debugging)
- */
-export function getTrackedEvents(): unknown[] {
-  if (typeof window === 'undefined') return [];
-  try {
-    const stored = sessionStorage.getItem('analytics_events') || '[]';
-    return JSON.parse(stored) as unknown[];
-  } catch {
-    return [];
-  }
-}

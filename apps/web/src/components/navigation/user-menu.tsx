@@ -178,7 +178,7 @@ export function UserMenu() {
                       ? 'bg-[#0A0A0A]/95 text-white shadow-sm'
                       : 'text-zinc-400 hover:text-white',
                   )}
-                  aria-label="Light theme"
+                  aria-label={t('nav.aria.lightTheme')}
                   aria-pressed={themeContext?.theme === 'light'}
                 >
                   <Sun className="h-3.5 w-3.5" strokeWidth={1.5} />
@@ -192,7 +192,7 @@ export function UserMenu() {
                       ? 'bg-[#0A0A0A]/95 text-white shadow-sm'
                       : 'text-zinc-400 hover:text-white',
                   )}
-                  aria-label="Dark theme"
+                  aria-label={t('nav.aria.darkTheme')}
                   aria-pressed={themeContext?.theme === 'dark'}
                 >
                   <Moon className="h-3.5 w-3.5" strokeWidth={1.5} />

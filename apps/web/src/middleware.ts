@@ -13,7 +13,7 @@ import {
   getLocaleFromPathname,
   i18nConfig,
   type Locale,
-} from '@/config/i18n.config';
+} from '@profile/i18n';
 import { isProtectedRoute, ROUTES } from '@/config/routes';
 
 const LOCALE_COOKIE = 'NEXT_LOCALE';

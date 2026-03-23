@@ -94,7 +94,7 @@ export function UsersTable() {
             }}
           >
             <SelectTrigger className="w-36">
-              <SelectValue placeholder="Filter by role" />
+              <SelectValue placeholder={t('admin.users.filterByRole')} />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t('admin.users.filterAllRoles')}</SelectItem>

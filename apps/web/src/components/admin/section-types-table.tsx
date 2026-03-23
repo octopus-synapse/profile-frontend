@@ -106,7 +106,7 @@ export function SectionTypesTable() {
             }}
           >
             <SelectTrigger className="w-40">
-              <SelectValue placeholder="Semantic kind" />
+              <SelectValue placeholder={t('admin.sectionTypes.filterSemanticKind')} />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t('admin.sectionTypes.allKinds')}</SelectItem>
@@ -125,7 +125,7 @@ export function SectionTypesTable() {
             }}
           >
             <SelectTrigger className="w-32">
-              <SelectValue placeholder="Status" />
+              <SelectValue placeholder={t('admin.sectionTypes.filterStatus')} />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t('admin.sectionTypes.statusAll')}</SelectItem>

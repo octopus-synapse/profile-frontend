@@ -8,7 +8,9 @@ interface ResumeListItem {
  */
 export function extractResumeListItems(response: unknown): ResumeListItem[] {
   // Try various possible response shapes
-  const data = (response as { data?: { data?: unknown; resumes?: unknown; items?: unknown } } | null)?.data;
+  const data = (
+    response as { data?: { data?: unknown; resumes?: unknown; items?: unknown } } | null
+  )?.data;
 
   // Shape 1: { data: { data: ResumeListItem[] } }
   if (Array.isArray(data?.data)) {

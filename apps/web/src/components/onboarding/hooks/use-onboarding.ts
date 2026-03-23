@@ -17,6 +17,7 @@ import {
   useOnboardingSaveStepData,
 } from '@profile/api-client';
 import { useQueryClient } from '@tanstack/react-query';
+import { showToast } from '@/shared/components/ui/toast';
 
 type SectionItem = { id?: string; content: Record<string, unknown> };
 type SectionData = Omit<SectionProgressDto, 'items'> & { items: SectionItem[] };
@@ -42,31 +43,50 @@ export function useOnboarding() {
   // --- Commands ---
 
   const goToNextStep = async (stepData?: Record<string, unknown>) => {
-    // Send stepData directly in body (SDK wraps it correctly)
-    await nextMut.mutateAsync({ data: stepData ?? {} });
-    await invalidate();
+    try {
+      await nextMut.mutateAsync({ data: stepData ?? {} });
+      await invalidate();
+    } catch {
+      showToast.error('Failed to proceed', 'Please try again.');
+    }
   };
 
   const goToPreviousStep = async () => {
-    await prevMut.mutateAsync({ data: {} });
-    await invalidate();
+    try {
+      await prevMut.mutateAsync({ data: {} });
+      await invalidate();
+    } catch {
+      showToast.error('Failed to go back', 'Please try again.');
+    }
   };
 
   const goToStep = async (stepId: string) => {
-    await gotoMut.mutateAsync({ data: { stepId } });
-    await invalidate();
+    try {
+      await gotoMut.mutateAsync({ data: { stepId } });
+      await invalidate();
+    } catch {
+      showToast.error('Failed to navigate', 'Please try again.');
+    }
   };
 
   const saveStepData = async (stepData: Record<string, unknown>) => {
-    // Send stepData as stringified JSON per the new API contract
-    await saveMut.mutateAsync({ data: { stepData: JSON.stringify(stepData) } });
-    await invalidate();
+    try {
+      await saveMut.mutateAsync({ data: { stepData: JSON.stringify(stepData) } });
+      await invalidate();
+    } catch {
+      showToast.error('Failed to save', 'Your changes could not be saved. Please try again.');
+    }
   };
 
   const complete = async () => {
-    const r = await completeMut.mutateAsync({ data: {} });
-    await invalidate();
-    return r;
+    try {
+      const r = await completeMut.mutateAsync({ data: {} });
+      await invalidate();
+      return r;
+    } catch {
+      showToast.error('Failed to complete onboarding', 'Please try again.');
+      return null;
+    }
   };
 
   // --- Derived state ---

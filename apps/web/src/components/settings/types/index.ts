@@ -48,23 +48,6 @@ export interface UserPreferences {
 }
 
 // ============================================================================
-// API Response Types
-// ============================================================================
-
-export interface ApiResponse<T> {
-  success: boolean;
-  data?: T;
-  message?: string;
-}
-
-export interface PaginatedResponse<T> {
-  data: T[];
-  total: number;
-  page: number;
-  limit: number;
-}
-
-// ============================================================================
 // Spoken Languages Catalog (pre-populated list)
 // ============================================================================
 

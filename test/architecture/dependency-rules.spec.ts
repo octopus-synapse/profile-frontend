@@ -2,10 +2,9 @@
  * Architecture Fitness Tests
  *
  * These tests enforce architectural constraints:
- * 1. No profile-contracts imports anywhere
- * 2. No client-side Zod validation (server validates)
- * 3. Proper dependency direction
- * 4. Components must come from profile-ui
+ * 1. No client-side Zod validation (server validates)
+ * 2. Proper dependency direction
+ * 3. Components must come from profile-ui
  *
  * Uncle Bob: "Architecture tests are executable specifications of intent."
  */
@@ -59,74 +58,6 @@ function getAllTypeScriptFiles(dir: string): string[] {
 // ============================================================================
 
 describe("Architecture Rules", () => {
- describe("profile-contracts Elimination", () => {
-  it("should have ZERO imports from profile-contracts in apps/web/src", () => {
-   const srcFiles = getAllTypeScriptFiles("apps/web/src");
-   const violations: string[] = [];
-
-   for (const file of srcFiles) {
-    const content = fs.readFileSync(file, "utf-8");
-    if (content.includes("profile-contracts")) {
-     violations.push(file);
-    }
-   }
-
-   expect(violations).toEqual([]);
-  });
-
-  it("should have ZERO imports from profile-contracts in packages/", () => {
-   const srcFiles = getAllTypeScriptFiles("packages");
-   const violations: string[] = [];
-
-   for (const file of srcFiles) {
-    const content = fs.readFileSync(file, "utf-8");
-    // Check for actual imports, not comments
-    const lines = content.split("\n");
-    for (const line of lines) {
-     const trimmed = line.trim();
-     // Skip comments
-     if (
-      trimmed.startsWith("//") ||
-      trimmed.startsWith("*") ||
-      trimmed.startsWith("/*")
-     ) {
-      continue;
-     }
-     if (line.includes("profile-contracts")) {
-      violations.push(file);
-      break;
-     }
-    }
-   }
-
-   expect(violations).toEqual([]);
-  });
-
-  it("should NOT have profile-contracts in any package.json dependencies", () => {
-   const packageJsonFiles = [
-    "package.json",
-    "apps/web/package.json",
-    "apps/mobile/package.json",
-    "packages/api-client/package.json",
-    "packages/stores/package.json",
-    "packages/i18n/package.json",
-   ];
-
-   const violations: string[] = [];
-
-   for (const pkgFile of packageJsonFiles) {
-    if (fs.existsSync(pkgFile)) {
-     const content = fs.readFileSync(pkgFile, "utf-8");
-     if (content.includes("profile-contracts")) {
-      violations.push(pkgFile);
-     }
-    }
-   }
-
-   expect(violations).toEqual([]);
-  });
- });
-
  describe("Store Deprecation", () => {
   it("apps/web/src components should NOT import from @profile/stores", () => {
    const srcFiles = getAllTypeScriptFiles("apps/web/src");

@@ -7,6 +7,7 @@
  * Sub-components extracted to section-type-form-fields.tsx.
  */
 
+import { useT } from '@profile/i18n';
 import { useState } from 'react';
 import { Button } from '@/shared/components/ui';
 import {
@@ -18,21 +19,27 @@ import {
   DialogTitle,
 } from '@/shared/components/ui/dialog';
 import { showToast } from '@/shared/components/ui/toast';
+import { AtsConfigEditor } from './ats-config-editor';
+import { FieldDefinitionEditor } from './field-definition-editor';
+import { FieldStylesEditor } from './field-styles-editor';
 import { useSectionTypeCreate, useSectionTypeUpdate } from './hooks';
+import { RenderHintsEditor } from './render-hints-editor';
 import {
   CoreFieldsSection,
-  EMPTY_TRANSLATION,
-  LOCALES,
+  getTranslationErrors,
   type TranslationFields,
   type TranslationLocale,
   TranslationsSection,
 } from './section-type-form-fields';
-import type {
-  CreateSectionTypePayload,
-  SectionTypeData,
-  SectionTypeTranslation,
-  UpdateSectionTypePayload,
-} from './types/section-types';
+import {
+  buildCreatePayload,
+  buildTranslationState,
+  buildTranslationsPayload,
+  buildUpdatePayload,
+} from './section-type-form-helpers';
+import type { SectionTypeData } from './types/section-types';
+import { parseDefinition, serializeDefinition, type FieldDefinition } from './types/field-definition';
+import { parseRenderHints, parseFieldStyles, type RenderHints, type FieldStylesMap } from './types/style-config';
 
 // ============================================================================
 // Types
@@ -55,6 +62,7 @@ export function SectionTypeFormDialog({
   mode,
   sectionType,
 }: SectionTypeFormDialogProps) {
+  const t = useT();
   const createMutation = useSectionTypeCreate();
   const updateMutation = useSectionTypeUpdate();
 
@@ -74,17 +82,33 @@ export function SectionTypeFormDialog({
   const [translations, setTranslations] = useState<Record<TranslationLocale, TranslationFields>>(
     () => buildTranslationState(sectionType),
   );
+  const [definition, setDefinition] = useState<FieldDefinition>(
+    () => parseDefinition(sectionType?.definition ?? {}),
+  );
+  const [renderHints, setRenderHints] = useState<RenderHints>(
+    () => parseRenderHints(sectionType?.renderHints),
+  );
+  const [fieldStyles, setFieldStyles] = useState<FieldStylesMap>(
+    () => parseFieldStyles(sectionType?.fieldStyles),
+  );
 
   const isPending = createMutation.isPending || updateMutation.isPending;
 
   const handleSubmit = async () => {
     if (!key.trim() || !title.trim() || !semanticKind.trim()) {
-      showToast.error('Key, title, and semantic kind are required');
+      showToast.error(t('admin.sectionTypes.form.requiredFields'));
+      return;
+    }
+
+    const translationErrors = getTranslationErrors(translations);
+    if (translationErrors.length > 0) {
+      showToast.error(t('admin.sectionTypes.form.translationIncomplete', { error: translationErrors[0] }));
       return;
     }
 
     const translationsPayload = buildTranslationsPayload(translations);
     const parsedMaxItems = maxItems ? Number(maxItems) : null;
+    const serializedDefinition = serializeDefinition({ ...definition, kind: semanticKind });
 
     try {
       if (mode === 'create') {
@@ -93,9 +117,12 @@ export function SectionTypeFormDialog({
             { key, title, description, semanticKind, iconType, icon, isRepeatable, minItems },
             parsedMaxItems,
             translationsPayload,
+            serializedDefinition,
+            renderHints,
+            fieldStyles,
           ),
         );
-        showToast.success('Section type created');
+        showToast.success(t('admin.sectionTypes.form.created'));
       } else {
         await updateMutation.mutateAsync({
           key,
@@ -103,13 +130,16 @@ export function SectionTypeFormDialog({
             { title, description, isActive, isRepeatable, iconType, icon, minItems },
             parsedMaxItems,
             translationsPayload,
+            serializedDefinition,
+            renderHints,
+            fieldStyles,
           ),
         });
-        showToast.success('Section type updated');
+        showToast.success(t('admin.sectionTypes.form.updated'));
       }
       onOpenChange(false);
     } catch {
-      showToast.error(`Failed to ${mode} section type`);
+      showToast.error(t('admin.sectionTypes.form.saveFailed'));
     }
   };
 
@@ -122,15 +152,15 @@ export function SectionTypeFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
+      <DialogContent className="max-h-[85vh] max-w-3xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            {mode === 'create' ? 'Create Section Type' : 'Edit Section Type'}
+            {mode === 'create' ? t('admin.sectionTypes.form.createTitle') : t('admin.sectionTypes.form.editTitle')}
           </DialogTitle>
           <DialogDescription>
             {mode === 'create'
-              ? 'Define a new resume section type with translations'
-              : `Editing section type: ${sectionType?.key}`}
+              ? t('admin.sectionTypes.form.createDescription')
+              : t('admin.sectionTypes.form.editDescription', { key: sectionType?.key ?? '' })}
           </DialogDescription>
         </DialogHeader>
 
@@ -165,128 +195,29 @@ export function SectionTypeFormDialog({
             onLocaleChange={setActiveLocale}
             onFieldChange={updateTranslation}
           />
+
+          <FieldDefinitionEditor definition={definition} onChange={setDefinition} />
+
+          <AtsConfigEditor
+            atsConfig={definition.ats}
+            fields={definition.fields}
+            onChange={(ats) => setDefinition((prev) => ({ ...prev, ats }))}
+          />
+
+          <RenderHintsEditor renderHints={renderHints} onChange={setRenderHints} />
+
+          <FieldStylesEditor fields={definition.fields} fieldStyles={fieldStyles} onChange={setFieldStyles} />
         </div>
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            {t('action.cancel')}
           </Button>
           <Button onClick={() => void handleSubmit()} loading={isPending}>
-            {mode === 'create' ? 'Create' : 'Save Changes'}
+            {mode === 'create' ? t('admin.sectionTypes.form.createButton') : t('admin.sectionTypes.form.saveButton')}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
-}
-
-// ============================================================================
-// Helpers
-// ============================================================================
-
-function buildTranslationState(
-  sectionType?: SectionTypeData | null,
-): Record<TranslationLocale, TranslationFields> {
-  const base: Record<TranslationLocale, TranslationFields> = {
-    en: { ...EMPTY_TRANSLATION },
-    'pt-BR': { ...EMPTY_TRANSLATION },
-    es: { ...EMPTY_TRANSLATION },
-  };
-
-  if (!sectionType?.translations) return base;
-
-  for (const locale of LOCALES) {
-    const existing = sectionType.translations[locale.key];
-    if (existing) {
-      base[locale.key] = {
-        title: existing.title ?? '',
-        label: existing.label ?? '',
-        description: existing.description ?? '',
-        noDataLabel: existing.noDataLabel ?? '',
-        placeholder: existing.placeholder ?? '',
-        addLabel: existing.addLabel ?? '',
-      };
-    }
-  }
-
-  return base;
-}
-
-function stripEmpty(obj: TranslationFields): Partial<TranslationFields> {
-  const result: Partial<TranslationFields> = {};
-  for (const [k, v] of Object.entries(obj)) {
-    if (v) result[k as keyof TranslationFields] = v;
-  }
-  return result;
-}
-
-function buildTranslationsPayload(
-  translations: Record<TranslationLocale, TranslationFields>,
-): Record<string, Partial<SectionTypeTranslation>> {
-  const payload: Record<string, Partial<SectionTypeTranslation>> = {};
-  for (const locale of LOCALES) {
-    const t = translations[locale.key];
-    if (t.title) payload[locale.key] = stripEmpty(t);
-  }
-  return payload;
-}
-
-interface CreateFields {
-  key: string;
-  title: string;
-  description: string;
-  semanticKind: string;
-  iconType: string;
-  icon: string;
-  isRepeatable: boolean;
-  minItems: number;
-}
-
-function buildCreatePayload(
-  fields: CreateFields,
-  maxItems: number | null,
-  translations: Record<string, Partial<SectionTypeTranslation>>,
-): CreateSectionTypePayload {
-  return {
-    key: fields.key.trim(),
-    slug: fields.key.trim().replace(/_/g, '-'),
-    title: fields.title.trim(),
-    description: fields.description.trim() || undefined,
-    semanticKind: fields.semanticKind.trim(),
-    iconType: fields.iconType as 'emoji' | 'lucide',
-    icon: fields.icon.trim(),
-    isRepeatable: fields.isRepeatable,
-    minItems: fields.minItems,
-    maxItems: maxItems ?? undefined,
-    definition: {},
-    translations,
-  };
-}
-
-interface UpdateFields {
-  title: string;
-  description: string;
-  isActive: boolean;
-  isRepeatable: boolean;
-  iconType: string;
-  icon: string;
-  minItems: number;
-}
-
-function buildUpdatePayload(
-  fields: UpdateFields,
-  maxItems: number | null,
-  translations: Record<string, Partial<SectionTypeTranslation>>,
-): UpdateSectionTypePayload {
-  return {
-    title: fields.title.trim(),
-    description: fields.description.trim() || null,
-    isActive: fields.isActive,
-    isRepeatable: fields.isRepeatable,
-    iconType: fields.iconType as 'emoji' | 'lucide',
-    icon: fields.icon.trim(),
-    minItems: fields.minItems,
-    maxItems,
-    translations,
-  };
 }

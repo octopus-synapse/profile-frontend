@@ -10,7 +10,6 @@ WORKDIR /app
 
 # Handle Context Normalization and Sister Repositories
 # Supports both Monorepo Context (CI) and Project Root Context (CD)
-# Note: profile-contracts is no longer needed - we use orval SDK from profile-services
 RUN --mount=type=bind,target=/context \
     --mount=type=secret,id=github_token \
     if [ -s /run/secrets/github_token ]; then \

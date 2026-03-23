@@ -9,10 +9,15 @@ export {
   useCreateResume,
   useDeleteResume,
   useDuplicateResume,
-  useExportResumeDOCX,
-  useExportResumePDF,
   useUpdateResume,
 } from './use-resume-mutations';
+export {
+  useExportBanner,
+  useExportDOCX,
+  useExportJSON,
+  useExportLaTeX,
+  useExportPDF,
+} from './use-resume-export';
 export { usePublicResume, useResume, useResumes } from './use-resume-queries';
 // Section config hooks
 export {

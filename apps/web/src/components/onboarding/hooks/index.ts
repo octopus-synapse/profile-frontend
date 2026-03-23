@@ -11,7 +11,15 @@ import type {
 export { useGitHubUser } from './use-github-user';
 export { useOnboarding } from './use-onboarding';
 
-export type OnboardingStep = string;
+export type KnownStep =
+  | 'welcome'
+  | 'personal-info'
+  | 'username'
+  | 'professional-profile'
+  | 'template'
+  | 'review'
+  | 'complete';
+export type OnboardingStep = KnownStep | SectionStep | (string & {});
 export type SectionStep = `section:${string}`;
 export const isSectionStep = (step: string): step is SectionStep => step.startsWith('section:');
 export const getSectionTypeFromStep = (step: SectionStep | string) => step.replace('section:', '');

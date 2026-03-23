@@ -7,6 +7,7 @@
 
 import { useCallback, useState } from 'react';
 import { cn } from '@/shared/utils';
+import { showToast } from '@/shared/components/ui/toast';
 import { useCreateTheme, useForkTheme, useUpdateTheme } from '../hooks';
 import type { Theme } from '../services/theme.types';
 import type { ResumeStyleConfig } from '../types/config';
@@ -101,7 +102,7 @@ export function ThemeEditor({ theme, onSave, onCancel }: Props) {
 
       onSave?.(saved);
     } catch (error) {
-      console.error('Failed to save theme:', error);
+      showToast.error('Failed to save theme');
     }
   };
 

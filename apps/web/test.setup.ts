@@ -41,34 +41,87 @@ afterEach(() => {
 
 // Mock lucide-react icons
 void mock.module('lucide-react', () => ({
+  Activity: () => React.createElement('span', { 'data-testid': 'icon-activity' }),
   AlertCircle: () => React.createElement('span', { 'data-testid': 'icon-alert' }),
-  Mail: () => React.createElement('span', { 'data-testid': 'icon-mail' }),
-  Lock: () => React.createElement('span', { 'data-testid': 'icon-lock' }),
-  Eye: () => React.createElement('span', { 'data-testid': 'icon-eye' }),
-  EyeOff: () => React.createElement('span', { 'data-testid': 'icon-eye-off' }),
-  ChevronRight: () => React.createElement('span', { 'data-testid': 'icon-chevron' }),
   ArrowLeft: () => React.createElement('span', { 'data-testid': 'icon-arrow-left' }),
   ArrowRight: () => React.createElement('span', { 'data-testid': 'icon-arrow-right' }),
-  SkipForward: () => React.createElement('span', { 'data-testid': 'icon-skip' }),
   AtSign: () => React.createElement('span', { 'data-testid': 'icon-at' }),
   Check: () => React.createElement('span', { 'data-testid': 'icon-check' }),
-  X: () => React.createElement('span', { 'data-testid': 'icon-x' }),
-  Loader2: () => React.createElement('span', { 'data-testid': 'icon-loader' }),
+  CheckCircle2: () => React.createElement('span', { 'data-testid': 'icon-check-circle' }),
+  ChevronRight: () => React.createElement('span', { 'data-testid': 'icon-chevron' }),
+  Clock: () => React.createElement('span', { 'data-testid': 'icon-clock' }),
+  Copy: () => React.createElement('span', { 'data-testid': 'icon-copy' }),
+  Eye: () => React.createElement('span', { 'data-testid': 'icon-eye' }),
+  EyeOff: () => React.createElement('span', { 'data-testid': 'icon-eye-off' }),
   ExternalLink: () => React.createElement('span', { 'data-testid': 'icon-external' }),
+  FileJson: () => React.createElement('span', { 'data-testid': 'icon-file-json' }),
+  FileText: () => React.createElement('span', { 'data-testid': 'icon-file-text' }),
+  Inbox: () => React.createElement('span', { 'data-testid': 'icon-inbox' }),
+  KeyRound: () => React.createElement('span', { 'data-testid': 'icon-key-round' }),
+  Loader2: () => React.createElement('span', { 'data-testid': 'icon-loader' }),
+  Lock: () => React.createElement('span', { 'data-testid': 'icon-lock' }),
+  Mail: () => React.createElement('span', { 'data-testid': 'icon-mail' }),
+  QrCode: () => React.createElement('span', { 'data-testid': 'icon-qr-code' }),
   RefreshCw: () => React.createElement('span', { 'data-testid': 'icon-refresh' }),
+  ShieldCheck: () => React.createElement('span', { 'data-testid': 'icon-shield-check' }),
+  ShieldOff: () => React.createElement('span', { 'data-testid': 'icon-shield-off' }),
+  SkipForward: () => React.createElement('span', { 'data-testid': 'icon-skip' }),
+  TrendingDown: () => React.createElement('span', { 'data-testid': 'icon-trending-down' }),
+  TrendingUp: () => React.createElement('span', { 'data-testid': 'icon-trending-up' }),
+  UserMinus: () => React.createElement('span', { 'data-testid': 'icon-user-minus' }),
+  UserPlus: () => React.createElement('span', { 'data-testid': 'icon-user-plus' }),
+  Users: () => React.createElement('span', { 'data-testid': 'icon-users' }),
+  X: () => React.createElement('span', { 'data-testid': 'icon-x' }),
+  XCircle: () => React.createElement('span', { 'data-testid': 'icon-x-circle' }),
+  Zap: () => React.createElement('span', { 'data-testid': 'icon-zap' }),
 }));
 
 // Mock @profile/ui components (via @/shared/components/ui)
 void mock.module('@/shared/components/ui', () => ({
-  Button: ({ children, ...props }: React.ComponentProps<'button'>) =>
+  Badge: ({ children, variant, ...props }: React.PropsWithChildren<{ variant?: string; className?: string }>) =>
+    React.createElement('span', { 'data-testid': 'badge', 'data-variant': variant, ...props }, children),
+  Button: ({ children, asChild, ...props }: React.ComponentProps<'button'> & { variant?: string; asChild?: boolean }) =>
     React.createElement('button', { type: 'button', ...props }, children),
+  Card: ({ children, ...props }: React.PropsWithChildren<{ className?: string }>) =>
+    React.createElement('div', { 'data-testid': 'card', ...props }, children),
+  CardContent: ({ children, ...props }: React.PropsWithChildren<{ className?: string }>) =>
+    React.createElement('div', props, children),
+  CardDescription: ({ children }: React.PropsWithChildren) =>
+    React.createElement('p', null, children),
+  CardHeader: ({ children, ...props }: React.PropsWithChildren<{ className?: string }>) =>
+    React.createElement('div', props, children),
+  CardTitle: ({ children, ...props }: React.PropsWithChildren<{ className?: string }>) =>
+    React.createElement('h3', props, children),
+  HelpTooltip: ({ children }: React.PropsWithChildren) =>
+    React.createElement('span', null, children),
   Input: React.forwardRef<HTMLInputElement, React.ComponentProps<'input'>>((props, ref) =>
     React.createElement('input', { ...props, ref }),
   ),
+  Skeleton: ({ className }: { className?: string }) =>
+    React.createElement('div', { 'data-testid': 'skeleton', className }),
   Spinner: () =>
     React.createElement('span', { 'data-testid': 'spinner', role: 'status' }, 'Loading...'),
-  HelpTooltip: ({ children }: React.PropsWithChildren) =>
-    React.createElement('span', null, children),
+}));
+
+// Mock dialog components
+void mock.module('@/shared/components/ui/dialog', () => ({
+  Dialog: ({ children, open }: React.PropsWithChildren<{ open?: boolean; onOpenChange?: (v: boolean) => void }>) =>
+    open ? React.createElement('div', { role: 'dialog' }, children) : null,
+  DialogContent: ({ children }: React.PropsWithChildren<{ className?: string }>) =>
+    React.createElement('div', null, children),
+  DialogDescription: ({ children }: React.PropsWithChildren) =>
+    React.createElement('p', null, children),
+  DialogFooter: ({ children }: React.PropsWithChildren) =>
+    React.createElement('div', null, children),
+  DialogHeader: ({ children }: React.PropsWithChildren) =>
+    React.createElement('div', null, children),
+  DialogTitle: ({ children, ...props }: React.PropsWithChildren<{ className?: string }>) =>
+    React.createElement('h3', props, children),
+}));
+
+// Mock toast notifications
+void mock.module('@/shared/components/ui/toast', () => ({
+  showToast: { success: () => {}, error: () => {}, info: () => {} },
 }));
 
 void mock.module('@/shared/components/ui/label', () => ({

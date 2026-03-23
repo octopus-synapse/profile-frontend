@@ -91,7 +91,7 @@ export function CoreFieldsSection(props: CoreFieldsSectionProps) {
         <div className="space-y-2">
           <Label required>{t('admin.sectionTypes.form.title')}</Label>
           <Input
-            placeholder="Work Experience"
+            placeholder={t('admin.sectionTypes.form.placeholderExample')}
             value={props.title}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               props.onTitleChange(e.target.value)
@@ -131,8 +131,8 @@ export function CoreFieldsSection(props: CoreFieldsSectionProps) {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="emoji">Emoji</SelectItem>
-                <SelectItem value="lucide">Lucide</SelectItem>
+                <SelectItem value="emoji">{t('admin.sectionTypes.form.iconEmoji')}</SelectItem>
+                <SelectItem value="lucide">{t('admin.sectionTypes.form.iconLucide')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -166,7 +166,7 @@ export function CoreFieldsSection(props: CoreFieldsSectionProps) {
           <Input
             type="number"
             min={0}
-            placeholder="No limit"
+            placeholder={t('admin.sectionTypes.form.noLimit')}
             value={props.maxItems}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               props.onMaxItemsChange(e.target.value)

@@ -1,6 +1,6 @@
 'use client';
 
-import { useT } from '@profile/i18n';
+import { useI18n } from '@profile/i18n';
 import { Search } from 'lucide-react';
 import { cn } from '@/shared/utils';
 
@@ -10,7 +10,7 @@ interface SearchTriggerProps {
 }
 
 export function SearchTrigger({ onClick, className }: SearchTriggerProps) {
-  const t = useT();
+  const { t } = useI18n();
   return (
     <button
       type="button"
@@ -23,7 +23,7 @@ export function SearchTrigger({ onClick, className }: SearchTriggerProps) {
         'w-full max-w-md',
         className,
       )}
-      aria-label="Open command palette"
+      aria-label={t('nav.aria.openCommandPalette')}
     >
       <Search className="h-4 w-4 shrink-0 text-zinc-500" strokeWidth={1.5} />
       <span className="flex-1 text-left text-sm text-zinc-500">{t('nav.search.placeholder')}</span>

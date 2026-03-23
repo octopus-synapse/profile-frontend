@@ -3,7 +3,9 @@
  * Based on profile-services Prisma schema
  */
 
-export type UserRole = 'USER' | 'ADMIN';
+import type { SessionUserResponseDtoRole } from '@profile/api-client';
+
+export type UserRole = SessionUserResponseDtoRole;
 
 export interface User {
   id: string;

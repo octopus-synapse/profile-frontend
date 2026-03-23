@@ -8,7 +8,7 @@
 import Link, { type LinkProps } from 'next/link';
 import { useParams } from 'next/navigation';
 import type { AnchorHTMLAttributes } from 'react';
-import { i18nConfig, type Locale } from '@/config/i18n.config';
+import { hasLocalePrefix, i18nConfig, type Locale } from '@profile/i18n';
 
 interface LocalizedLinkProps
   extends Omit<LinkProps, 'href'>,
@@ -30,15 +30,6 @@ function isExternalUrl(url: string): boolean {
  */
 function isHashLink(url: string): boolean {
   return url.startsWith('#');
-}
-
-/**
- * Check if URL already has a locale prefix
- */
-function hasLocalePrefix(pathname: string): boolean {
-  return i18nConfig.locales.some(
-    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`,
-  );
 }
 
 export function LocalizedLink({

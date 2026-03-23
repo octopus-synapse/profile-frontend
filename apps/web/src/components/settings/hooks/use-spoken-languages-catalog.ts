@@ -15,14 +15,6 @@ export const spokenLanguagesCatalogKeys = {
   search: (query: string) => [...spokenLanguagesCatalogKeys.all, 'search', query] as const,
 };
 
-export function useSpokenLanguagesCatalog() {
-  return useQuery({
-    queryKey: spokenLanguagesCatalogKeys.list(),
-    queryFn: () => spokenLanguagesCatalogRepository.getAll(),
-    staleTime: CACHE_TIMES.STATIC,
-  });
-}
-
 export function useSearchSpokenLanguages(query: string) {
   return useQuery({
     queryKey: spokenLanguagesCatalogKeys.search(query),

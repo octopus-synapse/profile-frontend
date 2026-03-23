@@ -1,5 +1,6 @@
-import { ArrowLeft, Home, Search, Terminal } from 'lucide-react';
+import { Home, Search, Terminal } from 'lucide-react';
 import Link from 'next/link';
+import { GoBackButton } from '@/shared/components/ui/go-back-button';
 
 /**
  * Global 404 Not Found Page
@@ -36,13 +37,7 @@ export default function NotFound() {
             <Home className="h-4 w-4" strokeWidth={1.5} />
             Go Home
           </Link>
-          <Link
-            href="javascript:history.back()"
-            className="inline-flex items-center justify-center gap-2 border border-white/10 bg-transparent px-6 py-3 font-mono text-sm text-white transition-colors hover:bg-white/5"
-          >
-            <ArrowLeft className="h-4 w-4" strokeWidth={1.5} />
-            Go Back
-          </Link>
+          <GoBackButton />
         </div>
 
         {/* Help text */}

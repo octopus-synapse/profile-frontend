@@ -85,7 +85,7 @@ export function RecentUsersWidget({ users, loading }: RecentUsersWidgetProps) {
                     </p>
                     {user.role === 'ADMIN' && (
                       <span className="bg-pf-accent-subtle text-pf-accent-fg rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase">
-                        Admin
+                        {t('admin.role.admin')}
                       </span>
                     )}
                   </div>

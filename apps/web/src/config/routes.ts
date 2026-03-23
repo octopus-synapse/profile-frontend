@@ -27,6 +27,9 @@ export const ROUTES = {
     PROFILE: '/protected/profile',
     RESUME: '/protected/resume',
     SETTINGS: '/protected/settings',
+    CHAT: '/protected/chat',
+    FEED: '/protected/feed',
+    SEARCH: '/protected/search',
   },
 
   // Admin routes (require ADMIN role) - under /protected

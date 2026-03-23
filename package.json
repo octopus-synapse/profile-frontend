@@ -8,7 +8,6 @@
   ],
   "scripts": {
     "dev": "bun --filter @profile/web dev",
-    "dev:mobile": "bun --filter @profile/mobile start",
     "build": "bun --filter @profile/api-client build && bun --filter @profile/i18n build && bun --filter @profile/web build",
     "start": "bun --filter @profile/web start",
     "lint": "biome check .",

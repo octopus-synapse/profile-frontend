@@ -42,11 +42,11 @@ export * from './alert';
 export * from './autocomplete';
 export * from './checkbox';
 // Overlays
+export * from './confirm-dialog';
 export * from './dialog';
 export * from './dropdown-menu';
 export * from './empty-state';
 export * from './label';
-export * from './language-toggle';
 export * from './phone-input';
 // Feedback
 export * from './progress';

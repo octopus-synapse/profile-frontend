@@ -2,7 +2,7 @@
  * Admin Section Types - Type Definitions
  *
  * Maps to the backend AdminSectionTypesController API contract.
- * All types derived from the Zod schemas in profile-contracts.
+ * All types derived from the orval-generated SDK.
  */
 
 export interface SectionTypeTranslation {

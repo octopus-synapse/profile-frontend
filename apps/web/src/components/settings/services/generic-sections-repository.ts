@@ -12,7 +12,8 @@
  * - DELETE /v1/resumes/:resumeId/sections/:sectionTypeKey/items/:itemId - Delete item
  */
 
-import { httpClient } from '@/shared/lib/http-client';
+import { apiFetch } from '@profile/api-client';
+import { getOrCreateResumeId, clearResumeIdCache } from '@/shared/services/resume-id-resolver';
 
 // ============================================================================
 // Generic Section Types (from backend)
@@ -71,7 +72,7 @@ export interface ResumeSection {
 }
 
 // ============================================================================
-// API Response Types (after httpClient extracts .data from wrapper)
+// API Response Types (after apiFetch extracts .data from wrapper)
 // ============================================================================
 
 interface SectionTypesData {
@@ -87,56 +88,14 @@ interface SectionItemData {
 }
 
 // ============================================================================
-// Resume ID Cache
-// ============================================================================
-
-interface Resume {
-  id: string;
-  title: string;
-}
-
-interface ResumesListData {
-  data: Resume[];
-  meta: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  };
-}
-
-let cachedResumeId: string | null = null;
-
-async function getResumeId(): Promise<string> {
-  if (cachedResumeId) return cachedResumeId;
-
-  const response = await httpClient.get<ResumesListData>('/api/v1/resumes');
-  const resumes = response.data;
-
-  if (!resumes || resumes.length === 0) {
-    const newResume = await httpClient.post<Resume>('/api/v1/resumes', { title: 'My Resume' });
-    cachedResumeId = newResume.id;
-    return newResume.id;
-  }
-
-  const firstResume = resumes[0] as Resume;
-  cachedResumeId = firstResume.id;
-  return firstResume.id;
-}
-
-export function clearResumeCacheGeneric() {
-  cachedResumeId = null;
-}
-
-// ============================================================================
 // Generic Sections Repository
 // ============================================================================
 
 export const genericSectionsRepository = {
   /** List all available section types from backend */
   async getSectionTypes(): Promise<SectionType[]> {
-    const resumeId = await getResumeId();
-    const response = await httpClient.get<SectionTypesData>(
+    const resumeId = await getOrCreateResumeId();
+    const response = await apiFetch.get<SectionTypesData>(
       `/api/v1/resumes/${resumeId}/sections/types`,
     );
     return response.sectionTypes;
@@ -144,8 +103,8 @@ export const genericSectionsRepository = {
 
   /** List all sections with items for a resume */
   async getAllSections(resumeId?: string): Promise<ResumeSection[]> {
-    const id = resumeId || (await getResumeId());
-    const response = await httpClient.get<ResumeSectionsData>(`/api/v1/resumes/${id}/sections`);
+    const id = resumeId || (await getOrCreateResumeId());
+    const response = await apiFetch.get<ResumeSectionsData>(`/api/v1/resumes/${id}/sections`);
     return response.sections;
   },
 
@@ -164,8 +123,8 @@ export const genericSectionsRepository = {
     content: Record<string, unknown>,
     resumeId?: string,
   ): Promise<SectionItem> {
-    const id = resumeId || (await getResumeId());
-    const response = await httpClient.post<SectionItemData>(
+    const id = resumeId || (await getOrCreateResumeId());
+    const response = await apiFetch.post<SectionItemData>(
       `/api/v1/resumes/${id}/sections/${sectionTypeKey}/items`,
       { content },
     );
@@ -179,8 +138,8 @@ export const genericSectionsRepository = {
     content: Record<string, unknown>,
     resumeId?: string,
   ): Promise<SectionItem> {
-    const id = resumeId || (await getResumeId());
-    const response = await httpClient.patch<SectionItemData>(
+    const id = resumeId || (await getOrCreateResumeId());
+    const response = await apiFetch.patch<SectionItemData>(
       `/api/v1/resumes/${id}/sections/${sectionTypeKey}/items/${itemId}`,
       { content },
     );
@@ -189,7 +148,11 @@ export const genericSectionsRepository = {
 
   /** Delete a section item */
   async deleteItem(sectionTypeKey: string, itemId: string, resumeId?: string): Promise<void> {
-    const id = resumeId || (await getResumeId());
-    await httpClient.delete(`/api/v1/resumes/${id}/sections/${sectionTypeKey}/items/${itemId}`);
+    const id = resumeId || (await getOrCreateResumeId());
+    await apiFetch.delete(`/api/v1/resumes/${id}/sections/${sectionTypeKey}/items/${itemId}`);
   },
 };
+
+export function clearResumeCacheGeneric() {
+  clearResumeIdCache();
+}

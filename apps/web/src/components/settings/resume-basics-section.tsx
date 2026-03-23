@@ -1,6 +1,7 @@
 'use client';
 
 import type { ResumeFullResponseDto, ResumeResponseDto } from '@profile/api-client';
+import { useI18n } from '@profile/i18n';
 import { AlertCircle, Check, FileText, Loader2, Save, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { showToast } from '@/shared/components/ui/toast';
@@ -27,6 +28,7 @@ export function ResumeBasicsSection({
   dynamicSections = [],
   onOpenSection,
 }: ResumeBasicsSectionProps) {
+  const { t } = useI18n();
   const { data: resumeId, isLoading: isLoadingResumeId } = useCurrentResumeId();
   const { data: resumeResponse, isLoading: isLoadingResume, isError } = useResume(resumeId ?? '');
   const updateResume = useUpdateResume(resumeId ?? '');
@@ -73,7 +75,7 @@ export function ResumeBasicsSection({
   if (isError) {
     return (
       <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-sm text-red-400">
-        Failed to load resume settings
+        {t('settings.resume.failedLoad')}
       </div>
     );
   }
@@ -81,7 +83,7 @@ export function ResumeBasicsSection({
   if (!resumeId || !resume) {
     return (
       <div className="rounded-xl border border-white/10 bg-white/5 p-6 text-sm text-zinc-400">
-        We could not load your resume settings yet.
+        {t('settings.resume.failedLoadDesc')}
       </div>
     );
   }
@@ -90,9 +92,9 @@ export function ResumeBasicsSection({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-white">Resume essentials</h2>
+          <h2 className="text-lg font-semibold text-white">{t('settings.resume.title')}</h2>
           <p className="mt-1 text-sm text-zinc-400">
-            Edit the core information created during onboarding.
+            {t('settings.resume.description')}
           </p>
         </div>
         {isDirty && (
@@ -118,13 +120,13 @@ export function ResumeBasicsSection({
             label="Resume title"
             value={formData.title}
             onChange={(value) => handleChange('title', value)}
-            placeholder="My Resume"
+            placeholder={t('settings.resume.titlePlaceholder')}
           />
           <LabeledField
             label="Target role"
             value={formData.jobTitle}
             onChange={(value) => handleChange('jobTitle', value)}
-            placeholder="Senior Software Engineer"
+            placeholder={t('settings.resume.headlinePlaceholder')}
           />
         </div>
 
@@ -133,7 +135,7 @@ export function ResumeBasicsSection({
             label="Full name"
             value={formData.fullName}
             onChange={(value) => handleChange('fullName', value)}
-            placeholder="Jane Doe"
+            placeholder={t('settings.resume.fullNamePlaceholder')}
           />
           <LabeledField
             label="Email"
@@ -155,19 +157,19 @@ export function ResumeBasicsSection({
             label="Location"
             value={formData.location}
             onChange={(value) => handleChange('location', value)}
-            placeholder="Sao Paulo, BR"
+            placeholder={t('settings.resume.locationPlaceholder')}
           />
         </div>
 
         <label className="block">
           <span className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
             <FileText className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
-            Summary
+            {t('settings.resume.summary')}
           </span>
           <textarea
             value={formData.summary}
             onChange={(event) => handleChange('summary', event.target.value)}
-            placeholder="Tell recruiters what matters most about your profile."
+            placeholder={t('settings.resume.summaryPlaceholder')}
             rows={5}
             className="w-full resize-none rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
           />
@@ -180,10 +182,10 @@ export function ResumeBasicsSection({
         <div>
           <h3 className="flex items-center gap-2 text-base font-semibold text-white">
             <Sparkles className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
-            Resume theme
+            {t('settings.resume.theme')}
           </h3>
           <p className="mt-1 text-sm text-zinc-400">
-            Apply a different visual style without changing your resume content.
+            {t('settings.resume.themeDescription')}
           </p>
         </div>
         <ThemePicker resumeId={resumeId} activeThemeId={activeThemeId ?? null} />
@@ -192,14 +194,14 @@ export function ResumeBasicsSection({
       {updateResume.isSuccess && !isDirty && (
         <div className="flex items-center gap-2 text-sm text-emerald-500">
           <Check className="h-4 w-4" />
-          Resume updated successfully
+          {t('settings.resume.updateSuccess')}
         </div>
       )}
 
       {updateResume.isError && (
         <div className="flex items-center gap-2 text-sm text-red-500">
           <AlertCircle className="h-4 w-4" />
-          Failed to update resume
+          {t('settings.resume.updateFailed')}
         </div>
       )}
     </div>

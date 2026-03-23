@@ -8,7 +8,7 @@
 import { type SessionUserResponseDtoRole, useAuthSession } from '@profile/api-client';
 import { usePathname } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
-import { removeLocalePrefix } from '@/config/i18n.config';
+import { removeLocalePrefix } from '@profile/i18n';
 import { ROUTES } from '@/config/routes';
 import {
   ADMIN_MENU_ITEMS,

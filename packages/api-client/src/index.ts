@@ -45,12 +45,11 @@ export * from './repositories';
 export type { ApiError, authSessionServer } from './client';
 export {
   authSession,
-  clearAuthToken,
   customFetch,
   getApiLocale,
   isApiError,
   setApiLocale,
-  setAuthToken,
+  apiFetch,
 } from './client';
 
 // ============================================================================

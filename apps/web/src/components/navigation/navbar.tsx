@@ -84,7 +84,7 @@ export function Navbar({
                 ? 'mt-3 max-w-6xl rounded-full border border-white/10 bg-black/55 px-5 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-2xl'
                 : 'mt-0 border-transparent bg-transparent px-1'),
           )}
-          aria-label="Main navigation"
+          aria-label={t('nav.aria.mainNavigation')}
         >
           {/* Logo */}
           <div className="shrink-0">

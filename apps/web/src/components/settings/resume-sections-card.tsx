@@ -1,3 +1,4 @@
+import { useI18n } from '@profile/i18n';
 import type { DynamicSettingsNavItem } from './settings-page.utils';
 import { SectionIcon } from '@/shared/components/section-icon';
 
@@ -10,17 +11,19 @@ export function ResumeSectionsCard({
   dynamicSections,
   onOpenSection,
 }: ResumeSectionsCardProps) {
+  const { t } = useI18n();
+
   return (
     <div className="space-y-4 rounded-xl border border-white/10 bg-white/5 p-6">
       <div>
-        <h3 className="text-base font-semibold text-white">Resume sections</h3>
+        <h3 className="text-base font-semibold text-white">{t('settings.resume.sections.title')}</h3>
         <p className="mt-1 text-sm text-zinc-400">
-          Build your profile by adding experiences, education, skills, and more.
+          {t('settings.resume.sections.description')}
         </p>
       </div>
       {dynamicSections.length === 0 ? (
         <div className="rounded-xl border border-dashed border-white/10 p-6 text-center">
-          <p className="text-sm text-zinc-500">Loading section types...</p>
+          <p className="text-sm text-zinc-500">{t('settings.resume.sections.loading')}</p>
         </div>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">

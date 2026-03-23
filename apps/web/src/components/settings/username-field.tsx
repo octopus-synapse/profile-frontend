@@ -8,6 +8,7 @@
 import { formatDistanceToNow } from 'date-fns';
 import { AlertCircle, AtSign, Calendar, Check, ExternalLink, Loader2, Lock, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import { useI18n } from '@profile/i18n';
 import { APP_URL } from '@/config';
 import { useDebounce } from '@/shared/hooks/use-debounce';
 import { showToast } from '@/shared/components/ui/toast';
@@ -21,6 +22,7 @@ import {
 } from './username-field.utils';
 
 export function UsernameField() {
+  const { t } = useI18n();
   const { data: profile, isLoading: profileLoading } = useProfile();
   const updateUsername = useUpdateUsername();
 
@@ -107,7 +109,7 @@ export function UsernameField() {
       setIsEditing(false);
       setTouched(false);
     } catch (error) {
-      showToast.error('Failed to update username');
+      showToast.error(t('settings.username.updateFailed'));
     }
   };
 
@@ -154,7 +156,7 @@ export function UsernameField() {
     return (
       <div className="flex items-center gap-2 py-2">
         <Loader2 className="h-4 w-4 animate-spin text-zinc-400" />
-        <span className="text-sm text-zinc-400">Loading...</span>
+        <span className="text-sm text-zinc-400">{t('action.loading')}</span>
       </div>
     );
   }
@@ -167,7 +169,7 @@ export function UsernameField() {
       <div className="flex items-center justify-between">
         <label className="flex items-center gap-2 text-sm font-medium text-white">
           <AtSign className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
-          Username
+          {t('settings.username.title')}
         </label>
 
         {/* View Profile Link */}
@@ -179,7 +181,7 @@ export function UsernameField() {
             className="flex items-center gap-1 text-xs text-cyan-400 hover:underline"
           >
             <ExternalLink className="h-3 w-3" />
-            View public profile
+            {t('settings.username.viewProfile')}
           </a>
         )}
       </div>
@@ -189,7 +191,7 @@ export function UsernameField() {
         <div className="flex items-start gap-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3">
           <Lock className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-500" />
           <div className="space-y-1">
-            <p className="text-sm font-medium text-amber-500">Username change restricted</p>
+            <p className="text-sm font-medium text-amber-500">{t('settings.username.restricted')}</p>
             <p className="text-xs text-amber-500/80">
               You can change your username again{' '}
               {formatDistanceToNow(nextChangeDate, { addSuffix: true })}
@@ -272,7 +274,7 @@ export function UsernameField() {
             disabled={updateUsername.isPending}
             className="rounded-lg px-4 py-2 text-sm font-medium text-zinc-400 transition-colors hover:text-white"
           >
-            Cancel
+            {t('action.cancel')}
           </button>
         </div>
       )}
@@ -281,7 +283,7 @@ export function UsernameField() {
       {updateUsername.isError && (
         <div className="flex items-center gap-2 text-sm text-red-500">
           <AlertCircle className="h-4 w-4" />
-          Failed to update username. Please try again.
+          {t('settings.username.updateFailed')}
         </div>
       )}
     </div>

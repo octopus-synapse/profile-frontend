@@ -5,7 +5,7 @@
 
 import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
-import { i18nConfig, type Locale } from '@/config/i18n.config';
+import { i18nConfig, type Locale } from '@profile/i18n';
 
 interface LocaleLayoutProps {
   children: ReactNode;

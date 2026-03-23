@@ -7,6 +7,7 @@
 
 import { Palette, Plus, Sparkles, Upload, Users } from 'lucide-react';
 import { useState } from 'react';
+import { ConfirmDialog, useConfirmDialog } from '@/shared/components/ui/confirm-dialog';
 import { cn } from '@/shared/utils';
 import {
   useApplyTheme,
@@ -39,6 +40,7 @@ const tabs: { id: TabId; label: string; icon: typeof Sparkles }[] = [
 export function ThemePicker({ resumeId, activeThemeId, onThemeApplied, onEditTheme }: Props) {
   const [tab, setTab] = useState<TabId>('system');
   const [showImport, setShowImport] = useState(false);
+  const { dialogProps, confirm } = useConfirmDialog();
 
   const { data: systemThemes = [], isLoading: loadingSystem } = useSystemThemes();
   const { data: popularThemes = [], isLoading: loadingPopular } = usePopularThemes(10);
@@ -70,7 +72,12 @@ export function ThemePicker({ resumeId, activeThemeId, onThemeApplied, onEditThe
   };
 
   const handleDelete = async (theme: Theme) => {
-    if (confirm(`Delete "${theme.name}"?`)) {
+    const confirmed = await confirm(
+      `Delete "${theme.name}"?`,
+      'This theme will be permanently removed.',
+      { variant: 'danger', confirmLabel: 'Delete' },
+    );
+    if (confirmed) {
       await deleteTheme.mutateAsync(theme.id);
     }
   };
@@ -173,6 +180,8 @@ export function ThemePicker({ resumeId, activeThemeId, onThemeApplied, onEditThe
           </p>
         </div>
       )}
+
+      <ConfirmDialog {...dialogProps} />
 
       {/* Import Modal */}
       <JsonImportModal

@@ -9,9 +9,8 @@
  * - Aesthetic and minimalist design
  */
 
-import { type DictionaryKey, useI18n } from '@profile/i18n';
+import { type DictionaryKey, i18nConfig, useI18n } from '@profile/i18n';
 import { usePathname } from 'next/navigation';
-import { i18nConfig } from '@/config/i18n.config';
 import { LocalizedLink } from '@/shared/components/localized-link';
 import { cn } from '@/shared/utils';
 import type { NavItem } from './config/types';

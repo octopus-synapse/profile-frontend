@@ -37,23 +37,6 @@ export function getApiLocale(): string | null {
 }
 
 /**
- * @deprecated No longer stores tokens - auth is via httpOnly cookies
- * Kept for backward compatibility, does nothing
- */
-export function setAuthToken(_token: string): void {
-  // No-op: Authentication is now handled by httpOnly cookies
-  // The backend sets 'session' cookie on login
-}
-
-/**
- * @deprecated No longer stores tokens - auth is via httpOnly cookies
- * Kept for backward compatibility, does nothing
- */
-export function clearAuthToken(): void {
-  // No-op: Call /api/auth/logout to clear session cookie
-}
-
-/**
  * API Error structure from backend
  */
 export interface ApiError {
