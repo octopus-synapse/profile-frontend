@@ -60,11 +60,15 @@ export function WelcomeStep() {
           <div className="text-sm text-zinc-400">
             <p>{t('onboarding.welcome.infoText')}</p>
             <p className="mt-2">
-              <span className="font-medium text-white">{t('onboarding.welcome.requiredLabel')}</span>{' '}
+              <span className="font-medium text-white">
+                {t('onboarding.welcome.requiredLabel')}
+              </span>{' '}
               {t('onboarding.welcome.requiredItems')}
             </p>
             <p>
-              <span className="font-medium text-white">{t('onboarding.welcome.optionalLabel')}</span>{' '}
+              <span className="font-medium text-white">
+                {t('onboarding.welcome.optionalLabel')}
+              </span>{' '}
               {t('onboarding.welcome.optionalItems')}
             </p>
           </div>
@@ -72,7 +76,11 @@ export function WelcomeStep() {
       </div>
 
       {/* Navigation */}
-      <StepNavigation onNext={handleStartSetup} nextLabel={t('onboarding.welcome.startSetup')} canProceed={true} />
+      <StepNavigation
+        onNext={handleStartSetup}
+        nextLabel={t('onboarding.welcome.startSetup')}
+        canProceed={true}
+      />
     </div>
   );
 }

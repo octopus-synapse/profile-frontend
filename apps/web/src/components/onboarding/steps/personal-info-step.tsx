@@ -6,7 +6,7 @@
 
 'use client';
 
-import { useI18n, type DictionaryKey } from '@profile/i18n';
+import { type DictionaryKey, useI18n } from '@profile/i18n';
 import { AlertCircle, Mail, MapPin, Phone, User } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
 import { PhoneInput } from '@/shared/components/ui';
@@ -48,13 +48,15 @@ function validateFullName(value: string, t: TranslateFn): ValidationResult {
 
 function validateEmail(value: string, t: TranslateFn): ValidationResult {
   if (!value) return { valid: false, message: t('onboarding.personalInfo.emailRequired') };
-  if (!EMAIL_REGEX.test(value)) return { valid: false, message: t('onboarding.personalInfo.invalidEmail') };
+  if (!EMAIL_REGEX.test(value))
+    return { valid: false, message: t('onboarding.personalInfo.invalidEmail') };
   return { valid: true, message: '' };
 }
 
 function validatePhone(value: string, t: TranslateFn): ValidationResult {
   if (!value) return { valid: true, message: '' }; // Optional
-  if (!PHONE_REGEX.test(value)) return { valid: false, message: t('onboarding.personalInfo.invalidPhone') };
+  if (!PHONE_REGEX.test(value))
+    return { valid: false, message: t('onboarding.personalInfo.invalidPhone') };
   return { valid: true, message: '' };
 }
 
@@ -149,13 +151,17 @@ export function PersonalInfoStep() {
   return (
     <div className="space-y-6">
       <OnboardingStepHeader
-        eyebrow={t('onboarding.shell.stepOf', { current: currentStepIndex + 1, total: allSteps.length })}
+        eyebrow={t('onboarding.shell.stepOf', {
+          current: currentStepIndex + 1,
+          total: allSteps.length,
+        })}
         title={t('onboarding.personalInfo.title')}
         description={t('onboarding.personalInfo.description')}
       />
 
       <div className="rounded-2xl border border-white/10 bg-zinc-950/40 px-4 py-3 text-sm text-zinc-400">
-        {t('onboarding.personalInfo.requiredNote')} <span className="font-medium text-white">*</span>.
+        {t('onboarding.personalInfo.requiredNote')}{' '}
+        <span className="font-medium text-white">*</span>.
       </div>
 
       {/* Form */}
@@ -164,7 +170,8 @@ export function PersonalInfoStep() {
         <div>
           <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-white">
             <User className="h-4 w-4" strokeWidth={1.5} />
-            {t('onboarding.personalInfo.fullNameLabel')}<span className="text-red-500">*</span>
+            {t('onboarding.personalInfo.fullNameLabel')}
+            <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
@@ -186,7 +193,8 @@ export function PersonalInfoStep() {
         <div>
           <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-white">
             <Mail className="h-4 w-4" strokeWidth={1.5} />
-            {t('onboarding.personalInfo.emailLabel')}<span className="text-red-500">*</span>
+            {t('onboarding.personalInfo.emailLabel')}
+            <span className="text-red-500">*</span>
           </label>
           <input
             type="email"
@@ -208,7 +216,10 @@ export function PersonalInfoStep() {
         <div>
           <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-white">
             <Phone className="h-4 w-4" strokeWidth={1.5} />
-            {t('onboarding.personalInfo.phoneLabel')}<span className="ml-1 text-xs font-normal text-zinc-500">{t('onboarding.personalInfo.optional')}</span>
+            {t('onboarding.personalInfo.phoneLabel')}
+            <span className="ml-1 text-xs font-normal text-zinc-500">
+              {t('onboarding.personalInfo.optional')}
+            </span>
           </label>
           <PhoneInput
             value={formData.phone}
@@ -222,7 +233,10 @@ export function PersonalInfoStep() {
         <div>
           <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-white">
             <MapPin className="h-4 w-4" strokeWidth={1.5} />
-            {t('onboarding.personalInfo.locationLabel')}<span className="ml-1 text-xs font-normal text-zinc-500">{t('onboarding.personalInfo.optional')}</span>
+            {t('onboarding.personalInfo.locationLabel')}
+            <span className="ml-1 text-xs font-normal text-zinc-500">
+              {t('onboarding.personalInfo.optional')}
+            </span>
           </label>
           <input
             type="text"

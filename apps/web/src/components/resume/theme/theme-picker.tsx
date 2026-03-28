@@ -5,20 +5,20 @@
 
 'use client';
 
+import {
+  useThemesApply,
+  useThemesDeleteThemeForUser,
+  useThemesFindAllSystemThemes,
+  useThemesFindPopularThemes,
+  useThemesFork,
+  useThemesGetAllThemesByUser,
+  useThemesSubmit,
+} from '@profile/api-client';
 import { Palette, Plus, Sparkles, Upload, Users } from 'lucide-react';
 import { useState } from 'react';
 import { ConfirmDialog, useConfirmDialog } from '@/shared/components/ui/confirm-dialog';
 import { cn } from '@/shared/utils';
-import {
-  useApplyTheme,
-  useDeleteTheme,
-  useForkTheme,
-  useMyThemes,
-  usePopularThemes,
-  useSubmitForApproval,
-  useSystemThemes,
-} from '../hooks';
-import type { Theme } from '../services/theme.types';
+import type { Theme } from '../types/config';
 import { JsonImportModal } from './json-import-modal';
 import { ThemeCard } from './theme-card';
 
@@ -42,33 +42,62 @@ export function ThemePicker({ resumeId, activeThemeId, onThemeApplied, onEditThe
   const [showImport, setShowImport] = useState(false);
   const { dialogProps, confirm } = useConfirmDialog();
 
-  const { data: systemThemes = [], isLoading: loadingSystem } = useSystemThemes();
-  const { data: popularThemes = [], isLoading: loadingPopular } = usePopularThemes(10);
-  const { data: myThemes = [], isLoading: loadingMine } = useMyThemes();
+  const systemQuery = useThemesFindAllSystemThemes();
+  const popularQuery = useThemesFindPopularThemes({ limit: 10 });
+  const myQuery = useThemesGetAllThemesByUser();
 
-  const applyTheme = useApplyTheme();
-  const forkTheme = useForkTheme();
-  const deleteTheme = useDeleteTheme();
-  const submitForApproval = useSubmitForApproval();
+  const systemThemes =
+    (systemQuery.data?.data?.data as { themes?: Theme[] } | undefined)?.themes ?? [];
+  const popularThemes =
+    (popularQuery.data?.data?.data as { themes?: Theme[] } | undefined)?.themes ?? [];
+  const myThemes = (myQuery.data?.data?.data as { themes?: Theme[] } | undefined)?.themes ?? [];
+  const loadingSystem = systemQuery.isLoading;
+  const loadingPopular = popularQuery.isLoading;
+  const loadingMine = myQuery.isLoading;
 
-  const themes = tab === 'system' ? systemThemes : tab === 'popular' ? popularThemes : myThemes;
-  const isLoading =
-    tab === 'system' ? loadingSystem : tab === 'popular' ? loadingPopular : loadingMine;
+  const applyMutation = useThemesApply();
+  const forkMutation = useThemesFork();
+  const deleteMutation = useThemesDeleteThemeForUser();
+  const submitMutation = useThemesSubmit();
+
+  const getThemesForTab = (tabId: TabId): Theme[] => {
+    const themesByTab: Record<TabId, Theme[]> = {
+      system: systemThemes,
+      popular: popularThemes,
+      mine: myThemes,
+    };
+    return themesByTab[tabId];
+  };
+
+  const getLoadingForTab = (tabId: TabId): boolean => {
+    const loadingByTab: Record<TabId, boolean> = {
+      system: loadingSystem,
+      popular: loadingPopular,
+      mine: loadingMine,
+    };
+    return loadingByTab[tabId];
+  };
+
+  const themes = getThemesForTab(tab);
+  const isLoading = getLoadingForTab(tab);
 
   const handleSelect = async (theme: Theme) => {
-    await applyTheme.mutateAsync({ resumeId, themeId: theme.id });
+    await applyMutation.mutateAsync({ data: { themeId: theme.id, resumeId } });
     onThemeApplied?.();
   };
 
   const handleFork = async (theme: Theme) => {
-    const response = await forkTheme.mutateAsync({
-      themeId: theme.id,
-      name: `${theme.name} (Custom)`,
-      description: theme.description ?? '',
+    const response = await forkMutation.mutateAsync({
+      data: {
+        themeId: theme.id,
+        name: `${theme.name} (Custom)`,
+        description: theme.description ?? '',
+      },
     });
-    // SDK response: { data: { theme: Theme } }
-    const forked = (response?.data as unknown as { theme: Theme })?.theme;
-    onEditTheme?.(forked);
+    const forked = response?.data?.data as unknown as Theme | undefined;
+    if (forked) {
+      onEditTheme?.(forked);
+    }
   };
 
   const handleDelete = async (theme: Theme) => {
@@ -78,7 +107,7 @@ export function ThemePicker({ resumeId, activeThemeId, onThemeApplied, onEditThe
       { variant: 'danger', confirmLabel: 'Delete' },
     );
     if (confirmed) {
-      await deleteTheme.mutateAsync(theme.id);
+      await deleteMutation.mutateAsync({ id: theme.id });
     }
   };
 
@@ -87,7 +116,7 @@ export function ThemePicker({ resumeId, activeThemeId, onThemeApplied, onEditThe
   };
 
   const handleSubmitForApproval = async (theme: Theme) => {
-    await submitForApproval.mutateAsync(theme.id);
+    await submitMutation.mutateAsync({ id: theme.id });
   };
 
   const handleImported = () => {

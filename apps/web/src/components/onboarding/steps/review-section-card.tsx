@@ -69,9 +69,7 @@ export function ReviewSectionCard({ section, onEdit }: ReviewSectionCardProps) {
   return (
     <div
       className={`rounded-2xl border p-4 transition-colors ${
-        section.isComplete
-          ? 'border-white/10 bg-zinc-950/40'
-          : 'border-red-500/40 bg-red-500/5'
+        section.isComplete ? 'border-white/10 bg-zinc-950/40' : 'border-red-500/40 bg-red-500/5'
       }`}
     >
       <div className="flex items-start justify-between">
@@ -83,7 +81,11 @@ export function ReviewSectionCard({ section, onEdit }: ReviewSectionCardProps) {
           )}
           {renderIcon(section.icon)}
           <span className="text-sm font-medium text-white">{section.label}</span>
-          {section.optional && <span className="text-[11px] text-zinc-500">{t('onboarding.review.optional' as Parameters<typeof t>[0])}</span>}
+          {section.optional && (
+            <span className="text-[11px] text-zinc-500">
+              {t('onboarding.review.optional' as Parameters<typeof t>[0])}
+            </span>
+          )}
         </div>
         <button
           type="button"

@@ -3,21 +3,21 @@
 /**
  * Spoken Language Autocomplete Component
  * Search and select spoken languages with dynamic "Other" option
+ * Uses SDK hooks directly - no manual types
  */
 
+import { useSkillsSearchLanguagesByName } from '@profile/api-client';
 import { useI18n } from '@profile/i18n';
 import { Popover, PopoverContent, PopoverTrigger } from '@radix-ui/react-popover';
 import { Check, ChevronDown, Loader2, Search, X } from 'lucide-react';
 import * as React from 'react';
 import { cn } from '@/shared/utils/cn';
-import { useSearchSpokenLanguages } from './hooks';
-import type { SpokenLanguageCatalog } from './types';
 
 export interface SpokenLanguageAutocompleteProps {
   /** Selected language name */
   value?: string;
-  /** Called when selection changes */
-  onValueChange?: (name: string, language?: SpokenLanguageCatalog) => void;
+  /** Called when selection changes - language is raw API object */
+  onValueChange?: (name: string, language?: Record<string, unknown>) => void;
   /** Placeholder text */
   placeholder?: string;
   /** Disabled state */
@@ -28,14 +28,14 @@ export interface SpokenLanguageAutocompleteProps {
   className?: string;
 }
 
-function getLanguageName(lang: SpokenLanguageCatalog, locale: string): string {
+function getLanguageName(lang: Record<string, unknown>, locale: string): string {
   switch (locale) {
     case 'pt-BR':
-      return lang.namePtBr;
+      return (lang.namePtBr as string) || (lang.nameEn as string) || '';
     case 'es':
-      return lang.nameEs;
+      return (lang.nameEs as string) || (lang.nameEn as string) || '';
     default:
-      return lang.nameEn;
+      return (lang.nameEn as string) || '';
   }
 }
 
@@ -52,7 +52,18 @@ export function SpokenLanguageAutocomplete({
   const [search, setSearch] = React.useState('');
   const inputRef = React.useRef<HTMLInputElement>(null);
 
-  const { data: languages = [], isLoading } = useSearchSpokenLanguages(search);
+  // Use SDK hook for language search
+  const searchQuery = useSkillsSearchLanguagesByName(
+    { q: search || '', limit: '50' },
+    {
+      query: {
+        enabled: true,
+        staleTime: 60 * 1000,
+      },
+    },
+  );
+  const languages = (searchQuery.data?.data?.data?.languages ?? []) as Record<string, unknown>[];
+  const isLoading = searchQuery.isFetching;
 
   // Translations based on locale
   const labels = React.useMemo(
@@ -70,12 +81,12 @@ export function SpokenLanguageAutocomplete({
   // Transform languages to options with localized names
   const options = React.useMemo(() => {
     return languages
-      .filter((lang) => lang.code !== 'other') // Filter out "Other" - we handle it dynamically
+      .filter((lang) => (lang.code as string) !== 'other')
       .map((lang) => ({
         value: getLanguageName(lang, locale),
         label: getLanguageName(lang, locale),
-        nativeName: lang.nativeName,
-        code: lang.code,
+        nativeName: lang.nativeName as string | undefined,
+        code: lang.code as string,
         language: lang,
       }));
   }, [languages, locale]);
@@ -97,7 +108,7 @@ export function SpokenLanguageAutocomplete({
     }
   }, [open]);
 
-  const handleSelect = (name: string, language?: SpokenLanguageCatalog) => {
+  const handleSelect = (name: string, language?: Record<string, unknown>) => {
     onValueChange?.(name, language);
     setOpen(false);
     setSearch('');

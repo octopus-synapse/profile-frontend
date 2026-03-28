@@ -1,22 +1,16 @@
 'use client';
 
 import {
-  ArrowDownRight,
-  ArrowUpRight,
-  Camera,
-  LayoutDashboard,
-  Minus,
-} from 'lucide-react';
+  useResumeAnalyticsCreateSnapshot,
+  useResumeAnalyticsGetProgression,
+} from '@profile/api-client';
+import { ArrowDownRight, ArrowUpRight, Camera, LayoutDashboard, Minus } from 'lucide-react';
 import { useCallback } from 'react';
 
 import { Badge, Button, Skeleton } from '@/shared/components/ui';
 import { showToast } from '@/shared/components/ui/toast';
 
 import { AtsScoreWidget } from './ats-score-widget';
-import {
-  useCreateSnapshot,
-  useProgression,
-} from './hooks/use-resume-analytics';
 import { JobMatchTool } from './job-match-tool';
 import { KeywordAnalysisPanel } from './keyword-analysis-panel';
 import { ViewStatsChart } from './view-stats-chart';
@@ -83,18 +77,26 @@ function ProgressionSkeleton() {
 }
 
 export function AnalyticsDashboard({ resumeId }: AnalyticsDashboardProps) {
-  const { data: progression, isLoading: progressionLoading } = useProgression(resumeId);
-  const { mutateAsync: createSnapshot, isPending: snapshotPending } =
-    useCreateSnapshot(resumeId);
+  // SDK hooks directly
+  const progressionQuery = useResumeAnalyticsGetProgression(resumeId, {
+    query: { enabled: !!resumeId },
+  });
+  const snapshotMutation = useResumeAnalyticsCreateSnapshot();
+
+  const progression = progressionQuery.data?.data?.data as
+    | { trend: 'improving' | 'stable' | 'declining'; changePercent: number }
+    | undefined;
+  const progressionLoading = progressionQuery.isLoading;
+  const snapshotPending = snapshotMutation.isPending;
 
   const handleSnapshot = useCallback(async () => {
     try {
-      await createSnapshot();
+      await snapshotMutation.mutateAsync({ resumeId, data: {} });
       showToast.success('Snapshot created', 'Progress has been recorded.');
     } catch {
       showToast.error('Snapshot failed', 'Could not create snapshot.');
     }
-  }, [createSnapshot]);
+  }, [snapshotMutation, resumeId]);
 
   return (
     <div className="space-y-6">
@@ -110,10 +112,7 @@ export function AnalyticsDashboard({ resumeId }: AnalyticsDashboardProps) {
             <ProgressionSkeleton />
           ) : (
             progression && (
-              <TrendIndicator
-                trend={progression.trend}
-                changePercent={progression.changePercent}
-              />
+              <TrendIndicator trend={progression.trend} changePercent={progression.changePercent} />
             )
           )}
 
@@ -122,9 +121,7 @@ export function AnalyticsDashboard({ resumeId }: AnalyticsDashboardProps) {
             variant="ghost"
             loading={snapshotPending}
             onClick={handleSnapshot}
-            leftIcon={
-              snapshotPending ? undefined : <Camera className="h-4 w-4" />
-            }
+            leftIcon={snapshotPending ? undefined : <Camera className="h-4 w-4" />}
           >
             {snapshotPending ? 'Saving…' : 'Take Snapshot'}
           </Button>

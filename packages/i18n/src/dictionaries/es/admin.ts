@@ -111,14 +111,16 @@ export const admin = {
   'admin.sectionTypes.form.noLimit': 'Sin límite',
   'admin.sectionTypes.form.iconEmoji': 'Emoji',
   'admin.sectionTypes.form.iconLucide': 'Lucide',
-  'admin.sectionTypes.form.requiredFields': 'La clave, el título y el tipo semántico son obligatorios',
+  'admin.sectionTypes.form.requiredFields':
+    'La clave, el título y el tipo semántico son obligatorios',
   'admin.sectionTypes.form.translationIncomplete': 'Traducción incompleta: {error}',
   'admin.sectionTypes.form.created': 'Tipo de sección creado',
   'admin.sectionTypes.form.updated': 'Tipo de sección actualizado',
   'admin.sectionTypes.form.saveFailed': 'Error al crear/actualizar el tipo de sección',
   'admin.sectionTypes.form.createTitle': 'Crear Tipo de Sección',
   'admin.sectionTypes.form.editTitle': 'Editar Tipo de Sección',
-  'admin.sectionTypes.form.createDescription': 'Definí un nuevo tipo de sección de currículum con traducciones',
+  'admin.sectionTypes.form.createDescription':
+    'Definí un nuevo tipo de sección de currículum con traducciones',
   'admin.sectionTypes.form.editDescription': 'Editando tipo de sección: {key}',
   'admin.sectionTypes.form.createButton': 'Crear',
   'admin.sectionTypes.form.saveButton': 'Guardar Cambios',
@@ -143,7 +145,8 @@ export const admin = {
   // Field definitions
   'admin.sectionTypes.fields.title': 'Definiciones de Campos',
   'admin.sectionTypes.fields.count': '{count} campo(s)',
-  'admin.sectionTypes.fields.empty': 'No hay campos definidos. Agregá campos para configurar este tipo de sección.',
+  'admin.sectionTypes.fields.empty':
+    'No hay campos definidos. Agregá campos para configurar este tipo de sección.',
   'admin.sectionTypes.fields.add': '+ Agregar Campo',
   'admin.sectionTypes.fields.moveUp': 'Mover arriba',
   'admin.sectionTypes.fields.moveDown': 'Mover abajo',
@@ -189,7 +192,8 @@ export const admin = {
 
   // Field styles
   'admin.sectionTypes.fieldStyles.title': 'Estilos de Campo',
-  'admin.sectionTypes.fieldStyles.empty': 'Agregá definiciones de campos primero para configurar estilos.',
+  'admin.sectionTypes.fieldStyles.empty':
+    'Agregá definiciones de campos primero para configurar estilos.',
   'admin.sectionTypes.fieldStyles.field': 'Campo',
   'admin.sectionTypes.fieldStyles.semantic': 'Semántico',
   'admin.sectionTypes.fieldStyles.widget': 'Widget',
@@ -226,7 +230,8 @@ export const admin = {
   'admin.themes.title': 'Aprobación de Temas',
   'admin.themes.subtitle': 'Revisá y aprobá temas enviados por usuarios para uso público',
   'admin.themes.pendingCount': '{count} tema(s) esperando revisión',
-  'admin.themes.reviewPrompt': 'Revisá los envíos para hacerlos disponibles para todos los usuarios',
+  'admin.themes.reviewPrompt':
+    'Revisá los envíos para hacerlos disponibles para todos los usuarios',
   'admin.themes.allCaughtUp': '¡Todo al día!',
   'admin.themes.noPending': 'No hay temas pendientes de revisión por el momento',
   'admin.themes.pendingReview': 'Pendiente de Revisión',

@@ -30,7 +30,9 @@ export default function UnauthorizedPage() {
         </div>
 
         {/* Message */}
-        <h1 className="text-pf-fg-default mb-3 text-xl font-semibold">{t('app.unauthorized.title')}</h1>
+        <h1 className="text-pf-fg-default mb-3 text-xl font-semibold">
+          {t('app.unauthorized.title')}
+        </h1>
         <p className="text-pf-fg-muted mb-8 max-w-md font-mono text-sm">
           {t('app.unauthorized.description')}
         </p>
@@ -78,7 +80,9 @@ export default function UnauthorizedPage() {
             </div>
             <div className="ml-4">
               <span className="code-function">message</span>:{' '}
-              <span className="code-string">&quot;{t('app.unauthorized.checkPermissions')}&quot;</span>
+              <span className="code-string">
+                &quot;{t('app.unauthorized.checkPermissions')}&quot;
+              </span>
             </div>
             <div>{'}'}</div>
           </div>

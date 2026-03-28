@@ -45,7 +45,7 @@ export function InstitutionAutocomplete({
 
   // Transform institutions to autocomplete options
   const options: AutocompleteOption[] = React.useMemo(() => {
-    return institutions.map((inst) => ({
+    return institutions.map((inst: MecInstitution) => ({
       value: String(inst.codigoIes),
       label: inst.sigla ? `${inst.sigla} - ${inst.nome}` : inst.nome,
       description:
@@ -63,7 +63,7 @@ export function InstitutionAutocomplete({
     }
 
     const codigoIes = Number(val);
-    const institution = institutions.find((inst) => inst.codigoIes === codigoIes);
+    const institution = institutions.find((inst: MecInstitution) => inst.codigoIes === codigoIes);
     onValueChange?.(codigoIes, institution);
   };
 

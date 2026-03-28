@@ -6,7 +6,11 @@
  * Uses Strategy Pattern for role checking
  */
 
-import { type SessionUserResponseDtoRole, useAuthSession } from '@profile/api-client';
+import {
+  type SessionUserResponseDtoRole,
+  selectEnvelopeData,
+  useAuthSession,
+} from '@profile/api-client';
 import type { ReactNode } from 'react';
 import { Spinner } from '@/shared/components/ui';
 
@@ -59,8 +63,8 @@ export function RoleGuard({
   fallback = null,
   loading,
 }: RoleGuardProps) {
-  const { data, isLoading } = useAuthSession();
-  const user = data?.data?.user;
+  const { data, isLoading } = useAuthSession({ query: { select: selectEnvelopeData } });
+  const user = data?.user;
 
   // Show loading state
   if (isLoading) {
@@ -107,8 +111,8 @@ interface AuthenticatedOnlyProps {
 }
 
 export function AuthenticatedOnly({ children, fallback }: AuthenticatedOnlyProps) {
-  const { data, isLoading } = useAuthSession();
-  const isAuthenticated = data?.data?.authenticated ?? false;
+  const { data, isLoading } = useAuthSession({ query: { select: selectEnvelopeData } });
+  const isAuthenticated = data?.authenticated ?? false;
 
   if (isLoading) {
     return (

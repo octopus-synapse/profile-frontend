@@ -2,12 +2,10 @@
  * Shared types and utilities for GenericSectionEditor sub-components.
  */
 
-import type { FieldDefinition } from '../types/generic-section.types';
-
 export type FormValues = Record<string, string | number | boolean | null | string[] | undefined>;
 export type FormErrors = Record<string, string>;
 
-export function getDefaultForType(type: FieldDefinition['type']): FormValues[string] {
+export function getDefaultForType(type: string): FormValues[string] {
   switch (type) {
     case 'string':
     case 'text':

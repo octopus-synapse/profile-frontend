@@ -1,8 +1,8 @@
 'use client';
 
-import { Pencil, Trash2 } from 'lucide-react';
 import { useI18n } from '@profile/i18n';
-import type { FieldDefinition, SectionItem } from '../types/generic-section.types';
+import { Pencil, Trash2 } from 'lucide-react';
+import type { FieldDefinition, SectionItem } from './field-input-shared';
 
 interface SectionItemListProps {
   items: SectionItem[];
@@ -53,7 +53,9 @@ export function SectionItemList({
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <h4 className="text-base font-semibold text-white">
-                {titleField ? String(item.content[titleField.key] || t('resume.section.untitled')) : t('resume.section.item')}
+                {titleField
+                  ? String(item.content[titleField.key] || t('resume.section.untitled'))
+                  : t('resume.section.item')}
               </h4>
               {subtitleField && item.content[subtitleField.key] != null && (
                 <p className="mt-1 text-sm text-zinc-400">

@@ -1,5 +1,6 @@
 'use client';
 
+import { useResumeAnalyticsGetATSScore } from '@profile/api-client';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
 
 import { Badge, Button, Card, CardContent, CardHeader, Skeleton } from '@/shared/components/ui';
@@ -10,8 +11,11 @@ import {
   getScoreGaugeColor,
   getScoreLabel,
 } from '../ats/score-utils';
-import type { SectionBreakdown } from './hooks/use-resume-analytics';
-import { useAtsScore } from './hooks/use-resume-analytics';
+
+interface SectionBreakdown {
+  section: string;
+  score: number;
+}
 
 interface AtsScoreWidgetProps {
   resumeId: string;
@@ -97,9 +101,18 @@ function LoadingSkeleton() {
 }
 
 export function AtsScoreWidget({ resumeId, onViewFullAnalysis }: AtsScoreWidgetProps) {
-  const { data, isLoading } = useAtsScore(resumeId);
+  const query = useResumeAnalyticsGetATSScore(resumeId, {
+    query: { enabled: !!resumeId },
+  });
+  const data = query.data?.data?.data as
+    | {
+        score: number;
+        sectionBreakdown: SectionBreakdown[];
+        recommendations: string[];
+      }
+    | undefined;
 
-  if (isLoading) return <LoadingSkeleton />;
+  if (query.isLoading) return <LoadingSkeleton />;
   if (!data) return null;
 
   const topRecommendations = data.recommendations.slice(0, 3);
@@ -126,7 +139,7 @@ export function AtsScoreWidget({ resumeId, onViewFullAnalysis }: AtsScoreWidgetP
           {data.sectionBreakdown.length > 0 && (
             <div className="space-y-2.5">
               <p className="text-xs font-medium text-zinc-400">Section Breakdown</p>
-              {data.sectionBreakdown.map((item) => (
+              {data.sectionBreakdown.map((item: SectionBreakdown) => (
                 <SectionBar key={item.section} {...item} />
               ))}
             </div>
@@ -136,7 +149,7 @@ export function AtsScoreWidget({ resumeId, onViewFullAnalysis }: AtsScoreWidgetP
             <div className="space-y-2">
               <p className="text-xs font-medium text-zinc-400">Top Recommendations</p>
               <ul className="space-y-1.5">
-                {topRecommendations.map((rec, idx) => (
+                {topRecommendations.map((rec: string, idx: number) => (
                   <li key={idx} className="flex items-start gap-2 text-sm text-zinc-300">
                     <span className="mt-1 block h-1 w-1 shrink-0 rounded-full bg-cyan-400" />
                     {rec}

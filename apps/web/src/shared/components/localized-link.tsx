@@ -5,10 +5,10 @@
  * Automatically adds the current locale prefix to internal links
  */
 
+import { hasLocalePrefix, i18nConfig, type Locale } from '@profile/i18n';
 import Link, { type LinkProps } from 'next/link';
 import { useParams } from 'next/navigation';
 import type { AnchorHTMLAttributes } from 'react';
-import { hasLocalePrefix, i18nConfig, type Locale } from '@profile/i18n';
 
 interface LocalizedLinkProps
   extends Omit<LinkProps, 'href'>,

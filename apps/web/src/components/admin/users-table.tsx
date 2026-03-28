@@ -16,13 +16,13 @@ import {
   SelectValue,
 } from '@/shared/components/ui/select';
 import { showToast } from '@/shared/components/ui/toast';
+import type { UserRole } from './types';
 import {
   type UsersListUsersParams,
   useUsersDeleteUser,
   useUsersListUsers,
   useUsersUpdateUser,
 } from './hooks';
-import type { UserRole } from '../users/types';
 import {
   DeleteUserDialog,
   UsersTableEmptyRow,
@@ -115,12 +115,18 @@ export function UsersTable() {
           <table className="w-full">
             <thead className="bg-pf-canvas-subtle border-pf-border-default border-b">
               <tr>
-                <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">{t('admin.users.table.user')}</th>
-                <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">{t('admin.users.table.role')}</th>
+                <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">
+                  {t('admin.users.table.user')}
+                </th>
+                <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">
+                  {t('admin.users.table.role')}
+                </th>
                 <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">
                   {t('admin.users.table.resumes')}
                 </th>
-                <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">{t('admin.users.table.joined')}</th>
+                <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">
+                  {t('admin.users.table.joined')}
+                </th>
                 <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">
                   {t('admin.users.table.lastLogin')}
                 </th>

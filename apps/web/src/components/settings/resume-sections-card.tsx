@@ -1,25 +1,22 @@
 import { useI18n } from '@profile/i18n';
-import type { DynamicSettingsNavItem } from './settings-page.utils';
 import { SectionIcon } from '@/shared/components/section-icon';
+import type { DynamicSettingsNavItem } from './settings-page.utils';
 
 interface ResumeSectionsCardProps {
   dynamicSections: DynamicSettingsNavItem[];
   onOpenSection?: (sectionKey: string) => void;
 }
 
-export function ResumeSectionsCard({
-  dynamicSections,
-  onOpenSection,
-}: ResumeSectionsCardProps) {
+export function ResumeSectionsCard({ dynamicSections, onOpenSection }: ResumeSectionsCardProps) {
   const { t } = useI18n();
 
   return (
     <div className="space-y-4 rounded-xl border border-white/10 bg-white/5 p-6">
       <div>
-        <h3 className="text-base font-semibold text-white">{t('settings.resume.sections.title')}</h3>
-        <p className="mt-1 text-sm text-zinc-400">
-          {t('settings.resume.sections.description')}
-        </p>
+        <h3 className="text-base font-semibold text-white">
+          {t('settings.resume.sections.title')}
+        </h3>
+        <p className="mt-1 text-sm text-zinc-400">{t('settings.resume.sections.description')}</p>
       </div>
       {dynamicSections.length === 0 ? (
         <div className="rounded-xl border border-dashed border-white/10 p-6 text-center">

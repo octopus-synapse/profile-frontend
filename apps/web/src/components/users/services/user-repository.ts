@@ -15,13 +15,13 @@ export type {
 } from '../types';
 
 import {
+  apiFetch,
+  getUsersUpdateProfileUrl,
   uploadUploadProfileImage,
   usersCheckUsernameAvailability,
   usersGetProfile,
   usersGetPublicProfileByUsername,
-  usersUpdateProfile,
 } from '@profile/api-client';
-import { apiFetch } from '@profile/api-client';
 import { buildUserFiltersQuery } from '@/shared/utils/query-builder';
 import type {
   AdminUserFilters,
@@ -33,11 +33,16 @@ import type {
   UserStats,
 } from '../types';
 
+function extractData<T>(response: { data?: { data?: T } }): T | undefined {
+  return response?.data?.data;
+}
+
 export const userRepository = {
   async getMe(): Promise<User | null> {
     try {
       const response = await usersGetProfile();
-      return (response as unknown as User) ?? null;
+      const data = extractData(response as { data?: { data?: { profile?: User } } });
+      return (data?.profile as User) ?? null;
     } catch {
       return null;
     }
@@ -45,18 +50,18 @@ export const userRepository = {
 
   async updateMe(data: UpdateUserDto): Promise<User | null> {
     try {
-      const response = await usersUpdateProfile({
-        displayName: data.name ?? '',
+      const response = await apiFetch.patch<{ profile: User }>(getUsersUpdateProfileUrl(), {
+        name: data.name ?? '',
         bio: data.bio ?? '',
         location: data.location ?? '',
         phone: data.phone ?? '',
-        photoURL: data.image,
+        image: data.image,
         website: data.website,
         linkedin: data.linkedin,
         github: data.github,
         twitter: data.twitter,
       });
-      return (response as unknown as User) ?? null;
+      return response.profile ?? null;
     } catch {
       return null;
     }
@@ -67,7 +72,8 @@ export const userRepository = {
       const response = await uploadUploadProfileImage({
         file: file as unknown as string,
       });
-      return (response as unknown as { url: string }) ?? null;
+      const data = extractData(response as { data?: { data?: { url: string } } });
+      return data ?? null;
     } catch {
       return null;
     }
@@ -101,9 +107,12 @@ export const userRepository = {
 
   async getMyStats(): Promise<UserStats | null> {
     try {
-      const profile = await usersGetProfile();
+      const response = await usersGetProfile();
+      const data = extractData(
+        response as { data?: { data?: { profile?: { resumeCount?: number } } } },
+      );
       return {
-        totalResumes: (profile as unknown as { resumeCount?: number }).resumeCount ?? 0,
+        totalResumes: data?.profile?.resumeCount ?? 0,
         publicProfiles: 0,
         lastActive: null,
       };
@@ -115,7 +124,8 @@ export const userRepository = {
   async getByUsername(username: string): Promise<UserProfile | null> {
     try {
       const response = await usersGetPublicProfileByUsername(username);
-      return (response as unknown as UserProfile) ?? null;
+      const data = extractData(response as unknown as { data?: { data?: UserProfile } });
+      return data ?? null;
     } catch {
       return null;
     }
@@ -124,7 +134,8 @@ export const userRepository = {
   async checkUsername(username: string): Promise<{ available: boolean } | null> {
     try {
       const response = await usersCheckUsernameAvailability({ username });
-      return (response as unknown as { available: boolean }) ?? null;
+      const data = extractData(response as { data?: { data?: { available: boolean } } });
+      return data ?? null;
     } catch {
       return null;
     }

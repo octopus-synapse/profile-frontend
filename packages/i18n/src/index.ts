@@ -18,10 +18,8 @@ export {
   i18nConfig,
   removeLocalePrefix,
 } from './config';
-
+// Dictionary types
+export type { DictionaryKey } from './dictionaries/en';
 // React Provider and hooks
 export type { LocaleInfo } from './provider';
 export { I18nProvider, useI18n, useT } from './provider';
-
-// Dictionary types
-export type { DictionaryKey } from './dictionaries/en';

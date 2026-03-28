@@ -5,15 +5,15 @@
  * All role/permission checks delegated to page components using SDK fields.
  */
 
-import { authSession } from '@profile/api-client';
-import type { NextRequest } from 'next/server';
-import { NextResponse } from 'next/server';
+import { authSession } from '@profile/api-client/client';
 import {
   getLocaleFromHeaders,
   getLocaleFromPathname,
   i18nConfig,
   type Locale,
-} from '@profile/i18n';
+} from '@profile/i18n/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import { isProtectedRoute, ROUTES } from '@/config/routes';
 
 const LOCALE_COOKIE = 'NEXT_LOCALE';

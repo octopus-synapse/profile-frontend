@@ -46,6 +46,15 @@ export interface ApiError {
   details?: Record<string, unknown>;
 }
 
+interface BackendErrorEnvelope {
+  success?: boolean;
+  error?: {
+    code?: string;
+    message?: string;
+    details?: Record<string, unknown>;
+  };
+}
+
 /**
  * Check if error is API error
  */
@@ -57,6 +66,34 @@ export function isApiError(error: unknown): error is ApiError {
     'message' in error &&
     'statusCode' in error
   );
+}
+
+function normalizeApiError(rawBody: unknown, response: Response): ApiError {
+  if (
+    typeof rawBody === 'object' &&
+    rawBody !== null &&
+    'error' in rawBody &&
+    typeof (rawBody as BackendErrorEnvelope).error === 'object' &&
+    (rawBody as BackendErrorEnvelope).error !== null
+  ) {
+    const backendError = (rawBody as BackendErrorEnvelope).error;
+
+    return {
+      code: backendError?.code ?? 'UNKNOWN_ERROR',
+      message: backendError?.message ?? `HTTP ${response.status}`,
+      statusCode: response.status,
+      details: backendError?.details,
+    };
+  }
+
+  const fallbackBody = rawBody as Partial<ApiError> | null | undefined;
+
+  return {
+    code: fallbackBody?.code ?? 'UNKNOWN_ERROR',
+    message: fallbackBody?.message ?? `HTTP ${response.status}: ${response.statusText}`,
+    statusCode: response.status,
+    details: fallbackBody?.details,
+  };
 }
 
 /**
@@ -99,7 +136,7 @@ export async function customFetch<T>(url: string, options?: RequestInit): Promis
     let errorBody: ApiError;
 
     try {
-      errorBody = await response.json();
+      errorBody = normalizeApiError(await response.json(), response);
     } catch {
       errorBody = {
         code: 'NETWORK_ERROR',

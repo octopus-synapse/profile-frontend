@@ -5,7 +5,7 @@
  * Ultra Premium Version - Inspired by Linear, Vercel & Cursor
  */
 
-import { customFetch, type ForgotPasswordDto } from '@profile/api-client';
+import { type ForgotPasswordDto, forgotPasswordHandle } from '@profile/api-client';
 import { useT } from '@profile/i18n';
 import { useMutation } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -15,10 +15,7 @@ import { Button, Input, Spinner } from '@/shared/components/ui';
 import { Label } from '@/shared/components/ui/label';
 
 async function requestPasswordReset(dto: ForgotPasswordDto) {
-  return customFetch<{ data: { message: string } }>('/api/password/forgot', {
-    method: 'POST',
-    body: JSON.stringify(dto),
-  });
+  return forgotPasswordHandle(dto);
 }
 
 export function ForgotPasswordForm() {

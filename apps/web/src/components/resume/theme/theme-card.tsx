@@ -18,8 +18,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import { cn } from '@/shared/utils';
-import type { Theme } from '../services/theme.types';
-import type { ResumeStyleConfig } from '../types/config';
+import type { ResumeStyleConfig, Theme } from '../types/config';
 
 interface Props {
   theme: Theme;
@@ -54,9 +53,11 @@ export function ThemeCard({
 
   // Extract colors from styleConfig
   const styleConfig = theme.styleConfig as Partial<ResumeStyleConfig> | undefined;
-  const primaryColor = styleConfig?.tokens?.colors?.colors?.primary ?? '#3B82F6';
-  const bgColor = styleConfig?.tokens?.colors?.colors?.background ?? '#FFFFFF';
-  const textColor = styleConfig?.tokens?.colors?.colors?.text?.primary ?? '#1E293B';
+  const colors = styleConfig?.colors ?? styleConfig?.tokens?.colors;
+  const primaryColor = colors?.primary ?? '#3B82F6';
+  const bgColor = colors?.background ?? '#FFFFFF';
+  const textRaw = colors?.text;
+  const textColor = typeof textRaw === 'string' ? textRaw : (textRaw?.primary ?? '#1E293B');
 
   return (
     <div
@@ -232,7 +233,8 @@ function ActionButton({
   );
 }
 
-function getCategoryLabel(category: string): string {
+function getCategoryLabel(category?: string): string {
+  if (!category) return 'Custom theme';
   const labels: Record<string, string> = {
     PROFESSIONAL: 'Professional style',
     CREATIVE: 'Creative design',

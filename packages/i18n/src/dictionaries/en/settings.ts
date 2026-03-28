@@ -49,8 +49,7 @@ export const settings = {
   'settings.danger.title': 'Danger Zone',
   'settings.danger.description': 'Irreversible actions that affect your account.',
   'settings.danger.export.title': 'Export your data',
-  'settings.danger.export.description':
-    'Download all your data in JSON format (GDPR Article 20).',
+  'settings.danger.export.description': 'Download all your data in JSON format (GDPR Article 20).',
   'settings.danger.export.exporting': 'Exporting…',
   'settings.danger.export.button': 'Export Data',
   'settings.danger.export.success': 'Data export downloaded',
@@ -105,6 +104,18 @@ export const settings = {
   'settings.twoFactor.regenError': 'Failed to regenerate backup codes',
   'settings.twoFactor.copySuccess': 'Backup codes copied to clipboard',
   'settings.twoFactor.copyError': 'Failed to copy backup codes',
+  'settings.twoFactor.notEnabled': '2FA not enabled',
+
+  // Add Section Dialog
+  'settings.sections.addNew': 'Add section',
+  'settings.sections.addNewDescription': 'Choose a section type to add to your resume',
+  'settings.sections.addItemDescription': 'Fill in the details below',
+  'settings.sections.editItemTitle': 'Edit {section}',
+  'settings.sections.editItemDescription': 'Update the details below',
+  'settings.sections.searchPlaceholder': 'Search sections...',
+  'settings.sections.noResults': 'No sections found',
+  'settings.sections.yourSections': 'Your sections',
+  'settings.sections.availableSections': 'Available',
 
   // Username Field
   'settings.username.title': 'Username',

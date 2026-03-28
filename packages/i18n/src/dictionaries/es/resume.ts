@@ -10,6 +10,9 @@ export const resume = {
   'resume.builder.copied': 'Copiado',
   'resume.builder.share': 'Compartir',
   'resume.builder.noAstData': 'Sin datos AST',
+  'resume.builder.noAstDataHint': 'Completá el onboarding para generar tu currículum',
+  'resume.builder.selectTheme': 'Seleccionar un Tema',
+  'resume.builder.selectThemeHint': 'Elegí un tema en la barra lateral para ver tu currículum',
   'resume.builder.failedCopyLink': 'Error al copiar enlace',
   'resume.builder.sectionFallback': 'Sección {index}',
 
@@ -24,14 +27,11 @@ export const resume = {
   'resume.builder.dialog.shareLinks.description':
     'Gestioná los enlaces para compartir tu currículum',
   'resume.builder.dialog.analytics.title': 'Analíticas',
-  'resume.builder.dialog.analytics.description':
-    'Rendimiento e insights del currículum',
+  'resume.builder.dialog.analytics.description': 'Rendimiento e insights del currículum',
   'resume.builder.dialog.ats.title': 'Verificación de Compatibilidad ATS',
-  'resume.builder.dialog.ats.description':
-    'Validá tu currículum contra sistemas ATS',
+  'resume.builder.dialog.ats.description': 'Validá tu currículum contra sistemas ATS',
   'resume.builder.dialog.skills.title': 'Habilidades',
-  'resume.builder.dialog.skills.description':
-    'Agregá, editá y organizá tus habilidades',
+  'resume.builder.dialog.skills.description': 'Agregá, editá y organizá tus habilidades',
   'resume.builder.dialog.reorder.title': 'Reordenar Secciones',
   'resume.builder.dialog.reorder.description':
     'Arrastrá para reordenar y alternar la visibilidad de las secciones',
@@ -41,6 +41,7 @@ export const resume = {
   'resume.sidebar.tabs.themes': 'Temas',
   'resume.sidebar.activeTheme': 'Tema Activo',
   'resume.sidebar.defaultTheme': 'Moderno',
+  'resume.sidebar.clickToChange': 'Clic para cambiar',
   'resume.sidebar.stats.title': 'Estadísticas del Currículum',
   'resume.sidebar.stats.experience': 'Experiencia',
   'resume.sidebar.stats.education': 'Educación',
@@ -134,8 +135,7 @@ export const resume = {
     '¿Estás seguro de que querés eliminar este elemento? Esta acción no se puede deshacer.',
   'resume.section.failedDelete': 'Error al eliminar',
   'resume.section.failedLoad': 'Error al cargar sección:',
-  'resume.section.noDefinition':
-    'Tipo de sección no encontrado o sin definiciones de campo.',
+  'resume.section.noDefinition': 'Tipo de sección no encontrado o sin definiciones de campo.',
   'resume.section.itemCountOne': '1 elemento agregado',
   'resume.section.itemCountOther': '{count} elementos agregados',
   'resume.section.addButton': 'Agregar {title}',
@@ -145,8 +145,7 @@ export const resume = {
   'resume.share.deleted': 'Enlace para compartir eliminado',
   'resume.share.failedDelete': 'Error al eliminar enlace para compartir',
   'resume.share.noLinks': 'Sin enlaces para compartir',
-  'resume.share.noLinksDesc':
-    'Creá un enlace para compartir tu currículum públicamente',
+  'resume.share.noLinksDesc': 'Creá un enlace para compartir tu currículum públicamente',
   'resume.share.copied': 'Enlace copiado',
   'resume.share.failedCopy': 'Error al copiar',
   'resume.share.password': 'Contraseña',
@@ -179,8 +178,7 @@ export const resume = {
 
   // Skills Editor
   'resume.skills.editorLabel': 'Editor de habilidades',
-  'resume.skills.noSkills':
-    'Sin habilidades agregadas. Empezá a escribir para agregar.',
+  'resume.skills.noSkills': 'Sin habilidades agregadas. Empezá a escribir para agregar.',
   'resume.skills.namePlaceholder': 'Nombre de habilidad…',
   'resume.skills.categoryPlaceholder': 'Categoría',
   'resume.skills.levelPlaceholder': 'Nivel',

@@ -21,12 +21,14 @@ export function PublicProfileNotFound({ username }: PublicProfileNotFoundProps) 
         <UserX className="text-pf-fg-muted h-10 w-10" strokeWidth={1.5} />
       </div>
 
-      <h1 className="text-pf-fg-default mt-8 text-2xl font-bold">{t('social.profile.notFound' as Parameters<typeof t>[0])}</h1>
+      <h1 className="text-pf-fg-default mt-8 text-2xl font-bold">
+        {t('social.profile.notFound' as Parameters<typeof t>[0])}
+      </h1>
 
       <p className="text-pf-fg-muted mt-3 max-w-md text-center">
         {t('social.profile.theProfile' as Parameters<typeof t>[0])}{' '}
-        <span className="text-pf-fg-default font-medium">@{username}</span>{' '}
-        doesn&apos;t exist or is set to private.
+        <span className="text-pf-fg-default font-medium">@{username}</span> doesn&apos;t exist or is
+        set to private.
       </p>
 
       <Link

@@ -26,7 +26,9 @@ export function RecentUsersWidget({ users, loading }: RecentUsersWidgetProps) {
         <CardHeader>
           <div className="flex items-center gap-2">
             <Users className="text-pf-fg-muted h-4 w-4" strokeWidth={1.5} />
-            <span className="text-pf-fg-default text-sm font-semibold">{t('admin.recentUsers.title')}</span>
+            <span className="text-pf-fg-default text-sm font-semibold">
+              {t('admin.recentUsers.title')}
+            </span>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">

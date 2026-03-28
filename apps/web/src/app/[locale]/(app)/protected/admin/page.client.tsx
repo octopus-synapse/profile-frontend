@@ -29,10 +29,10 @@ export default function AdminDashboardPage() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-pf-fg-default text-2xl font-semibold tracking-tight">{t('admin.dashboard.title')}</h1>
-        <p className="text-pf-fg-muted mt-1 text-sm">
-          {t('admin.dashboard.subtitle')}
-        </p>
+        <h1 className="text-pf-fg-default text-2xl font-semibold tracking-tight">
+          {t('admin.dashboard.title')}
+        </h1>
+        <p className="text-pf-fg-muted mt-1 text-sm">{t('admin.dashboard.subtitle')}</p>
       </div>
 
       {/* Quick Status Banner */}
@@ -41,10 +41,10 @@ export default function AdminDashboardPage() {
           <CheckCircle2 className="text-pf-success-fg h-5 w-5" strokeWidth={2} />
         </div>
         <div>
-          <p className="text-pf-fg-default text-sm font-medium">{t('admin.dashboard.allOperational')}</p>
-          <p className="text-pf-fg-muted text-xs">
-            {t('admin.dashboard.servicesRunning')}
+          <p className="text-pf-fg-default text-sm font-medium">
+            {t('admin.dashboard.allOperational')}
           </p>
+          <p className="text-pf-fg-muted text-xs">{t('admin.dashboard.servicesRunning')}</p>
         </div>
       </div>
 

@@ -2,8 +2,6 @@
  * Theme Components Barrel Export
  */
 
-// Editors
-export { ColorEditor, LayoutEditor, SpacingEditor, TypographyEditor } from './editors';
 export { JsonImportModal } from './json-import-modal';
 export { MyThemesManager } from './my-themes-manager';
 export { ThemeApprovalQueue } from './theme-approval-queue';

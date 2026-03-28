@@ -11,7 +11,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CACHE_TIMES } from '@/shared/constants/cache-times';
 import type { PaginatedResponse } from '@/shared/types/api-responses';
 import { buildUserFiltersQuery } from '@/shared/utils/query-builder';
-import type { UserRole } from '../../users/types';
+import type { UserRole } from '../types';
 
 export interface UsersListUsersParams {
   search?: string;

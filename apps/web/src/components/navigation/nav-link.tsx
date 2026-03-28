@@ -57,12 +57,12 @@ export function NavLink({ item, className, onClick, variant = 'desktop' }: NavLi
         rel={item.external ? 'noopener noreferrer' : undefined}
         className={cn(
           'relative flex items-center gap-3 py-3 text-base transition-colors duration-150',
-          isActive ? 'text-white' : 'text-zinc-400 active:text-white',
+          isActive ? 'text-pf-fg-default' : 'text-pf-fg-muted active:text-pf-fg-default',
           className,
         )}
         aria-current={isActive ? 'page' : undefined}
       >
-        {isActive && <span className="h-1.5 w-1.5 rounded-full bg-cyan-500" />}
+        {isActive && <span className="h-1.5 w-1.5 rounded-full bg-pf-accent-emphasis" />}
         {t(item.labelKey as DictionaryKey)}
       </LocalizedLink>
     );
@@ -76,7 +76,7 @@ export function NavLink({ item, className, onClick, variant = 'desktop' }: NavLi
       rel={item.external ? 'noopener noreferrer' : undefined}
       className={cn(
         'group relative px-3 py-2 text-sm font-medium transition-colors duration-150',
-        isActive ? 'text-white' : 'text-zinc-400 hover:text-white',
+        isActive ? 'text-pf-fg-default' : 'text-pf-fg-muted hover:text-pf-fg-default',
         className,
       )}
       aria-current={isActive ? 'page' : undefined}
@@ -86,7 +86,9 @@ export function NavLink({ item, className, onClick, variant = 'desktop' }: NavLi
       <span
         className={cn(
           'absolute inset-x-1 -bottom-[1px] h-[2px] rounded-full transition-all duration-200',
-          isActive ? 'bg-cyan-500' : 'scale-x-0 bg-cyan-500/50 group-hover:scale-x-100',
+          isActive
+            ? 'bg-pf-accent-emphasis'
+            : 'scale-x-0 bg-pf-accent-emphasis/50 group-hover:scale-x-100',
         )}
       />
     </LocalizedLink>

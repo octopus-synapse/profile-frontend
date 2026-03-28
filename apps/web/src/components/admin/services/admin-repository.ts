@@ -4,7 +4,7 @@
  * Wired to backend SDK for admin dashboard functionality.
  */
 
-import { apiFetch, PLATFORM_ROUTES } from '@profile/api-client';
+import { apiFetch, platformGetStatistics, selectEnvelopeData } from '@profile/api-client';
 import type { PaginatedResponse } from '@/shared/types/api-responses';
 import type { AdminStats, AdminUser, RecentActivity, SystemHealth } from '../types';
 
@@ -27,7 +27,7 @@ interface HealthCheckData {
 
 export const adminRepository = {
   async getStats(): Promise<AdminStats> {
-    const stats = await apiFetch.get<PlatformStatsData>(PLATFORM_ROUTES.PLATFORM_GET_STATISTICS);
+    const stats = selectEnvelopeData(await platformGetStatistics()) as PlatformStatsData;
     return {
       totalUsers: stats.totalUsers,
       activeUsers: stats.activeUsersToday,

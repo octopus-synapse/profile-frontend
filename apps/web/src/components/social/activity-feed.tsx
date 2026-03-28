@@ -2,8 +2,8 @@
 
 import { useT } from '@profile/i18n';
 import { Activity as ActivityIcon, Clock } from 'lucide-react';
-import { useActivityFeed } from './hooks/use-social';
 import type { Activity } from './hooks/use-social';
+import { useActivityFeed } from './hooks/use-social';
 
 // ============================================================================
 // Helpers
@@ -48,14 +48,9 @@ function EmptyFeed() {
   const t = useT();
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center">
-      <ActivityIcon
-        className="mb-3 h-10 w-10 text-zinc-600"
-        strokeWidth={1}
-      />
+      <ActivityIcon className="mb-3 h-10 w-10 text-zinc-600" strokeWidth={1} />
       <p className="text-sm font-medium text-zinc-300">{t('social.feed.noActivity')}</p>
-      <p className="mt-1 text-xs text-zinc-500">
-        {t('social.feed.followPrompt')}
-      </p>
+      <p className="mt-1 text-xs text-zinc-500">{t('social.feed.followPrompt')}</p>
     </div>
   );
 }
@@ -79,9 +74,7 @@ function ActivityItem({ activity }: { activity: Activity }) {
       {/* Content */}
       <div className="min-w-0 flex-1">
         <p className="text-sm leading-snug text-zinc-300">
-          <span className="font-medium text-white">
-            {activity.actorName}
-          </span>{' '}
+          <span className="font-medium text-white">{activity.actorName}</span>{' '}
           {activity.description}
         </p>
         <p className="mt-0.5 flex items-center gap-1 text-xs text-zinc-500">

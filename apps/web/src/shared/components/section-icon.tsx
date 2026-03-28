@@ -1,44 +1,8 @@
-import {
-  Award,
-  BookOpen,
-  Briefcase,
-  Bug,
-  Code,
-  FileText,
-  Globe,
-  GraduationCap,
-  Heart,
-  Languages,
-  MessageSquare,
-  Mic,
-  Rocket,
-  Scroll,
-  Star,
-  Trophy,
-  Users,
-  Zap,
-} from 'lucide-react';
+'use client';
 
-const LUCIDE_MAP: Record<string, typeof FileText> = {
-  briefcase: Briefcase,
-  'graduation-cap': GraduationCap,
-  zap: Zap,
-  languages: Languages,
-  'file-text': FileText,
-  'message-square': MessageSquare,
-  heart: Heart,
-  star: Star,
-  award: Award,
-  'book-open': BookOpen,
-  code: Code,
-  bug: Bug,
-  mic: Mic,
-  trophy: Trophy,
-  users: Users,
-  globe: Globe,
-  rocket: Rocket,
-  scroll: Scroll,
-};
+import { FileText } from 'lucide-react';
+import { DynamicIcon } from 'lucide-react/dynamic';
+import { Suspense } from 'react';
 
 interface SectionIconProps {
   iconType: string;
@@ -47,15 +11,32 @@ interface SectionIconProps {
   size?: number;
 }
 
+function EmojiIcon({ icon, className, size = 18 }: Omit<SectionIconProps, 'iconType'>) {
+  return (
+    <span className={className} style={{ fontSize: size }}>
+      {icon}
+    </span>
+  );
+}
+
 export function SectionIcon({ iconType, icon, className, size = 18 }: SectionIconProps) {
   if (iconType === 'emoji') {
-    return <span className={className} style={{ fontSize: size }}>{icon}</span>;
+    return <EmojiIcon icon={icon} className={className} size={size} />;
   }
 
   if (iconType === 'lucide') {
-    const LucideIcon = LUCIDE_MAP[icon] ?? FileText;
-    return <LucideIcon className={className} size={size} strokeWidth={1.5} />;
+    return (
+      <Suspense fallback={<FileText className={className} size={size} strokeWidth={1.5} />}>
+        <DynamicIcon
+          name={icon as never}
+          className={className}
+          size={size}
+          strokeWidth={1.5}
+          fallback={() => <FileText className={className} size={size} strokeWidth={1.5} />}
+        />
+      </Suspense>
+    );
   }
 
-  return <span className={className} style={{ fontSize: size }}>📄</span>;
+  return <EmojiIcon icon="📄" className={className} size={size} />;
 }

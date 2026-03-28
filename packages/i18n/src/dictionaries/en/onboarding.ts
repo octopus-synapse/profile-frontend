@@ -27,8 +27,7 @@ export const onboarding = {
   'onboarding.welcome.infoText':
     'PATCH will compile your career into the optimal format for each opportunity.',
   'onboarding.welcome.requiredLabel': 'Required:',
-  'onboarding.welcome.requiredItems':
-    'Personal info, username, professional profile, and theme.',
+  'onboarding.welcome.requiredItems': 'Personal info, username, professional profile, and theme.',
   'onboarding.welcome.optionalLabel': 'Optional:',
   'onboarding.welcome.optionalItems': 'Experience, education, and languages.',
   'onboarding.welcome.startSetup': 'start setup',
@@ -38,8 +37,7 @@ export const onboarding = {
   'onboarding.username.description':
     'This creates your public profile URL, so keep it simple and memorable.',
   'onboarding.username.preview': 'username',
-  'onboarding.username.hint':
-    'Use 3 to 30 lowercase letters, numbers, or underscores.',
+  'onboarding.username.hint': 'Use 3 to 30 lowercase letters, numbers, or underscores.',
   'onboarding.username.label': 'Username',
   'onboarding.username.tooltip':
     'Your unique identifier on PATCH. This cannot be changed later, so choose wisely!',
@@ -88,26 +86,21 @@ export const onboarding = {
     'Summarize your role, your strengths, and the links that support your profile.',
   'onboarding.professionalProfile.jobTitleLabel': 'Job title',
   'onboarding.professionalProfile.jobTitlePlaceholder': 'Senior Software Engineer',
-  'onboarding.professionalProfile.jobTitleMinLength':
-    'Job title must be at least 2 characters',
+  'onboarding.professionalProfile.jobTitleMinLength': 'Job title must be at least 2 characters',
   'onboarding.professionalProfile.summaryLabel': 'Summary',
   'onboarding.professionalProfile.summaryPlaceholder':
     'Passionate full-stack developer with 5+ years of experience building scalable web applications. Specialized in React, Node.js, and cloud infrastructure...',
-  'onboarding.professionalProfile.summaryMinLength':
-    'Summary must be at least {min} characters',
-  'onboarding.professionalProfile.summaryMaxLength':
-    'Summary must be less than {max} characters',
+  'onboarding.professionalProfile.summaryMinLength': 'Summary must be at least {min} characters',
+  'onboarding.professionalProfile.summaryMaxLength': 'Summary must be less than {max} characters',
   'onboarding.professionalProfile.minimumChars': 'Minimum {min} characters',
   'onboarding.professionalProfile.socialLinksHint':
     'Social links are optional, but they help make your profile more credible.',
   'onboarding.professionalProfile.linkedinLabel': 'LinkedIn',
-  'onboarding.professionalProfile.linkedinPlaceholder':
-    'https://linkedin.com/in/username',
+  'onboarding.professionalProfile.linkedinPlaceholder': 'https://linkedin.com/in/username',
   'onboarding.professionalProfile.invalidUrl': 'Invalid URL format',
   'onboarding.professionalProfile.githubLabel': 'GitHub',
   'onboarding.professionalProfile.githubPlaceholder': 'username',
-  'onboarding.professionalProfile.githubHint':
-    'Enter your username only (e.g. octocat)',
+  'onboarding.professionalProfile.githubHint': 'Enter your username only (e.g. octocat)',
   'onboarding.professionalProfile.websiteLabel': 'Website',
   'onboarding.professionalProfile.websitePlaceholder': 'https://yoursite.dev',
 
@@ -131,13 +124,11 @@ export const onboarding = {
   // Review Step
   'onboarding.review.eyebrow': 'Final step',
   'onboarding.review.title': 'Review and submit',
-  'onboarding.review.description':
-    'Confirm the essentials before we create your profile.',
+  'onboarding.review.description': 'Confirm the essentials before we create your profile.',
   'onboarding.review.paletteLabel': 'Palette: {scheme}',
   'onboarding.review.noneListed': 'None listed',
   'onboarding.review.itemCount': '{count} item(s)',
-  'onboarding.review.incompleteError':
-    'Please complete all required sections before submitting',
+  'onboarding.review.incompleteError': 'Please complete all required sections before submitting',
   'onboarding.review.usernameRequired':
     'Username is required. Please go back to the username step.',
   'onboarding.review.genericError': 'Something went wrong. Please try again.',
@@ -157,8 +148,7 @@ export const onboarding = {
 
   // Complete Step
   'onboarding.complete.welcomeUser': 'Welcome, {name}! 🎉',
-  'onboarding.complete.successMessage':
-    'Your professional profile has been created successfully',
+  'onboarding.complete.successMessage': 'Your professional profile has been created successfully',
   'onboarding.complete.redirectCountdown':
     'Redirecting to your resume in {count} second{suffix}...',
   'onboarding.complete.whatsNext': "What's next?",

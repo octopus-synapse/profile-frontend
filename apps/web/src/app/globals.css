@@ -76,6 +76,10 @@
   --pf-neutral-muted: rgba(113, 113, 122, 0.3);
   --pf-neutral-subtle: rgba(113, 113, 122, 0.1);
 
+  /* Hover States */
+  --pf-hover-subtle: rgba(255, 255, 255, 0.05);
+  --pf-hover-default: rgba(255, 255, 255, 0.1);
+
   /* Component Tokens - Glass Morphism */
   --btn-primary-bg: #ffffff;
   --btn-primary-bg-hover: #22d3ee;
@@ -194,117 +198,122 @@
 
 /* ========================================
  * LIGHT THEME (Optional)
- * Sandy warm white for those who prefer it
+ * Professional warm white with excellent contrast
  * ======================================== */
 .light {
   color-scheme: light;
 
-  /* Canvas (Background) Colors - Sandy/Warm White */
-  --pf-canvas-default: #faf9f7;
-  --pf-canvas-subtle: #f5f3f0;
-  --pf-canvas-inset: #efeee9;
+  /* Canvas (Background) Colors - Clean professional white */
+  --pf-canvas-default: #fafafa;
+  --pf-canvas-subtle: #f4f4f5;
+  --pf-canvas-inset: #e4e4e7;
   --pf-canvas-overlay: #ffffff;
-  --pf-canvas-emphasis: #1a1a1a;
+  --pf-canvas-emphasis: #18181b;
 
-  /* Foreground (Text) Colors */
-  --pf-fg-default: #1a1a1a;
-  --pf-fg-muted: #57534e;
-  --pf-fg-subtle: #78716c;
+  /* Foreground (Text) Colors - High contrast for readability */
+  --pf-fg-default: #18181b;
+  --pf-fg-muted: #3f3f46;
+  --pf-fg-subtle: #52525b;
   --pf-fg-on-emphasis: #ffffff;
 
-  /* Border Colors */
-  --pf-border-default: #d6d3d1;
-  --pf-border-muted: #e7e5e4;
-  --pf-border-subtle: rgba(0, 0, 0, 0.06);
-  --pf-border-emphasis: #1a1a1a;
+  /* Border Colors - Visible but not harsh */
+  --pf-border-default: #d4d4d8;
+  --pf-border-muted: #e4e4e7;
+  --pf-border-subtle: rgba(0, 0, 0, 0.08);
+  --pf-border-emphasis: #18181b;
 
-  /* Accent (Cyan) */
-  --pf-accent-fg: #0891b2;
-  --pf-accent-emphasis: #0e7490;
-  --pf-accent-muted: rgba(8, 145, 178, 0.2);
-  --pf-accent-subtle: rgba(8, 145, 178, 0.08);
+  /* Accent (Cyan) - Deeper for light backgrounds */
+  --pf-accent-fg: #0e7490;
+  --pf-accent-emphasis: #0891b2;
+  --pf-accent-muted: rgba(14, 116, 144, 0.15);
+  --pf-accent-subtle: rgba(14, 116, 144, 0.08);
 
   /* Success (Emerald) */
-  --pf-success-fg: #059669;
-  --pf-success-emphasis: #047857;
-  --pf-success-muted: rgba(5, 150, 105, 0.2);
-  --pf-success-subtle: rgba(5, 150, 105, 0.08);
+  --pf-success-fg: #047857;
+  --pf-success-emphasis: #059669;
+  --pf-success-muted: rgba(4, 120, 87, 0.15);
+  --pf-success-subtle: rgba(4, 120, 87, 0.08);
 
   /* Attention (Amber) */
-  --pf-attention-fg: #d97706;
-  --pf-attention-emphasis: #b45309;
-  --pf-attention-muted: rgba(217, 119, 6, 0.2);
-  --pf-attention-subtle: rgba(217, 119, 6, 0.08);
+  --pf-attention-fg: #b45309;
+  --pf-attention-emphasis: #d97706;
+  --pf-attention-muted: rgba(180, 83, 9, 0.15);
+  --pf-attention-subtle: rgba(180, 83, 9, 0.08);
 
   /* Danger (Red) */
-  --pf-danger-fg: #dc2626;
-  --pf-danger-emphasis: #b91c1c;
-  --pf-danger-muted: rgba(220, 38, 38, 0.2);
-  --pf-danger-subtle: rgba(220, 38, 38, 0.08);
+  --pf-danger-fg: #b91c1c;
+  --pf-danger-emphasis: #dc2626;
+  --pf-danger-muted: rgba(185, 28, 28, 0.15);
+  --pf-danger-subtle: rgba(185, 28, 28, 0.08);
 
   /* Done (Purple) */
-  --pf-done-fg: #9333ea;
-  --pf-done-emphasis: #7e22ce;
-  --pf-done-muted: rgba(147, 51, 234, 0.2);
-  --pf-done-subtle: rgba(147, 51, 234, 0.08);
+  --pf-done-fg: #7c3aed;
+  --pf-done-emphasis: #8b5cf6;
+  --pf-done-muted: rgba(124, 58, 237, 0.15);
+  --pf-done-subtle: rgba(124, 58, 237, 0.08);
 
   /* Neutral */
-  --pf-neutral-emphasis: #78716c;
-  --pf-neutral-muted: rgba(120, 113, 108, 0.2);
-  --pf-neutral-subtle: rgba(120, 113, 108, 0.08);
+  --pf-neutral-emphasis: #52525b;
+  --pf-neutral-muted: rgba(82, 82, 91, 0.15);
+  --pf-neutral-subtle: rgba(82, 82, 91, 0.08);
+
+  /* Hover States */
+  --pf-hover-subtle: rgba(0, 0, 0, 0.03);
+  --pf-hover-default: rgba(0, 0, 0, 0.06);
 
   /* Component Tokens */
-  --btn-primary-bg: #1a1a1a;
-  --btn-primary-bg-hover: #0891b2;
-  --btn-primary-border: #1a1a1a;
+  --btn-primary-bg: #18181b;
+  --btn-primary-bg-hover: #0e7490;
+  --btn-primary-border: #18181b;
   --btn-primary-text: #ffffff;
 
-  --btn-secondary-bg: #f5f3f0;
-  --btn-secondary-bg-hover: #efeee9;
-  --btn-secondary-border: #d6d3d1;
-  --btn-secondary-text: #1a1a1a;
+  --btn-secondary-bg: #f4f4f5;
+  --btn-secondary-bg-hover: #e4e4e7;
+  --btn-secondary-border: #d4d4d8;
+  --btn-secondary-text: #18181b;
 
   --btn-outline-bg: transparent;
-  --btn-outline-bg-hover: #f5f3f0;
-  --btn-outline-border: #d6d3d1;
-  --btn-outline-text: #1a1a1a;
+  --btn-outline-bg-hover: #f4f4f5;
+  --btn-outline-border: #d4d4d8;
+  --btn-outline-text: #18181b;
 
   --btn-danger-bg: #fef2f2;
-  --btn-danger-bg-hover: #dc2626;
-  --btn-danger-border: #dc2626;
-  --btn-danger-text: #dc2626;
+  --btn-danger-bg-hover: #b91c1c;
+  --btn-danger-border: #b91c1c;
+  --btn-danger-text: #b91c1c;
   --btn-danger-text-hover: #ffffff;
 
   /* Inputs */
   --input-bg: #ffffff;
-  --input-bg-disabled: #f5f3f0;
-  --input-border: #d6d3d1;
-  --input-border-focus: #0891b2;
-  --input-border-error: #dc2626;
-  --input-text: #1a1a1a;
-  --input-placeholder: #a8a29e;
+  --input-bg-disabled: #f4f4f5;
+  --input-border: #d4d4d8;
+  --input-border-focus: #0e7490;
+  --input-border-error: #b91c1c;
+  --input-text: #18181b;
+  --input-placeholder: #71717a;
 
   /* Cards */
   --card-bg: #ffffff;
-  --card-bg-muted: #f5f3f0;
-  --card-border: #e7e5e4;
+  --card-bg-muted: #f4f4f5;
+  --card-border: #e4e4e7;
 
   /* Code Block */
-  --code-bg: #1a1a1a;
-  --code-fg: #e5e5e5;
+  --code-bg: #18181b;
+  --code-fg: #fafafa;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.08);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  /* Shadows - More visible for light theme */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.08);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 0 40px -8px rgba(14, 116, 144, 0.2);
 
   /* Overlay */
-  --overlay-backdrop: rgba(0, 0, 0, 0.4);
+  --overlay-backdrop: rgba(0, 0, 0, 0.5);
 
   /* Focus Ring */
-  --ring-color: #0891b2;
-  --ring-offset: #faf9f7;
+  --ring-color: rgba(14, 116, 144, 0.5);
+  --ring-offset: #fafafa;
 }
 
 /* ========================================
@@ -371,6 +380,10 @@
   --color-pf-neutral-emphasis: var(--pf-neutral-emphasis);
   --color-pf-neutral-muted: var(--pf-neutral-muted);
   --color-pf-neutral-subtle: var(--pf-neutral-subtle);
+
+  /* Hover States */
+  --color-pf-hover-subtle: var(--pf-hover-subtle);
+  --color-pf-hover-default: var(--pf-hover-default);
 
   /* Code */
   --color-code-bg: var(--code-bg);
@@ -474,6 +487,27 @@ body.landing-scroll-enhanced {
 * {
   scrollbar-width: thin;
   scrollbar-color: rgba(125, 211, 252, 0.75) rgba(255, 255, 255, 0.03);
+}
+
+/* Light theme scrollbar */
+.light::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.light::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #a1a1aa 0%, #71717a 100%);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.light::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #71717a 0%, #52525b 100%);
+  background-clip: padding-box;
+}
+
+.light * {
+  scrollbar-color: #a1a1aa rgba(0, 0, 0, 0.02);
 }
 
 html.landing-scrollbar::-webkit-scrollbar {

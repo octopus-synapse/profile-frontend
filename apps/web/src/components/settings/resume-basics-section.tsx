@@ -1,13 +1,18 @@
 'use client';
 
-import type { ResumeFullResponseDto, ResumeResponseDto } from '@profile/api-client';
+import {
+  type ResumeFullResponseDto,
+  type ResumeResponseDto,
+  useResumesGetAllUserResumes,
+  useResumesGetResumeByIdForUser,
+  useResumesUpdateResumeForUser,
+} from '@profile/api-client';
 import { useI18n } from '@profile/i18n';
-import { AlertCircle, Check, FileText, Loader2, Save, Sparkles } from 'lucide-react';
+import { FileText, Save, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { showToast } from '@/shared/components/ui/toast';
-import { useResume, useUpdateResume } from '@/components/resume/hooks';
 import { ThemePicker } from '@/components/resume/theme';
-import { useCurrentResumeId } from './hooks/use-current-resume-id';
+import { SaveButton, Spinner, StatusMessage } from '@/shared/components/ui';
+import { showToast } from '@/shared/components/ui/toast';
 import { LabeledField } from './labeled-field';
 import {
   createEmptyResumeBasicsForm,
@@ -29,19 +34,37 @@ export function ResumeBasicsSection({
   onOpenSection,
 }: ResumeBasicsSectionProps) {
   const { t } = useI18n();
-  const { data: resumeId, isLoading: isLoadingResumeId } = useCurrentResumeId();
-  const { data: resumeResponse, isLoading: isLoadingResume, isError } = useResume(resumeId ?? '');
-  const updateResume = useUpdateResume(resumeId ?? '');
+
+  // Get first resume ID using SDK hook directly
+  // API returns { data: Resume[], meta: {...} } - extract .data not .resumes
+  const resumesQuery = useResumesGetAllUserResumes({ page: 1, limit: 1 });
+  const resumes = (resumesQuery.data?.data?.data as Record<string, unknown> | undefined)?.data as
+    | Array<{ id: string }>
+    | undefined;
+  const resumeId = resumes?.[0]?.id ?? null;
+  const isLoadingResumeId = resumesQuery.isLoading;
+
+  // Get resume details - SDK hook directly
+  const resumeQuery = useResumesGetResumeByIdForUser(resumeId ?? '', {
+    query: { enabled: !!resumeId },
+  });
+  const resumeData = resumeQuery.data?.data?.data ?? null;
+  const isLoadingResume = resumeQuery.isLoading;
+  const isError = resumeQuery.isError;
+
+  // Update mutation - SDK hook directly
+  const updateResume = useResumesUpdateResumeForUser();
+
   const [formData, setFormData] = useState(createEmptyResumeBasicsForm);
   const [isDirty, setIsDirty] = useState(false);
 
-  const resume = (resumeResponse?.data ?? null) as ResumeSettingsData | null;
-  // activeThemeId may be present at runtime even if not typed in the generated DTO
-  const activeThemeId = (resume as Record<string, unknown> | null)?.activeThemeId as string | undefined;
+  const resume = (resumeData ?? null) as ResumeSettingsData | null;
+  const activeThemeId = (resume as Record<string, unknown> | null)?.activeThemeId as
+    | string
+    | undefined;
 
   useEffect(() => {
     if (!resume) return;
-
     queueMicrotask(() => {
       setFormData(toResumeBasicsForm(resume));
       setIsDirty(false);
@@ -55,9 +78,11 @@ export function ResumeBasicsSection({
 
   const handleSave = async () => {
     if (!resumeId) return;
-
     try {
-      await updateResume.mutateAsync(toUpdateResumePayload(formData));
+      await updateResume.mutateAsync({
+        id: resumeId,
+        data: toUpdateResumePayload(formData),
+      });
       setIsDirty(false);
     } catch {
       showToast.error('Failed to save resume settings');
@@ -67,50 +92,39 @@ export function ResumeBasicsSection({
   if (isLoadingResumeId || isLoadingResume) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+        <Spinner size="md" />
       </div>
     );
   }
 
-  if (isError) {
+  if (isError)
     return (
       <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-sm text-red-400">
         {t('settings.resume.failedLoad')}
       </div>
     );
-  }
-
-  if (!resumeId || !resume) {
+  if (!resumeId || !resume)
     return (
       <div className="rounded-xl border border-white/10 bg-white/5 p-6 text-sm text-zinc-400">
         {t('settings.resume.failedLoadDesc')}
       </div>
     );
-  }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-white">{t('settings.resume.title')}</h2>
-          <p className="mt-1 text-sm text-zinc-400">
-            {t('settings.resume.description')}
-          </p>
+          <p className="mt-1 text-sm text-zinc-400">{t('settings.resume.description')}</p>
         </div>
         {isDirty && (
-          <button
-            type="button"
+          <SaveButton
+            icon={Save}
+            isPending={updateResume.isPending}
             onClick={() => void handleSave()}
-            disabled={updateResume.isPending}
-            className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition-opacity hover:opacity-90 disabled:opacity-50"
           >
-            {updateResume.isPending ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Save className="h-4 w-4" strokeWidth={1.5} />
-            )}
             Save Resume
-          </button>
+          </SaveButton>
         )}
       </div>
 
@@ -129,7 +143,6 @@ export function ResumeBasicsSection({
             placeholder={t('settings.resume.headlinePlaceholder')}
           />
         </div>
-
         <div className="grid gap-5 sm:grid-cols-2">
           <LabeledField
             label="Full name"
@@ -145,7 +158,6 @@ export function ResumeBasicsSection({
             placeholder="jane@example.com"
           />
         </div>
-
         <div className="grid gap-5 sm:grid-cols-2">
           <LabeledField
             label="Phone"
@@ -160,7 +172,6 @@ export function ResumeBasicsSection({
             placeholder={t('settings.resume.locationPlaceholder')}
           />
         </div>
-
         <label className="block">
           <span className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
             <FileText className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
@@ -184,25 +195,16 @@ export function ResumeBasicsSection({
             <Sparkles className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
             {t('settings.resume.theme')}
           </h3>
-          <p className="mt-1 text-sm text-zinc-400">
-            {t('settings.resume.themeDescription')}
-          </p>
+          <p className="mt-1 text-sm text-zinc-400">{t('settings.resume.themeDescription')}</p>
         </div>
         <ThemePicker resumeId={resumeId} activeThemeId={activeThemeId ?? null} />
       </div>
 
       {updateResume.isSuccess && !isDirty && (
-        <div className="flex items-center gap-2 text-sm text-emerald-500">
-          <Check className="h-4 w-4" />
-          {t('settings.resume.updateSuccess')}
-        </div>
+        <StatusMessage type="success" message={t('settings.resume.updateSuccess')} />
       )}
-
       {updateResume.isError && (
-        <div className="flex items-center gap-2 text-sm text-red-500">
-          <AlertCircle className="h-4 w-4" />
-          {t('settings.resume.updateFailed')}
-        </div>
+        <StatusMessage type="error" message={t('settings.resume.updateFailed')} />
       )}
     </div>
   );

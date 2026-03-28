@@ -1,6 +1,6 @@
 'use client';
 
-import { apiFetch, RESUMES_ROUTES } from '@profile/api-client';
+import { apiFetch, getResumesCreateShareUrl } from '@profile/api-client';
 import { useMutation } from '@tanstack/react-query';
 import { Check, Copy, Loader2 } from 'lucide-react';
 import { useCallback, useState } from 'react';
@@ -32,7 +32,7 @@ interface CreateShareResponse {
 function useCreateShareLink() {
   return useMutation({
     mutationFn: async (params: { resumeId: string; password?: string; expiresAt?: string }) => {
-      const result = await apiFetch.post<CreateShareResponse>(RESUMES_ROUTES.RESUMES_CREATE_SHARE, {
+      const result = await apiFetch.post<CreateShareResponse>(getResumesCreateShareUrl(), {
         resumeId: params.resumeId,
         password: params.password || undefined,
         expiresAt: params.expiresAt || undefined,

@@ -39,9 +39,7 @@ export function TwoFactorLoginChallenge({ userId, onVerified }: LoginChallengePr
     } catch {
       showToast.error(
         t('auth.2fa.verificationFailed'),
-        mode === 'totp'
-          ? t('auth.2fa.invalidTotp')
-          : t('auth.2fa.invalidBackup'),
+        mode === 'totp' ? t('auth.2fa.invalidTotp') : t('auth.2fa.invalidBackup'),
       );
     }
   }
@@ -61,9 +59,7 @@ export function TwoFactorLoginChallenge({ userId, onVerified }: LoginChallengePr
         </div>
         <h2 className="text-pf-fg-default text-xl font-semibold">{t('auth.2fa.title')}</h2>
         <p className="text-pf-fg-muted text-center text-sm">
-          {mode === 'totp'
-            ? t('auth.2fa.totpPrompt')
-            : t('auth.2fa.backupPrompt')}
+          {mode === 'totp' ? t('auth.2fa.totpPrompt') : t('auth.2fa.backupPrompt')}
         </p>
       </div>
 

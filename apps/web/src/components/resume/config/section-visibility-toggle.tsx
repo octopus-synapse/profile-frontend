@@ -48,7 +48,11 @@ export function SectionVisibilityToggle({
       ) : (
         <EyeOff className="h-4 w-4 text-zinc-400" />
       )}
-      <span className={optimisticVisible ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-400 line-through'}>
+      <span
+        className={
+          optimisticVisible ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-400 line-through'
+        }
+      >
         {label}
       </span>
     </button>

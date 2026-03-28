@@ -5,10 +5,10 @@
 
 'use client';
 
+import { useThemesCreateThemeForUser } from '@profile/api-client';
 import { AlertCircle, CheckCircle2, Clipboard, FileJson, Upload, X } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/shared/utils';
-import { useCreateTheme } from '../hooks';
 import type { ResumeStyleConfig } from '../types/config';
 
 interface Props {
@@ -23,7 +23,7 @@ export function JsonImportModal({ isOpen, onClose, onImported }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [isValid, setIsValid] = useState(false);
 
-  const createTheme = useCreateTheme();
+  const createMutation = useThemesCreateThemeForUser();
 
   if (!isOpen) return null;
 
@@ -36,8 +36,8 @@ export function JsonImportModal({ isOpen, onClose, onImported }: Props) {
 
     try {
       const parsed = JSON.parse(value) as Partial<ResumeStyleConfig>;
-      if (!parsed.layout && !parsed.tokens && !parsed.sections) {
-        setError('Must include layout, tokens, or sections');
+      if (!parsed.layout && !parsed.colors && !parsed.sections) {
+        setError('Must include layout, colors, or sections');
         return;
       }
       setIsValid(true);
@@ -50,17 +50,18 @@ export function JsonImportModal({ isOpen, onClose, onImported }: Props) {
     try {
       const parsed = JSON.parse(json) as Partial<ResumeStyleConfig>;
 
-      const themeResponse = await createTheme.mutateAsync({
-        name,
-        description: '',
-        category: 'MODERN',
-        styleConfig: parsed as Record<string, unknown>,
+      const response = await createMutation.mutateAsync({
+        data: {
+          name,
+          description: '',
+          category: 'MODERN',
+          styleConfig: parsed as Record<string, unknown>,
+        },
       });
 
-      // SDK response is now directly the DTO: { theme: { id } }
-      const themeId = (themeResponse as unknown as { theme?: { id?: string } })?.theme?.id;
-      if (themeId) {
-        onImported?.(themeId);
+      const themeData = response?.data?.data as { id?: string } | undefined;
+      if (themeData?.id) {
+        onImported?.(themeData.id);
       }
       onClose();
       setJson('');
@@ -211,11 +212,11 @@ export function JsonImportModal({ isOpen, onClose, onImported }: Props) {
           <button
             type="button"
             onClick={() => void handleImport()}
-            disabled={!isValid || !name.trim() || createTheme.isPending}
+            disabled={!isValid || !name.trim() || createMutation.isPending}
             className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Upload className="h-4 w-4" strokeWidth={1.5} />
-            {createTheme.isPending ? 'Creating...' : 'Create Theme'}
+            {createMutation.isPending ? 'Creating...' : 'Create Theme'}
           </button>
         </div>
       </div>

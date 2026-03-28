@@ -38,8 +38,7 @@ export const onboarding = {
   'onboarding.username.description':
     'Isso cria a URL do seu perfil público, então mantenha simples e memorável.',
   'onboarding.username.preview': 'usuario',
-  'onboarding.username.hint':
-    'Use de 3 a 30 letras minúsculas, números ou underscores.',
+  'onboarding.username.hint': 'Use de 3 a 30 letras minúsculas, números ou underscores.',
   'onboarding.username.label': 'Nome de usuário',
   'onboarding.username.tooltip':
     'Seu identificador único no PATCH. Não pode ser alterado depois, então escolha com cuidado!',
@@ -88,26 +87,22 @@ export const onboarding = {
     'Resuma sua função, seus pontos fortes e os links que apoiam seu perfil.',
   'onboarding.professionalProfile.jobTitleLabel': 'Cargo',
   'onboarding.professionalProfile.jobTitlePlaceholder': 'Engenheiro de Software Sênior',
-  'onboarding.professionalProfile.jobTitleMinLength':
-    'O cargo deve ter pelo menos 2 caracteres',
+  'onboarding.professionalProfile.jobTitleMinLength': 'O cargo deve ter pelo menos 2 caracteres',
   'onboarding.professionalProfile.summaryLabel': 'Resumo',
   'onboarding.professionalProfile.summaryPlaceholder':
     'Desenvolvedor full-stack apaixonado com mais de 5 anos de experiência construindo aplicações web escaláveis. Especializado em React, Node.js e infraestrutura em nuvem...',
   'onboarding.professionalProfile.summaryMinLength':
     'O resumo deve ter pelo menos {min} caracteres',
-  'onboarding.professionalProfile.summaryMaxLength':
-    'O resumo deve ter menos de {max} caracteres',
+  'onboarding.professionalProfile.summaryMaxLength': 'O resumo deve ter menos de {max} caracteres',
   'onboarding.professionalProfile.minimumChars': 'Mínimo de {min} caracteres',
   'onboarding.professionalProfile.socialLinksHint':
     'Links sociais são opcionais, mas ajudam a tornar seu perfil mais credível.',
   'onboarding.professionalProfile.linkedinLabel': 'LinkedIn',
-  'onboarding.professionalProfile.linkedinPlaceholder':
-    'https://linkedin.com/in/usuario',
+  'onboarding.professionalProfile.linkedinPlaceholder': 'https://linkedin.com/in/usuario',
   'onboarding.professionalProfile.invalidUrl': 'Formato de URL inválido',
   'onboarding.professionalProfile.githubLabel': 'GitHub',
   'onboarding.professionalProfile.githubPlaceholder': 'usuario',
-  'onboarding.professionalProfile.githubHint':
-    'Digite apenas seu nome de usuário (ex: octocat)',
+  'onboarding.professionalProfile.githubHint': 'Digite apenas seu nome de usuário (ex: octocat)',
   'onboarding.professionalProfile.websiteLabel': 'Website',
   'onboarding.professionalProfile.websitePlaceholder': 'https://seusite.dev',
 
@@ -131,8 +126,7 @@ export const onboarding = {
   // Review Step
   'onboarding.review.eyebrow': 'Etapa final',
   'onboarding.review.title': 'Revisar e enviar',
-  'onboarding.review.description':
-    'Confirme o essencial antes de criarmos seu perfil.',
+  'onboarding.review.description': 'Confirme o essencial antes de criarmos seu perfil.',
   'onboarding.review.paletteLabel': 'Paleta: {scheme}',
   'onboarding.review.noneListed': 'Nenhum listado',
   'onboarding.review.itemCount': '{count} item(ns)',
@@ -157,16 +151,14 @@ export const onboarding = {
 
   // Complete Step
   'onboarding.complete.welcomeUser': 'Bem-vindo, {name}! 🎉',
-  'onboarding.complete.successMessage':
-    'Seu perfil profissional foi criado com sucesso',
+  'onboarding.complete.successMessage': 'Seu perfil profissional foi criado com sucesso',
   'onboarding.complete.redirectCountdown':
     'Redirecionando para seu currículo em {count} segundo{suffix}...',
   'onboarding.complete.whatsNext': 'E agora?',
   'onboarding.complete.nextCustomize': 'Visualize e personalize seu currículo',
   'onboarding.complete.nextExport': 'Exporte para PDF ou DOCX',
   'onboarding.complete.nextShare': 'Compartilhe o link do seu perfil público',
-  'onboarding.complete.nextSettings':
-    'Adicione mais detalhes a qualquer momento nas configurações',
+  'onboarding.complete.nextSettings': 'Adicione mais detalhes a qualquer momento nas configurações',
   'onboarding.complete.viewResume': 'Ver Meu Currículo',
   'onboarding.complete.goToDashboard': 'Ir para o Painel',
   'onboarding.complete.helpPrefix': 'Precisa de ajuda? Confira nossa ',

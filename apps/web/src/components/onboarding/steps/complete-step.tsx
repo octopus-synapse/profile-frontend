@@ -6,8 +6,8 @@
 
 'use client';
 
+import { getAuthSessionQueryKey, selectEnvelopeData, useAuthSession } from '@profile/api-client';
 import { useI18n } from '@profile/i18n';
-import { getAuthSessionQueryKey, useAuthSession } from '@profile/api-client';
 import { useQueryClient } from '@tanstack/react-query';
 import confetti from 'canvas-confetti';
 import { ArrowRight, CheckCircle2, ExternalLink, Sparkles } from 'lucide-react';
@@ -20,8 +20,8 @@ import { useOnboarding } from '../hooks';
 export function CompleteStep() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { data } = useAuthSession();
-  const user = data?.data?.user;
+  const { data } = useAuthSession({ query: { select: selectEnvelopeData } });
+  const user = data?.user;
   const { personalInfo } = useOnboarding();
   const { t } = useI18n();
   const [showContent, setShowContent] = useState(false);
@@ -128,14 +128,19 @@ export function CompleteStep() {
         className={`transition-all duration-500 ${showContent ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}
       >
         <h2 className="text-2xl font-bold text-white">
-          {t('onboarding.complete.welcomeUser', { name: personalInfo?.fullName?.split(' ')[0] ?? '' })}
+          {t('onboarding.complete.welcomeUser', {
+            name: personalInfo?.fullName?.split(' ')[0] ?? '',
+          })}
         </h2>
         <p className="mt-2 font-mono text-sm text-zinc-400">
           {t('onboarding.complete.successMessage')}
         </p>
         {countdown > 0 && (
           <p className="mt-2 font-mono text-xs text-cyan-400">
-            {t('onboarding.complete.redirectCountdown', { count: countdown, suffix: countdown !== 1 ? 's' : '' })}
+            {t('onboarding.complete.redirectCountdown', {
+              count: countdown,
+              suffix: countdown !== 1 ? 's' : '',
+            })}
           </p>
         )}
       </div>
@@ -189,7 +194,9 @@ export function CompleteStep() {
       <div
         className={`border border-white/10 p-4 text-left transition-all delay-500 duration-700 ${showContent ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}
       >
-        <h3 className="font-mono text-sm font-semibold text-white">{t('onboarding.complete.whatsNext')}</h3>
+        <h3 className="font-mono text-sm font-semibold text-white">
+          {t('onboarding.complete.whatsNext')}
+        </h3>
         <ul className="mt-3 space-y-2 font-mono text-xs text-zinc-400">
           <li className="flex items-center gap-2">
             <span className="text-emerald-500">→</span>

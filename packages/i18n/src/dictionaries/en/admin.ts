@@ -143,7 +143,8 @@ export const admin = {
   // Field definitions
   'admin.sectionTypes.fields.title': 'Field Definitions',
   'admin.sectionTypes.fields.count': '{count} field(s)',
-  'admin.sectionTypes.fields.empty': 'No fields defined. Add fields to configure this section type.',
+  'admin.sectionTypes.fields.empty':
+    'No fields defined. Add fields to configure this section type.',
   'admin.sectionTypes.fields.add': '+ Add Field',
   'admin.sectionTypes.fields.moveUp': 'Move up',
   'admin.sectionTypes.fields.moveDown': 'Move down',

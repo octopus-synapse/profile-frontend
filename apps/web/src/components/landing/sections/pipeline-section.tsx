@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
 import { useI18n } from '@profile/i18n';
+import { AnimatePresence, motion } from 'framer-motion';
 import { CheckCircle, Pause, Play, RefreshCw } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useMemo, useState } from 'react';
 
 const JOBS = [
   { company: 'Stripe', role: 'Staff Engineer', score: 98, detail: 'Matching Stack (A+B)' },
@@ -88,10 +88,19 @@ export function PipelineSection() {
 
   const badge =
     phase === 'done'
-      ? { text: t('landing.pipeline.statusCompleted' as Parameters<typeof t>[0]), cls: 'bg-green-500/20 text-green-400' }
+      ? {
+          text: t('landing.pipeline.statusCompleted'),
+          cls: 'bg-green-500/20 text-green-400',
+        }
       : paused
-        ? { text: t('landing.pipeline.statusPaused' as Parameters<typeof t>[0]), cls: 'bg-yellow-500/20 text-yellow-400' }
-        : { text: t('landing.pipeline.statusExecuting' as Parameters<typeof t>[0]), cls: 'bg-cyan-500/20 text-cyan-400' };
+        ? {
+            text: t('landing.pipeline.statusPaused'),
+            cls: 'bg-yellow-500/20 text-yellow-400',
+          }
+        : {
+            text: t('landing.pipeline.statusExecuting'),
+            cls: 'bg-cyan-500/20 text-cyan-400',
+          };
 
   const confetti = useMemo(
     () =>
@@ -114,29 +123,26 @@ export function PipelineSection() {
   ];
 
   return (
-    <section className="relative z-10 bg-[#060606] px-6 py-32 md:px-8">
+    <section className="relative z-10 bg-white px-6 py-32 md:px-8">
       <div className="mx-auto flex max-w-6xl flex-col gap-16 lg:flex-row lg:items-start">
         <div className="flex-1">
-          <div className="mb-4 font-mono text-[10px] tracking-[0.25em] uppercase text-cyan-500">
-            {t('landing.pipeline.label' as Parameters<typeof t>[0])}
-          </div>
-          <h2 className="mb-6 text-5xl font-black uppercase leading-[0.85] tracking-tighter text-white md:text-7xl">
-            {t('landing.pipeline.title' as Parameters<typeof t>[0])}
+          <h2 className="mb-6 text-5xl font-black uppercase leading-[0.85] tracking-tighter text-zinc-900 md:text-7xl">
+            {t('landing.pipeline.title')}
           </h2>
-          <p className="text-lg leading-relaxed text-zinc-400">
-            {t('landing.pipeline.description' as Parameters<typeof t>[0])}{' '}
-            <span className="inline bg-black px-1.5 py-0.5 font-semibold text-white">
-              {t('landing.pipeline.descriptionHighlight' as Parameters<typeof t>[0])}
+          <p className="text-lg leading-relaxed text-zinc-500">
+            {t('landing.pipeline.description')}{' '}
+            <span className="inline bg-zinc-900 px-1.5 py-0.5 font-semibold text-white">
+              {t('landing.pipeline.descriptionHighlight')}
             </span>
           </p>
         </div>
 
         <div className="w-full flex-1">
-          <div className="rounded-2xl border border-white/[0.07] bg-[#111] p-8">
+          <div className="rounded-2xl border border-zinc-200 bg-zinc-900 p-8">
             <div className="mb-6 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="font-mono text-sm text-zinc-300">
-                  {t('landing.pipeline.autoApply' as Parameters<typeof t>[0])}
+                  {t('landing.pipeline.autoApply')}
                 </span>
                 <span
                   className={`rounded-full px-2 py-0.5 font-mono text-[10px] uppercase ${badge.cls}`}
@@ -146,6 +152,7 @@ export function PipelineSection() {
               </div>
               {phase !== 'done' && (
                 <button
+                  type="button"
                   onClick={() => setPaused((p) => !p)}
                   className="rounded-lg p-2 text-zinc-400 transition hover:bg-white/5 hover:text-white"
                   aria-label={paused ? 'Resume' : 'Pause'}
@@ -183,27 +190,28 @@ export function PipelineSection() {
                       ))}
                     </div>
                     <p className="mb-1 font-mono text-xs uppercase text-green-400">
-                      {t('landing.pipeline.completed' as Parameters<typeof t>[0])}
+                      {t('landing.pipeline.completed')}
                     </p>
                     <p className="mb-6 text-xl font-bold text-white">
-                      {t('landing.pipeline.summaryTitle' as Parameters<typeof t>[0])}
+                      {t('landing.pipeline.summaryTitle')}
                     </p>
                     <div className="grid w-full grid-cols-2 gap-4 text-center">
                       {stats.map((s) => (
                         <div key={s.key} className="rounded-lg bg-zinc-800/50 p-3">
                           <p className="font-mono text-2xl font-bold text-cyan-400">{s.value}</p>
                           <p className="text-xs text-zinc-500">
-                            {t(s.key as Parameters<typeof t>[0])}
+                            {t(s.key as 'landing.pipeline.applications')}
                           </p>
                         </div>
                       ))}
                     </div>
                     <button
+                      type="button"
                       onClick={restart}
                       className="mt-6 flex items-center gap-2 rounded-lg bg-white/5 px-4 py-2 font-mono text-sm text-zinc-300 transition hover:bg-white/10"
                     >
                       <RefreshCw className="h-4 w-4" />
-                      {t('landing.pipeline.restart' as Parameters<typeof t>[0])}
+                      {t('landing.pipeline.restart')}
                     </button>
                   </motion.div>
                 ) : (
@@ -240,9 +248,7 @@ export function PipelineSection() {
             </div>
 
             <div className="mt-6 border-t border-white/[0.07] pt-4">
-              <p className="font-mono text-xs text-zinc-500">
-                {t('landing.pipeline.footerStats' as Parameters<typeof t>[0])}
-              </p>
+              <p className="font-mono text-xs text-zinc-500">{t('landing.pipeline.footerStats')}</p>
             </div>
           </div>
         </div>

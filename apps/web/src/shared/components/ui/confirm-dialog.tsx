@@ -52,7 +52,7 @@ export function ConfirmDialog({
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-lg border border-white/10 px-4 py-2 text-sm font-medium text-zinc-300 transition-colors hover:bg-white/5"
+            className="rounded-lg border border-pf-border-default px-4 py-2 text-sm font-medium text-pf-fg-muted transition-colors hover:bg-pf-hover-subtle"
           >
             {cancelLabel}
           </button>
@@ -61,8 +61,8 @@ export function ConfirmDialog({
             onClick={onConfirm}
             className={
               isDanger
-                ? 'rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700'
-                : 'rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-zinc-200'
+                ? 'rounded-lg bg-pf-danger-emphasis px-4 py-2 text-sm font-medium text-pf-fg-on-emphasis transition-colors hover:opacity-90'
+                : 'rounded-lg bg-pf-canvas-emphasis px-4 py-2 text-sm font-medium text-pf-fg-on-emphasis transition-colors hover:opacity-90'
             }
           >
             {confirmLabel}

@@ -1,13 +1,11 @@
 'use client';
 
 /**
- * Two-Factor Settings Panel
- *
- * Displays 2FA status and provides enable/disable/regenerate actions.
+ * Two-Factor Settings — Minimal design
  */
 
 import { useI18n } from '@profile/i18n';
-import { Copy, KeyRound, ShieldCheck, ShieldOff } from 'lucide-react';
+import { Copy, KeyRound, Loader2, ShieldCheck, ShieldOff } from 'lucide-react';
 import { useState } from 'react';
 import {
   use2FAStatus,
@@ -15,15 +13,7 @@ import {
   useRegenerateBackupCodes,
 } from '@/components/auth/hooks/use-2fa';
 import { TwoFactorSetupWizard } from '@/components/auth/two-factor/setup-wizard';
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui';
 import {
   Dialog,
   DialogContent,
@@ -43,88 +33,95 @@ export function TwoFactorSettings() {
 
   if (isLoading) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <ShieldCheck className="h-5 w-5" />
-            {t('settings.twoFactor.title')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="bg-pf-canvas-subtle h-20 animate-pulse rounded-lg" />
-        </CardContent>
-      </Card>
+      <div className="space-y-12">
+        <div>
+          <h2 className="text-xl font-light text-white">{t('settings.twoFactor.title')}</h2>
+          <p className="mt-1 text-[13px] text-zinc-500">{t('settings.twoFactor.description')}</p>
+        </div>
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="h-5 w-5 animate-spin text-zinc-600" />
+        </div>
+      </div>
     );
   }
 
   return (
     <>
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="flex items-center gap-2">
-                <ShieldCheck className="h-5 w-5" />
-                {t('settings.twoFactor.title')}
-              </CardTitle>
-              <CardDescription>{t('settings.twoFactor.description')}</CardDescription>
-            </div>
-            <Badge variant={status?.enabled ? 'default' : 'secondary'}>
-              {status?.enabled ? t('settings.twoFactor.enabled') : t('settings.twoFactor.disabled')}
-            </Badge>
+      <div className="space-y-12">
+        {/* Header */}
+        <div className="flex items-start justify-between">
+          <div>
+            <h2 className="text-xl font-light text-white">{t('settings.twoFactor.title')}</h2>
+            <p className="mt-1 text-[13px] text-zinc-500">{t('settings.twoFactor.description')}</p>
           </div>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
+          <span
+            className={`rounded-full px-3 py-1 text-[11px] font-medium ${
+              status?.enabled ? 'bg-emerald-950/50 text-emerald-400' : 'bg-zinc-800 text-zinc-400'
+            }`}
+          >
+            {status?.enabled ? t('settings.twoFactor.enabled') : t('settings.twoFactor.disabled')}
+          </span>
+        </div>
+
+        {/* Content */}
+        <div className="border-t border-zinc-800/50 pt-8">
           {status?.enabled ? (
-            <EnabledView
-              backupCodesRemaining={status.backupCodesRemaining}
-              onDisable={() => setDisableOpen(true)}
-              onRegenerate={() => setRegenOpen(true)}
-            />
+            <div className="space-y-6">
+              <div className="flex items-center gap-4">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-950/30">
+                  <ShieldCheck className="h-5 w-5 text-emerald-400" strokeWidth={1.5} />
+                </div>
+                <div>
+                  <p className="text-sm text-white">
+                    {t('settings.twoFactor.backupCodesRemaining')}
+                  </p>
+                  <p className="text-2xl font-light text-white">{status.backupCodesRemaining}</p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setRegenOpen(true)}
+                  className="flex items-center gap-2 rounded-lg border border-zinc-700 px-4 py-2 text-[13px] text-zinc-300 transition-colors hover:border-zinc-600 hover:text-white"
+                >
+                  <KeyRound className="h-4 w-4" />
+                  <span>{t('settings.twoFactor.regenerateBackup')}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDisableOpen(true)}
+                  className="flex items-center gap-2 rounded-lg border border-red-900/50 px-4 py-2 text-[13px] text-red-400 transition-colors hover:border-red-800 hover:bg-red-950/20"
+                >
+                  <ShieldOff className="h-4 w-4" />
+                  <span>{t('settings.twoFactor.disable')}</span>
+                </button>
+              </div>
+            </div>
           ) : (
-            <Button onClick={() => setSetupOpen(true)} className="gap-2 self-start">
-              <ShieldCheck className="h-4 w-4" />
-              {t('settings.twoFactor.enable')}
-            </Button>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-900">
+                  <ShieldOff className="h-5 w-5 text-zinc-500" strokeWidth={1.5} />
+                </div>
+                <p className="text-sm text-zinc-400">{t('settings.twoFactor.notEnabled')}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSetupOpen(true)}
+                className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition-opacity hover:opacity-90"
+              >
+                <ShieldCheck className="h-4 w-4" />
+                <span>{t('settings.twoFactor.enable')}</span>
+              </button>
+            </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       <TwoFactorSetupWizard open={setupOpen} onOpenChange={setSetupOpen} />
       <DisableConfirmDialog open={disableOpen} onOpenChange={setDisableOpen} />
       <RegenerateCodesDialog open={regenOpen} onOpenChange={setRegenOpen} />
-    </>
-  );
-}
-
-// ── Sub-components ─────────────────────────────────────
-
-function EnabledView({
-  backupCodesRemaining,
-  onDisable,
-  onRegenerate,
-}: {
-  backupCodesRemaining: number;
-  onDisable: () => void;
-  onRegenerate: () => void;
-}) {
-  const { t } = useI18n();
-
-  return (
-    <>
-      <p className="text-pf-fg-muted text-sm">
-        {t('settings.twoFactor.backupCodesRemaining')} <strong>{backupCodesRemaining}</strong>
-      </p>
-      <div className="flex gap-2">
-        <Button variant="outline" onClick={onRegenerate} className="gap-2">
-          <KeyRound className="h-4 w-4" />
-          {t('settings.twoFactor.regenerateBackup')}
-        </Button>
-        <Button variant="outline" onClick={onDisable} className="gap-2 text-red-600">
-          <ShieldOff className="h-4 w-4" />
-          {t('settings.twoFactor.disable')}
-        </Button>
-      </div>
     </>
   );
 }
@@ -154,16 +151,16 @@ function DisableConfirmDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('settings.twoFactor.disableDialogTitle')}</DialogTitle>
-          <DialogDescription>
-            {t('settings.twoFactor.disableDialogDesc')}
-          </DialogDescription>
+          <DialogDescription>{t('settings.twoFactor.disableDialogDesc')}</DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             {t('action.cancel')}
           </Button>
           <Button variant="destructive" onClick={handleDisable} disabled={disable.isPending}>
-            {disable.isPending ? t('settings.twoFactor.disabling') : t('settings.twoFactor.disable')}
+            {disable.isPending
+              ? t('settings.twoFactor.disabling')
+              : t('settings.twoFactor.disable')}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -214,9 +211,9 @@ function RegenerateCodesDialog({
         </DialogHeader>
         {regen.data ? (
           <div className="flex flex-col gap-3">
-            <div className="bg-pf-canvas-subtle grid grid-cols-2 gap-2 rounded-lg p-4">
+            <div className="grid grid-cols-2 gap-2 rounded-lg bg-zinc-900 p-4">
               {regen.data.backupCodes.map((code) => (
-                <code key={code} className="text-sm font-mono text-center">
+                <code key={code} className="text-center font-mono text-sm text-white">
                   {code}
                 </code>
               ))}
@@ -236,7 +233,9 @@ function RegenerateCodesDialog({
                 {t('action.cancel')}
               </Button>
               <Button onClick={handleRegenerate} disabled={regen.isPending}>
-                {regen.isPending ? t('settings.twoFactor.generating') : t('settings.twoFactor.regenerate')}
+                {regen.isPending
+                  ? t('settings.twoFactor.generating')
+                  : t('settings.twoFactor.regenerate')}
               </Button>
             </>
           )}

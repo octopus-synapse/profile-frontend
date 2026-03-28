@@ -10,11 +10,7 @@
 import { useT } from '@profile/i18n';
 import { Button, Label } from '@/shared/components/ui';
 import { FieldRow } from './field-row';
-import {
-  createEmptyField,
-  type FieldDefinition,
-  type FieldEntry,
-} from './types/field-definition';
+import { createEmptyField, type FieldDefinition, type FieldEntry } from './types/field-definition';
 
 interface FieldDefinitionEditorProps {
   definition: FieldDefinition;
@@ -65,7 +61,9 @@ export function FieldDefinitionEditor({ definition, onChange }: FieldDefinitionE
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <Label className="text-sm font-semibold">{t('admin.sectionTypes.fields.title')}</Label>
-        <span className="text-pf-fg-muted text-xs">{t('admin.sectionTypes.fields.count', { count: fields.length })}</span>
+        <span className="text-pf-fg-muted text-xs">
+          {t('admin.sectionTypes.fields.count', { count: fields.length })}
+        </span>
       </div>
 
       {fields.length === 0 && (

@@ -4,7 +4,28 @@
  * Extracted from generic-field-input to keep files under 300 lines.
  */
 
-import type { FieldDefinition } from '../types/generic-section.types';
+export type FieldType = 'string' | 'text' | 'number' | 'date' | 'boolean' | 'enum' | 'array';
+
+export interface FieldDefinition {
+  key: string;
+  type: FieldType;
+  required?: boolean;
+  label?: string;
+  placeholder?: string;
+  order?: number;
+  maxLength?: number;
+  min?: number;
+  max?: number;
+  defaultValue?: unknown;
+  enumValues?: string[];
+  options?: Array<{ label: string; value: string }>;
+  semanticRole?: 'TITLE' | 'SUBTITLE' | 'DATE_START' | 'DATE_END' | 'DESCRIPTION';
+}
+
+export interface SectionItem {
+  id: string;
+  content: Record<string, unknown>;
+}
 
 export type FieldRenderProps = {
   field: FieldDefinition;
@@ -18,12 +39,12 @@ export type FieldRenderProps = {
 };
 
 export const INPUT_BASE =
-  'w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white ' +
-  'placeholder:text-zinc-600 focus:border-white/20 focus:outline-none disabled:opacity-50';
+  'w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white ' +
+  'placeholder:text-zinc-500 focus:border-white/20 focus:outline-none disabled:opacity-50';
 
 export const INPUT_ERROR =
-  'w-full rounded-lg border border-red-500/50 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white ' +
-  'placeholder:text-zinc-600 focus:border-red-500/70 focus:outline-none disabled:opacity-50';
+  'w-full rounded-lg border border-red-500/50 bg-white/5 px-4 py-2.5 text-sm text-white ' +
+  'placeholder:text-zinc-500 focus:border-red-500/70 focus:outline-none disabled:opacity-50';
 
 export function formatDateValue(value: unknown): string {
   if (!value) return '';

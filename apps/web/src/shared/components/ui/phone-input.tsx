@@ -115,8 +115,8 @@ export const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
           placeholder || (countryFormat === 'BR' ? '+55 (11) 99999-9999' : '+1 (555) 123-4567')
         }
         className={cn(
-          'border-white/10 bg-[#0A0A0A]/95 text-white',
-          'placeholder:text-zinc-600 focus:border-cyan-500',
+          'border-pf-border-default bg-pf-canvas-subtle/95 text-pf-fg-default',
+          'placeholder:text-pf-fg-subtle focus:border-pf-accent-emphasis',
           'w-full border px-3 py-2 font-mono text-sm focus:outline-none',
           className,
         )}

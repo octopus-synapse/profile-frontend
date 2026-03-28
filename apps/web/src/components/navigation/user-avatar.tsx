@@ -1,11 +1,11 @@
 'use client';
 
-import { useAuthSession } from '@profile/api-client';
+import { selectEnvelopeData, useAuthSession } from '@profile/api-client';
 import { Avatar } from '@/shared/components/ui';
 
 export function UserAvatar() {
-  const { data } = useAuthSession();
-  const user = data?.data?.user;
+  const { data } = useAuthSession({ query: { select: selectEnvelopeData } });
+  const user = data?.user;
 
   if (!user) return null;
 

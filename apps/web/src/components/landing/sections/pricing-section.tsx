@@ -3,8 +3,6 @@
 import { useI18n } from '@profile/i18n';
 import { Check } from 'lucide-react';
 
-import { SectionLabel } from './section-label';
-
 const FEATURE_KEYS = [
   'landing.pricing.feature1',
   'landing.pricing.feature2',
@@ -24,7 +22,7 @@ export function PricingSection() {
   const { t } = useI18n();
 
   return (
-    <section className="relative z-10 bg-[#080808] px-4 py-32">
+    <section className="relative z-10 bg-zinc-950 px-4 py-32">
       {/* Radial glow behind card */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
         <div className="h-[600px] w-[600px] rounded-full bg-cyan-500/5 blur-[120px]" />
@@ -32,20 +30,15 @@ export function PricingSection() {
 
       <div className="relative mx-auto max-w-5xl">
         <div className="mb-16 text-center">
-          <div className="mb-6">
-            <SectionLabel variant="dark" centered>
-              {t('landing.pricing.label')}
-            </SectionLabel>
-          </div>
-          <h2 className="mb-4 text-4xl font-medium tracking-tighter text-white md:text-5xl">
+          <h2 className="mb-4 text-5xl font-black uppercase tracking-tighter text-white md:text-7xl">
             {t('landing.pricing.title')}
+            <br />
+            <span className="text-cyan-400">{t('landing.pricing.titleAccent')}</span>
           </h2>
-          <p className="text-lg text-zinc-500">
-            {t('landing.pricing.subtitle')}
-          </p>
+          <p className="text-lg text-zinc-500">{t('landing.pricing.subtitle')}</p>
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#111]">
+        <div className="overflow-hidden rounded-2xl border border-white/10 bg-zinc-900">
           <div className="h-[3px] bg-gradient-to-r from-cyan-500 via-cyan-400 to-cyan-500" />
 
           <div className="grid gap-10 p-10 md:grid-cols-2">
@@ -62,15 +55,11 @@ export function PricingSection() {
                 {t('landing.pricing.price')}
               </p>
 
-              <p className="mb-8 text-sm text-zinc-500">
-                {t('landing.pricing.cancelNote')}
-              </p>
+              <p className="mb-8 text-sm text-zinc-500">{t('landing.pricing.cancelNote')}</p>
 
               <div className="mb-8">
                 <div className="mb-2 flex items-center justify-between text-xs">
-                  <span className="text-zinc-500">
-                    {t('landing.pricing.urgencyLabel')}
-                  </span>
+                  <span className="text-zinc-500">{t('landing.pricing.urgencyLabel')}</span>
                   <span className="font-mono text-cyan-400">
                     {t('landing.pricing.urgencyCount')}
                   </span>
@@ -82,14 +71,12 @@ export function PricingSection() {
 
               <button
                 type="button"
-                className="mb-3 w-full rounded-xl bg-cyan-500 py-4 text-center font-bold text-black transition-all hover:bg-cyan-400 active:scale-[0.98]"
+                className="mb-3 w-full rounded-xl bg-cyan-500 py-4 text-center font-bold uppercase tracking-wide text-black transition-all hover:bg-cyan-400 hover:shadow-lg hover:shadow-cyan-500/25 active:scale-[0.98]"
               >
                 {t('landing.pricing.ctaButton')}
               </button>
 
-              <p className="text-center text-xs text-zinc-500">
-                {t('landing.pricing.ctaNote')}
-              </p>
+              <p className="text-center text-xs text-zinc-500">{t('landing.pricing.ctaNote')}</p>
             </div>
 
             {/* Right — features & FAQ */}
@@ -102,9 +89,7 @@ export function PricingSection() {
                 {FEATURE_KEYS.map((key) => (
                   <li key={key} className="flex items-start gap-3">
                     <Check className="mt-0.5 h-4 w-4 shrink-0 text-cyan-400" />
-                    <span className="text-sm leading-relaxed text-zinc-300">
-                      {t(key)}
-                    </span>
+                    <span className="text-sm leading-relaxed text-zinc-300">{t(key)}</span>
                   </li>
                 ))}
               </ul>
@@ -116,12 +101,8 @@ export function PricingSection() {
                 <div className="space-y-4">
                   {FAQ_KEYS.map((faq) => (
                     <div key={faq.q}>
-                      <p className="text-sm font-medium text-zinc-300">
-                        {t(faq.q)}
-                      </p>
-                      <p className="mt-1 text-xs leading-relaxed text-zinc-500">
-                        {t(faq.a)}
-                      </p>
+                      <p className="text-sm font-medium text-zinc-300">{t(faq.q)}</p>
+                      <p className="mt-1 text-xs leading-relaxed text-zinc-500">{t(faq.a)}</p>
                     </div>
                   ))}
                 </div>

@@ -1,8 +1,8 @@
 'use client';
 
+import { useI18n } from '@profile/i18n';
 import { GripVertical, Loader2 } from 'lucide-react';
 import { useCallback, useState } from 'react';
-import { useI18n } from '@profile/i18n';
 import { SectionVisibilityToggle } from './section-visibility-toggle';
 
 export interface SectionItem {
@@ -17,7 +17,9 @@ interface SectionReorderPanelProps {
   sections: SectionItem[];
   onToggleVisibility: (sectionId: string, visible: boolean) => Promise<void>;
   onReorder: (sectionId: string, newOrder: number) => Promise<void>;
-  onBatchUpdate?: (sections: Array<{ id: string; visible?: boolean; order?: number }>) => Promise<void>;
+  onBatchUpdate?: (
+    sections: Array<{ id: string; visible?: boolean; order?: number }>,
+  ) => Promise<void>;
 }
 
 export function SectionReorderPanel({
@@ -62,9 +64,7 @@ export function SectionReorderPanel({
 
     try {
       if (onBatchUpdate) {
-        await onBatchUpdate(
-          items.map((item, index) => ({ id: item.id, order: index })),
-        );
+        await onBatchUpdate(items.map((item, index) => ({ id: item.id, order: index })));
       } else {
         for (let i = 0; i < items.length; i++) {
           const item = items[i];
@@ -86,15 +86,14 @@ export function SectionReorderPanel({
         <h3 className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
           {t('resume.reorder.title')}
         </h3>
-        {isSaving && (
-          <Loader2 className="h-4 w-4 animate-spin text-zinc-400" />
-        )}
+        {isSaving && <Loader2 className="h-4 w-4 animate-spin text-zinc-400" />}
       </div>
 
       <div className="space-y-1">
         {items.map((section, index) => (
           <div
             key={section.id}
+            role="listitem"
             draggable
             onDragStart={() => handleDragStart(index)}
             onDragOver={(e) => handleDragOver(e, index)}
@@ -118,9 +117,7 @@ export function SectionReorderPanel({
       </div>
 
       {items.length === 0 && (
-        <p className="py-4 text-center text-sm text-zinc-400">
-          {t('resume.reorder.noSections')}
-        </p>
+        <p className="py-4 text-center text-sm text-zinc-400">{t('resume.reorder.noSections')}</p>
       )}
     </div>
   );

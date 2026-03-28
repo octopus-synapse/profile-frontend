@@ -5,10 +5,14 @@
  * Provides filtered navigation items based on auth state and role
  */
 
-import { type SessionUserResponseDtoRole, useAuthSession } from '@profile/api-client';
+import {
+  type SessionUserResponseDtoRole,
+  selectEnvelopeData,
+  useAuthSession,
+} from '@profile/api-client';
+import { removeLocalePrefix } from '@profile/i18n';
 import { usePathname } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
-import { removeLocalePrefix } from '@profile/i18n';
 import { ROUTES } from '@/config/routes';
 import {
   ADMIN_MENU_ITEMS,
@@ -20,8 +24,8 @@ import {
 import type { NavItem } from '../config/types';
 
 export function useNavigation() {
-  const { data } = useAuthSession();
-  const user = data?.data?.user;
+  const { data } = useAuthSession({ query: { select: selectEnvelopeData } });
+  const user = data?.user;
   const isAuthenticated = !!user;
   const pathname = usePathname();
 

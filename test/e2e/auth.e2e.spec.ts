@@ -19,6 +19,7 @@ import {
  e2eFetch,
  skipIfBackendUnavailable,
  AUTH_ROUTES,
+ AUTHENTICATION_ROUTES,
  ACCOUNTS_ROUTES,
 } from "./setup";
 
@@ -58,6 +59,33 @@ describe("E2E: Authentication API", () => {
     expect(response.data.userId).toBeDefined();
     expect(response.data.email).toBe(testUser.email);
    }
+  });
+
+  it("should return 409 when registering duplicate email", async () => {
+   // First registration (may succeed or already exist)
+   await e2eFetch<CreateAccountResponseDto>(ACCOUNTS_ROUTES.ACCOUNTS_SIGNUP, {
+    method: "POST",
+    body: JSON.stringify({
+     email: testUser.email,
+     password: testUser.password,
+     name: testUser.name,
+    }),
+   });
+
+   // Second registration with same email should return 409
+   const response = await e2eFetch<{ code: string; message: string }>(
+    ACCOUNTS_ROUTES.ACCOUNTS_SIGNUP,
+    {
+     method: "POST",
+     body: JSON.stringify({
+      email: testUser.email,
+      password: testUser.password,
+      name: "Another Name",
+     }),
+    },
+   );
+
+   expect(response.status).toBe(409);
   });
 
   it("should reject registration with invalid email", async () => {
@@ -149,7 +177,7 @@ describe("E2E: Authentication API", () => {
    }
 
    const response = await e2eFetch<RefreshTokenResponseDto>(
-    AUTH_ROUTES.AUTH_REFRESH,
+    AUTHENTICATION_ROUTES.AUTH_REFRESH,
     {
      method: "POST",
      body: JSON.stringify({
@@ -169,7 +197,7 @@ describe("E2E: Authentication API", () => {
 
   it("should reject refresh with invalid token", async () => {
    const response = await e2eFetch<RefreshTokenResponseDto>(
-    AUTH_ROUTES.AUTH_REFRESH,
+    AUTHENTICATION_ROUTES.AUTH_REFRESH,
     {
      method: "POST",
      body: JSON.stringify({

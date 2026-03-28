@@ -12,14 +12,15 @@
 
 import type React from 'react';
 import { useId } from 'react';
-import type { FieldDefinition } from '../types/generic-section.types';
 import { renderArrayField } from './array-field-input';
 import {
-  INPUT_BASE,
-  INPUT_ERROR,
+  type FieldDefinition,
   type FieldRenderProps,
+  type FieldType,
   formatDateValue,
   formatEnumLabel,
+  INPUT_BASE,
+  INPUT_ERROR,
 } from './field-input-shared';
 
 interface GenericFieldInputProps {
@@ -157,7 +158,7 @@ function renderBooleanField({
         aria-invalid={!!error}
         aria-describedby={error ? errorId : undefined}
       />
-      <span className="text-sm text-zinc-300">{field.placeholder || field.label}</span>
+      <span className="text-sm text-zinc-300">{field.placeholder || field.label || field.key}</span>
     </label>
   );
 }
@@ -183,7 +184,9 @@ function renderEnumField({
       aria-invalid={!!error}
       aria-describedby={error ? errorId : undefined}
     >
-      <option value="">{field.placeholder ?? `Select ${field.label.toLowerCase()}`}</option>
+      <option value="">
+        {field.placeholder ?? `Select ${(field.label || field.key || 'option').toLowerCase()}`}
+      </option>
       {(field.enumValues ?? []).map((option) => (
         <option key={option} value={option}>
           {formatEnumLabel(option)}
@@ -193,9 +196,7 @@ function renderEnumField({
   );
 }
 
-const FIELD_RENDERERS: Partial<
-  Record<FieldDefinition['type'], (props: FieldRenderProps) => React.ReactNode>
-> = {
+const FIELD_RENDERERS: Partial<Record<FieldType, (props: FieldRenderProps) => React.ReactNode>> = {
   string: renderStringField,
   text: renderTextField,
   number: renderNumberField,
@@ -245,7 +246,7 @@ export function GenericFieldInput({
   return (
     <div className="space-y-2">
       <label htmlFor={inputId} className="block text-sm font-medium text-white">
-        {field.label}
+        {field.label || field.key}
         {field.required && <span className="ml-0.5 text-red-500">*</span>}
       </label>
       {input}

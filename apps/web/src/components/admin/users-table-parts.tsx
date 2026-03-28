@@ -27,8 +27,8 @@ import {
 } from '@/shared/components/ui/dropdown-menu';
 import { EmptyState } from '@/shared/components/ui/empty-state';
 import { formatDate, formatDistanceToNow } from '@/shared/utils/date';
-import type { UserRole } from '../users/types';
 import type { AdminUserData } from './hooks';
+import type { UserRole } from './types';
 
 function getInitials(name: string): string {
   return name
@@ -58,7 +58,9 @@ export function UsersTableRow({ user, onRoleChange, onDeleteRequest }: UsersTabl
             size="md"
           />
           <div>
-            <p className="text-pf-fg-default text-sm font-medium">{user.name ?? t('admin.users.table.noName')}</p>
+            <p className="text-pf-fg-default text-sm font-medium">
+              {user.name ?? t('admin.users.table.noName')}
+            </p>
             <p className="text-pf-fg-muted text-xs">{user.email}</p>
           </div>
         </div>
@@ -67,11 +69,11 @@ export function UsersTableRow({ user, onRoleChange, onDeleteRequest }: UsersTabl
         <Badge variant={user.role === 'ADMIN' ? 'warning' : 'secondary'}>{user.role}</Badge>
       </td>
       <td className="text-pf-fg-muted px-4 py-3 text-sm">{user.resumeCount}</td>
+      <td className="text-pf-fg-muted px-4 py-3 text-sm">{formatDate(new Date(user.createdAt))}</td>
       <td className="text-pf-fg-muted px-4 py-3 text-sm">
-        {formatDate(new Date(user.createdAt))}
-      </td>
-      <td className="text-pf-fg-muted px-4 py-3 text-sm">
-        {user.lastLoginAt ? formatDistanceToNow(new Date(user.lastLoginAt)) : t('admin.users.table.never')}
+        {user.lastLoginAt
+          ? formatDistanceToNow(new Date(user.lastLoginAt))
+          : t('admin.users.table.never')}
       </td>
       <td className="px-4 py-3 text-right">
         <DropdownMenu>
@@ -82,12 +84,12 @@ export function UsersTableRow({ user, onRoleChange, onDeleteRequest }: UsersTabl
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem
-              onClick={() =>
-                onRoleChange(user.id, user.role === 'ADMIN' ? 'USER' : 'ADMIN')
-              }
+              onClick={() => onRoleChange(user.id, user.role === 'ADMIN' ? 'USER' : 'ADMIN')}
             >
               <Shield className="mr-2 h-4 w-4" />
-              {user.role === 'ADMIN' ? t('admin.users.table.removeAdmin') : t('admin.users.table.makeAdmin')}
+              {user.role === 'ADMIN'
+                ? t('admin.users.table.removeAdmin')
+                : t('admin.users.table.makeAdmin')}
             </DropdownMenuItem>
             <DropdownMenuItem>
               <User className="mr-2 h-4 w-4" />
@@ -155,11 +157,7 @@ export function UsersTableEmptyRow({ search }: UsersTableEmptyRowProps) {
         <EmptyState
           icon={Users}
           title={t('admin.users.noUsers')}
-          description={
-            search
-              ? t('admin.users.adjustSearch')
-              : t('admin.users.usersWillAppear')
-          }
+          description={search ? t('admin.users.adjustSearch') : t('admin.users.usersWillAppear')}
         />
       </td>
     </tr>
@@ -180,9 +178,7 @@ export function DeleteUserDialog({ open, isPending, onClose, onConfirm }: Delete
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('admin.users.deleteTitle')}</DialogTitle>
-          <DialogDescription>
-            {t('admin.users.deleteDescription')}
-          </DialogDescription>
+          <DialogDescription>{t('admin.users.deleteDescription')}</DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>

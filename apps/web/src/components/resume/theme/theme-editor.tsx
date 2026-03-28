@@ -1,17 +1,23 @@
 /**
  * Theme Editor
  * Edit theme with live preview
+ *
+ * NOTE: Color/Layout/Typography/Spacing editors were deleted.
+ * Backend should provide a schema and frontend renders a generic form.
+ * For now, only JSON editing is available.
  */
 
 'use client';
 
-import { useCallback, useState } from 'react';
-import { cn } from '@/shared/utils';
+import {
+  useThemesCreateThemeForUser,
+  useThemesFork,
+  useThemesUpdateThemeForUser,
+} from '@profile/api-client';
+import { useState } from 'react';
 import { showToast } from '@/shared/components/ui/toast';
-import { useCreateTheme, useForkTheme, useUpdateTheme } from '../hooks';
-import type { Theme } from '../services/theme.types';
-import type { ResumeStyleConfig } from '../types/config';
-import { ColorEditor, LayoutEditor, SpacingEditor, TypographyEditor } from './editors';
+import { cn } from '@/shared/utils';
+import type { ResumeStyleConfig, Theme } from '../types/config';
 
 interface Props {
   theme?: Theme | null;
@@ -19,7 +25,7 @@ interface Props {
   onCancel?: () => void;
 }
 
-type EditorTab = 'layout' | 'colors' | 'typography' | 'spacing' | 'json';
+type EditorTab = 'json';
 
 export function ThemeEditor({ theme, onSave, onCancel }: Props) {
   const isNew = !theme;
@@ -29,79 +35,66 @@ export function ThemeEditor({ theme, onSave, onCancel }: Props) {
   const [config, setConfig] = useState<Partial<ResumeStyleConfig>>(
     (theme?.styleConfig as Partial<ResumeStyleConfig>) || {},
   );
-  const [tab, setTab] = useState<EditorTab>('layout');
+  const [_tab, setTab] = useState<EditorTab>('json');
 
-  const createTheme = useCreateTheme();
-  const updateTheme = useUpdateTheme();
-  const forkTheme = useForkTheme();
-
-  const updateConfig = useCallback((path: string, value: unknown) => {
-    setConfig((prev) => {
-      const keys = path.split('.');
-      if (keys.length === 0) return prev;
-
-      const result = { ...prev };
-      let current = result as Record<string, unknown>;
-
-      for (let i = 0; i < keys.length - 1; i++) {
-        const key = keys[i]!;
-        const nextVal = (current[key] as Record<string, unknown>) || {};
-        current[key] = { ...nextVal };
-        current = current[key] as Record<string, unknown>;
-      }
-      const lastKey = keys[keys.length - 1]!;
-      current[lastKey] = value;
-      return result as Partial<ResumeStyleConfig>;
-    });
-  }, []);
+  const createMutation = useThemesCreateThemeForUser();
+  const updateMutation = useThemesUpdateThemeForUser();
+  const forkMutation = useThemesFork();
 
   const handleSave = async () => {
     try {
-      let saved: Theme;
+      let saved: Theme | undefined;
 
       if (isNew) {
-        const response = await createTheme.mutateAsync({
-          name,
-          description: '',
-          category: 'MODERN',
-          styleConfig: config,
-        });
-        // SDK response: { data: { theme: Theme } }
-        saved = (response?.data as unknown as { theme: Theme })?.theme;
-      } else if (isPublicOrSystem) {
-        const forkResponse = await forkTheme.mutateAsync({
-          themeId: theme.id,
-          name: `${name} (Custom)`,
-          description: theme.description ?? '',
-        });
-        saved = (forkResponse?.data as unknown as { theme: Theme })?.theme;
-        const updateResponse = await updateTheme.mutateAsync({
-          id: saved.id,
-          input: {
-            name: saved.name,
-            description: saved.description ?? '',
-            category: saved.category,
-            tags: saved.tags,
-            styleConfig: config,
+        const response = await createMutation.mutateAsync({
+          data: {
+            name,
+            description: '',
+            category: 'MODERN',
+            styleConfig: config as Record<string, unknown>,
           },
         });
-        saved = (updateResponse?.data as unknown as { theme: Theme })?.theme;
-      } else {
-        const response = await updateTheme.mutateAsync({
+        saved = response?.data?.data as unknown as Theme | undefined;
+      } else if (isPublicOrSystem && theme) {
+        const forkResponse = await forkMutation.mutateAsync({
+          data: {
+            themeId: theme.id,
+            name: `${name} (Custom)`,
+            description: theme.description ?? '',
+          },
+        });
+        const forkedTheme = forkResponse?.data?.data as unknown as Theme | undefined;
+        if (forkedTheme) {
+          const updateResponse = await updateMutation.mutateAsync({
+            id: forkedTheme.id,
+            data: {
+              name: forkedTheme.name,
+              description: forkedTheme.description ?? '',
+              category: forkedTheme.category,
+              tags: forkedTheme.tags,
+              styleConfig: config as Record<string, unknown>,
+            },
+          });
+          saved = updateResponse?.data?.data as unknown as Theme | undefined;
+        }
+      } else if (theme) {
+        const response = await updateMutation.mutateAsync({
           id: theme.id,
-          input: {
+          data: {
             name,
             description: theme.description ?? '',
             category: theme.category,
             tags: theme.tags,
-            styleConfig: config,
+            styleConfig: config as Record<string, unknown>,
           },
         });
-        saved = (response?.data as unknown as { theme: Theme })?.theme;
+        saved = response?.data?.data as unknown as Theme | undefined;
       }
 
-      onSave?.(saved);
-    } catch (error) {
+      if (saved) {
+        onSave?.(saved);
+      }
+    } catch (_error) {
       showToast.error('Failed to save theme');
     }
   };
@@ -133,7 +126,9 @@ export function ThemeEditor({ theme, onSave, onCancel }: Props) {
           <button
             type="button"
             onClick={() => void handleSave()}
-            disabled={createTheme.isPending || updateTheme.isPending || forkTheme.isPending}
+            disabled={
+              createMutation.isPending || updateMutation.isPending || forkMutation.isPending
+            }
             className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis rounded-lg px-4 py-2 text-sm font-medium transition-colors hover:opacity-90 disabled:opacity-50"
           >
             {isPublicOrSystem ? 'Save as Copy' : 'Save'}
@@ -141,32 +136,23 @@ export function ThemeEditor({ theme, onSave, onCancel }: Props) {
         </div>
       </div>
 
-      {/* Tabs */}
+      {/* Tabs - Only JSON for now until backend schema is available */}
       <div className="border-pf-border-default flex border-b">
-        {(['layout', 'colors', 'typography', 'spacing', 'json'] as const).map((t) => (
-          <button
-            type="button"
-            key={t}
-            onClick={() => setTab(t)}
-            className={cn(
-              'border-b-2 px-4 py-2.5 text-sm font-medium capitalize transition-colors',
-              tab === t
-                ? 'border-pf-border-emphasis text-pf-fg-default'
-                : 'text-pf-fg-muted hover:text-pf-fg-default border-transparent',
-            )}
-          >
-            {t}
-          </button>
-        ))}
+        <button
+          type="button"
+          onClick={() => setTab('json')}
+          className={cn(
+            'border-b-2 px-4 py-2.5 text-sm font-medium capitalize transition-colors',
+            'border-pf-border-emphasis text-pf-fg-default',
+          )}
+        >
+          JSON
+        </button>
       </div>
 
       {/* Editor Content */}
       <div className="flex-1 overflow-auto p-4">
-        {tab === 'layout' && <LayoutEditor config={config} onChange={updateConfig} />}
-        {tab === 'colors' && <ColorEditor config={config} onChange={updateConfig} />}
-        {tab === 'typography' && <TypographyEditor config={config} onChange={updateConfig} />}
-        {tab === 'spacing' && <SpacingEditor config={config} onChange={updateConfig} />}
-        {tab === 'json' && <JsonEditor config={config} onChange={setConfig} />}
+        <JsonEditor config={config} onChange={setConfig} />
       </div>
     </div>
   );

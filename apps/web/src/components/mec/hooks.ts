@@ -7,11 +7,22 @@
  */
 
 import {
+  selectEnvelopeData,
   useMecCoursesSearchCoursesByName,
   useMecInstitutionsListCoursesByInstitutionCode,
   useMecInstitutionsSearchInstitutionsByName,
 } from '@profile/api-client';
 import type { MecCourse, MecInstitution } from './types';
+
+function selectCourses(response: { data: { data: unknown } }): MecCourse[] {
+  return ((selectEnvelopeData(response) as { courses?: unknown })?.courses ??
+    []) as unknown as MecCourse[];
+}
+
+function selectInstitutions(response: { data: { data: unknown } }): MecInstitution[] {
+  return ((selectEnvelopeData(response) as { institutions?: unknown })?.institutions ??
+    []) as unknown as MecInstitution[];
+}
 
 /**
  * Search courses by name
@@ -25,14 +36,15 @@ export function useSearchCourses(query: string, enabled: boolean = true) {
       query: {
         enabled: enabled && query.length >= 2,
         staleTime: 1000 * 60 * 5, // 5 minutes
+        select: selectCourses,
       },
     },
   );
 
   return {
-    data: result.data?.data?.courses
+    data: result.data
       ? {
-          data: (result.data.data.courses ?? []) as unknown as MecCourse[],
+          data: result.data,
         }
       : undefined,
     isLoading: result.isLoading,
@@ -51,14 +63,15 @@ export function useSearchInstitutions(query: string) {
       query: {
         enabled: query.length >= 2,
         staleTime: 1000 * 60 * 5, // 5 minutes
+        select: selectInstitutions,
       },
     },
   );
 
   return {
-    data: result.data?.data?.institutions
+    data: result.data
       ? {
-          data: (result.data.data.institutions ?? []) as unknown as MecInstitution[],
+          data: result.data,
         }
       : undefined,
     isLoading: result.isLoading,
@@ -71,15 +84,16 @@ export function useSearchInstitutions(query: string) {
  * @param institutionCode - Institution code (codigoIes)
  */
 export function useCoursesByInstitution(institutionCode: number | null) {
-  const result = useMecInstitutionsListCoursesByInstitutionCode(String(institutionCode ?? 0), {
+  const result = useMecInstitutionsListCoursesByInstitutionCode(institutionCode ?? 0, {
     query: {
       enabled: institutionCode !== null && institutionCode > 0,
       staleTime: 1000 * 60 * 5, // 5 minutes
+      select: selectCourses,
     },
   });
 
   return {
-    data: (result.data?.data?.courses ?? []) as unknown as MecCourse[],
+    data: result.data ?? [],
     isLoading: result.isLoading,
     error: result.error,
   };

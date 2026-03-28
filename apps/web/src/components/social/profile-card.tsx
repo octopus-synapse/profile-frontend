@@ -69,12 +69,7 @@ export function ProfileCard({
   const { data: stats } = useSocialStats(userId);
 
   return (
-    <div
-      className={cn(
-        'rounded-xl border border-white/10 bg-[#0A0A0A]/70 p-5',
-        className,
-      )}
-    >
+    <div className={cn('rounded-xl border border-white/10 bg-[#0A0A0A]/70 p-5', className)}>
       <div className="flex items-start gap-4">
         {/* Avatar */}
         {photoURL ? (
@@ -92,14 +87,8 @@ export function ProfileCard({
           <p className="truncate text-base font-semibold text-white">
             {name ?? t('social.profile.anonymous')}
           </p>
-          {username && (
-            <p className="truncate text-sm text-zinc-400">@{username}</p>
-          )}
-          {bio && (
-            <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-zinc-400">
-              {bio}
-            </p>
-          )}
+          {username && <p className="truncate text-sm text-zinc-400">@{username}</p>}
+          {bio && <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-zinc-400">{bio}</p>}
         </div>
 
         {/* Follow button */}
@@ -109,8 +98,16 @@ export function ProfileCard({
       {/* Stats row */}
       {stats && (
         <div className="mt-4 flex gap-5 border-t border-white/5 pt-4">
-          <StatItem icon={Users} label={t('social.profile.followers')} value={stats.followersCount} />
-          <StatItem icon={Users} label={t('social.profile.following')} value={stats.followingCount} />
+          <StatItem
+            icon={Users}
+            label={t('social.profile.followers')}
+            value={stats.followersCount}
+          />
+          <StatItem
+            icon={Users}
+            label={t('social.profile.following')}
+            value={stats.followingCount}
+          />
           <StatItem icon={FileText} label={t('social.profile.resumes')} value={stats.resumeCount} />
         </div>
       )}

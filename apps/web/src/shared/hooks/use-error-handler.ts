@@ -12,8 +12,8 @@
  *   if (result) { // success }
  */
 
+import { type ApiError, isApiError } from '@profile/api-client';
 import { useCallback } from 'react';
-import { isApiError, type ApiError } from '@profile/api-client';
 import { showToast } from '@/shared/components/ui/toast';
 
 // ============================================================================
@@ -36,17 +36,32 @@ export interface ClassifiedError {
   original: unknown;
 }
 
+interface BackendErrorEnvelope {
+  success?: boolean;
+  error?: {
+    code?: string;
+    message?: string;
+    details?: Record<string, unknown>;
+  };
+}
+
 // ============================================================================
 // Error Classification
 // ============================================================================
 
 function classifyError(error: unknown): ClassifiedError {
-  if (isApiError(error)) {
-    return classifyApiError(error);
+  const normalizedError = normalizeApiError(error);
+
+  if (normalizedError) {
+    return classifyApiError(normalizedError);
   }
 
   if (error instanceof TypeError && error.message.includes('fetch')) {
-    return { category: 'network', message: 'Network error. Check your connection.', original: error };
+    return {
+      category: 'network',
+      message: 'Network error. Check your connection.',
+      original: error,
+    };
   }
 
   if (error instanceof Error) {
@@ -54,6 +69,50 @@ function classifyError(error: unknown): ClassifiedError {
   }
 
   return { category: 'unexpected', message: 'An unexpected error occurred.', original: error };
+}
+
+function normalizeApiError(error: unknown): ApiError | null {
+  if (isApiError(error)) {
+    return error;
+  }
+
+  if (
+    typeof error !== 'object' ||
+    error === null ||
+    !('error' in error) ||
+    typeof (error as BackendErrorEnvelope).error !== 'object' ||
+    (error as BackendErrorEnvelope).error === null
+  ) {
+    return null;
+  }
+
+  const backendError = (error as BackendErrorEnvelope).error;
+
+  return {
+    code: backendError?.code ?? 'UNKNOWN_ERROR',
+    message: backendError?.message ?? 'Something went wrong.',
+    statusCode: statusCodeFromErrorCode(backendError?.code),
+    details: backendError?.details,
+  };
+}
+
+function statusCodeFromErrorCode(code?: string): number {
+  switch (code) {
+    case 'BAD_REQUEST':
+    case 'VALIDATION_ERROR':
+      return 400;
+    case 'UNAUTHORIZED':
+      return 401;
+    case 'FORBIDDEN':
+      return 403;
+    case 'NOT_FOUND':
+    case 'ENTITY_NOT_FOUND':
+      return 404;
+    case 'CONFLICT':
+      return 409;
+    default:
+      return 500;
+  }
 }
 
 function classifyApiError(error: ApiError): ClassifiedError {
@@ -65,14 +124,22 @@ function classifyApiError(error: ApiError): ClassifiedError {
     case 401:
       return { ...base, category: 'auth', message: 'Please sign in to continue.' };
     case 403:
-      return { ...base, category: 'permission', message: 'You don\'t have permission for this action.' };
+      return {
+        ...base,
+        category: 'permission',
+        message: "You don't have permission for this action.",
+      };
     case 404:
       return { ...base, category: 'not_found', message: error.message || 'Resource not found.' };
     case 409:
       return { ...base, category: 'conflict', message: error.message || 'A conflict occurred.' };
     default:
       if (error.statusCode >= 500) {
-        return { ...base, category: 'unexpected', message: 'Server error. Please try again later.' };
+        return {
+          ...base,
+          category: 'unexpected',
+          message: 'Server error. Please try again later.',
+        };
       }
       return { ...base, category: 'unexpected', message: error.message || 'Something went wrong.' };
   }
@@ -108,10 +175,7 @@ export interface HandleAsyncOptions {
 
 export function useErrorHandler() {
   const handleAsync = useCallback(
-    async <T>(
-      promise: Promise<T>,
-      options: HandleAsyncOptions = {},
-    ): Promise<T | null> => {
+    async <T>(promise: Promise<T>, options: HandleAsyncOptions = {}): Promise<T | null> => {
       const { showToast: shouldToast = false, onError, rethrow = false } = options;
 
       try {

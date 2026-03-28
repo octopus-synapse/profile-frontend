@@ -8,8 +8,8 @@
 
 import { useT } from '@profile/i18n';
 import { Activity, FileText, Users, Zap } from 'lucide-react';
-import { StatCard } from './stat-card';
 import { usePlatformStats } from './hooks/use-platform-stats';
+import { StatCard } from './stat-card';
 
 export function PlatformStatsWidget() {
   const t = useT();

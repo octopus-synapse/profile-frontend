@@ -90,7 +90,8 @@ const PALETTES = [
 ];
 
 export function TemplateStep() {
-  const { templateSelection, saveStepData, goToNextStep, currentStepIndex, allSteps } = useOnboarding();
+  const { templateSelection, saveStepData, goToNextStep, currentStepIndex, allSteps } =
+    useOnboarding();
   const { t } = useI18n();
 
   const paletteDescriptions: Record<string, string> = {
@@ -124,7 +125,10 @@ export function TemplateStep() {
   return (
     <div className="space-y-6">
       <OnboardingStepHeader
-        eyebrow={t('onboarding.shell.stepOf', { current: currentStepIndex + 1, total: allSteps.length })}
+        eyebrow={t('onboarding.shell.stepOf', {
+          current: currentStepIndex + 1,
+          total: allSteps.length,
+        })}
         title={t('onboarding.template.title')}
         description={t('onboarding.template.description')}
       />
@@ -133,7 +137,9 @@ export function TemplateStep() {
         <div className="flex items-start gap-3">
           <Palette className="mt-0.5 h-5 w-5 text-blue-400" strokeWidth={1.5} />
           <div>
-            <h3 className="text-sm font-semibold text-white">{t('onboarding.template.professionalTemplate')}</h3>
+            <h3 className="text-sm font-semibold text-white">
+              {t('onboarding.template.professionalTemplate')}
+            </h3>
             <p className="mt-1 text-sm leading-6 text-zinc-400">
               {t('onboarding.template.professionalDescription')}
             </p>
@@ -224,7 +230,9 @@ export function TemplateStep() {
 
               {/* Palette Info */}
               <h4 className="text-sm font-semibold text-white">{palette.name}</h4>
-              <p className="mt-0.5 text-xs text-zinc-400">{paletteDescriptions[palette.id] ?? palette.description}</p>
+              <p className="mt-0.5 text-xs text-zinc-400">
+                {paletteDescriptions[palette.id] ?? palette.description}
+              </p>
 
               {/* Color Swatches */}
               <div className="mt-2 flex gap-1">
@@ -244,7 +252,9 @@ export function TemplateStep() {
       {templateSelection?.colorScheme && (
         <div className="flex items-center gap-2 text-sm text-emerald-500">
           <Check className="h-4 w-4" strokeWidth={2} />
-          {t('onboarding.template.selected', { name: PALETTES.find((p) => p.id === templateSelection.colorScheme)?.name ?? '' })}
+          {t('onboarding.template.selected', {
+            name: PALETTES.find((p) => p.id === templateSelection.colorScheme)?.name ?? '',
+          })}
         </div>
       )}
 

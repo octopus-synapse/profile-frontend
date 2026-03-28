@@ -1,16 +1,9 @@
 'use client';
 
+import { useResumeAnalyticsGetKeywordSuggestions } from '@profile/api-client';
 import { AlertTriangle, CheckCircle2, Lightbulb, Tags } from 'lucide-react';
 
-import {
-  Badge,
-  Card,
-  CardContent,
-  CardHeader,
-  Skeleton,
-} from '@/shared/components/ui';
-
-import { useKeywordAnalysis } from './hooks/use-resume-analytics';
+import { Badge, Card, CardContent, CardHeader, Skeleton } from '@/shared/components/ui';
 
 interface KeywordAnalysisPanelProps {
   resumeId: string;
@@ -18,26 +11,12 @@ interface KeywordAnalysisPanelProps {
 
 function DensityIndicator({ density }: { density: number }) {
   const percentage = Math.min(density * 100, 100);
-  const status =
-    percentage >= 2 && percentage <= 4
-      ? 'optimal'
-      : percentage < 2
-        ? 'low'
-        : 'high';
+  const status = percentage >= 2 && percentage <= 4 ? 'optimal' : percentage < 2 ? 'low' : 'high';
 
   const color =
-    status === 'optimal'
-      ? 'bg-emerald-500'
-      : status === 'low'
-        ? 'bg-amber-500'
-        : 'bg-red-500';
+    status === 'optimal' ? 'bg-emerald-500' : status === 'low' ? 'bg-amber-500' : 'bg-red-500';
 
-  const label =
-    status === 'optimal'
-      ? 'Optimal'
-      : status === 'low'
-        ? 'Too Low'
-        : 'Too High';
+  const label = status === 'optimal' ? 'Optimal' : status === 'low' ? 'Too Low' : 'Too High';
 
   return (
     <div className="rounded-lg border border-white/5 bg-white/[0.02] p-3">
@@ -95,9 +74,20 @@ function LoadingSkeleton() {
 }
 
 export function KeywordAnalysisPanel({ resumeId }: KeywordAnalysisPanelProps) {
-  const { data, isLoading } = useKeywordAnalysis(resumeId);
+  const query = useResumeAnalyticsGetKeywordSuggestions(resumeId, {
+    query: { enabled: !!resumeId },
+  });
+  const data = query.data?.data?.data as
+    | {
+        keywordDensity: number;
+        existingKeywords: string[];
+        missingKeywords: string[];
+        warnings: string[];
+        recommendations: string[];
+      }
+    | undefined;
 
-  if (isLoading) return <LoadingSkeleton />;
+  if (query.isLoading) return <LoadingSkeleton />;
   if (!data) return null;
 
   return (
@@ -136,11 +126,8 @@ export function KeywordAnalysisPanel({ resumeId }: KeywordAnalysisPanelProps) {
             <div className="space-y-1.5">
               <p className="text-xs font-medium text-zinc-400">Warnings</p>
               <ul className="space-y-1">
-                {data.warnings.map((w, idx) => (
-                  <li
-                    key={idx}
-                    className="flex items-start gap-2 text-sm text-amber-300/80"
-                  >
+                {data.warnings.map((w: string, idx: number) => (
+                  <li key={idx} className="flex items-start gap-2 text-sm text-amber-300/80">
                     <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                     {w}
                   </li>
@@ -153,11 +140,8 @@ export function KeywordAnalysisPanel({ resumeId }: KeywordAnalysisPanelProps) {
             <div className="space-y-1.5">
               <p className="text-xs font-medium text-zinc-400">Recommendations</p>
               <ul className="space-y-1">
-                {data.recommendations.map((rec, idx) => (
-                  <li
-                    key={idx}
-                    className="flex items-start gap-2 text-sm text-zinc-300"
-                  >
+                {data.recommendations.map((rec: string, idx: number) => (
+                  <li key={idx} className="flex items-start gap-2 text-sm text-zinc-300">
                     <Lightbulb className="mt-0.5 h-3.5 w-3.5 shrink-0 text-cyan-400" />
                     {rec}
                   </li>

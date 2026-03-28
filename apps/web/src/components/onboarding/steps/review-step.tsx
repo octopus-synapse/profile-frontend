@@ -70,7 +70,9 @@ export function ReviewStep() {
         const noData = sec?.noData ?? false;
         isComplete = true;
         optional = true;
-        summary = noData ? t('onboarding.review.noneListed') : t('onboarding.review.itemCount', { count: items.length });
+        summary = noData
+          ? t('onboarding.review.noneListed')
+          : t('onboarding.review.itemCount', { count: items.length });
       }
 
       return {
@@ -164,9 +166,7 @@ export function ReviewStep() {
       {!allRequiredComplete && (
         <div className="flex items-center gap-2 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4">
           <AlertCircle className="h-4 w-4 text-amber-500" />
-          <span className="text-sm text-amber-400">
-            {t('onboarding.review.incompleteError')}
-          </span>
+          <span className="text-sm text-amber-400">{t('onboarding.review.incompleteError')}</span>
         </div>
       )}
 

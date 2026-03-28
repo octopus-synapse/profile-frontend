@@ -1,20 +1,27 @@
 /**
  * GenericSectionEditor - Dynamic section editor based on backend definitions
  *
- * Replaces section-specific editors (experiences-section.tsx, education-section.tsx, etc.)
- * with a single component that renders forms based on section type field definitions.
+ * Uses SDK-generated hooks directly. NO manual types, NO manual hooks.
+ * Backend is the source of truth for section types, fields, and validation.
+ * All add/edit operations open in a dialog for better UX.
  */
 
 'use client';
 
-import { Loader2, Plus } from 'lucide-react';
-import { useCallback, useMemo, useState } from 'react';
+import {
+  type GenericSectionItemDto,
+  getResumesListResumeSectionsQueryKey,
+  useResumesDeleteItem,
+  useResumesListResumeSections,
+  useResumesListTypes,
+} from '@profile/api-client';
 import { useI18n } from '@profile/i18n';
+import { useQueryClient } from '@tanstack/react-query';
+import { Loader2, Plus } from 'lucide-react';
+import { useCallback, useState } from 'react';
+import { SectionItemDialog } from '@/components/settings/section-item-dialog';
 import { ConfirmDialog, useConfirmDialog } from '@/shared/components/ui/confirm-dialog';
-import { useGenericSectionCRUD } from '../hooks/use-generic-section-crud';
-import { hasValidDefinition, type SectionItem } from '../types/generic-section.types';
-import { type FormErrors, type FormValues, getDefaultForType, isEmpty } from './section-editor-utils';
-import { SectionItemForm } from './section-item-form';
+import type { FieldDefinition } from './field-input-shared';
 import { SectionItemList } from './section-item-list';
 
 interface GenericSectionEditorProps {
@@ -24,119 +31,79 @@ interface GenericSectionEditorProps {
   onDataChange?: () => void;
 }
 
+function hasValidDefinition(
+  sectionType: { definition?: unknown } | undefined,
+): sectionType is { definition: { fields: FieldDefinition[] } } {
+  return (
+    sectionType != null &&
+    typeof sectionType.definition === 'object' &&
+    sectionType.definition != null &&
+    Array.isArray((sectionType.definition as { fields?: unknown }).fields)
+  );
+}
+
 export function GenericSectionEditor({
   resumeId,
   sectionTypeKey,
   title,
   onDataChange,
 }: GenericSectionEditorProps) {
-  const {
-    items,
-    sectionType,
-    isLoading,
-    error,
-    createItem,
-    updateItem,
-    deleteItem,
-    isCreating,
-    isUpdating,
-    isDeleting,
-  } = useGenericSectionCRUD({ resumeId, sectionTypeKey });
-
   const { t } = useI18n();
-  const [editingItemId, setEditingItemId] = useState<string | null>(null);
-  const [isAddingNew, setIsAddingNew] = useState(false);
-  const [formValues, setFormValues] = useState<FormValues>({});
-  const [formErrors, setFormErrors] = useState<FormErrors>({});
+  const queryClient = useQueryClient();
   const { dialogProps, confirm } = useConfirmDialog();
 
-  const fields = useMemo(() => {
-    if (!hasValidDefinition(sectionType)) return [];
-    return [...sectionType.definition.fields].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-  }, [sectionType]);
+  // Dialog state
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<GenericSectionItemDto | null>(null);
+
+  // Queries
+  const typesQuery = useResumesListTypes(resumeId, undefined, {
+    query: { enabled: !!resumeId, staleTime: 5 * 60 * 1000 },
+  });
+
+  const sectionsQuery = useResumesListResumeSections(resumeId, {
+    query: { enabled: !!resumeId, staleTime: 30 * 1000 },
+  });
+
+  const deleteMutation = useResumesDeleteItem({
+    mutation: {
+      onSuccess: async () => {
+        await queryClient.refetchQueries({
+          queryKey: getResumesListResumeSectionsQueryKey(resumeId),
+        });
+        onDataChange?.();
+      },
+    },
+  });
+
+  // Derived data
+  const sectionTypes = typesQuery.data?.data?.data?.sectionTypes ?? [];
+  const sectionType = sectionTypes.find((st) => st.key === sectionTypeKey);
+  const sections = sectionsQuery.data?.data?.data?.sections ?? [];
+  const section = sections.find(
+    (s) =>
+      s.sectionTypeKey === sectionTypeKey ||
+      (s.sectionType as { key?: string } | undefined)?.key === sectionTypeKey,
+  );
+  const items: GenericSectionItemDto[] = (section?.items ?? []) as GenericSectionItemDto[];
+  const fields = hasValidDefinition(sectionType)
+    ? [...sectionType.definition.fields].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    : [];
 
   const displayTitle = title ?? sectionType?.title ?? t('resume.section.fallbackTitle');
+  const isLoading = typesQuery.isLoading || sectionsQuery.isLoading;
+  const error = typesQuery.error ?? sectionsQuery.error;
 
-  const initializeForm = useCallback(
-    (item?: SectionItem) => {
-      if (item) {
-        setFormValues(item.content as FormValues);
-      } else {
-        const defaults: FormValues = {};
-        for (const field of fields) {
-          const defaultVal = field.defaultValue;
-          if (defaultVal !== undefined && defaultVal !== null) {
-            defaults[field.key] = defaultVal as FormValues[string];
-          } else {
-            defaults[field.key] = getDefaultForType(field.type);
-          }
-        }
-        setFormValues(defaults);
-      }
-      setFormErrors({});
-    },
-    [fields],
-  );
-
-  const handleFieldChange = useCallback((key: string, value: unknown) => {
-    setFormValues((prev) => ({ ...prev, [key]: value as FormValues[string] }));
-    setFormErrors((prev) => {
-      const { [key]: _removed, ...rest } = prev;
-      return rest;
-    });
-  }, []);
-
-  const validateForm = useCallback((): boolean => {
-    const errors: FormErrors = {};
-    for (const field of fields) {
-      const value = formValues[field.key];
-      if (field.required && isEmpty(value)) {
-        errors[field.key] = t('resume.section.fieldRequired', { field: field.label });
-      }
-      if (field.maxLength && typeof value === 'string' && value.length > field.maxLength) {
-        errors[field.key] = t('resume.section.fieldMaxLength', { field: field.label, max: field.maxLength });
-      }
-    }
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
-  }, [fields, formValues]);
-
+  // Handlers
   const handleAddNew = useCallback(() => {
-    setEditingItemId(null);
-    setIsAddingNew(true);
-    initializeForm();
-  }, [initializeForm]);
-
-  const handleEdit = useCallback(
-    (item: SectionItem) => {
-      setIsAddingNew(false);
-      setEditingItemId(item.id);
-      initializeForm(item);
-    },
-    [initializeForm],
-  );
-
-  const handleCancel = useCallback(() => {
-    setEditingItemId(null);
-    setIsAddingNew(false);
-    setFormValues({});
-    setFormErrors({});
+    setEditingItem(null);
+    setDialogOpen(true);
   }, []);
 
-  const handleSave = useCallback(async () => {
-    if (!validateForm()) return;
-    try {
-      if (editingItemId) {
-        await updateItem(editingItemId, formValues);
-      } else {
-        await createItem(formValues);
-      }
-      handleCancel();
-      onDataChange?.();
-    } catch (err) {
-      setFormErrors({ _form: err instanceof Error ? err.message : t('resume.section.failedSave') });
-    }
-  }, [editingItemId, formValues, validateForm, updateItem, createItem, handleCancel, onDataChange]);
+  const handleEdit = useCallback((item: GenericSectionItemDto) => {
+    setEditingItem(item);
+    setDialogOpen(true);
+  }, []);
 
   const handleDelete = useCallback(
     async (itemId: string) => {
@@ -147,93 +114,90 @@ export function GenericSectionEditor({
       );
       if (!confirmed) return;
       try {
-        await deleteItem(itemId);
-        if (editingItemId === itemId) handleCancel();
-        onDataChange?.();
-      } catch (err) {
-        setFormErrors({ _form: err instanceof Error ? err.message : t('resume.section.failedDelete') });
+        await deleteMutation.mutateAsync({ resumeId, sectionTypeKey, itemId });
+      } catch {
+        // Error handling is done by the mutation
       }
     },
-    [confirm, deleteItem, editingItemId, handleCancel, onDataChange],
+    [confirm, deleteMutation, resumeId, sectionTypeKey, t],
   );
+
+  const handleDialogSuccess = useCallback(() => {
+    setDialogOpen(false);
+    setEditingItem(null);
+    onDataChange?.();
+  }, [onDataChange]);
+
+  const handleDialogClose = useCallback((open: boolean) => {
+    if (!open) {
+      setDialogOpen(false);
+      setEditingItem(null);
+    }
+  }, []);
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+        <Loader2 className="h-6 w-6 animate-spin text-pf-fg-muted" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-sm text-red-400">
-        {t('resume.section.failedLoad')} {error.message}
+      <div className="rounded-xl border border-pf-danger-muted bg-pf-danger-subtle p-4 text-sm text-pf-danger-fg">
+        {t('resume.section.failedLoad')} {error instanceof Error ? error.message : String(error)}
       </div>
     );
   }
 
   if (!hasValidDefinition(sectionType)) {
     return (
-      <div className="py-8 text-center text-sm text-zinc-500">
+      <div className="py-8 text-center text-sm text-pf-fg-subtle">
         {t('resume.section.noDefinition')}
       </div>
     );
   }
 
-  const isEditing = editingItemId !== null || isAddingNew;
-  const isMutating = isCreating || isUpdating || isDeleting;
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-white">{displayTitle}</h2>
-          <p className="mt-1 text-sm text-zinc-400">
-            {items.length === 1 ? t('resume.section.itemCountOne') : t('resume.section.itemCountOther', { count: items.length })}
+          <h2 className="text-lg font-semibold text-pf-fg-default">{displayTitle}</h2>
+          <p className="mt-1 text-sm text-pf-fg-muted">
+            {items.length === 1
+              ? t('resume.section.itemCountOne')
+              : t('resume.section.itemCountOther', { count: items.length })}
           </p>
         </div>
-        {!isEditing && (
-          <button
-            type="button"
-            onClick={handleAddNew}
-            disabled={isMutating}
-            className="flex items-center gap-2 rounded-lg border border-white/10 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/5 disabled:opacity-50"
-          >
-            <Plus className="h-4 w-4" strokeWidth={1.5} />
-            {t('resume.section.addButton', { title: displayTitle })}
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={handleAddNew}
+          disabled={deleteMutation.isPending}
+          className="flex items-center gap-2 rounded-lg border border-pf-border-default px-4 py-2 text-sm font-medium text-pf-fg-default transition-colors hover:bg-pf-hover-subtle disabled:opacity-50"
+        >
+          <Plus className="h-4 w-4" strokeWidth={1.5} />
+          {t('resume.section.addButton', { title: displayTitle })}
+        </button>
       </div>
 
-      {formErrors._form && (
-        <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-3 text-sm text-red-400">
-          {formErrors._form}
-        </div>
-      )}
+      <SectionItemList
+        items={items}
+        fields={fields}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        isDeleting={deleteMutation.isPending}
+      />
 
-      {!isEditing && (
-        <SectionItemList
-          items={items}
-          fields={fields}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          isDeleting={isDeleting}
-        />
-      )}
-
-      {isEditing && (
-        <SectionItemForm
-          fields={fields}
-          values={formValues}
-          errors={formErrors}
-          onChange={handleFieldChange}
-          onSave={handleSave}
-          onCancel={handleCancel}
-          isSaving={isCreating || isUpdating}
-          isNew={isAddingNew}
-        />
-      )}
+      <SectionItemDialog
+        open={dialogOpen}
+        onOpenChange={handleDialogClose}
+        resumeId={resumeId}
+        sectionTypeKey={sectionTypeKey}
+        sectionLabel={displayTitle}
+        editItem={editingItem}
+        onSuccess={handleDialogSuccess}
+      />
 
       <ConfirmDialog {...dialogProps} />
     </div>

@@ -10,6 +10,10 @@ export const resume = {
   'resume.builder.copied': 'Copiado',
   'resume.builder.share': 'Compartilhar',
   'resume.builder.noAstData': 'Sem dados AST',
+  'resume.builder.noAstDataHint': 'Complete o onboarding para gerar seu currículo',
+  'resume.builder.selectTheme': 'Selecione um Tema',
+  'resume.builder.selectThemeHint':
+    'Escolha um tema na barra lateral para visualizar seu currículo',
   'resume.builder.failedCopyLink': 'Falha ao copiar link',
   'resume.builder.sectionFallback': 'Seção {index}',
 
@@ -26,11 +30,9 @@ export const resume = {
   'resume.builder.dialog.analytics.title': 'Análises',
   'resume.builder.dialog.analytics.description': 'Desempenho e insights do currículo',
   'resume.builder.dialog.ats.title': 'Verificação de Compatibilidade ATS',
-  'resume.builder.dialog.ats.description':
-    'Valide seu currículo contra sistemas ATS',
+  'resume.builder.dialog.ats.description': 'Valide seu currículo contra sistemas ATS',
   'resume.builder.dialog.skills.title': 'Habilidades',
-  'resume.builder.dialog.skills.description':
-    'Adicione, edite e organize suas habilidades',
+  'resume.builder.dialog.skills.description': 'Adicione, edite e organize suas habilidades',
   'resume.builder.dialog.reorder.title': 'Reordenar Seções',
   'resume.builder.dialog.reorder.description':
     'Arraste para reordenar e alternar a visibilidade das seções',
@@ -40,6 +42,7 @@ export const resume = {
   'resume.sidebar.tabs.themes': 'Temas',
   'resume.sidebar.activeTheme': 'Tema Ativo',
   'resume.sidebar.defaultTheme': 'Moderno',
+  'resume.sidebar.clickToChange': 'Clique para alterar',
   'resume.sidebar.stats.title': 'Estatísticas do Currículo',
   'resume.sidebar.stats.experience': 'Experiência',
   'resume.sidebar.stats.education': 'Educação',
@@ -133,8 +136,7 @@ export const resume = {
     'Tem certeza que deseja excluir este item? Esta ação não pode ser desfeita.',
   'resume.section.failedDelete': 'Falha ao excluir',
   'resume.section.failedLoad': 'Falha ao carregar seção:',
-  'resume.section.noDefinition':
-    'Tipo de seção não encontrado ou sem definições de campo.',
+  'resume.section.noDefinition': 'Tipo de seção não encontrado ou sem definições de campo.',
   'resume.section.itemCountOne': '1 item adicionado',
   'resume.section.itemCountOther': '{count} itens adicionados',
   'resume.section.addButton': 'Adicionar {title}',
@@ -178,8 +180,7 @@ export const resume = {
 
   // Skills Editor
   'resume.skills.editorLabel': 'Editor de habilidades',
-  'resume.skills.noSkills':
-    'Nenhuma habilidade adicionada. Comece a digitar para adicionar.',
+  'resume.skills.noSkills': 'Nenhuma habilidade adicionada. Comece a digitar para adicionar.',
   'resume.skills.namePlaceholder': 'Nome da habilidade…',
   'resume.skills.categoryPlaceholder': 'Categoria',
   'resume.skills.levelPlaceholder': 'Nível',

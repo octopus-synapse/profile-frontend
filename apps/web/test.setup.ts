@@ -78,9 +78,21 @@ void mock.module('lucide-react', () => ({
 
 // Mock @profile/ui components (via @/shared/components/ui)
 void mock.module('@/shared/components/ui', () => ({
-  Badge: ({ children, variant, ...props }: React.PropsWithChildren<{ variant?: string; className?: string }>) =>
-    React.createElement('span', { 'data-testid': 'badge', 'data-variant': variant, ...props }, children),
-  Button: ({ children, asChild, ...props }: React.ComponentProps<'button'> & { variant?: string; asChild?: boolean }) =>
+  Badge: ({
+    children,
+    variant,
+    ...props
+  }: React.PropsWithChildren<{ variant?: string; className?: string }>) =>
+    React.createElement(
+      'span',
+      { 'data-testid': 'badge', 'data-variant': variant, ...props },
+      children,
+    ),
+  Button: ({
+    children,
+    asChild,
+    ...props
+  }: React.ComponentProps<'button'> & { variant?: string; asChild?: boolean }) =>
     React.createElement('button', { type: 'button', ...props }, children),
   Card: ({ children, ...props }: React.PropsWithChildren<{ className?: string }>) =>
     React.createElement('div', { 'data-testid': 'card', ...props }, children),
@@ -105,7 +117,10 @@ void mock.module('@/shared/components/ui', () => ({
 
 // Mock dialog components
 void mock.module('@/shared/components/ui/dialog', () => ({
-  Dialog: ({ children, open }: React.PropsWithChildren<{ open?: boolean; onOpenChange?: (v: boolean) => void }>) =>
+  Dialog: ({
+    children,
+    open,
+  }: React.PropsWithChildren<{ open?: boolean; onOpenChange?: (v: boolean) => void }>) =>
     open ? React.createElement('div', { role: 'dialog' }, children) : null,
   DialogContent: ({ children }: React.PropsWithChildren<{ className?: string }>) =>
     React.createElement('div', null, children),
@@ -148,6 +163,7 @@ void mock.module('framer-motion', () => ({
 
 // Mock i18n - return readable text from translation keys
 const translationMap: Record<string, string> = {
+  // Auth
   'auth.signIn.email': 'Email',
   'auth.signIn.password': 'Password',
   'auth.signIn.submit': 'Sign In',
@@ -158,22 +174,66 @@ const translationMap: Record<string, string> = {
   'auth.signUp.email': 'Email',
   'auth.signUp.password': 'Password',
   'auth.signUp.confirmPassword': 'Confirm Password',
+  // Admin
+  'admin.dashboard.totalUsers': 'Total Users',
+  'admin.dashboard.totalResumes': 'Total Resumes',
+  'admin.dashboard.activeToday': 'Active Today',
+  'admin.dashboard.activeThisWeek': 'Active This Week',
+  // Social
+  'social.follow.follow': 'Follow',
+  'social.follow.following': 'Following',
+  'social.follow.unfollow': 'Unfollow',
+  'action.loading': 'Loading…',
+  'action.cancel': 'Cancel',
+  // Settings - Two-Factor
+  'settings.twoFactor.title': 'Two-Factor Authentication',
+  'settings.twoFactor.description': 'Add an extra layer of security to your account.',
+  'settings.twoFactor.enable': 'Enable 2FA',
+  'settings.twoFactor.disable': 'Disable 2FA',
+  'settings.twoFactor.enabled': 'Enabled',
+  'settings.twoFactor.disabled': 'Disabled',
+  'settings.twoFactor.regenerateBackup': 'Regenerate Backup Codes',
+  'settings.twoFactor.backupCodesRemaining': '{count} backup codes remaining',
+  'settings.twoFactor.disabling': 'Disabling…',
+  'settings.twoFactor.disableDialogTitle': 'Disable Two-Factor Authentication',
+  'settings.twoFactor.disableDialogDesc': 'Are you sure you want to disable 2FA?',
+  'settings.twoFactor.disableSuccess': '2FA disabled successfully',
+  'settings.twoFactor.disableError': 'Failed to disable 2FA',
+  'settings.twoFactor.regenSuccess': 'Backup codes regenerated',
+  'settings.twoFactor.regenError': 'Failed to regenerate backup codes',
+  'settings.twoFactor.copySuccess': 'Copied to clipboard',
+  // Onboarding
+  'onboarding.shell.progress': 'Progress',
+  'onboarding.shell.stepsCompleted': '{completed} of {total} required steps completed',
+  'onboarding.shell.goToStep': 'Go to {step}',
+  'onboarding.shell.optional': '(Optional)',
+  'onboarding.shell.stepOf': 'Step {current} of {total}',
 };
 
+function mockT(key: string, params?: Record<string, unknown>): string {
+  let text = translationMap[key] ?? key;
+  if (params) {
+    for (const [k, v] of Object.entries(params)) {
+      text = text.replace(new RegExp(`\\{${k}\\}`, 'g'), String(v));
+    }
+  }
+  return text;
+}
+
 void mock.module('@/features/i18n', () => ({
-  useT: () => (key: string) => translationMap[key] ?? key,
+  useT: () => mockT,
   useI18n: () => ({
     locale: 'en',
-    t: (key: string) => translationMap[key] ?? key,
+    t: mockT,
   }),
 }));
 
 // Mock @profile/i18n package for tests (used by step-navigation and other components)
 void mock.module('@profile/i18n', () => ({
-  useT: () => (key: string) => translationMap[key] ?? key,
+  useT: () => mockT,
   useI18n: () => ({
     locale: 'en',
-    t: (key: string) => translationMap[key] ?? key,
+    t: mockT,
   }),
   I18nProvider: ({ children }: React.PropsWithChildren) =>
     React.createElement(React.Fragment, null, children),

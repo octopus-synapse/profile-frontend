@@ -14,10 +14,10 @@ import { OnboardingStepHeader } from '../step-header';
 import { StepNavigation } from '../step-navigation';
 import { GitHubField } from './professional-profile-github-field';
 import {
-  SUMMARY_MAX,
-  SUMMARY_MIN,
   extractGitHubUsername,
   normalizeUrl,
+  SUMMARY_MAX,
+  SUMMARY_MIN,
 } from './professional-profile-step.utils';
 
 export function ProfessionalProfileStep() {
@@ -53,9 +53,13 @@ export function ProfessionalProfileStep() {
 
     if (touched.summary) {
       if (summaryLength < SUMMARY_MIN) {
-        newErrors.summary = t('onboarding.professionalProfile.summaryMinLength', { min: SUMMARY_MIN });
+        newErrors.summary = t('onboarding.professionalProfile.summaryMinLength', {
+          min: SUMMARY_MIN,
+        });
       } else if (summaryLength > SUMMARY_MAX) {
-        newErrors.summary = t('onboarding.professionalProfile.summaryMaxLength', { max: SUMMARY_MAX });
+        newErrors.summary = t('onboarding.professionalProfile.summaryMaxLength', {
+          max: SUMMARY_MAX,
+        });
       }
     }
 
@@ -75,7 +79,7 @@ export function ProfessionalProfileStep() {
     }
 
     return newErrors;
-  }, [formData, touched, summaryLength, githubError, isGithubLoading]);
+  }, [formData, touched, summaryLength, githubError, isGithubLoading, t]);
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -128,17 +132,18 @@ export function ProfessionalProfileStep() {
       website: normalizeUrl(formData.website),
     };
     await goToNextStep({ professionalProfile: profile });
-  }, [formData, summaryLength, goToNextStep]);
+  }, [formData, summaryLength, goToNextStep, t]);
 
   const canProceed =
-    formData.jobTitle.length >= 2 &&
-    summaryLength >= SUMMARY_MIN &&
-    summaryLength <= SUMMARY_MAX;
+    formData.jobTitle.length >= 2 && summaryLength >= SUMMARY_MIN && summaryLength <= SUMMARY_MAX;
 
   return (
     <div className="space-y-6">
       <OnboardingStepHeader
-        eyebrow={t('onboarding.shell.stepOf', { current: currentStepIndex + 1, total: allSteps.length })}
+        eyebrow={t('onboarding.shell.stepOf', {
+          current: currentStepIndex + 1,
+          total: allSteps.length,
+        })}
         title={t('onboarding.professionalProfile.title')}
         description={t('onboarding.professionalProfile.description')}
       />
@@ -148,7 +153,8 @@ export function ProfessionalProfileStep() {
         <div>
           <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-white">
             <Briefcase className="h-4 w-4" strokeWidth={1.5} />
-            {t('onboarding.professionalProfile.jobTitleLabel')}<span className="text-red-500">*</span>
+            {t('onboarding.professionalProfile.jobTitleLabel')}
+            <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
@@ -170,7 +176,8 @@ export function ProfessionalProfileStep() {
         <div>
           <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-white">
             <FileText className="h-4 w-4" strokeWidth={1.5} />
-            {t('onboarding.professionalProfile.summaryLabel')}<span className="text-red-500">*</span>
+            {t('onboarding.professionalProfile.summaryLabel')}
+            <span className="text-red-500">*</span>
           </label>
           <textarea
             value={formData.summary}
@@ -187,7 +194,9 @@ export function ProfessionalProfileStep() {
                 {errors.summary}
               </p>
             ) : (
-              <span className="text-xs text-zinc-500">{t('onboarding.professionalProfile.minimumChars', { min: SUMMARY_MIN })}</span>
+              <span className="text-xs text-zinc-500">
+                {t('onboarding.professionalProfile.minimumChars', { min: SUMMARY_MIN })}
+              </span>
             )}
             <span
               className={`text-xs ${

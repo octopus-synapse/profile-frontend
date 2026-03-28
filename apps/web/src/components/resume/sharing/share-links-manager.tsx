@@ -88,9 +88,7 @@ function EmptyShareLinks() {
     <div className="flex flex-col items-center justify-center py-12 text-center">
       <Share2 className="mb-3 h-10 w-10 text-neutral-400" />
       <p className="text-sm font-medium text-neutral-300">{t('resume.share.noLinks')}</p>
-      <p className="mt-1 text-xs text-neutral-500">
-        {t('resume.share.noLinksDesc')}
-      </p>
+      <p className="mt-1 text-xs text-neutral-500">{t('resume.share.noLinksDesc')}</p>
     </div>
   );
 }
@@ -145,7 +143,13 @@ function ShareLinkItem({ share, onDelete, isDeleting }: ShareLinkItemProps) {
       </div>
 
       <div className="flex shrink-0 items-center gap-1">
-        <Button type="button" variant="ghost" size="icon" onClick={handleCopy} title={t('resume.share.copyLink')}>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={handleCopy}
+          title={t('resume.share.copyLink')}
+        >
           {copied ? <Check className="h-4 w-4 text-emerald-400" /> : <Copy className="h-4 w-4" />}
         </Button>
         <Button

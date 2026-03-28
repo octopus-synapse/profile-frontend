@@ -1,17 +1,10 @@
 'use client';
 
+import { useResumeAnalyticsGetViewStats } from '@profile/api-client';
+import { useI18n } from '@profile/i18n';
 import { Eye, Globe, Users } from 'lucide-react';
 
-import { useI18n } from '@profile/i18n';
-
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  Skeleton,
-} from '@/shared/components/ui';
-
-import { useViewStats } from './hooks/use-resume-analytics';
+import { Card, CardContent, CardHeader, Skeleton } from '@/shared/components/ui';
 
 interface ViewStatsChartProps {
   resumeId: string;
@@ -106,9 +99,19 @@ function LoadingSkeleton() {
 
 export function ViewStatsChart({ resumeId }: ViewStatsChartProps) {
   const { t } = useI18n();
-  const { data, isLoading } = useViewStats(resumeId);
+  const query = useResumeAnalyticsGetViewStats(resumeId, {
+    query: { enabled: !!resumeId },
+  });
+  const data = query.data?.data?.data as
+    | {
+        totalViews: number;
+        uniqueVisitors: number;
+        viewsByDay: Array<{ date: string; count: number }>;
+        topSources: Array<{ source: string; count: number }>;
+      }
+    | undefined;
 
-  if (isLoading) return <LoadingSkeleton />;
+  if (query.isLoading) return <LoadingSkeleton />;
   if (!data) return null;
 
   return (
@@ -123,12 +126,18 @@ export function ViewStatsChart({ resumeId }: ViewStatsChartProps) {
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <StatCard icon={Eye} label={t('resume.stats.totalViews')} value={data.totalViews} />
-            <StatCard icon={Users} label={t('resume.stats.uniqueVisitors')} value={data.uniqueVisitors} />
+            <StatCard
+              icon={Users}
+              label={t('resume.stats.uniqueVisitors')}
+              value={data.uniqueVisitors}
+            />
           </div>
 
           {data.viewsByDay.length > 0 && (
             <div className="rounded-lg border border-white/5 bg-white/[0.02] p-3">
-              <p className="mb-2 text-xs font-medium text-zinc-400">{t('resume.stats.viewsOverTime')}</p>
+              <p className="mb-2 text-xs font-medium text-zinc-400">
+                {t('resume.stats.viewsOverTime')}
+              </p>
               <BarChart data={data.viewsByDay} />
             </div>
           )}
@@ -137,7 +146,7 @@ export function ViewStatsChart({ resumeId }: ViewStatsChartProps) {
             <div className="space-y-2">
               <p className="text-xs font-medium text-zinc-400">{t('resume.stats.topSources')}</p>
               <ul className="space-y-1.5">
-                {data.topSources.map((source) => (
+                {data.topSources.map((source: { source: string; count: number }) => (
                   <li
                     key={source.source}
                     className="flex items-center justify-between rounded-md px-2 py-1.5 text-sm hover:bg-white/[0.02]"

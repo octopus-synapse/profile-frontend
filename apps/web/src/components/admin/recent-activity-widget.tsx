@@ -5,8 +5,8 @@
  * Clean, professional design
  */
 
-import { useT } from '@profile/i18n';
 import type { DictionaryKey } from '@profile/i18n';
+import { useT } from '@profile/i18n';
 import { Activity, FileText, LogIn, User, UserPlus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, Skeleton } from '@/shared/components/ui';
 import { EmptyState } from '@/shared/components/ui/empty-state';
@@ -53,7 +53,9 @@ export function RecentActivityWidget({ activities, loading }: RecentActivityWidg
         <CardHeader>
           <div className="flex items-center gap-2">
             <Activity className="text-pf-fg-muted h-4 w-4" strokeWidth={1.5} />
-            <span className="text-pf-fg-default text-sm font-semibold">{t('admin.recentActivity.title')}</span>
+            <span className="text-pf-fg-default text-sm font-semibold">
+              {t('admin.recentActivity.title')}
+            </span>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">

@@ -1,48 +1,24 @@
 'use client';
 
 /**
- * Danger Zone Panel
- *
- * Account deactivation, data export, and permanent deletion.
+ * DangerZone — Minimal design
  */
 
-import { useCallback, useState } from 'react';
+import { authLogout, getAuthSessionQueryKey, userConsentExportData } from '@profile/api-client';
 import { useI18n } from '@profile/i18n';
-import { authLogout, getAuthSessionQueryKey } from '@profile/api-client';
 import { useQueryClient } from '@tanstack/react-query';
-import { AlertTriangle, Download, Trash2, UserX } from 'lucide-react';
+import { Download, Loader2, Trash2, UserX } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import {
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Input,
-} from '@/shared/components/ui';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/shared/components/ui/dialog';
+import { useCallback, useState } from 'react';
 import { showToast } from '@/shared/components/ui/toast';
-import {
-  useDeactivateAccount,
-  useDeleteAccount,
-  useRequestDataExport,
-} from '../hooks/use-account-lifecycle';
-
-const DELETION_PHRASE = 'DELETE MY ACCOUNT';
+import { DeactivateDialog } from './deactivate-dialog';
+import { DeleteDialog } from './delete-dialog';
 
 export function DangerZone() {
   const { t } = useI18n();
   const [deactivateOpen, setDeactivateOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const dataExport = useRequestDataExport();
+  const [isExporting, setIsExporting] = useState(false);
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -56,8 +32,10 @@ export function DangerZone() {
   );
 
   async function handleExport() {
+    setIsExporting(true);
     try {
-      const data = await dataExport.mutateAsync();
+      const response = await userConsentExportData();
+      const data = response.data?.data;
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -68,45 +46,74 @@ export function DangerZone() {
       showToast.success(t('settings.danger.export.success'));
     } catch {
       showToast.error(t('settings.danger.export.error'));
+    } finally {
+      setIsExporting(false);
     }
   }
 
   return (
-    <Card className="border-red-200 dark:border-red-900">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-red-600">
-          <AlertTriangle className="h-5 w-5" />
-          {t('settings.danger.title')}
-        </CardTitle>
-        <CardDescription>
-          {t('settings.danger.description')}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        <DangerAction
+    <div className="space-y-12">
+      {/* Header */}
+      <div>
+        <h2 className="text-xl font-light text-white">{t('settings.danger.title')}</h2>
+        <p className="mt-1 text-[13px] text-zinc-500">{t('settings.danger.description')}</p>
+      </div>
+
+      {/* Actions */}
+      <div className="space-y-6 border-t border-zinc-800/50 pt-8">
+        {/* Export */}
+        <ActionRow
           icon={Download}
           title={t('settings.danger.export.title')}
           description={t('settings.danger.export.description')}
-          buttonLabel={dataExport.isPending ? t('settings.danger.export.exporting') : t('settings.danger.export.button')}
-          onClick={handleExport}
-          disabled={dataExport.isPending}
-        />
-        <DangerAction
+        >
+          <button
+            type="button"
+            onClick={() => void handleExport()}
+            disabled={isExporting}
+            className="flex items-center gap-2 rounded-lg border border-zinc-700 px-4 py-2 text-[13px] text-zinc-300 transition-colors hover:border-zinc-600 hover:text-white disabled:opacity-50"
+          >
+            {isExporting ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="h-4 w-4" />
+            )}
+            <span>{isExporting ? t('settings.danger.export.exporting') : t('settings.danger.export.button')}</span>
+          </button>
+        </ActionRow>
+
+        {/* Deactivate */}
+        <ActionRow
           icon={UserX}
           title={t('settings.danger.deactivate.title')}
           description={t('settings.danger.deactivate.description')}
-          buttonLabel={t('settings.danger.deactivate.button')}
-          onClick={() => setDeactivateOpen(true)}
-        />
-        <DangerAction
+        >
+          <button
+            type="button"
+            onClick={() => setDeactivateOpen(true)}
+            className="flex items-center gap-2 rounded-lg border border-zinc-700 px-4 py-2 text-[13px] text-zinc-300 transition-colors hover:border-amber-600/50 hover:text-amber-400"
+          >
+            <UserX className="h-4 w-4" />
+            <span>{t('settings.danger.deactivate.button')}</span>
+          </button>
+        </ActionRow>
+
+        {/* Delete */}
+        <ActionRow
           icon={Trash2}
           title={t('settings.danger.delete.title')}
           description={t('settings.danger.delete.description')}
-          buttonLabel={t('settings.danger.delete.button')}
-          onClick={() => setDeleteOpen(true)}
-          destructive
-        />
-      </CardContent>
+        >
+          <button
+            type="button"
+            onClick={() => setDeleteOpen(true)}
+            className="flex items-center gap-2 rounded-lg border border-red-900/50 bg-red-950/20 px-4 py-2 text-[13px] text-red-400 transition-colors hover:border-red-800 hover:bg-red-950/40"
+          >
+            <Trash2 className="h-4 w-4" />
+            <span>{t('settings.danger.delete.button')}</span>
+          </button>
+        </ActionRow>
+      </div>
 
       <DeactivateDialog
         open={deactivateOpen}
@@ -118,153 +125,33 @@ export function DangerZone() {
         onOpenChange={setDeleteOpen}
         onSuccess={() => clearSessionAndRedirect('/')}
       />
-    </Card>
-  );
-}
-
-// ── Sub-components ─────────────────────────────────────
-
-function DangerAction({
-  icon: Icon,
-  title,
-  description,
-  buttonLabel,
-  onClick,
-  disabled,
-  destructive,
-}: {
-  icon: React.ElementType;
-  title: string;
-  description: string;
-  buttonLabel: string;
-  onClick: () => void;
-  disabled?: boolean;
-  destructive?: boolean;
-}) {
-  return (
-    <div className="flex items-center justify-between rounded-lg border border-red-100 p-4 dark:border-red-900/50">
-      <div className="flex items-start gap-3">
-        <Icon className="text-pf-fg-muted mt-0.5 h-5 w-5" />
-        <div>
-          <p className="text-pf-fg-default text-sm font-medium">{title}</p>
-          <p className="text-pf-fg-muted text-xs">{description}</p>
-        </div>
-      </div>
-      <Button
-        variant={destructive ? 'destructive' : 'outline'}
-        size="sm"
-        onClick={onClick}
-        disabled={disabled}
-      >
-        {buttonLabel}
-      </Button>
     </div>
   );
 }
 
-function DeactivateDialog({
-  open,
-  onOpenChange,
-  onSuccess,
+function ActionRow({
+  icon: Icon,
+  title,
+  description,
+  children,
 }: {
-  open: boolean;
-  onOpenChange: (v: boolean) => void;
-  onSuccess: () => Promise<void>;
+  icon: typeof Download;
+  title: string;
+  description: string;
+  children: React.ReactNode;
 }) {
-  const { t } = useI18n();
-  const deactivate = useDeactivateAccount();
-
-  async function handleDeactivate() {
-    try {
-      await deactivate.mutateAsync();
-      showToast.success(t('settings.danger.deactivate.success'));
-      onOpenChange(false);
-      await onSuccess();
-    } catch {
-      showToast.error(t('settings.danger.deactivate.error'));
-    }
-  }
-
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t('settings.danger.deactivate.dialogTitle')}</DialogTitle>
-          <DialogDescription>
-            {t('settings.danger.deactivate.dialogDesc')}
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>{t('action.cancel')}</Button>
-          <Button
-            variant="destructive"
-            onClick={handleDeactivate}
-            disabled={deactivate.isPending}
-          >
-            {deactivate.isPending ? t('settings.danger.deactivate.deactivating') : t('settings.danger.deactivate.button')}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-function DeleteDialog({
-  open,
-  onOpenChange,
-  onSuccess,
-}: {
-  open: boolean;
-  onOpenChange: (v: boolean) => void;
-  onSuccess: () => Promise<void>;
-}) {
-  const { t } = useI18n();
-  const [confirmation, setConfirmation] = useState('');
-  const deleteAccount = useDeleteAccount();
-  const isConfirmed = confirmation === DELETION_PHRASE;
-
-  async function handleDelete() {
-    if (!isConfirmed) return;
-    try {
-      await deleteAccount.mutateAsync({ confirmationPhrase: DELETION_PHRASE });
-      showToast.success(t('settings.danger.delete.success'));
-      onOpenChange(false);
-      await onSuccess();
-    } catch {
-      showToast.error(t('settings.danger.delete.error'));
-    }
-  }
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle className="text-red-600">{t('settings.danger.delete.dialogTitle')}</DialogTitle>
-          <DialogDescription>
-            {t('settings.danger.delete.dialogDesc')}
-          </DialogDescription>
-        </DialogHeader>
-        <div className="flex flex-col gap-2 py-2">
-          <p className="text-pf-fg-muted text-sm">
-            {t('settings.danger.delete.confirmPrompt', { phrase: DELETION_PHRASE })}
-          </p>
-          <Input
-            value={confirmation}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmation(e.target.value)}
-            placeholder={DELETION_PHRASE}
-          />
+    <div className="flex items-start justify-between gap-8">
+      <div className="flex gap-4">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-zinc-900">
+          <Icon className="h-4 w-4 text-zinc-500" strokeWidth={1.5} />
         </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>{t('action.cancel')}</Button>
-          <Button
-            variant="destructive"
-            onClick={handleDelete}
-            disabled={!isConfirmed || deleteAccount.isPending}
-          >
-            {deleteAccount.isPending ? t('settings.danger.delete.deleting') : t('settings.danger.delete.deleteForever')}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        <div>
+          <h4 className="text-sm font-medium text-white">{title}</h4>
+          <p className="mt-0.5 text-[12px] text-zinc-500">{description}</p>
+        </div>
+      </div>
+      {children}
+    </div>
   );
 }

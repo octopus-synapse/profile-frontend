@@ -6,8 +6,7 @@
  * Endpoint: GET /api/v1/platform/stats
  */
 
-import { useQuery } from '@tanstack/react-query';
-import { apiFetch, PLATFORM_ROUTES } from '@profile/api-client';
+import { selectEnvelopeData, usePlatformGetStatistics } from '@profile/api-client';
 
 // ── Types ──────────────────────────────────────────────
 
@@ -30,10 +29,12 @@ export const platformStatsKeys = {
 // ── Query ──────────────────────────────────────────────
 
 export function usePlatformStats() {
-  return useQuery<PlatformStats>({
-    queryKey: platformStatsKeys.stats(),
-    queryFn: () => apiFetch.get<PlatformStats>(PLATFORM_ROUTES.PLATFORM_GET_STATISTICS),
-    staleTime: 60 * 1000,
-    refetchInterval: 5 * 60 * 1000,
+  return usePlatformGetStatistics<PlatformStats>({
+    query: {
+      queryKey: platformStatsKeys.stats(),
+      select: selectEnvelopeData,
+      staleTime: 60 * 1000,
+      refetchInterval: 5 * 60 * 1000,
+    },
   });
 }

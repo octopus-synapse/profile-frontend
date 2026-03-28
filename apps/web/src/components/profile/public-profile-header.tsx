@@ -5,8 +5,10 @@
 
 'use client';
 
+import { useAuthSession } from '@profile/api-client';
 import { AtSign, Github, Globe, Linkedin, Mail, MapPin, Phone } from 'lucide-react';
 import { Avatar } from '@/shared/components/ui';
+import { SendMessageButton } from '@/components/chat/send-message-button';
 
 interface ProfileDisplayData {
   name: string;
@@ -24,9 +26,16 @@ interface ProfileDisplayData {
 interface PublicProfileHeaderProps {
   data: ProfileDisplayData;
   username: string;
+  profileUserId?: string;
 }
 
-export function PublicProfileHeader({ data, username }: PublicProfileHeaderProps) {
+export function PublicProfileHeader({ data, username, profileUserId }: PublicProfileHeaderProps) {
+  const { data: sessionResponse } = useAuthSession();
+  const session = sessionResponse?.data?.data as { user?: { id: string } } | undefined;
+  const currentUserId = session?.user?.id;
+  const isAuthenticated = !!currentUserId;
+  const isOwnProfile = currentUserId === profileUserId;
+
   const initials = data.name
     .split(' ')
     .map((n) => n[0])
@@ -130,6 +139,17 @@ export function PublicProfileHeader({ data, username }: PublicProfileHeaderProps
                   <link.icon className="h-5 w-5" strokeWidth={1.5} />
                 </a>
               ))}
+            </div>
+          )}
+
+          {/* Send Message Button */}
+          {isAuthenticated && !isOwnProfile && profileUserId && (
+            <div className="mt-6">
+              <SendMessageButton
+                recipientId={profileUserId}
+                recipientName={data.name}
+                recipientPhotoUrl={data.photoURL}
+              />
             </div>
           )}
         </div>

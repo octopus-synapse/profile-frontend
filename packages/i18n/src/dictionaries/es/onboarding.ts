@@ -38,8 +38,7 @@ export const onboarding = {
   'onboarding.username.description':
     'Esto crea la URL de tu perfil público, así que mantenlo simple y memorable.',
   'onboarding.username.preview': 'usuario',
-  'onboarding.username.hint':
-    'Usa de 3 a 30 letras minúsculas, números o guiones bajos.',
+  'onboarding.username.hint': 'Usa de 3 a 30 letras minúsculas, números o guiones bajos.',
   'onboarding.username.label': 'Nombre de usuario',
   'onboarding.username.tooltip':
     'Tu identificador único en PATCH. No se puede cambiar después, ¡así que elige con cuidado!',
@@ -88,8 +87,7 @@ export const onboarding = {
     'Resume tu rol, tus fortalezas y los enlaces que respaldan tu perfil.',
   'onboarding.professionalProfile.jobTitleLabel': 'Cargo',
   'onboarding.professionalProfile.jobTitlePlaceholder': 'Ingeniero de Software Senior',
-  'onboarding.professionalProfile.jobTitleMinLength':
-    'El cargo debe tener al menos 2 caracteres',
+  'onboarding.professionalProfile.jobTitleMinLength': 'El cargo debe tener al menos 2 caracteres',
   'onboarding.professionalProfile.summaryLabel': 'Resumen',
   'onboarding.professionalProfile.summaryPlaceholder':
     'Desarrollador full-stack apasionado con más de 5 años de experiencia construyendo aplicaciones web escalables. Especializado en React, Node.js e infraestructura en la nube...',
@@ -101,13 +99,11 @@ export const onboarding = {
   'onboarding.professionalProfile.socialLinksHint':
     'Los enlaces sociales son opcionales, pero ayudan a hacer tu perfil más creíble.',
   'onboarding.professionalProfile.linkedinLabel': 'LinkedIn',
-  'onboarding.professionalProfile.linkedinPlaceholder':
-    'https://linkedin.com/in/usuario',
+  'onboarding.professionalProfile.linkedinPlaceholder': 'https://linkedin.com/in/usuario',
   'onboarding.professionalProfile.invalidUrl': 'Formato de URL inválido',
   'onboarding.professionalProfile.githubLabel': 'GitHub',
   'onboarding.professionalProfile.githubPlaceholder': 'usuario',
-  'onboarding.professionalProfile.githubHint':
-    'Ingresa solo tu nombre de usuario (ej: octocat)',
+  'onboarding.professionalProfile.githubHint': 'Ingresa solo tu nombre de usuario (ej: octocat)',
   'onboarding.professionalProfile.websiteLabel': 'Sitio web',
   'onboarding.professionalProfile.websitePlaceholder': 'https://tusitio.dev',
 
@@ -131,8 +127,7 @@ export const onboarding = {
   // Review Step
   'onboarding.review.eyebrow': 'Paso final',
   'onboarding.review.title': 'Revisar y enviar',
-  'onboarding.review.description':
-    'Confirma lo esencial antes de crear tu perfil.',
+  'onboarding.review.description': 'Confirma lo esencial antes de crear tu perfil.',
   'onboarding.review.paletteLabel': 'Paleta: {scheme}',
   'onboarding.review.noneListed': 'Ninguno listado',
   'onboarding.review.itemCount': '{count} elemento(s)',
@@ -157,16 +152,14 @@ export const onboarding = {
 
   // Complete Step
   'onboarding.complete.welcomeUser': '¡Bienvenido, {name}! 🎉',
-  'onboarding.complete.successMessage':
-    'Tu perfil profesional ha sido creado exitosamente',
+  'onboarding.complete.successMessage': 'Tu perfil profesional ha sido creado exitosamente',
   'onboarding.complete.redirectCountdown':
     'Redirigiendo a tu currículum en {count} segundo{suffix}...',
   'onboarding.complete.whatsNext': '¿Qué sigue?',
   'onboarding.complete.nextCustomize': 'Visualiza y personaliza tu currículum',
   'onboarding.complete.nextExport': 'Exporta a PDF o DOCX',
   'onboarding.complete.nextShare': 'Comparte el enlace de tu perfil público',
-  'onboarding.complete.nextSettings':
-    'Agrega más detalles en cualquier momento en configuración',
+  'onboarding.complete.nextSettings': 'Agrega más detalles en cualquier momento en configuración',
   'onboarding.complete.viewResume': 'Ver Mi Currículum',
   'onboarding.complete.goToDashboard': 'Ir al Panel',
   'onboarding.complete.helpPrefix': '¿Necesitas ayuda? Consulta nuestra ',

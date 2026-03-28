@@ -28,6 +28,8 @@ export interface SectionTypeData {
   maxItems: number | null;
   definition: Record<string, unknown>;
   uiSchema: Record<string, unknown> | null;
+  renderHints: Record<string, unknown> | null;
+  fieldStyles: Record<string, unknown> | null;
   iconType: 'emoji' | 'lucide';
   icon: string;
   translations: Record<string, SectionTypeTranslation>;
@@ -63,6 +65,8 @@ export interface CreateSectionTypePayload {
   maxItems?: number;
   definition: Record<string, unknown>;
   uiSchema?: Record<string, unknown>;
+  renderHints?: Record<string, unknown>;
+  fieldStyles?: Record<string, unknown>;
   iconType?: 'emoji' | 'lucide';
   icon?: string;
   translations?: Record<string, Partial<SectionTypeTranslation>>;
@@ -78,6 +82,8 @@ export interface UpdateSectionTypePayload {
   maxItems?: number | null;
   definition?: Record<string, unknown>;
   uiSchema?: Record<string, unknown> | null;
+  renderHints?: Record<string, unknown>;
+  fieldStyles?: Record<string, unknown>;
   iconType?: 'emoji' | 'lucide';
   icon?: string;
   translations?: Record<string, Partial<SectionTypeTranslation>>;

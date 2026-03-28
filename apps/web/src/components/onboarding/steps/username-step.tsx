@@ -6,9 +6,13 @@
 
 'use client';
 
-import { useI18n, type DictionaryKey } from '@profile/i18n';
-import { apiFetch, isApiError, useAuthSession } from '@profile/api-client';
-import { useQuery } from '@tanstack/react-query';
+import {
+  isApiError,
+  selectEnvelopeData,
+  useAuthSession,
+  useUsersCheckUsernameAvailability,
+} from '@profile/api-client';
+import { type DictionaryKey, useI18n } from '@profile/i18n';
 import { AlertCircle, AtSign, Check, ExternalLink, Loader2, RefreshCw, X } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
 import { APP_URL } from '@/config';
@@ -22,9 +26,9 @@ import { normalizeUsername, USERNAME_MAX_LENGTH, validateUsername } from './user
 
 export function UsernameStep() {
   const { username, goToNextStep, currentStepIndex, allSteps } = useOnboarding();
-  const { data, isLoading } = useAuthSession();
+  const { data, isLoading } = useAuthSession({ query: { select: selectEnvelopeData } });
   const { t } = useI18n();
-  const isAuthenticated = !!data?.data?.user;
+  const isAuthenticated = !!data?.user;
 
   const [inputValue, setInputValue] = useState(username || '');
   const [touched, setTouched] = useState(false);
@@ -39,15 +43,15 @@ export function UsernameStep() {
     isAuthenticated &&
     !isLoading;
 
-  const availabilityQuery = useQuery({
-    queryKey: ['username-availability', debouncedUsername],
-    queryFn: () =>
-      apiFetch.get<{ available: boolean; username: string }>(
-        `/api/v1/users/username/check?username=${encodeURIComponent(debouncedUsername)}`,
-      ),
-    enabled: shouldCheck,
-    retry: false,
-  });
+  const availabilityQuery = useUsersCheckUsernameAvailability(
+    { username: debouncedUsername || '' },
+    {
+      query: {
+        enabled: shouldCheck,
+        retry: false,
+      },
+    },
+  );
 
   const isChecking = availabilityQuery.isFetching;
 
@@ -56,7 +60,12 @@ export function UsernameStep() {
     if (!debouncedUsername || !validation.valid) return null;
     if (debouncedUsername === username) return true;
     if (!shouldCheck) return null;
-    if (availabilityQuery.isSuccess) return availabilityQuery.data?.available ?? null;
+    if (availabilityQuery.isSuccess) {
+      const responseData = availabilityQuery.data?.data?.data as
+        | { available?: boolean }
+        | undefined;
+      return responseData?.available ?? null;
+    }
     return null;
   }, [
     inputValue,
@@ -74,12 +83,13 @@ export function UsernameStep() {
     const err = availabilityQuery.error;
     if (!err) return null;
     if (isApiError(err)) {
-      if (err.statusCode === 401) return t('onboarding.username.sessionExpired');
-      if (err.statusCode === 429) return t('onboarding.username.tooManyRequests');
+      const apiErr = err as { statusCode?: number };
+      if (apiErr.statusCode === 401) return t('onboarding.username.sessionExpired');
+      if (apiErr.statusCode === 429) return t('onboarding.username.tooManyRequests');
       return t('onboarding.username.couldNotVerify');
     }
     return t('onboarding.username.connectionError');
-  }, [inputValue, debouncedUsername, availabilityQuery.error, isAuthenticated, isLoading]);
+  }, [inputValue, debouncedUsername, availabilityQuery.error, isAuthenticated, isLoading, t]);
 
   const handleChange = (value: string) => {
     setInputValue(normalizeUsername(value));
@@ -126,7 +136,10 @@ export function UsernameStep() {
   return (
     <div className="space-y-6">
       <OnboardingStepHeader
-        eyebrow={t('onboarding.shell.stepOf', { current: currentStepIndex + 1, total: allSteps.length })}
+        eyebrow={t('onboarding.shell.stepOf', {
+          current: currentStepIndex + 1,
+          total: allSteps.length,
+        })}
         title={t('onboarding.username.title')}
         description={t('onboarding.username.description')}
       />
@@ -135,7 +148,9 @@ export function UsernameStep() {
         <div className="flex items-center gap-2 text-sm">
           <ExternalLink className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
           <span className="text-zinc-400">{appDomain}/</span>
-          <span className="font-medium text-blue-400">{inputValue || t('onboarding.username.preview')}</span>
+          <span className="font-medium text-blue-400">
+            {inputValue || t('onboarding.username.preview')}
+          </span>
         </div>
       </div>
 
@@ -147,7 +162,8 @@ export function UsernameStep() {
       <div>
         <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-white">
           <AtSign className="h-4 w-4" strokeWidth={1.5} />
-          {t('onboarding.username.label')}<span className="text-red-500">*</span>
+          {t('onboarding.username.label')}
+          <span className="text-red-500">*</span>
           <HelpTooltip content={t('onboarding.username.tooltip')} />
         </label>
         <div className="relative">
@@ -213,12 +229,15 @@ function getStatusIcon(s: StatusState) {
   return null;
 }
 
-function getStatusMessage(s: StatusState & { t: (key: DictionaryKey) => string }): StatusMessageData | null {
+function getStatusMessage(
+  s: StatusState & { t: (key: DictionaryKey) => string },
+): StatusMessageData | null {
   if (s.isLoading) return { text: s.t('onboarding.username.loadingSession'), type: 'muted' };
   if (s.isChecking) return { text: s.t('onboarding.username.checkingAvailability'), type: 'muted' };
   if (s.apiError) return { text: s.apiError, type: 'warning' };
   if (!s.validation.valid && s.touched) return { text: s.validation.message, type: 'error' };
-  if (s.isAvailable === true) return { text: s.t('onboarding.username.available'), type: 'success' };
+  if (s.isAvailable === true)
+    return { text: s.t('onboarding.username.available'), type: 'success' };
   if (s.isAvailable === false) return { text: s.t('onboarding.username.taken'), type: 'error' };
   return null;
 }

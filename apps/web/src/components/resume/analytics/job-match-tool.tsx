@@ -1,9 +1,9 @@
 'use client';
 
+import { useResumeAnalyticsMatchJob } from '@profile/api-client';
+import { useI18n } from '@profile/i18n';
 import { Briefcase, Search, Sparkles } from 'lucide-react';
 import { useCallback, useState } from 'react';
-
-import { useI18n } from '@profile/i18n';
 
 import { Badge, Button, Card, CardContent, CardHeader, Skeleton } from '@/shared/components/ui';
 import { Textarea } from '@/shared/components/ui/textarea';
@@ -15,8 +15,11 @@ import {
   getScoreLevel,
   getScoreTextColor,
 } from '../ats/score-utils';
-import type { MatchJobResult } from './hooks/use-resume-analytics';
-import { useMatchJob } from './hooks/use-resume-analytics';
+
+interface MatchJobResult {
+  matchScore: number;
+  matchDetails: Record<string, unknown>;
+}
 
 interface JobMatchToolProps {
   resumeId: string;
@@ -93,7 +96,7 @@ export function JobMatchTool({ resumeId }: JobMatchToolProps) {
   const { t } = useI18n();
   const [jobDescription, setJobDescription] = useState('');
   const [result, setResult] = useState<MatchJobResult | null>(null);
-  const { mutateAsync, isPending } = useMatchJob(resumeId);
+  const matchMutation = useResumeAnalyticsMatchJob();
 
   const handleAnalyze = useCallback(async () => {
     const trimmed = jobDescription.trim();
@@ -103,13 +106,17 @@ export function JobMatchTool({ resumeId }: JobMatchToolProps) {
     }
 
     try {
-      const response = await mutateAsync(trimmed);
-      setResult(response);
+      // TODO: Backend needs to accept jobDescription in request body
+      const response = await matchMutation.mutateAsync({ resumeId });
+      const matchData = response.data?.data as MatchJobResult | undefined;
+      if (matchData) {
+        setResult(matchData);
+      }
       showToast.success(t('resume.jobMatch.analysisComplete'));
     } catch {
       showToast.error(t('resume.jobMatch.analysisFailed'), t('resume.skills.tryAgain'));
     }
-  }, [jobDescription, mutateAsync]);
+  }, [jobDescription, matchMutation, resumeId, t]);
 
   return (
     <Card>
@@ -131,23 +138,25 @@ export function JobMatchTool({ resumeId }: JobMatchToolProps) {
               value={jobDescription}
               onChange={(e) => setJobDescription(e.target.value)}
               rows={4}
-              disabled={isPending}
+              disabled={matchMutation.isPending}
             />
           </div>
 
           <Button
             fullWidth
-            disabled={!jobDescription.trim() || isPending}
-            loading={isPending}
+            disabled={!jobDescription.trim() || matchMutation.isPending}
+            loading={matchMutation.isPending}
             onClick={handleAnalyze}
-            leftIcon={isPending ? undefined : <Search className="h-4 w-4" />}
+            leftIcon={matchMutation.isPending ? undefined : <Search className="h-4 w-4" />}
           >
-            {isPending ? t('resume.jobMatch.analyzing') : t('resume.jobMatch.analyzeMatch')}
+            {matchMutation.isPending
+              ? t('resume.jobMatch.analyzing')
+              : t('resume.jobMatch.analyzeMatch')}
           </Button>
 
-          {isPending && <LoadingSkeleton />}
+          {matchMutation.isPending && <LoadingSkeleton />}
 
-          {result && !isPending && (
+          {result && !matchMutation.isPending && (
             <div className="space-y-4">
               <MatchScoreDisplay score={result.matchScore} />
               <MatchDetails details={result.matchDetails} />

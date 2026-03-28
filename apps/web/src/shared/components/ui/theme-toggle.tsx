@@ -29,8 +29,8 @@ export function ThemeToggle({ className, showLabel = false }: ThemeToggleProps) 
         className={cn(
           'flex h-8 w-8 items-center justify-center rounded-md transition-colors',
           theme === 'light'
-            ? 'bg-white text-black'
-            : 'text-zinc-500 hover:bg-white/5 hover:text-white',
+            ? 'bg-pf-canvas-emphasis text-pf-fg-on-emphasis'
+            : 'text-pf-fg-subtle hover:bg-pf-hover-subtle hover:text-pf-fg-default',
         )}
         title="Light mode"
       >
@@ -42,8 +42,8 @@ export function ThemeToggle({ className, showLabel = false }: ThemeToggleProps) 
         className={cn(
           'flex h-8 w-8 items-center justify-center rounded-md transition-colors',
           theme === 'dark'
-            ? 'bg-white text-black'
-            : 'text-zinc-500 hover:bg-white/5 hover:text-white',
+            ? 'bg-pf-canvas-emphasis text-pf-fg-on-emphasis'
+            : 'text-pf-fg-subtle hover:bg-pf-hover-subtle hover:text-pf-fg-default',
         )}
         title="Dark mode"
       >
@@ -55,15 +55,15 @@ export function ThemeToggle({ className, showLabel = false }: ThemeToggleProps) 
         className={cn(
           'flex h-8 w-8 items-center justify-center rounded-md transition-colors',
           theme === 'system'
-            ? 'bg-white text-black'
-            : 'text-zinc-500 hover:bg-white/5 hover:text-white',
+            ? 'bg-pf-canvas-emphasis text-pf-fg-on-emphasis'
+            : 'text-pf-fg-subtle hover:bg-pf-hover-subtle hover:text-pf-fg-default',
         )}
         title="System theme"
       >
         <Monitor className="h-4 w-4" strokeWidth={1.5} />
       </button>
       {showLabel && (
-        <span className="ml-2 text-xs font-medium tracking-wider text-zinc-500 uppercase">
+        <span className="ml-2 text-xs font-medium tracking-wider text-pf-fg-subtle uppercase">
           {theme}
         </span>
       )}
@@ -82,7 +82,7 @@ export function ThemeToggleSimple({ className }: { className?: string }) {
         type="button"
         className={cn(
           'flex h-9 w-9 items-center justify-center rounded-md transition-colors',
-          'text-zinc-500 hover:bg-white/5 hover:text-white',
+          'text-pf-fg-subtle hover:bg-pf-hover-subtle hover:text-pf-fg-default',
           className,
         )}
         title="Toggle theme"
@@ -100,7 +100,7 @@ export function ThemeToggleSimple({ className }: { className?: string }) {
       onClick={toggleTheme}
       className={cn(
         'flex h-9 w-9 items-center justify-center rounded-md transition-colors',
-        'text-zinc-500 hover:bg-white/5 hover:text-white',
+        'text-pf-fg-subtle hover:bg-pf-hover-subtle hover:text-pf-fg-default',
         className,
       )}
       title={resolvedTheme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}

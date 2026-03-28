@@ -110,7 +110,9 @@ export function TwoFactorSetupWizard({ open, onOpenChange }: SetupWizardProps) {
               {verify.isPending ? t('auth.2fa.verifying') : t('auth.2fa.verifyAndEnable')}
             </Button>
           )}
-          {step === 'backup' && <Button onClick={() => handleOpen(false)}>{t('auth.2fa.done')}</Button>}
+          {step === 'backup' && (
+            <Button onClick={() => handleOpen(false)}>{t('auth.2fa.done')}</Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -193,9 +195,7 @@ function BackupStep({ codes, onCopy }: { codes: string[]; onCopy: () => void }) 
         <Copy className="h-4 w-4" />
         {t('auth.2fa.copyAll')}
       </Button>
-      <p className="text-pf-fg-muted text-xs text-center">
-        {t('auth.2fa.backupWarning')}
-      </p>
+      <p className="text-pf-fg-muted text-xs text-center">{t('auth.2fa.backupWarning')}</p>
     </div>
   );
 }

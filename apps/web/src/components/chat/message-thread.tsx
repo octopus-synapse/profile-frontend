@@ -1,12 +1,14 @@
 'use client';
 
 import { useT } from '@profile/i18n';
-import { useCallback, useEffect, useRef, useState } from 'react';
 import { Loader2, MessageSquare, Send } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button, Input, Skeleton } from '@/shared/components/ui';
 import { showToast } from '@/shared/components/ui/toast';
-import { useMessages, useSendMessage } from './hooks/use-chat';
+import { useSocket } from '@/shared/providers/socket-provider';
 import type { Message } from './hooks/use-chat';
+import { useMarkAsRead, useMessages, useSendMessage } from './hooks/use-chat';
+import { useTyping } from './hooks/use-typing';
 
 // --- Sub-components ---
 
@@ -30,12 +32,8 @@ function EmptyThread() {
   return (
     <div className="flex flex-1 flex-col items-center justify-center text-center">
       <MessageSquare className="mb-3 h-10 w-10 text-neutral-400" />
-      <p className="text-sm font-medium text-neutral-300">
-        {t('social.chat.noMessages')}
-      </p>
-      <p className="mt-1 text-xs text-neutral-500">
-        {t('social.chat.startMessage')}
-      </p>
+      <p className="text-sm font-medium text-neutral-300">{t('social.chat.noMessages')}</p>
+      <p className="mt-1 text-xs text-neutral-500">{t('social.chat.startMessage')}</p>
     </div>
   );
 }
@@ -55,22 +53,42 @@ function MessageBubble({ message, isOwn }: MessageBubbleProps) {
     <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
       <div
         className={`max-w-[75%] rounded-2xl px-4 py-2 ${
-          isOwn
-            ? 'bg-neutral-100 text-neutral-900'
-            : 'bg-neutral-800 text-neutral-100'
+          isOwn ? 'bg-neutral-100 text-neutral-900' : 'bg-neutral-800 text-neutral-100'
         }`}
       >
-        <p className="whitespace-pre-wrap break-words text-sm">
-          {message.content}
-        </p>
+        <p className="whitespace-pre-wrap break-words text-sm">{message.content}</p>
         <span
           className={`mt-1 block text-right text-[10px] ${
             isOwn ? 'text-neutral-500' : 'text-neutral-500'
           }`}
         >
           {time}
+          {isOwn && <span className="ml-1">{message.readAt ? '✓✓' : '✓'}</span>}
         </span>
       </div>
+    </div>
+  );
+}
+
+function TypingIndicator() {
+  const t = useT();
+  return (
+    <div className="flex items-center gap-2 px-4 py-1">
+      <div className="flex gap-1">
+        <span
+          className="h-1.5 w-1.5 animate-bounce rounded-full bg-neutral-400"
+          style={{ animationDelay: '0ms' }}
+        />
+        <span
+          className="h-1.5 w-1.5 animate-bounce rounded-full bg-neutral-400"
+          style={{ animationDelay: '150ms' }}
+        />
+        <span
+          className="h-1.5 w-1.5 animate-bounce rounded-full bg-neutral-400"
+          style={{ animationDelay: '300ms' }}
+        />
+      </div>
+      <span className="text-xs text-neutral-500">{t('social.chat.typing')}</span>
     </div>
   );
 }
@@ -80,9 +98,11 @@ function MessageBubble({ message, isOwn }: MessageBubbleProps) {
 interface MessageInputProps {
   onSend: (content: string) => void;
   isSending: boolean;
+  onTyping?: () => void;
+  onTypingStop?: () => void;
 }
 
-function MessageInput({ onSend, isSending }: MessageInputProps) {
+function MessageInput({ onSend, isSending, onTyping, onTypingStop }: MessageInputProps) {
   const t = useT();
   const [value, setValue] = useState('');
 
@@ -91,10 +111,19 @@ function MessageInput({ onSend, isSending }: MessageInputProps) {
       e.preventDefault();
       const trimmed = value.trim();
       if (!trimmed || isSending) return;
+      onTypingStop?.();
       onSend(trimmed);
       setValue('');
     },
-    [value, isSending, onSend],
+    [value, isSending, onSend, onTypingStop],
+  );
+
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setValue(e.target.value);
+      onTyping?.();
+    },
+    [onTyping],
   );
 
   return (
@@ -104,22 +133,15 @@ function MessageInput({ onSend, isSending }: MessageInputProps) {
     >
       <Input
         value={value}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value)}
+        onChange={handleChange}
+        onBlur={onTypingStop}
         placeholder={t('social.chat.messagePlaceholder')}
         className="flex-1"
         disabled={isSending}
         autoComplete="off"
       />
-      <Button
-        type="submit"
-        disabled={!value.trim() || isSending}
-        className="shrink-0"
-      >
-        {isSending ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
-        ) : (
-          <Send className="h-4 w-4" />
-        )}
+      <Button type="submit" disabled={!value.trim() || isSending} className="shrink-0">
+        {isSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
       </Button>
     </form>
   );
@@ -132,21 +154,33 @@ interface MessageThreadProps {
   currentUserId: string;
 }
 
-export function MessageThread({
-  conversationId,
-  currentUserId,
-}: MessageThreadProps) {
+export function MessageThread({ conversationId, currentUserId }: MessageThreadProps) {
   const t = useT();
   const scrollRef = useRef<HTMLDivElement>(null);
   const { data: messages, isLoading } = useMessages(conversationId);
   const sendMessage = useSendMessage();
+  const markAsRead = useMarkAsRead();
+  const { socket, isConnected } = useSocket();
+  const { isOtherTyping, emitTypingStart, emitTypingStop } = useTyping(conversationId);
+
+  // Auto-join conversation room and mark as read
+  useEffect(() => {
+    if (!socket || !isConnected || !conversationId) return;
+
+    socket.emit('conversation:join', { conversationId });
+    markAsRead(conversationId);
+
+    return () => {
+      socket.emit('conversation:leave', { conversationId });
+    };
+  }, [socket, isConnected, conversationId, markAsRead]);
 
   // Auto-scroll when new messages arrive
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, []);
 
   const handleSend = useCallback(
     (content: string) => {
@@ -159,7 +193,7 @@ export function MessageThread({
         },
       );
     },
-    [conversationId, sendMessage],
+    [conversationId, sendMessage, t],
   );
 
   if (isLoading) {
@@ -177,16 +211,19 @@ export function MessageThread({
           <EmptyThread />
         ) : (
           messages.map((msg) => (
-            <MessageBubble
-              key={msg.id}
-              message={msg}
-              isOwn={msg.senderId === currentUserId}
-            />
+            <MessageBubble key={msg.id} message={msg} isOwn={msg.senderId === currentUserId} />
           ))
         )}
       </div>
 
-      <MessageInput onSend={handleSend} isSending={sendMessage.isPending} />
+      {isOtherTyping && <TypingIndicator />}
+
+      <MessageInput
+        onSend={handleSend}
+        isSending={sendMessage.isPending}
+        onTyping={emitTypingStart}
+        onTypingStop={emitTypingStop}
+      />
     </div>
   );
 }

@@ -5,8 +5,8 @@
  * Backend is the SINGLE SOURCE OF TRUTH for all types.
  *
  * Usage:
- *   import { useOnboardingGetProgress, type OnboardingProgressDto } from '@profile/api-client';
- *   import { userRepository } from '@profile/api-client';
+ *   import { useAuthSession, type SessionResponseDto } from '@profile/api-client';
+ *   import { selectEnvelopeData } from '@profile/api-client';
  *
  * No local types, no local validation, no aliases — generated SDK names only.
  */
@@ -24,32 +24,18 @@ export * from './generated/models';
 export * from './generated/api';
 
 // ============================================================================
-// ALIASES (for backward compatibility)
-// ============================================================================
-
-export {
-  getAuthGetSessionQueryKey as getAuthSessionQueryKey,
-  useAuthGetSession as useAuthSession,
-} from './generated/api/auth/auth';
-
-// ============================================================================
-// REPOSITORIES (repository pattern wrappers over SDK functions)
-// ============================================================================
-
-export * from './repositories';
-
-// ============================================================================
 // CLIENT UTILITIES
 // ============================================================================
 
 export type { ApiError, authSessionServer } from './client';
 export {
+  apiFetch,
   authSession,
   customFetch,
   getApiLocale,
   isApiError,
+  selectEnvelopeData,
   setApiLocale,
-  apiFetch,
 } from './client';
 
 // ============================================================================

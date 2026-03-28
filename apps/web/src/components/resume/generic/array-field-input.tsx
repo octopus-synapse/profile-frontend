@@ -7,8 +7,12 @@
 
 'use client';
 
-import type { FieldDefinition } from '../types/generic-section.types';
-import { INPUT_BASE, INPUT_ERROR, type FieldRenderProps } from './field-input-shared';
+import {
+  type FieldDefinition,
+  type FieldRenderProps,
+  INPUT_BASE,
+  INPUT_ERROR,
+} from './field-input-shared';
 
 export function renderArrayField({
   field,
@@ -80,7 +84,7 @@ function ArrayFieldInput({
             onClick={() => removeItem(index)}
             disabled={disabled}
             className="shrink-0 rounded-lg p-2 text-zinc-400 transition-colors hover:text-red-400 disabled:opacity-50"
-            aria-label={`Remove ${field.label.toLowerCase()} item`}
+            aria-label={`Remove ${(field.label || field.key || 'item').toLowerCase()} item`}
           >
             ✕
           </button>
@@ -92,7 +96,7 @@ function ArrayFieldInput({
         disabled={disabled}
         className="text-sm text-zinc-400 transition-colors hover:text-white disabled:opacity-50"
       >
-        + Add {field.label.toLowerCase()}
+        + Add {(field.label || field.key || 'item').toLowerCase()}
       </button>
       {error && (
         <p id={errorId} className="text-xs text-red-400">

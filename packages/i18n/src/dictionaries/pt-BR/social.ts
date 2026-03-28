@@ -12,6 +12,8 @@ export const social = {
   'social.chat.messagePlaceholder': 'Digite uma mensagem…',
   'social.chat.sendFailed': 'Falha ao enviar mensagem',
   'social.chat.selectConversation': 'Selecione uma conversa para começar a conversar',
+  'social.chat.typing': 'digitando…',
+  'social.chat.reconnecting': 'Reconectando…',
 
   // Activity Feed
   'social.feed.title': 'Feed de Atividades',

@@ -10,7 +10,7 @@
 import { useT } from '@profile/i18n';
 import { Input, Label } from '@/shared/components/ui';
 import { Checkbox } from '@/shared/components/ui/checkbox';
-import { createEmptyAtsConfig, type AtsConfig, type FieldEntry } from './types/field-definition';
+import { type AtsConfig, createEmptyAtsConfig, type FieldEntry } from './types/field-definition';
 
 interface AtsConfigEditorProps {
   atsConfig?: AtsConfig;
@@ -54,7 +54,9 @@ export function AtsConfigEditor({ atsConfig, fields, onChange }: AtsConfigEditor
             checked={config.isMandatory}
             onCheckedChange={(v) => update({ isMandatory: v === true })}
           />
-          <Label htmlFor="ats-mandatory" className="text-xs">{t('admin.sectionTypes.ats.mandatory')}</Label>
+          <Label htmlFor="ats-mandatory" className="text-xs">
+            {t('admin.sectionTypes.ats.mandatory')}
+          </Label>
         </div>
 
         <div className="space-y-1">
@@ -64,7 +66,9 @@ export function AtsConfigEditor({ atsConfig, fields, onChange }: AtsConfigEditor
             min={1}
             max={20}
             value={config.recommendedPosition}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => update({ recommendedPosition: Number(e.target.value) || 1 })}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              update({ recommendedPosition: Number(e.target.value) || 1 })
+            }
             className="h-8 text-sm"
           />
         </div>
@@ -76,7 +80,9 @@ export function AtsConfigEditor({ atsConfig, fields, onChange }: AtsConfigEditor
             min={0}
             max={100}
             value={config.scoring.baseScore}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateScoring({ baseScore: Number(e.target.value) || 0 })}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              updateScoring({ baseScore: Number(e.target.value) || 0 })
+            }
             className="h-8 text-sm"
           />
         </div>
@@ -88,7 +94,9 @@ export function AtsConfigEditor({ atsConfig, fields, onChange }: AtsConfigEditor
           <Input
             placeholder={t('admin.sectionTypes.ats.keywordsPlaceholder')}
             value={config.sectionDetection.keywords.join(', ')}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateDetection({ keywords: parseCommaSeparated(e.target.value) })}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              updateDetection({ keywords: parseCommaSeparated(e.target.value) })
+            }
             className="h-8 text-sm"
           />
         </div>
@@ -98,7 +106,9 @@ export function AtsConfigEditor({ atsConfig, fields, onChange }: AtsConfigEditor
           <Input
             placeholder={t('admin.sectionTypes.ats.multiWordPlaceholder')}
             value={config.sectionDetection.multiWord.join(', ')}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateDetection({ multiWord: parseCommaSeparated(e.target.value) })}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              updateDetection({ multiWord: parseCommaSeparated(e.target.value) })
+            }
             className="h-8 text-sm"
           />
         </div>
@@ -110,13 +120,17 @@ export function AtsConfigEditor({ atsConfig, fields, onChange }: AtsConfigEditor
           <div className="grid grid-cols-3 gap-2">
             {fieldRoles.map((role) => (
               <div key={role} className="flex items-center gap-2">
-                <code className="text-xs bg-pf-canvas-subtle px-1.5 py-0.5 rounded truncate flex-1">{role}</code>
+                <code className="text-xs bg-pf-canvas-subtle px-1.5 py-0.5 rounded truncate flex-1">
+                  {role}
+                </code>
                 <Input
                   type="number"
                   min={0}
                   max={100}
                   value={config.scoring.fieldWeights[role] ?? 0}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateFieldWeight(role, Number(e.target.value) || 0)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    updateFieldWeight(role, Number(e.target.value) || 0)
+                  }
                   className="h-7 w-16 text-xs"
                 />
               </div>
@@ -129,5 +143,8 @@ export function AtsConfigEditor({ atsConfig, fields, onChange }: AtsConfigEditor
 }
 
 function parseCommaSeparated(value: string): string[] {
-  return value.split(',').map((s) => s.trim()).filter(Boolean);
+  return value
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
 }

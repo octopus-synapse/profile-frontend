@@ -6,12 +6,11 @@
  * File dropzone and JSON text area for the first step of the import wizard.
  */
 
-import { useCallback, useRef, useState } from 'react';
-import { AlertCircle, Clipboard, FileJson, Loader2, Upload } from 'lucide-react';
 import { useI18n } from '@profile/i18n';
+import { AlertCircle, Clipboard, FileJson, Upload } from 'lucide-react';
+import { useCallback, useRef, useState } from 'react';
 import { Button } from '@/shared/components/ui';
 import { cn } from '@/shared/utils';
-import { useParseJson } from '../hooks/use-resume-import';
 
 // ============================================================================
 // Types
@@ -36,30 +35,28 @@ export function UploadStep({ onParsed }: UploadStepProps) {
   const { t } = useI18n();
   const [json, setJson] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [isParsing, setIsParsing] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
-  const parseJson = useParseJson();
 
   const handleParse = useCallback(
-    async (value: string) => {
+    (value: string) => {
       setError(null);
+      setIsParsing(true);
       if (!value.trim()) {
         setError(t('resume.import.provideJson'));
+        setIsParsing(false);
         return;
       }
       try {
-        JSON.parse(value);
+        const parsed = JSON.parse(value) as ParsedData;
+        onParsed(value, parsed);
       } catch {
         setError(t('resume.import.invalidJson'));
-        return;
-      }
-      try {
-        const parsed = await parseJson.mutateAsync({ content: value });
-        onParsed(value, parsed as unknown as ParsedData);
-      } catch {
-        setError(t('resume.import.failedParse'));
+      } finally {
+        setIsParsing(false);
       }
     },
-    [parseJson, onParsed],
+    [onParsed, t],
   );
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,16 +82,19 @@ export function UploadStep({ onParsed }: UploadStepProps) {
 
   return (
     <div className="space-y-4 p-6 pt-0">
-      <div
+      <button
+        type="button"
         onClick={() => fileRef.current?.click()}
-        className="flex cursor-pointer flex-col items-center gap-3 rounded-lg border border-dashed border-white/10 bg-white/[0.02] p-8 transition-colors hover:border-white/20 hover:bg-white/5"
+        className="flex w-full cursor-pointer flex-col items-center gap-3 rounded-lg border border-dashed border-white/10 bg-white/[0.02] p-8 transition-colors hover:border-white/20 hover:bg-white/5"
       >
         <Upload className="h-8 w-8 text-zinc-400" strokeWidth={1.5} />
         <p className="text-sm text-zinc-400">
-          {t('resume.import.dropzonePre')} <code className="rounded bg-white/10 px-1 text-zinc-300">.json</code> {t('resume.import.dropzonePost')}
+          {t('resume.import.dropzonePre')}{' '}
+          <code className="rounded bg-white/10 px-1 text-zinc-300">.json</code>{' '}
+          {t('resume.import.dropzonePost')}
         </p>
         <input ref={fileRef} type="file" accept=".json" className="hidden" onChange={handleFile} />
-      </div>
+      </button>
 
       <div className="flex items-center gap-3">
         <div className="h-px flex-1 bg-white/10" />
@@ -104,7 +104,9 @@ export function UploadStep({ onParsed }: UploadStepProps) {
 
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <label className="text-sm font-medium text-zinc-300">{t('resume.import.jsonDataLabel')}</label>
+          <label className="text-sm font-medium text-zinc-300">
+            {t('resume.import.jsonDataLabel')}
+          </label>
           <button
             type="button"
             onClick={() => void handlePaste()}
@@ -135,16 +137,12 @@ export function UploadStep({ onParsed }: UploadStepProps) {
 
       <div className="flex justify-end">
         <Button
-          onClick={() => void handleParse(json)}
-          disabled={!json.trim() || parseJson.isPending}
+          onClick={() => handleParse(json)}
+          disabled={!json.trim() || isParsing}
           className="gap-2"
         >
-          {parseJson.isPending ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <FileJson className="h-4 w-4" />
-          )}
-          {parseJson.isPending ? t('resume.import.parsing') : t('resume.import.parsePreview')}
+          <FileJson className="h-4 w-4" />
+          {t('resume.import.parsePreview')}
         </Button>
       </div>
     </div>

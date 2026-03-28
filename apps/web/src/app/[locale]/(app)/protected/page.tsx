@@ -22,10 +22,13 @@ export default function ProtectedPage() {
       <div>
         <div className="mb-4 inline-flex items-center gap-2">
           <Code2 className="h-5 w-5 text-zinc-400" strokeWidth={1.5} />
-          <span className="font-mono text-xs text-zinc-400">{'//'} {t('app.dashboard.title')}</span>
+          <span className="font-mono text-xs text-zinc-400">
+            {'//'} {t('app.dashboard.title')}
+          </span>
         </div>
         <h1 className="text-3xl font-bold text-white">
-          {t('app.dashboard.welcome')} <span className="font-normal text-zinc-400">{t('app.dashboard.developer')}</span>
+          {t('app.dashboard.welcome')}{' '}
+          <span className="font-normal text-zinc-400">{t('app.dashboard.developer')}</span>
         </h1>
         <p className="mt-2 font-mono text-sm text-zinc-400">
           <span className="text-pf-success-fg">●</span> {t('app.dashboard.authenticated')}

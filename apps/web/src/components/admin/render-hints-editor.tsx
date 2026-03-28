@@ -19,8 +19,8 @@ import {
 } from '@/shared/components/ui/select';
 import {
   ITEM_LAYOUTS,
-  LAYOUTS,
   type ItemLayout,
+  LAYOUTS,
   type LayoutType,
   type RenderHints,
 } from './types/style-config';
@@ -41,22 +41,40 @@ export function RenderHintsEditor({ renderHints, onChange }: RenderHintsEditorPr
       <div className="grid grid-cols-3 gap-3">
         <div className="space-y-1">
           <Label className="text-xs">{t('admin.sectionTypes.renderHints.layout')}</Label>
-          <Select value={renderHints.layout ?? ''} onValueChange={(v) => update({ layout: (v || undefined) as LayoutType })}>
-            <SelectTrigger className="h-8 text-sm"><SelectValue placeholder={t('admin.sectionTypes.renderHints.default')} /></SelectTrigger>
+          <Select
+            value={renderHints.layout ?? ''}
+            onValueChange={(v) => update({ layout: (v || undefined) as LayoutType })}
+          >
+            <SelectTrigger className="h-8 text-sm">
+              <SelectValue placeholder={t('admin.sectionTypes.renderHints.default')} />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="">{t('admin.sectionTypes.renderHints.default')}</SelectItem>
-              {LAYOUTS.map((l) => <SelectItem key={l} value={l}>{l}</SelectItem>)}
+              {LAYOUTS.map((l) => (
+                <SelectItem key={l} value={l}>
+                  {l}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
 
         <div className="space-y-1">
           <Label className="text-xs">{t('admin.sectionTypes.renderHints.itemLayout')}</Label>
-          <Select value={renderHints.itemLayout ?? ''} onValueChange={(v) => update({ itemLayout: (v || undefined) as ItemLayout })}>
-            <SelectTrigger className="h-8 text-sm"><SelectValue placeholder={t('admin.sectionTypes.renderHints.default')} /></SelectTrigger>
+          <Select
+            value={renderHints.itemLayout ?? ''}
+            onValueChange={(v) => update({ itemLayout: (v || undefined) as ItemLayout })}
+          >
+            <SelectTrigger className="h-8 text-sm">
+              <SelectValue placeholder={t('admin.sectionTypes.renderHints.default')} />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="">{t('admin.sectionTypes.renderHints.default')}</SelectItem>
-              {ITEM_LAYOUTS.map((l) => <SelectItem key={l} value={l}>{l}</SelectItem>)}
+              {ITEM_LAYOUTS.map((l) => (
+                <SelectItem key={l} value={l}>
+                  {l}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -69,7 +87,9 @@ export function RenderHintsEditor({ renderHints, onChange }: RenderHintsEditorPr
             max={4}
             placeholder={t('admin.sectionTypes.renderHints.auto')}
             value={renderHints.columns ?? ''}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => update({ columns: e.target.value ? Number(e.target.value) : undefined })}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              update({ columns: e.target.value ? Number(e.target.value) : undefined })
+            }
             className="h-8 text-sm"
           />
         </div>
@@ -81,7 +101,9 @@ export function RenderHintsEditor({ renderHints, onChange }: RenderHintsEditorPr
           <Input
             placeholder="MMM YYYY"
             value={renderHints.dateFormat ?? ''}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => update({ dateFormat: e.target.value || undefined })}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              update({ dateFormat: e.target.value || undefined })
+            }
             className="h-8 text-sm"
           />
         </div>
@@ -93,7 +115,9 @@ export function RenderHintsEditor({ renderHints, onChange }: RenderHintsEditorPr
               checked={renderHints.showDividers === true}
               onCheckedChange={(v) => update({ showDividers: v === true || undefined })}
             />
-            <Label htmlFor="show-dividers" className="text-xs">{t('admin.sectionTypes.renderHints.showDividers')}</Label>
+            <Label htmlFor="show-dividers" className="text-xs">
+              {t('admin.sectionTypes.renderHints.showDividers')}
+            </Label>
           </div>
         </div>
       </div>

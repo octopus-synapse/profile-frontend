@@ -5,10 +5,9 @@
 
 'use client';
 
+import { useThemesReview } from '@profile/api-client';
 import { useState } from 'react';
-import { useApproveTheme, useRejectTheme } from '../hooks';
-import type { Theme } from '../services/theme.types';
-import type { ResumeStyleConfig } from '../types/config';
+import type { ResumeStyleConfig, Theme } from '../types/config';
 import { ThemePreview } from './theme-preview';
 
 interface Props {
@@ -21,25 +20,28 @@ export function ThemeReviewModal({ theme, isOpen, onClose }: Props) {
   const [rejectionReason, setRejectionReason] = useState('');
   const [showRejectForm, setShowRejectForm] = useState(false);
 
-  const approveTheme = useApproveTheme();
-  const rejectTheme = useRejectTheme();
+  const reviewMutation = useThemesReview();
 
   if (!isOpen) return null;
 
   const handleApprove = async () => {
-    await approveTheme.mutateAsync(theme.id);
+    await reviewMutation.mutateAsync({
+      data: { themeId: theme.id, approved: true },
+    });
     onClose();
   };
 
   const handleReject = async () => {
     if (!rejectionReason.trim()) return;
-    await rejectTheme.mutateAsync({ themeId: theme.id, reason: rejectionReason });
+    await reviewMutation.mutateAsync({
+      data: { themeId: theme.id, approved: false, rejectionReason },
+    });
     onClose();
     setRejectionReason('');
     setShowRejectForm(false);
   };
 
-  const isPending = approveTheme.isPending || rejectTheme.isPending;
+  const isPending = reviewMutation.isPending;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -74,7 +76,7 @@ export function ThemeReviewModal({ theme, isOpen, onClose }: Props) {
               </p>
               <p>
                 <span className="text-muted-foreground">Created:</span>{' '}
-                {new Date(theme.createdAt).toLocaleDateString()}
+                {theme.createdAt ? new Date(theme.createdAt).toLocaleDateString() : 'Unknown'}
               </p>
             </div>
           </div>
@@ -91,7 +93,7 @@ export function ThemeReviewModal({ theme, isOpen, onClose }: Props) {
             <div>
               <h3 className="font-medium">Tags</h3>
               <div className="mt-1 flex flex-wrap gap-1">
-                {theme.tags.length > 0 ? (
+                {theme.tags && theme.tags.length > 0 ? (
                   theme.tags.map((tag) => (
                     <span key={tag} className="bg-muted rounded px-2 py-0.5 text-xs">
                       {tag}
@@ -154,7 +156,7 @@ export function ThemeReviewModal({ theme, isOpen, onClose }: Props) {
                 disabled={!rejectionReason.trim() || isPending}
                 className="bg-pf-danger-emphasis text-pf-fg-on-emphasis rounded px-4 py-2 text-sm hover:opacity-90 disabled:opacity-50"
               >
-                {rejectTheme.isPending ? 'Rejecting...' : 'Confirm Rejection'}
+                {reviewMutation.isPending ? 'Rejecting...' : 'Confirm Rejection'}
               </button>
             </>
           ) : (
@@ -173,7 +175,7 @@ export function ThemeReviewModal({ theme, isOpen, onClose }: Props) {
                 disabled={isPending}
                 className="bg-pf-success-emphasis text-pf-fg-on-emphasis rounded px-4 py-2 text-sm hover:opacity-90 disabled:opacity-50"
               >
-                {approveTheme.isPending ? 'Approving...' : 'Approve & Publish'}
+                {reviewMutation.isPending ? 'Approving...' : 'Approve & Publish'}
               </button>
             </>
           )}

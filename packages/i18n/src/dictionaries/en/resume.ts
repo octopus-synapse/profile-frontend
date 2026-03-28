@@ -10,6 +10,9 @@ export const resume = {
   'resume.builder.copied': 'Copied',
   'resume.builder.share': 'Share',
   'resume.builder.noAstData': 'No AST data',
+  'resume.builder.noAstDataHint': 'Complete the onboarding to generate your resume',
+  'resume.builder.selectTheme': 'Select a Theme',
+  'resume.builder.selectThemeHint': 'Choose a theme from the sidebar to preview your resume',
   'resume.builder.failedCopyLink': 'Failed to copy link',
   'resume.builder.sectionFallback': 'Section {index}',
 
@@ -29,14 +32,14 @@ export const resume = {
   'resume.builder.dialog.skills.title': 'Skills',
   'resume.builder.dialog.skills.description': 'Add, edit, and organize your skills',
   'resume.builder.dialog.reorder.title': 'Reorder Sections',
-  'resume.builder.dialog.reorder.description':
-    'Drag to reorder and toggle section visibility',
+  'resume.builder.dialog.reorder.description': 'Drag to reorder and toggle section visibility',
 
   // Sidebar
   'resume.sidebar.tabs.overview': 'Overview',
   'resume.sidebar.tabs.themes': 'Themes',
   'resume.sidebar.activeTheme': 'Active Theme',
   'resume.sidebar.defaultTheme': 'Modern',
+  'resume.sidebar.clickToChange': 'Click to change',
   'resume.sidebar.stats.title': 'Resume Stats',
   'resume.sidebar.stats.experience': 'Experience',
   'resume.sidebar.stats.education': 'Education',

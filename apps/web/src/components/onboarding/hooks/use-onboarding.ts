@@ -1,5 +1,5 @@
 /**
- * useOnboarding — Thin SDK wrapper for the session/commands API.
+ * useOnboarding — Orchestrates generated onboarding session/command hooks.
  * Backend owns all navigation, validation, and field definitions.
  * Frontend sends commands, receives full session state.
  */
@@ -9,6 +9,7 @@ import {
   getOnboardingGetSessionQueryKey,
   type SectionProgressDto,
   type StepMetaDto,
+  selectEnvelopeData,
   useOnboardingCompleteFromSession,
   useOnboardingGetSession,
   useOnboardingGotoStep,
@@ -24,15 +25,16 @@ type SectionData = Omit<SectionProgressDto, 'items'> & { items: SectionItem[] };
 
 export function useOnboarding() {
   const qc = useQueryClient();
-  const q = useOnboardingGetSession(undefined, { query: { staleTime: 0, retry: 1 } });
+  const q = useOnboardingGetSession(undefined, {
+    query: { staleTime: 0, retry: 1, select: selectEnvelopeData },
+  });
   const nextMut = useOnboardingNextStep();
   const prevMut = useOnboardingPreviousStep();
   const gotoMut = useOnboardingGotoStep();
   const saveMut = useOnboardingSaveStepData();
   const completeMut = useOnboardingCompleteFromSession();
 
-  // Response structure: { data: OnboardingSessionDto, status: 200 }
-  const d = q.data?.status === 200 ? q.data.data : null;
+  const d = q.data ?? null;
 
   const invalidate = async () => {
     await qc.invalidateQueries({ queryKey: getOnboardingGetSessionQueryKey() });
@@ -53,7 +55,7 @@ export function useOnboarding() {
 
   const goToPreviousStep = async () => {
     try {
-      await prevMut.mutateAsync({ data: {} });
+      await prevMut.mutateAsync({});
       await invalidate();
     } catch {
       showToast.error('Failed to go back', 'Please try again.');
@@ -71,7 +73,7 @@ export function useOnboarding() {
 
   const saveStepData = async (stepData: Record<string, unknown>) => {
     try {
-      await saveMut.mutateAsync({ data: { stepData: JSON.stringify(stepData) } });
+      await saveMut.mutateAsync({ data: stepData });
       await invalidate();
     } catch {
       showToast.error('Failed to save', 'Your changes could not be saved. Please try again.');
@@ -80,7 +82,7 @@ export function useOnboarding() {
 
   const complete = async () => {
     try {
-      const r = await completeMut.mutateAsync({ data: {} });
+      const r = await completeMut.mutateAsync();
       await invalidate();
       return r;
     } catch {

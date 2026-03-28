@@ -9,8 +9,8 @@
 
 import { useT } from '@profile/i18n';
 import { ChevronLeft, ChevronRight, Edit, MoreVertical, Trash2 } from 'lucide-react';
-import { Badge, Button, Skeleton } from '@/shared/components/ui';
 import { SectionIcon } from '@/shared/components/section-icon';
+import { Badge, Button, Skeleton } from '@/shared/components/ui';
 import {
   Dialog,
   DialogContent,
@@ -37,12 +37,24 @@ export function TableHeader() {
   return (
     <thead className="bg-pf-canvas-subtle border-pf-border-default border-b">
       <tr>
-        <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">{t('admin.sectionTypes.table.section')}</th>
-        <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">{t('admin.sectionTypes.table.title')}</th>
-        <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">{t('admin.sectionTypes.table.semanticKind')}</th>
-        <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">{t('admin.sectionTypes.table.status')}</th>
-        <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">{t('admin.sectionTypes.table.system')}</th>
-        <th className="text-pf-fg-muted px-4 py-3 text-right text-sm font-medium">{t('admin.sectionTypes.table.actions')}</th>
+        <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">
+          {t('admin.sectionTypes.table.section')}
+        </th>
+        <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">
+          {t('admin.sectionTypes.table.title')}
+        </th>
+        <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">
+          {t('admin.sectionTypes.table.semanticKind')}
+        </th>
+        <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">
+          {t('admin.sectionTypes.table.status')}
+        </th>
+        <th className="text-pf-fg-muted px-4 py-3 text-left text-sm font-medium">
+          {t('admin.sectionTypes.table.system')}
+        </th>
+        <th className="text-pf-fg-muted px-4 py-3 text-right text-sm font-medium">
+          {t('admin.sectionTypes.table.actions')}
+        </th>
       </tr>
     </thead>
   );
@@ -113,7 +125,11 @@ export function SectionTypeRow({ item, onEdit, onDelete }: SectionTypeRowProps) 
           {item.isActive ? t('admin.sectionTypes.active') : t('admin.sectionTypes.inactive')}
         </Badge>
       </td>
-      <td className="px-4 py-3">{item.isSystem && <Badge variant="warning">{t('admin.sectionTypes.table.systemBadge')}</Badge>}</td>
+      <td className="px-4 py-3">
+        {item.isSystem && (
+          <Badge variant="warning">{t('admin.sectionTypes.table.systemBadge')}</Badge>
+        )}
+      </td>
       <td className="px-4 py-3 text-right">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -165,7 +181,11 @@ export function TablePagination({
   return (
     <div className="border-pf-border-default flex items-center justify-between border-t px-4 py-3">
       <p className="text-pf-fg-muted text-sm">
-        {t('admin.sectionTypes.table.showing', { from: (page - 1) * pageSize + 1, to: Math.min(page * pageSize, total), total })}
+        {t('admin.sectionTypes.table.showing', {
+          from: (page - 1) * pageSize + 1,
+          to: Math.min(page * pageSize, total),
+          total,
+        })}
       </p>
       <div className="flex items-center gap-2">
         <Button
@@ -216,8 +236,8 @@ export function DeleteConfirmDialog({
         <DialogHeader>
           <DialogTitle>{t('admin.sectionTypes.deleteTitle')}</DialogTitle>
           <DialogDescription>
-            {t('admin.sectionTypes.deleteConfirm')} <strong>{target?.key}</strong>? This action cannot be
-            undone. All associated section data may be affected.
+            {t('admin.sectionTypes.deleteConfirm')} <strong>{target?.key}</strong>? This action
+            cannot be undone. All associated section data may be affected.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

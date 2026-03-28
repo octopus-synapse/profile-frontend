@@ -1,5 +1,3 @@
-import type { UpdateResume } from '@profile/api-client';
-
 export interface ResumeBasicsSnapshot {
   title?: string;
   fullName?: string;
@@ -44,7 +42,7 @@ export function toResumeBasicsForm(snapshot?: ResumeBasicsSnapshot): ResumeBasic
   };
 }
 
-export function toUpdateResumePayload(form: ResumeBasicsFormData): UpdateResume {
+export function toUpdateResumePayload(form: ResumeBasicsFormData) {
   return {
     title: form.title,
     fullName: form.fullName,

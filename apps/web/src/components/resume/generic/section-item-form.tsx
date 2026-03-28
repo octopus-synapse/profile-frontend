@@ -1,9 +1,11 @@
 'use client';
 
 import { Loader2 } from 'lucide-react';
-import type { FieldDefinition } from '../types/generic-section.types';
+import type { FieldDefinition } from './field-input-shared';
 import { GenericFieldInput } from './generic-field-input';
-import type { FormErrors, FormValues } from './section-editor-utils';
+
+type FormValues = Record<string, unknown>;
+type FormErrors = Record<string, string | undefined>;
 
 interface SectionItemFormProps {
   fields: FieldDefinition[];

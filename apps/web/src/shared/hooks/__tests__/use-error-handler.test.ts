@@ -59,6 +59,21 @@ describe('useErrorHandler', () => {
       expect(classified.category).toBe('conflict');
     });
 
+    it('classifies backend envelope conflict errors', () => {
+      isApiErrorMock.mockReturnValue(false);
+      const { result } = renderHook(() => useErrorHandler());
+      const classified = result.current.classifyError({
+        success: false,
+        error: {
+          code: 'CONFLICT',
+          message: 'An account with this email already exists',
+          details: {},
+        },
+      });
+      expect(classified.category).toBe('conflict');
+      expect(classified.message).toBe('An account with this email already exists');
+    });
+
     it('classifies 400 as validation', () => {
       isApiErrorMock.mockReturnValue(true);
       const { result } = renderHook(() => useErrorHandler());

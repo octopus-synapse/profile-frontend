@@ -1,11 +1,11 @@
 /**
  * Generic Item Renderer
  *
- * Renders a single section item based on its content structure.
- * Uses Style DSL from backend to determine layout and styling.
+ * Renders a single section item based on backend-provided fieldStyles.
+ * Field classification (header, date, description) is determined by the
+ * `semantic` role in fieldStyles — no hardcoded field name arrays.
  *
- * Content fields are rendered dynamically based on what's present
- * and styled according to backend-provided fieldStyles.
+ * Falls back to field-name heuristic only when fieldStyles are absent.
  */
 
 'use client';
@@ -22,130 +22,136 @@ interface GenericItemRendererProps {
   fieldStyles?: FieldStyles;
 }
 
-/**
- * Fields that typically appear as "header" content (title, subtitle, date range)
- */
-const HEADER_FIELDS = [
-  'title',
-  'name',
-  'position',
-  'role',
-  'degree',
-  'institution',
-  'company',
-  'organization',
-];
+type SemanticRole =
+  | 'title'
+  | 'subtitle'
+  | 'date'
+  | 'dateRange'
+  | 'description'
+  | 'chip'
+  | 'badge'
+  | 'location'
+  | 'link'
+  | 'email'
+  | 'phone'
+  | 'hidden';
 
-const DATE_FIELDS = ['startDate', 'endDate', 'date', 'dateRange'];
-
-const DESCRIPTION_FIELDS = [
-  'description',
-  'summary',
-  'content',
-  'achievements',
-  'responsibilities',
-];
+const HEADER_SEMANTICS: ReadonlySet<string> = new Set(['title', 'subtitle']);
+const DATE_SEMANTICS: ReadonlySet<string> = new Set(['date', 'dateRange']);
+const DESCRIPTION_SEMANTICS: ReadonlySet<string> = new Set(['description']);
+const COMPACT_SEMANTICS: ReadonlySet<string> = new Set(['chip', 'badge']);
 
 /**
- * Determines the field layout based on semantic kind
+ * Infer semantic role from field key — fallback when fieldStyles are missing.
  */
-function getFieldLayout(
+function inferSemanticRole(fieldKey: string): SemanticRole {
+  const key = fieldKey.toLowerCase();
+  if (key.includes('title') || key.includes('name') || key.includes('position')) return 'title';
+  if (key.includes('company') || key.includes('institution') || key.includes('organization'))
+    return 'subtitle';
+  if (key.includes('date') || key.includes('start') || key.includes('end')) return 'dateRange';
+  if (key.includes('description') || key.includes('summary')) return 'description';
+  if (key.includes('location')) return 'location';
+  if (key.includes('url') || key.includes('link')) return 'link';
+  if (key.includes('email')) return 'email';
+  if (key.includes('phone')) return 'phone';
+  if (key.includes('level') || key.includes('proficiency')) return 'badge';
+  if (key.includes('skill') || key.includes('category')) return 'chip';
+  return 'title';
+}
+
+function getSemanticForField(fieldKey: string, fieldStyles?: FieldStyles): string {
+  const styles = fieldStyles?.[fieldKey];
+  if (styles && typeof styles === 'object' && 'semantic' in styles) {
+    return (styles as { semantic?: string }).semantic ?? inferSemanticRole(fieldKey);
+  }
+  return inferSemanticRole(fieldKey);
+}
+
+function getFieldClasses(fieldKey: string, fieldStyles?: FieldStyles): string {
+  const styles = fieldStyles?.[fieldKey];
+  if (styles && typeof styles === 'object') {
+    return fieldStyleToClasses(styles as { class?: string });
+  }
+  const role = inferSemanticRole(fieldKey);
+  return getSemanticRoleClass(
+    role.toUpperCase() as 'TITLE' | 'SUBTITLE' | 'DATE_START' | 'DATE_END' | 'DESCRIPTION',
+  );
+}
+
+function classifyFields(
   content: Record<string, unknown>,
-  _semanticKind?: string,
+  fieldStyles?: FieldStyles,
 ): {
   headerFields: string[];
   dateFields: string[];
   descriptionFields: string[];
+  compactFields: string[];
   otherFields: string[];
 } {
   const keys = Object.keys(content);
+  const headerFields: string[] = [];
+  const dateFields: string[] = [];
+  const descriptionFields: string[] = [];
+  const compactFields: string[] = [];
+  const otherFields: string[] = [];
 
-  const headerFields = keys.filter((k) =>
-    HEADER_FIELDS.some((h) => k.toLowerCase().includes(h.toLowerCase())),
-  );
-
-  const dateFields = keys.filter((k) =>
-    DATE_FIELDS.some((d) => k.toLowerCase().includes(d.toLowerCase())),
-  );
-
-  const descriptionFields = keys.filter((k) =>
-    DESCRIPTION_FIELDS.some((d) => k.toLowerCase().includes(d.toLowerCase())),
-  );
-
-  const otherFields = keys.filter(
-    (k) => !headerFields.includes(k) && !dateFields.includes(k) && !descriptionFields.includes(k),
-  );
-
-  return { headerFields, dateFields, descriptionFields, otherFields };
-}
-
-/**
- * Get CSS classes for a field from backend fieldStyles or fallback to semantic role
- */
-function getFieldClasses(fieldKey: string, fieldStyles?: FieldStyles): string {
-  if (fieldStyles?.[fieldKey]) {
-    return fieldStyleToClasses(fieldStyles[fieldKey]);
+  for (const key of keys) {
+    const semantic = getSemanticForField(key, fieldStyles);
+    if (semantic === 'hidden') continue;
+    if (HEADER_SEMANTICS.has(semantic)) headerFields.push(key);
+    else if (DATE_SEMANTICS.has(semantic)) dateFields.push(key);
+    else if (DESCRIPTION_SEMANTICS.has(semantic)) descriptionFields.push(key);
+    else if (COMPACT_SEMANTICS.has(semantic)) compactFields.push(key);
+    else otherFields.push(key);
   }
-  // Fallback: infer semantic role from field name
-  const semanticRole = inferSemanticRole(fieldKey);
-  return getSemanticRoleClass(semanticRole);
+
+  return { headerFields, dateFields, descriptionFields, compactFields, otherFields };
 }
 
-/**
- * Infer semantic role from field key for fallback styling
- */
-function inferSemanticRole(fieldKey: string): string {
-  const key = fieldKey.toLowerCase();
-  if (key.includes('title') || key.includes('name') || key.includes('position')) return 'TITLE';
-  if (key.includes('company') || key.includes('institution') || key.includes('organization'))
-    return 'ORGANIZATION';
-  if (key.includes('date') || key.includes('start') || key.includes('end')) return 'DATE_RANGE';
-  if (key.includes('description') || key.includes('summary')) return 'DESCRIPTION';
-  if (key.includes('location')) return 'LOCATION';
-  if (key.includes('url') || key.includes('link')) return 'URL';
-  if (key.includes('email')) return 'EMAIL';
-  if (key.includes('phone')) return 'PHONE';
-  if (key.includes('level') || key.includes('proficiency')) return 'PROFICIENCY';
-  return 'DEFAULT';
+function isCompactLayout(content: Record<string, unknown>, fieldStyles?: FieldStyles): boolean {
+  const keys = Object.keys(content);
+  const semantics = keys.map((k) => getSemanticForField(k, fieldStyles));
+  return semantics.every((s) => COMPACT_SEMANTICS.has(s) || s === 'title' || s === 'badge');
 }
 
-export function GenericItemRenderer({
-  item,
-  semanticKind,
-  styles,
-  fieldStyles,
-}: GenericItemRendererProps) {
+export function GenericItemRenderer({ item, styles, fieldStyles }: GenericItemRendererProps) {
   const content = (
     typeof item.content === 'string' ? JSON.parse(item.content) : item.content
   ) as Record<string, unknown>;
-  const layout = getFieldLayout(content, semanticKind);
 
-  // For simple items (like skills), just render the name
-  if (semanticKind === 'SKILL_SET' || semanticKind === 'LANGUAGE') {
-    const name = (content.name as string) || (content.skill as string) || '';
-    const level = content.level as string | undefined;
-    const category = content.category as string | undefined;
+  if (isCompactLayout(content, fieldStyles)) {
+    const classified = classifyFields(content, fieldStyles);
+    const nameKey = classified.compactFields[0] ?? classified.headerFields[0] ?? 'name';
+    const name = String(content[nameKey] ?? '');
+    const badgeKeys = classified.compactFields.slice(1).concat(classified.otherFields);
+    const firstBadgeKey = badgeKeys[0] ?? 'level';
+    const secondBadgeKey = badgeKeys[1];
+    const badge = badgeKeys.length > 0 ? String(content[firstBadgeKey] ?? '') : '';
+    const category = secondBadgeKey ? String(content[secondBadgeKey] ?? '') : '';
 
-    // Use fieldStyles if provided
-    const nameClasses = getFieldClasses('name', fieldStyles);
-    const levelClasses = getFieldClasses('level', fieldStyles);
+    const nameClasses = getFieldClasses(nameKey, fieldStyles);
+    const levelClasses = getFieldClasses(firstBadgeKey, fieldStyles);
 
     return (
       <div className="inline-flex items-center gap-1 px-2 py-1 bg-muted rounded">
         <span className={nameClasses}>{name}</span>
-        {level && <span className={levelClasses}>• {level}</span>}
+        {badge && <span className={levelClasses}>• {badge}</span>}
         {category && <span className="text-xs text-muted-foreground">({category})</span>}
       </div>
     );
   }
 
-  // For complex items (experience, education), use structured layout
+  const { headerFields, dateFields, descriptionFields, otherFields } = classifyFields(
+    content,
+    fieldStyles,
+  );
+
   return (
     <div className="py-2 border-b border-border last:border-b-0">
-      {/* Header row: title + dates */}
       <div className="flex justify-between items-start mb-1">
         <div>
-          {layout.headerFields.map((field) => (
+          {headerFields.map((field) => (
             <div key={field} className={getFieldClasses(field, fieldStyles)}>
               <GenericFieldRenderer
                 fieldKey={field}
@@ -157,7 +163,7 @@ export function GenericItemRenderer({
           ))}
         </div>
         <div className="text-right">
-          {layout.dateFields.map((field) => (
+          {dateFields.map((field) => (
             <div key={field} className={getFieldClasses(field, fieldStyles)}>
               <GenericFieldRenderer
                 fieldKey={field}
@@ -170,8 +176,7 @@ export function GenericItemRenderer({
         </div>
       </div>
 
-      {/* Description fields */}
-      {layout.descriptionFields.map((field) => (
+      {descriptionFields.map((field) => (
         <div key={field} className={getFieldClasses(field, fieldStyles)}>
           <GenericFieldRenderer
             fieldKey={field}
@@ -182,10 +187,9 @@ export function GenericItemRenderer({
         </div>
       ))}
 
-      {/* Other fields */}
-      {layout.otherFields.length > 0 && (
+      {otherFields.length > 0 && (
         <div className="mt-2">
-          {layout.otherFields.map((field) => (
+          {otherFields.map((field) => (
             <div key={field} className={getFieldClasses(field, fieldStyles)}>
               <GenericFieldRenderer fieldKey={field} value={content[field]} styles={styles} />
             </div>

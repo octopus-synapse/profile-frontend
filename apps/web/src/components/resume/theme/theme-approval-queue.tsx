@@ -5,19 +5,22 @@
 
 'use client';
 
+import { useThemesGetPending } from '@profile/api-client';
+import { type DictionaryKey, useI18n } from '@profile/i18n';
 import { useState } from 'react';
-import { useI18n } from '@profile/i18n';
-import { usePendingThemes } from '../hooks';
-import type { Theme } from '../services/theme.types';
+import type { Theme } from '../types/config';
 import { ThemeCard } from './theme-card';
 import { ThemeReviewModal } from './theme-review-modal';
+
+type TranslationFn = (key: DictionaryKey, params?: Record<string, string | number>) => string;
 
 export function ThemeApprovalQueue() {
   const [reviewingTheme, setReviewingTheme] = useState<Theme | null>(null);
   const { t } = useI18n();
-  const { data: pendingData, isLoading, error } = usePendingThemes();
-  // usePendingThemes returns unknown[] stub - cast to Theme[]
-  const themes = pendingData as Theme[];
+  const pendingQuery = useThemesGetPending();
+  const isLoading = pendingQuery.isLoading;
+  const error = pendingQuery.error as Error | null;
+  const themes = (pendingQuery.data?.data?.data as { themes?: Theme[] } | undefined)?.themes ?? [];
 
   if (isLoading) return <LoadingSkeleton />;
   if (error) return <ErrorState error={error} t={t} />;
@@ -49,7 +52,7 @@ export function ThemeApprovalQueue() {
   );
 }
 
-function Header({ count, t }: { count: number; t: (key: string) => string }) {
+function Header({ count, t }: { count: number; t: TranslationFn }) {
   return (
     <div className="flex items-center justify-between">
       <div>
@@ -75,23 +78,23 @@ function LoadingSkeleton() {
   );
 }
 
-function EmptyState({ t }: { t: (key: string) => string }) {
+function EmptyState({ t }: { t: TranslationFn }) {
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center">
       <div className="mb-4 text-4xl">✅</div>
       <h3 className="mb-2 text-lg font-medium">{t('resume.theme.approvalQueue.allCaughtUp')}</h3>
-      <p className="text-muted-foreground max-w-sm">
-        {t('resume.theme.approvalQueue.noPending')}
-      </p>
+      <p className="text-muted-foreground max-w-sm">{t('resume.theme.approvalQueue.noPending')}</p>
     </div>
   );
 }
 
-function ErrorState({ error, t }: { error: Error; t: (key: string) => string }) {
+function ErrorState({ error, t }: { error: Error; t: TranslationFn }) {
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center">
       <div className="mb-4 text-4xl">⚠️</div>
-      <h3 className="text-pf-danger-fg mb-2 text-lg font-medium">{t('resume.theme.approvalQueue.failedLoad')}</h3>
+      <h3 className="text-pf-danger-fg mb-2 text-lg font-medium">
+        {t('resume.theme.approvalQueue.failedLoad')}
+      </h3>
       <p className="text-muted-foreground max-w-sm">
         {error.message || 'Could not load pending themes. Please try again.'}
       </p>

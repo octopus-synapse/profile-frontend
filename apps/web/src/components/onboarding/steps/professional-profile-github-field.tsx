@@ -5,13 +5,7 @@
 'use client';
 
 import { useI18n } from '@profile/i18n';
-import {
-  AlertCircle,
-  Check,
-  ExternalLink,
-  Github,
-  Loader2,
-} from 'lucide-react';
+import { AlertCircle, Check, ExternalLink, Github, Loader2 } from 'lucide-react';
 
 interface GitHubUser {
   login: string;
@@ -110,7 +104,9 @@ export function GitHubField({
       )}
 
       {!value && !githubError && (
-        <p className="mt-1 text-xs text-zinc-500">{t('onboarding.professionalProfile.githubHint')}</p>
+        <p className="mt-1 text-xs text-zinc-500">
+          {t('onboarding.professionalProfile.githubHint')}
+        </p>
       )}
     </div>
   );

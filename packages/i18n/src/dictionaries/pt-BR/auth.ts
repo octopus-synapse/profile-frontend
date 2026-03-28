@@ -115,7 +115,8 @@ export const auth = {
   'auth.2fa.done': 'Concluído',
   'auth.2fa.manualKey': 'Chave de entrada manual',
   'auth.2fa.copyAll': 'Copiar todos os códigos',
-  'auth.2fa.backupWarning': 'Cada código de backup pode ser usado apenas uma vez. Guarde-os com segurança.',
+  'auth.2fa.backupWarning':
+    'Cada código de backup pode ser usado apenas uma vez. Guarde-os com segurança.',
   'auth.2fa.qrAlt': 'QR Code 2FA',
   'auth.2fa.backupPlaceholder': 'Código de backup',
 

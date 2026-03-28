@@ -7,8 +7,8 @@
 
 'use client';
 
-import { useI18n } from '@profile/i18n';
 import type { StepFieldDto } from '@profile/api-client';
+import { useI18n } from '@profile/i18n';
 import { CheckCircle2, Plus, X } from 'lucide-react';
 import { nanoid } from 'nanoid';
 import { useCallback, useState } from 'react';
@@ -171,7 +171,9 @@ export function GenericSectionStep({ stepId }: GenericSectionStepProps) {
 
       {/* Empty state */}
       {!noData && items.length === 0 && (
-        <p className="py-4 text-center font-mono text-sm text-zinc-500">{t('onboarding.section.noItemsYet')}</p>
+        <p className="py-4 text-center font-mono text-sm text-zinc-500">
+          {t('onboarding.section.noItemsYet')}
+        </p>
       )}
 
       {/* Item count */}

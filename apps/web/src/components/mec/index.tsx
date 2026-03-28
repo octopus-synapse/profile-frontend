@@ -58,7 +58,7 @@ export function CourseAutocomplete({
       // Filter by search if provided
       if (search.length >= 2) {
         const searchLower = search.toLowerCase();
-        return institutionCourses.filter((course) =>
+        return institutionCourses.filter((course: MecCourse) =>
           course.nome.toLowerCase().includes(searchLower),
         );
       }
@@ -71,7 +71,7 @@ export function CourseAutocomplete({
 
   // Transform courses to autocomplete options
   const options: AutocompleteOption[] = React.useMemo(() => {
-    return courses.map((course) => ({
+    return courses.map((course: MecCourse) => ({
       value: String(course.codigoCurso),
       label: course.nome,
       description: [course.grau, course.modalidade].filter(Boolean).join(' • ') || 'Curso',
@@ -85,7 +85,7 @@ export function CourseAutocomplete({
     }
 
     const codigoCurso = Number(val);
-    const course = courses.find((c) => c.codigoCurso === codigoCurso);
+    const course = courses.find((c: MecCourse) => c.codigoCurso === codigoCurso);
     onValueChange?.(codigoCurso, course);
   };
 

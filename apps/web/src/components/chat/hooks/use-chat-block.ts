@@ -1,11 +1,12 @@
 'use client';
 
-import { apiFetch, CHAT_BLOCK_USERS_ROUTES } from '@profile/api-client';
 import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-} from '@tanstack/react-query';
+  apiFetch,
+  getChatBlockUsersBlockUserUrl,
+  getChatBlockUsersGetBlockedUsersUrl,
+  getChatBlockUsersUnblockUserUrl,
+} from '@profile/api-client';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 // --- Types ---
 
@@ -40,7 +41,7 @@ export function useBlockedUsers() {
     queryKey: blockKeys.list(),
     queryFn: async () => {
       const result = await apiFetch.get<BlockedUsersResponse>(
-        CHAT_BLOCK_USERS_ROUTES.CHAT_BLOCK_USERS_GET_BLOCKED_USERS,
+        getChatBlockUsersGetBlockedUsersUrl(),
       );
       return result.blockedUsers;
     },
@@ -53,10 +54,10 @@ export function useBlockUser() {
 
   return useMutation({
     mutationFn: async (params: { userId: string; reason?: string }) => {
-      const result = await apiFetch.post<BlockUserResponse>(
-        CHAT_BLOCK_USERS_ROUTES.CHAT_BLOCK_USERS_BLOCK_USER,
-        { userId: params.userId, reason: params.reason },
-      );
+      const result = await apiFetch.post<BlockUserResponse>(getChatBlockUsersBlockUserUrl(), {
+        userId: params.userId,
+        reason: params.reason,
+      });
       return result.blockedUser;
     },
     onSuccess: () => {
@@ -70,7 +71,7 @@ export function useUnblockUser() {
 
   return useMutation({
     mutationFn: async (userId: string) => {
-      await apiFetch.delete(`/api/chat/blocked/${userId}`);
+      await apiFetch.delete(getChatBlockUsersUnblockUserUrl(userId));
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: blockKeys.list() });

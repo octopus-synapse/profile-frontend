@@ -1,12 +1,12 @@
 'use client';
 
-import { useAuthSession } from '@profile/api-client';
+import { selectEnvelopeData, useAuthSession } from '@profile/api-client';
 import { ActivityFeed } from '@/components/social/activity-feed';
 import { ProfileCard } from '@/components/social/profile-card';
 
 export function FeedPage() {
-  const { data: session } = useAuthSession();
-  const user = session?.data?.user;
+  const { data: session } = useAuthSession({ query: { select: selectEnvelopeData } });
+  const user = session?.user;
 
   if (!user) {
     return null;

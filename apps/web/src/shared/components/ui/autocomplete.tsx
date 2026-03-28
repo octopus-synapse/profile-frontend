@@ -115,16 +115,16 @@ export function Autocomplete({
           aria-controls={listboxId}
           className={cn(
             'flex h-10 w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm',
-            'border border-white/10 bg-[#030303]',
-            'text-white',
-            'ring-offset-[#030303]',
-            'focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:outline-none',
+            'border border-pf-border-default bg-pf-canvas-default',
+            'text-pf-fg-default',
+            'ring-offset-pf-canvas-default',
+            'focus:ring-2 focus:ring-pf-accent-emphasis focus:ring-offset-2 focus:outline-none',
             'disabled:cursor-not-allowed disabled:opacity-50',
-            error && 'border-red-500',
+            error && 'border-pf-danger-fg',
             className,
           )}
         >
-          <span className={cn('flex-1 truncate', !displayText && 'text-zinc-500')}>
+          <span className={cn('flex-1 truncate', !displayText && 'text-pf-fg-subtle')}>
             {displayText || placeholder}
           </span>
           <div className="ml-2 flex items-center gap-1">
@@ -141,39 +141,39 @@ export function Autocomplete({
       <PopoverContent
         className={cn(
           'z-50 w-[--radix-popover-trigger-width] overflow-hidden rounded-lg p-0',
-          'border border-white/10 bg-[#0A0A0A]/95 shadow-lg',
+          'border border-pf-border-default bg-pf-canvas-subtle/95 shadow-lg',
           'animate-in fade-in-0 zoom-in-95',
         )}
         align="start"
         sideOffset={4}
       >
         {/* Search Input */}
-        <div className="flex items-center border-b border-white/10 px-3">
-          <Search className="mr-2 h-4 w-4 text-zinc-400" />
+        <div className="flex items-center border-b border-pf-border-default px-3">
+          <Search className="mr-2 h-4 w-4 text-pf-fg-muted" />
           <input
             ref={inputRef}
             type="text"
             className={cn(
               'flex h-10 w-full bg-transparent py-3 text-sm outline-none',
-              'text-white placeholder:text-zinc-600',
+              'text-pf-fg-default placeholder:text-pf-fg-subtle',
             )}
             placeholder={searchPlaceholder}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          {isLoading && <Loader2 className="h-4 w-4 animate-spin text-zinc-400" />}
+          {isLoading && <Loader2 className="h-4 w-4 animate-spin text-pf-fg-muted" />}
         </div>
 
         {/* Options List */}
         <div id={listboxId} role="listbox" className="max-h-[300px] overflow-y-auto p-1">
           {search.length < minSearchLength ? (
-            <div className="py-6 text-center text-sm text-zinc-400">
+            <div className="py-6 text-center text-sm text-pf-fg-muted">
               Digite pelo menos {minSearchLength} caracteres para buscar
             </div>
           ) : isLoading ? (
-            <div className="py-6 text-center text-sm text-zinc-400">Buscando...</div>
+            <div className="py-6 text-center text-sm text-pf-fg-muted">Buscando...</div>
           ) : options.length === 0 ? (
-            <div className="py-6 text-center text-sm text-zinc-400">{emptyMessage}</div>
+            <div className="py-6 text-center text-sm text-pf-fg-muted">{emptyMessage}</div>
           ) : (
             options.map((option) => (
               <button
@@ -181,8 +181,8 @@ export function Autocomplete({
                 key={option.value}
                 className={cn(
                   'relative flex w-full cursor-pointer items-center rounded-md px-2 py-2 text-sm outline-none select-none',
-                  'hover:bg-white/5',
-                  value === option.value && 'bg-cyan-500/10',
+                  'hover:bg-pf-hover-subtle',
+                  value === option.value && 'bg-pf-accent-subtle',
                 )}
                 onClick={() => handleSelect(option)}
               >
@@ -195,7 +195,7 @@ export function Autocomplete({
                 <div className="flex flex-col items-start overflow-hidden">
                   <span className="truncate font-medium">{option.label}</span>
                   {option.description && (
-                    <span className="truncate text-xs text-zinc-400">{option.description}</span>
+                    <span className="truncate text-xs text-pf-fg-muted">{option.description}</span>
                   )}
                 </div>
               </button>

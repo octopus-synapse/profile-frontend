@@ -7,7 +7,7 @@
 
 'use client';
 
-import { useAuthSession } from '@profile/api-client';
+import { selectEnvelopeData, useAuthSession } from '@profile/api-client';
 import { useI18n } from '@profile/i18n';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -30,9 +30,11 @@ import {
 export function OnboardingWizard() {
   const { t } = useI18n();
   const router = useRouter();
-  const { data: authSession, isLoading: isAuthLoading } = useAuthSession();
+  const { data: authSession, isLoading: isAuthLoading } = useAuthSession({
+    query: { select: selectEnvelopeData },
+  });
   const { currentStep, isLoading, isError } = useOnboarding();
-  const user = authSession?.data?.user;
+  const user = authSession?.user;
   const mustRedirectCompletedUser = shouldRedirectCompletedOnboarding({
     hasCompletedOnboarding: user?.hasCompletedOnboarding,
     currentStep,
@@ -94,7 +96,9 @@ export function OnboardingWizard() {
     return (
       <OnboardingShell>
         <div className="flex flex-col items-center justify-center gap-4 py-16 text-center">
-          <p className="text-lg font-medium">{t('onboarding.wizard.error' as Parameters<typeof t>[0])}</p>
+          <p className="text-lg font-medium">
+            {t('onboarding.wizard.error' as Parameters<typeof t>[0])}
+          </p>
           <p className="text-muted-foreground text-sm">
             We couldn&apos;t load your onboarding session. Please try again.
           </p>

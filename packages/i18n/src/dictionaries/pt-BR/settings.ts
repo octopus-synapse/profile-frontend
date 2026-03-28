@@ -14,8 +14,7 @@ export const settings = {
   'settings.profile.saveChanges': 'Salvar Alterações',
   'settings.profile.failedUpdate': 'Falha ao atualizar perfil',
   'settings.profile.failedLoad': 'Falha ao carregar perfil',
-  'settings.profile.unexpectedError':
-    'Ocorreu um erro inesperado. Por favor, tente novamente.',
+  'settings.profile.unexpectedError': 'Ocorreu um erro inesperado. Por favor, tente novamente.',
   'settings.profile.displayName': 'Nome de Exibição',
   'settings.profile.displayNamePlaceholder': 'Como você quer ser conhecido',
   'settings.profile.bio': 'Bio',
@@ -37,16 +36,14 @@ export const settings = {
   'settings.preferences.title': 'Preferências',
   'settings.preferences.description': 'Personalize sua experiência',
   'settings.preferences.visibility.title': 'Visibilidade do Perfil',
-  'settings.preferences.visibility.description':
-    'Controle quem pode ver seu perfil público',
+  'settings.preferences.visibility.description': 'Controle quem pode ver seu perfil público',
   'settings.preferences.visibility.public': 'Público',
   'settings.preferences.visibility.publicDesc': 'Qualquer pessoa pode ver',
   'settings.preferences.visibility.private': 'Privado',
   'settings.preferences.visibility.privateDesc': 'Apenas você pode ver',
   'settings.preferences.visibility.updating': 'Atualizando...',
   'settings.preferences.language.title': 'Idioma da Interface',
-  'settings.preferences.language.description':
-    'Escolha seu idioma de interface preferido',
+  'settings.preferences.language.description': 'Escolha seu idioma de interface preferido',
 
   // Danger Zone
   'settings.danger.title': 'Zona de Perigo',
@@ -83,16 +80,14 @@ export const settings = {
 
   // Two-Factor Authentication
   'settings.twoFactor.title': 'Autenticação em Dois Fatores',
-  'settings.twoFactor.description':
-    'Adicione uma camada extra de segurança à sua conta.',
+  'settings.twoFactor.description': 'Adicione uma camada extra de segurança à sua conta.',
   'settings.twoFactor.enabled': 'Ativado',
   'settings.twoFactor.disabled': 'Desativado',
   'settings.twoFactor.enable': 'Ativar 2FA',
   'settings.twoFactor.disable': 'Desativar 2FA',
   'settings.twoFactor.backupCodesRemaining': 'Códigos de backup restantes:',
   'settings.twoFactor.regenerateBackup': 'Regenerar Códigos de Backup',
-  'settings.twoFactor.disableDialogTitle':
-    'Desativar Autenticação em Dois Fatores?',
+  'settings.twoFactor.disableDialogTitle': 'Desativar Autenticação em Dois Fatores?',
   'settings.twoFactor.disableDialogDesc':
     'Isso removerá a camada extra de segurança da sua conta. Você pode reativá-la a qualquer momento.',
   'settings.twoFactor.disabling': 'Desativando…',
@@ -111,6 +106,18 @@ export const settings = {
   'settings.twoFactor.regenError': 'Falha ao regenerar códigos de backup',
   'settings.twoFactor.copySuccess': 'Códigos de backup copiados',
   'settings.twoFactor.copyError': 'Falha ao copiar códigos de backup',
+  'settings.twoFactor.notEnabled': '2FA não ativado',
+
+  // Add Section Dialog
+  'settings.sections.addNew': 'Adicionar seção',
+  'settings.sections.addNewDescription': 'Escolha um tipo de seção para adicionar ao seu currículo',
+  'settings.sections.addItemDescription': 'Preencha os detalhes abaixo',
+  'settings.sections.editItemTitle': 'Editar {section}',
+  'settings.sections.editItemDescription': 'Atualize os detalhes abaixo',
+  'settings.sections.searchPlaceholder': 'Buscar seções...',
+  'settings.sections.noResults': 'Nenhuma seção encontrada',
+  'settings.sections.yourSections': 'Suas seções',
+  'settings.sections.availableSections': 'Disponíveis',
 
   // Username Field
   'settings.username.title': 'Nome de usuário',
@@ -121,14 +128,12 @@ export const settings = {
 
   // Resume Basics
   'settings.resume.title': 'Essenciais do currículo',
-  'settings.resume.description':
-    'Edite as informações principais criadas durante o onboarding.',
+  'settings.resume.description': 'Edite as informações principais criadas durante o onboarding.',
   'settings.resume.titlePlaceholder': 'Meu Currículo',
   'settings.resume.headlinePlaceholder': 'Engenheiro de Software Sênior',
   'settings.resume.fullNamePlaceholder': 'Maria Silva',
   'settings.resume.locationPlaceholder': 'São Paulo, BR',
-  'settings.resume.summaryPlaceholder':
-    'Diga aos recrutadores o que mais importa...',
+  'settings.resume.summaryPlaceholder': 'Diga aos recrutadores o que mais importa...',
   'settings.resume.failedLoad': 'Falha ao carregar configurações do currículo',
   'settings.resume.failedLoadDesc':
     'Não foi possível carregar suas configurações de currículo ainda.',

@@ -1,6 +1,11 @@
 'use client';
 
-import { authLogout, getAuthSessionQueryKey, useAuthSession } from '@profile/api-client';
+import {
+  authLogout,
+  getAuthSessionQueryKey,
+  selectEnvelopeData,
+  useAuthSession,
+} from '@profile/api-client';
 import { type LocaleInfo, useI18n } from '@profile/i18n';
 import { useQueryClient } from '@tanstack/react-query';
 import { Search } from 'lucide-react';
@@ -23,8 +28,8 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { t, language, setLanguage, locales } = useI18n();
-  const { data } = useAuthSession();
-  const user = data?.data?.user;
+  const { data } = useAuthSession({ query: { select: selectEnvelopeData } });
+  const user = data?.user;
   const themeContext = useThemeOptional();
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState('');
@@ -189,23 +194,23 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       <div
         className={cn(
           'relative w-full max-w-lg overflow-hidden rounded-xl',
-          'border border-white/10 bg-[#0A0A0A]/95 shadow-2xl',
+          'border border-pf-border-default bg-pf-canvas-subtle/95 shadow-2xl',
           'animate-in fade-in zoom-in-95 duration-150',
         )}
       >
         {/* Search Input */}
-        <div className="flex items-center gap-3 border-b border-white/10 px-4 py-3">
-          <Search className="h-5 w-5 shrink-0 text-zinc-500" strokeWidth={1.5} />
+        <div className="flex items-center gap-3 border-b border-pf-border-default px-4 py-3">
+          <Search className="h-5 w-5 shrink-0 text-pf-fg-subtle" strokeWidth={1.5} />
           <input
             ref={inputRef}
             type="text"
             value={query}
             onChange={(e) => handleQueryChange(e.target.value)}
             placeholder={t('nav.search.commandPlaceholder')}
-            className="flex-1 bg-transparent text-sm text-white placeholder:text-zinc-500 focus:outline-none"
+            className="flex-1 bg-transparent text-sm text-pf-fg-default placeholder:text-pf-fg-subtle focus:outline-none"
             aria-label={t('nav.aria.searchCommands')}
           />
-          <kbd className="rounded bg-white/10 px-1.5 py-0.5 text-[10px] font-medium text-zinc-500">
+          <kbd className="rounded bg-pf-hover-default px-1.5 py-0.5 text-[10px] font-medium text-pf-fg-subtle">
             ESC
           </kbd>
         </div>
@@ -213,7 +218,9 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
         {/* Results */}
         <div className="max-h-[60vh] overflow-y-auto py-2">
           {filteredGroups.length === 0 ? (
-            <p className="px-4 py-8 text-center text-sm text-zinc-500">{t('nav.search.noResults')}</p>
+            <p className="px-4 py-8 text-center text-sm text-pf-fg-subtle">
+              {t('nav.search.noResults')}
+            </p>
           ) : (
             filteredGroups.map((group) => (
               <CommandGroup key={group.id} label={group.label}>

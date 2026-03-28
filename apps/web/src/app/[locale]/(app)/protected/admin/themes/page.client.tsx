@@ -5,23 +5,27 @@
  * Clean, professional design
  */
 
+import { useThemesGetPending } from '@profile/api-client';
 import { useT } from '@profile/i18n';
 import { Check, Clock, Palette, X } from 'lucide-react';
-import { ThemeApprovalQueue, usePendingThemes } from '@/components/resume';
+import { ThemeApprovalQueue } from '@/components/resume';
+import type { Theme } from '@/components/resume/types/config';
 
 export default function ThemeApprovalsClient() {
   const t = useT();
-  const { data: pendingThemes } = usePendingThemes();
-  const pendingCount = pendingThemes?.length ?? 0;
+  const pendingQuery = useThemesGetPending();
+  const pendingThemes =
+    (pendingQuery.data?.data?.data as { themes?: Theme[] } | undefined)?.themes ?? [];
+  const pendingCount = pendingThemes.length;
 
   return (
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-white text-2xl font-semibold tracking-tight">{t('admin.themes.title')}</h1>
-        <p className="text-zinc-400 mt-1 text-sm">
-          {t('admin.themes.subtitle')}
-        </p>
+        <h1 className="text-white text-2xl font-semibold tracking-tight">
+          {t('admin.themes.title')}
+        </h1>
+        <p className="text-zinc-400 mt-1 text-sm">{t('admin.themes.subtitle')}</p>
       </div>
 
       {/* Quick Status Banner */}
@@ -34,9 +38,7 @@ export default function ThemeApprovalsClient() {
             <p className="text-white text-sm font-medium">
               {t('admin.themes.pendingCount').replace('{count}', String(pendingCount))}
             </p>
-            <p className="text-zinc-400 text-xs">
-              {t('admin.themes.reviewPrompt')}
-            </p>
+            <p className="text-zinc-400 text-xs">{t('admin.themes.reviewPrompt')}</p>
           </div>
         </div>
       ) : (
@@ -53,8 +55,18 @@ export default function ThemeApprovalsClient() {
 
       {/* Stats Overview */}
       <div className="grid gap-4 md:grid-cols-3">
-        <StatsCard label={t('admin.themes.pendingReview')} value={pendingCount} icon={Clock} variant="attention" />
-        <StatsCard label={t('admin.themes.approvedToday')} value={0} icon={Check} variant="success" />
+        <StatsCard
+          label={t('admin.themes.pendingReview')}
+          value={pendingCount}
+          icon={Clock}
+          variant="attention"
+        />
+        <StatsCard
+          label={t('admin.themes.approvedToday')}
+          value={0}
+          icon={Check}
+          variant="success"
+        />
         <StatsCard label={t('admin.themes.rejectedToday')} value={0} icon={X} variant="danger" />
       </div>
 
@@ -62,7 +74,9 @@ export default function ThemeApprovalsClient() {
       <div className="border-white/10 bg-[#0A0A0A]/80 rounded-xl border">
         <div className="border-white/10 flex items-center gap-2 border-b px-6 py-4">
           <Palette className="text-zinc-400 h-5 w-5" strokeWidth={1.5} />
-          <span className="text-white text-sm font-semibold">{t('admin.themes.pendingReviews')}</span>
+          <span className="text-white text-sm font-semibold">
+            {t('admin.themes.pendingReviews')}
+          </span>
         </div>
         <div className="p-6">
           <ThemeApprovalQueue />

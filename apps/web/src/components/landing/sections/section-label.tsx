@@ -11,20 +11,15 @@ export function SectionLabel({ children, variant, centered }: SectionLabelProps)
 
   return (
     <div className={`flex items-center gap-3 ${centered ? 'justify-center' : ''}`}>
+      <span className={`h-px w-8 ${isDark ? 'bg-white/30' : 'bg-cyan-600/50'}`} />
       <span
-        className={`h-px w-8 ${isDark ? 'bg-white/20' : 'bg-cyan-600/40'}`}
-      />
-      <span
-        className={`font-mono uppercase tracking-widest ${
-          isDark ? 'text-white/35' : 'text-cyan-600'
+        className={`font-mono text-xs uppercase tracking-widest ${
+          isDark ? 'text-white/60' : 'text-cyan-600'
         }`}
-        style={{ fontSize: '0.65rem' }}
       >
         {children}
       </span>
-      <span
-        className={`h-px w-8 ${isDark ? 'bg-white/20' : 'bg-cyan-600/40'}`}
-      />
+      <span className={`h-px w-8 ${isDark ? 'bg-white/30' : 'bg-cyan-600/50'}`} />
     </div>
   );
 }

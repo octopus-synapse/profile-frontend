@@ -1,11 +1,9 @@
 'use client';
 
 import { apiFetch, CHAT_ROUTES } from '@profile/api-client';
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback } from 'react';
+import { useSocket } from '@/shared/providers/socket-provider';
 
 // --- Types ---
 
@@ -68,8 +66,7 @@ export const chatKeys = {
   all: ['chat'] as const,
   conversations: () => [...chatKeys.all, 'conversations'] as const,
   conversation: (id: string) => [...chatKeys.all, 'conversation', id] as const,
-  messages: (conversationId: string) =>
-    [...chatKeys.all, 'messages', conversationId] as const,
+  messages: (conversationId: string) => [...chatKeys.all, 'messages', conversationId] as const,
   unread: () => [...chatKeys.all, 'unread'] as const,
 };
 
@@ -79,12 +76,10 @@ export function useConversations() {
   return useQuery({
     queryKey: chatKeys.conversations(),
     queryFn: async () => {
-      const result = await apiFetch.get<ConversationsResponse>(
-        CHAT_ROUTES.CHAT_GET_CONVERSATIONS,
-      );
+      const result = await apiFetch.get<ConversationsResponse>(CHAT_ROUTES.CHAT_GET_CONVERSATIONS);
       return result.conversations;
     },
-    staleTime: 15_000,
+    staleTime: 30_000,
   });
 }
 
@@ -98,18 +93,32 @@ export function useMessages(conversationId: string) {
       return result.messages;
     },
     enabled: !!conversationId,
-    staleTime: 5_000,
+    staleTime: 60_000,
   });
 }
 
 export function useSendMessage() {
   const queryClient = useQueryClient();
+  const { socket, isConnected } = useSocket();
 
   return useMutation({
-    mutationFn: async (params: {
-      conversationId: string;
-      content: string;
-    }) => {
+    mutationFn: async (params: { conversationId: string; content: string }) => {
+      if (socket && isConnected) {
+        return new Promise<Message>((resolve, reject) => {
+          socket.emit(
+            'message:send',
+            { conversationId: params.conversationId, content: params.content },
+            (response: { success: boolean; message?: Message; error?: string }) => {
+              if (response.success && response.message) {
+                resolve(response.message);
+              } else {
+                reject(new Error(response.error ?? 'Send failed'));
+              }
+            },
+          );
+        });
+      }
+
       const result = await apiFetch.post<MessageResponse>(
         `/api/chat/conversations/${params.conversationId}/messages`,
         { content: params.content },
@@ -117,13 +126,15 @@ export function useSendMessage() {
       return result.message;
     },
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: chatKeys.messages(variables.conversationId),
-      });
-      queryClient.invalidateQueries({
-        queryKey: chatKeys.conversations(),
-      });
-      queryClient.invalidateQueries({ queryKey: chatKeys.unread() });
+      if (!socket || !isConnected) {
+        queryClient.invalidateQueries({
+          queryKey: chatKeys.messages(variables.conversationId),
+        });
+        queryClient.invalidateQueries({
+          queryKey: chatKeys.conversations(),
+        });
+        queryClient.invalidateQueries({ queryKey: chatKeys.unread() });
+      }
     },
   });
 }
@@ -132,14 +143,11 @@ export function useCreateConversation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (params: {
-      recipientId: string;
-      content: string;
-    }) => {
-      const result = await apiFetch.post<MessageResponse>(
-        CHAT_ROUTES.CHAT_SEND_MESSAGE,
-        { recipientId: params.recipientId, content: params.content },
-      );
+    mutationFn: async (params: { recipientId: string; content: string }) => {
+      const result = await apiFetch.post<MessageResponse>(CHAT_ROUTES.CHAT_SEND_MESSAGE, {
+        recipientId: params.recipientId,
+        content: params.content,
+      });
       return result.message;
     },
     onSuccess: () => {
@@ -151,13 +159,15 @@ export function useCreateConversation() {
 }
 
 export function useUnreadCount() {
+  const { isConnected } = useSocket();
+
   return useQuery({
     queryKey: chatKeys.unread(),
     queryFn: async () => {
       return apiFetch.get<UnreadCountResponse>(CHAT_ROUTES.CHAT_GET_UNREAD_COUNT);
     },
-    staleTime: 10_000,
-    refetchInterval: 30_000,
+    staleTime: 30_000,
+    refetchInterval: isConnected ? false : 30_000,
   });
 }
 
@@ -165,10 +175,26 @@ export function useConversationWith(userId: string) {
   return useQuery({
     queryKey: [...chatKeys.all, 'conversation-with', userId],
     queryFn: async () => {
-      return apiFetch.get<ConversationWithResponse>(
-        `/api/chat/conversation-with/${userId}`,
-      );
+      return apiFetch.get<ConversationWithResponse>(`/api/chat/conversation-with/${userId}`);
     },
     enabled: !!userId,
   });
+}
+
+/**
+ * Emits `message:read` via socket and invalidates unread cache.
+ */
+export function useMarkAsRead() {
+  const { socket, isConnected } = useSocket();
+  const queryClient = useQueryClient();
+
+  return useCallback(
+    (conversationId: string) => {
+      if (socket && isConnected) {
+        socket.emit('message:read', { conversationId });
+      }
+      queryClient.invalidateQueries({ queryKey: chatKeys.unread() });
+    },
+    [socket, isConnected, queryClient],
+  );
 }

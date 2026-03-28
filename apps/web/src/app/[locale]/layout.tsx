@@ -3,9 +3,9 @@
  * Handles locale-specific providers and validation
  */
 
+import { i18nConfig, type Locale } from '@profile/i18n/server';
 import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
-import { i18nConfig, type Locale } from '@profile/i18n';
 
 interface LocaleLayoutProps {
   children: ReactNode;

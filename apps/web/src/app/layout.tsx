@@ -1,8 +1,8 @@
+import { i18nConfig, type Locale } from '@profile/i18n/server';
 import type { Metadata, Viewport } from 'next';
 import { Inter, JetBrains_Mono, Syne } from 'next/font/google';
 import { headers } from 'next/headers';
 import Script from 'next/script';
-import { i18nConfig, type Locale } from '@profile/i18n';
 import { RootProvider } from '@/shared/providers';
 import { themeScript } from '@/shared/providers/theme-provider';
 import './globals.css';

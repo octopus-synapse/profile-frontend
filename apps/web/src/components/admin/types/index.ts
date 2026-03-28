@@ -2,7 +2,9 @@
  * Admin Types
  */
 
-import type { UserRole } from '../../users/types';
+import type { SessionUserResponseDtoRole } from '@profile/api-client';
+
+export type UserRole = SessionUserResponseDtoRole;
 
 export interface AdminStats {
   totalUsers: number;

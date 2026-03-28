@@ -59,7 +59,9 @@ export function SystemHealthWidget({ health, loading }: SystemHealthWidgetProps)
         <CardHeader>
           <div className="flex items-center gap-2">
             <Activity className="text-pf-fg-muted h-4 w-4" strokeWidth={1.5} />
-            <span className="text-pf-fg-default text-sm font-semibold">{t('admin.systemHealth.title')}</span>
+            <span className="text-pf-fg-default text-sm font-semibold">
+              {t('admin.systemHealth.title')}
+            </span>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -102,7 +104,9 @@ export function SystemHealthWidget({ health, loading }: SystemHealthWidgetProps)
                 <div className="bg-pf-canvas-subtle flex h-10 w-10 items-center justify-center rounded-lg">
                   <service.icon className="text-pf-fg-muted h-5 w-5" strokeWidth={1.5} />
                 </div>
-                <span className="text-pf-fg-default text-sm font-medium">{t(service.labelKey)}</span>
+                <span className="text-pf-fg-default text-sm font-medium">
+                  {t(service.labelKey)}
+                </span>
               </div>
               <div
                 className={cn(

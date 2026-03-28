@@ -7,6 +7,12 @@
  */
 
 import {
+  type ImportJobDto,
+  useResumeImportCancel,
+  useResumeImportGetHistory,
+  useResumeImportRetry,
+} from '@profile/api-client';
+import {
   AlertCircle,
   CheckCircle2,
   Clock,
@@ -20,12 +26,6 @@ import {
 import { Badge, Button, Skeleton } from '@/shared/components/ui';
 import { showToast } from '@/shared/components/ui/toast';
 import { cn } from '@/shared/utils';
-import {
-  type ImportJob,
-  useCancelImport,
-  useImportHistory,
-  useRetryImport,
-} from '../hooks/use-resume-import';
 
 // ============================================================================
 // Status Config
@@ -67,15 +67,13 @@ function ImportStatusBadge({ status }: { status: string }) {
 // Row Actions
 // ============================================================================
 
-function RowActions({ job }: { job: ImportJob }) {
-  const retryImport = useRetryImport();
-  const cancelImport = useCancelImport();
-
-  const id = job.importId as string;
+function RowActions({ job }: { job: ImportJobDto }) {
+  const retryMutation = useResumeImportRetry();
+  const cancelMutation = useResumeImportCancel();
 
   const handleRetry = async () => {
     try {
-      await retryImport.mutateAsync(id);
+      await retryMutation.mutateAsync({ importId: job.id, data: {} });
       showToast.success('Import restarted');
     } catch {
       showToast.error('Failed to retry import');
@@ -84,7 +82,7 @@ function RowActions({ job }: { job: ImportJob }) {
 
   const handleCancel = async () => {
     try {
-      await cancelImport.mutateAsync(id);
+      await cancelMutation.mutateAsync({ importId: job.id });
       showToast.info('Import cancelled');
     } catch {
       showToast.error('Failed to cancel import');
@@ -97,10 +95,10 @@ function RowActions({ job }: { job: ImportJob }) {
         <Button
           variant="outline"
           onClick={() => void handleRetry()}
-          disabled={retryImport.isPending}
+          disabled={retryMutation.isPending}
           className="h-8 gap-1.5 px-3 text-xs"
         >
-          {retryImport.isPending ? (
+          {retryMutation.isPending ? (
             <Loader2 className="h-3.5 w-3.5 animate-spin" />
           ) : (
             <RefreshCw className="h-3.5 w-3.5" />
@@ -113,10 +111,10 @@ function RowActions({ job }: { job: ImportJob }) {
         <Button
           variant="outline"
           onClick={() => void handleCancel()}
-          disabled={cancelImport.isPending}
+          disabled={cancelMutation.isPending}
           className="h-8 gap-1.5 px-3 text-xs"
         >
-          {cancelImport.isPending ? (
+          {cancelMutation.isPending ? (
             <Loader2 className="h-3.5 w-3.5 animate-spin" />
           ) : (
             <XCircle className="h-3.5 w-3.5" />
@@ -141,14 +139,14 @@ function RowActions({ job }: { job: ImportJob }) {
 // Job Row
 // ============================================================================
 
-function JobRow({ job }: { job: ImportJob }) {
+function JobRow({ job }: { job: ImportJobDto }) {
   return (
     <div className="flex items-center justify-between gap-4 rounded-lg border border-white/10 bg-white/[0.02] p-4 transition-colors hover:bg-white/5">
       <div className="flex items-center gap-4">
         <div className="flex h-8 w-8 items-center justify-center rounded-md bg-white/5">
           <FileJson className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
         </div>
-        <span className="text-sm font-medium text-white">{String(job.importId).slice(0, 8)}…</span>
+        <span className="text-sm font-medium text-white">{job.id.slice(0, 8)}…</span>
         <ImportStatusBadge status={job.status} />
       </div>
       <RowActions job={job} />
@@ -191,9 +189,7 @@ function ImportHistoryEmpty() {
         <Inbox className="h-8 w-8 text-zinc-400" strokeWidth={1.5} />
       </div>
       <p className="text-base font-medium text-white">No imports yet</p>
-      <p className="mt-1 text-sm text-zinc-400">
-        Import a resume to see your history here.
-      </p>
+      <p className="mt-1 text-sm text-zinc-400">Import a resume to see your history here.</p>
     </div>
   );
 }
@@ -203,18 +199,19 @@ function ImportHistoryEmpty() {
 // ============================================================================
 
 export function ImportHistory() {
-  const { data: jobs, isLoading } = useImportHistory();
+  const historyQuery = useResumeImportGetHistory();
+  const jobs = (historyQuery.data?.data?.data as ImportJobDto[] | undefined) ?? [];
 
-  if (isLoading) return <ImportHistorySkeleton />;
+  if (historyQuery.isLoading) return <ImportHistorySkeleton />;
 
-  if (!jobs?.length) return <ImportHistoryEmpty />;
+  if (!jobs.length) return <ImportHistoryEmpty />;
 
   return (
     <div className="space-y-3">
       <h2 className="text-lg font-semibold text-white">Import History</h2>
       <div className="space-y-2">
         {jobs.map((job) => (
-          <JobRow key={job.importId} job={job} />
+          <JobRow key={job.id} job={job} />
         ))}
       </div>
     </div>

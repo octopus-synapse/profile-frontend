@@ -37,9 +37,18 @@ import {
   buildTranslationsPayload,
   buildUpdatePayload,
 } from './section-type-form-helpers';
+import {
+  type FieldDefinition,
+  parseDefinition,
+  serializeDefinition,
+} from './types/field-definition';
 import type { SectionTypeData } from './types/section-types';
-import { parseDefinition, serializeDefinition, type FieldDefinition } from './types/field-definition';
-import { parseRenderHints, parseFieldStyles, type RenderHints, type FieldStylesMap } from './types/style-config';
+import {
+  type FieldStylesMap,
+  parseFieldStyles,
+  parseRenderHints,
+  type RenderHints,
+} from './types/style-config';
 
 // ============================================================================
 // Types
@@ -82,14 +91,14 @@ export function SectionTypeFormDialog({
   const [translations, setTranslations] = useState<Record<TranslationLocale, TranslationFields>>(
     () => buildTranslationState(sectionType),
   );
-  const [definition, setDefinition] = useState<FieldDefinition>(
-    () => parseDefinition(sectionType?.definition ?? {}),
+  const [definition, setDefinition] = useState<FieldDefinition>(() =>
+    parseDefinition(sectionType?.definition ?? {}),
   );
-  const [renderHints, setRenderHints] = useState<RenderHints>(
-    () => parseRenderHints(sectionType?.renderHints),
+  const [renderHints, setRenderHints] = useState<RenderHints>(() =>
+    parseRenderHints(sectionType?.renderHints),
   );
-  const [fieldStyles, setFieldStyles] = useState<FieldStylesMap>(
-    () => parseFieldStyles(sectionType?.fieldStyles),
+  const [fieldStyles, setFieldStyles] = useState<FieldStylesMap>(() =>
+    parseFieldStyles(sectionType?.fieldStyles),
   );
 
   const isPending = createMutation.isPending || updateMutation.isPending;
@@ -102,7 +111,11 @@ export function SectionTypeFormDialog({
 
     const translationErrors = getTranslationErrors(translations);
     if (translationErrors.length > 0) {
-      showToast.error(t('admin.sectionTypes.form.translationIncomplete', { error: translationErrors[0] }));
+      showToast.error(
+        t('admin.sectionTypes.form.translationIncomplete', {
+          error: translationErrors[0] ?? 'Unknown error',
+        }),
+      );
       return;
     }
 
@@ -155,7 +168,9 @@ export function SectionTypeFormDialog({
       <DialogContent className="max-h-[85vh] max-w-3xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            {mode === 'create' ? t('admin.sectionTypes.form.createTitle') : t('admin.sectionTypes.form.editTitle')}
+            {mode === 'create'
+              ? t('admin.sectionTypes.form.createTitle')
+              : t('admin.sectionTypes.form.editTitle')}
           </DialogTitle>
           <DialogDescription>
             {mode === 'create'
@@ -206,7 +221,11 @@ export function SectionTypeFormDialog({
 
           <RenderHintsEditor renderHints={renderHints} onChange={setRenderHints} />
 
-          <FieldStylesEditor fields={definition.fields} fieldStyles={fieldStyles} onChange={setFieldStyles} />
+          <FieldStylesEditor
+            fields={definition.fields}
+            fieldStyles={fieldStyles}
+            onChange={setFieldStyles}
+          />
         </div>
 
         <DialogFooter>
@@ -214,7 +233,9 @@ export function SectionTypeFormDialog({
             {t('action.cancel')}
           </Button>
           <Button onClick={() => void handleSubmit()} loading={isPending}>
-            {mode === 'create' ? t('admin.sectionTypes.form.createButton') : t('admin.sectionTypes.form.saveButton')}
+            {mode === 'create'
+              ? t('admin.sectionTypes.form.createButton')
+              : t('admin.sectionTypes.form.saveButton')}
           </Button>
         </DialogFooter>
       </DialogContent>

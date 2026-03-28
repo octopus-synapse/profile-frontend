@@ -118,7 +118,8 @@ export const admin = {
   'admin.sectionTypes.form.saveFailed': 'Falha ao criar/atualizar o tipo de seção',
   'admin.sectionTypes.form.createTitle': 'Criar Tipo de Seção',
   'admin.sectionTypes.form.editTitle': 'Editar Tipo de Seção',
-  'admin.sectionTypes.form.createDescription': 'Defina um novo tipo de seção de currículo com traduções',
+  'admin.sectionTypes.form.createDescription':
+    'Defina um novo tipo de seção de currículo com traduções',
   'admin.sectionTypes.form.editDescription': 'Editando tipo de seção: {key}',
   'admin.sectionTypes.form.createButton': 'Criar',
   'admin.sectionTypes.form.saveButton': 'Salvar Alterações',
@@ -143,7 +144,8 @@ export const admin = {
   // Field definitions
   'admin.sectionTypes.fields.title': 'Definições de Campos',
   'admin.sectionTypes.fields.count': '{count} campo(s)',
-  'admin.sectionTypes.fields.empty': 'Nenhum campo definido. Adicione campos para configurar este tipo de seção.',
+  'admin.sectionTypes.fields.empty':
+    'Nenhum campo definido. Adicione campos para configurar este tipo de seção.',
   'admin.sectionTypes.fields.add': '+ Adicionar Campo',
   'admin.sectionTypes.fields.moveUp': 'Mover acima',
   'admin.sectionTypes.fields.moveDown': 'Mover abaixo',
@@ -189,7 +191,8 @@ export const admin = {
 
   // Field styles
   'admin.sectionTypes.fieldStyles.title': 'Estilos de Campo',
-  'admin.sectionTypes.fieldStyles.empty': 'Adicione definições de campos primeiro para configurar estilos.',
+  'admin.sectionTypes.fieldStyles.empty':
+    'Adicione definições de campos primeiro para configurar estilos.',
   'admin.sectionTypes.fieldStyles.field': 'Campo',
   'admin.sectionTypes.fieldStyles.semantic': 'Semântico',
   'admin.sectionTypes.fieldStyles.widget': 'Widget',

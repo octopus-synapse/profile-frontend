@@ -13,9 +13,7 @@ export function FooterSection() {
             <p className="text-lg font-black tracking-tight text-white">
               PATCH<span className="text-cyan-500">.</span>
             </p>
-            <p className="mt-1 text-sm text-zinc-500">
-              {t('landing.footer.tagline')}
-            </p>
+            <p className="mt-1 text-sm text-zinc-500">{t('landing.footer.tagline')}</p>
           </div>
 
           <nav className="flex items-center gap-6 text-sm text-zinc-500">
@@ -26,10 +24,10 @@ export function FooterSection() {
               {t('landing.footer.terms')}
             </a>
             <a
-              href="mailto:oi@patchcareers.com"
+              href={`mailto:${t('landing.footer.email')}`}
               className="transition-colors hover:text-cyan-400"
             >
-              oi@patchcareers.com
+              {t('landing.footer.email')}
             </a>
           </nav>
         </div>

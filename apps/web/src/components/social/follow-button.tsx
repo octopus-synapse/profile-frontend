@@ -4,11 +4,7 @@ import { useT } from '@profile/i18n';
 import { Loader2, UserMinus, UserPlus } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/shared/utils';
-import {
-  useFollowUser,
-  useIsFollowing,
-  useUnfollowUser,
-} from './hooks/use-social';
+import { useFollowUser, useIsFollowing, useUnfollowUser } from './hooks/use-social';
 
 // ============================================================================
 // Types

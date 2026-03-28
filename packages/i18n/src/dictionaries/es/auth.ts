@@ -116,7 +116,8 @@ export const auth = {
   'auth.2fa.done': 'Listo',
   'auth.2fa.manualKey': 'Clave de ingreso manual',
   'auth.2fa.copyAll': 'Copiar todos los códigos',
-  'auth.2fa.backupWarning': 'Cada código de respaldo se puede usar solo una vez. Guardalos de forma segura.',
+  'auth.2fa.backupWarning':
+    'Cada código de respaldo se puede usar solo una vez. Guardalos de forma segura.',
   'auth.2fa.qrAlt': 'Código QR 2FA',
   'auth.2fa.backupPlaceholder': 'Código de respaldo',
 

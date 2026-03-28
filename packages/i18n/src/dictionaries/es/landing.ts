@@ -171,8 +171,7 @@ export const landing = {
   'landing.pricing.feature6': 'PDF optimizado para ATS',
   'landing.pricing.faqTitle': 'Preguntas rápidas',
   'landing.pricing.faq1Question': '¿Puedo cancelar cuando quiera?',
-  'landing.pricing.faq1Answer':
-    'Sí. Cancelá con un clic, sin multa, sin preguntas.',
+  'landing.pricing.faq1Answer': 'Sí. Cancelá con un clic, sin multa, sin preguntas.',
   'landing.pricing.faq2Question': '¿Cómo funciona el auto-apply?',
   'landing.pricing.faq2Answer':
     'Patch identifica vacantes que encajan con tu perfil, adapta tu currículum y envía la postulación automáticamente. Vos revisás y aprobás.',
