@@ -1,83 +1,30 @@
 'use client';
 
-import { Button } from '@octopus-synapse/profile-ui';
 import { useI18n } from '@profile/i18n';
-import { AnimatePresence, motion } from 'framer-motion';
-import { CheckCircle, Pause, Play, RefreshCw } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { PIPELINE_BATCH_SIZE, PIPELINE_JOBS } from '../data';
-
-type Phase = 'appearing' | 'checking' | 'sliding' | 'done';
-const TOTAL = PIPELINE_JOBS.length / PIPELINE_BATCH_SIZE;
+import { usePipelineAnimation } from '../hooks';
+import { PipelineCard } from './pipeline';
 
 export function PipelineSection() {
   const { t } = useI18n();
-  const [batch, setBatch] = useState(0);
-  const [visible, setVisible] = useState(0);
-  const [checked, setChecked] = useState(0);
-  const [phase, setPhase] = useState<Phase>('appearing');
-  const [paused, setPaused] = useState(false);
-  const [reduced, setReduced] = useState(false);
-
-  useEffect(() => {
-    setReduced(window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  }, []);
-
-  useEffect(() => {
-    if (paused || reduced || phase === 'done') return;
-    let ms: number;
-    let fn: () => void;
-
-    if (phase === 'appearing' && visible < PIPELINE_BATCH_SIZE) {
-      ms = 200;
-      fn = () => setVisible((v) => v + 1);
-    } else if (phase === 'appearing') {
-      ms = 300;
-      fn = () => setPhase('checking');
-    } else if (phase === 'checking' && checked < PIPELINE_BATCH_SIZE) {
-      ms = 300;
-      fn = () => setChecked((c) => c + 1);
-    } else if (phase === 'checking') {
-      ms = 500;
-      fn = () => setPhase('sliding');
-    } else if (phase === 'sliding') {
-      ms = 600;
-      fn =
-        batch < TOTAL - 1
-          ? () => {
-              setBatch((b) => b + 1);
-              setVisible(0);
-              setChecked(0);
-              setPhase('appearing');
-            }
-          : () => setPhase('done');
-    } else {
-      return;
-    }
-
-    const id = setTimeout(fn, ms);
-    return () => clearTimeout(id);
-  }, [phase, visible, checked, batch, paused, reduced]);
-
-  const restart = () => {
-    setBatch(0);
-    setVisible(0);
-    setChecked(0);
-    setPhase('appearing');
-    setPaused(false);
-  };
+  const { batch, visible, checked, phase, paused, reduced, setPaused, restart } =
+    usePipelineAnimation();
 
   const jobs = reduced
     ? PIPELINE_JOBS.slice(0, PIPELINE_BATCH_SIZE)
     : PIPELINE_JOBS.slice(batch * PIPELINE_BATCH_SIZE, (batch + 1) * PIPELINE_BATCH_SIZE);
   const shown = reduced ? PIPELINE_BATCH_SIZE : visible;
 
-  const badge =
-    phase === 'done'
-      ? { text: t('landing.pipeline.statusCompleted'), cls: 'bg-green-500/20 text-green-400' }
-      : paused
-        ? { text: t('landing.pipeline.statusPaused'), cls: 'bg-yellow-500/20 text-yellow-400' }
-        : { text: t('landing.pipeline.statusExecuting'), cls: 'bg-cyan-500/20 text-cyan-400' };
+  const badge = useMemo(() => {
+    if (phase === 'done') {
+      return { text: t('landing.pipeline.statusCompleted'), cls: 'bg-green-500/20 text-green-400' };
+    }
+    if (paused) {
+      return { text: t('landing.pipeline.statusPaused'), cls: 'bg-yellow-500/20 text-yellow-400' };
+    }
+    return { text: t('landing.pipeline.statusExecuting'), cls: 'bg-cyan-500/20 text-cyan-400' };
+  }, [phase, paused, t]);
 
   const confetti = useMemo(
     () =>
@@ -136,189 +83,5 @@ function PipelineHeader({ t }: { t: ReturnType<typeof useI18n>['t'] }) {
         </span>
       </p>
     </div>
-  );
-}
-
-function PipelineCard(props: {
-  t: ReturnType<typeof useI18n>['t'];
-  badge: { text: string; cls: string };
-  phase: Phase;
-  paused: boolean;
-  setPaused: (p: boolean) => void;
-  jobs: typeof PIPELINE_JOBS;
-  shown: number;
-  checked: number;
-  reduced: boolean;
-  batch: number;
-  confetti: { id: number; left: string; delay: number; dur: number; color: string; size: number }[];
-  stats: { key: string; value: string }[];
-  restart: () => void;
-}) {
-  const {
-    t,
-    badge,
-    phase,
-    paused,
-    setPaused,
-    jobs,
-    shown,
-    checked,
-    reduced,
-    batch,
-    confetti,
-    stats,
-    restart,
-  } = props;
-
-  return (
-    <div className="w-full flex-1">
-      <div className="rounded-2xl border border-zinc-200 bg-zinc-900 p-8">
-        <div className="mb-6 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="font-mono text-sm text-zinc-300">
-              {t('landing.pipeline.autoApply')}
-            </span>
-            <span
-              className={`rounded-full px-2 py-0.5 font-mono text-[10px] uppercase ${badge.cls}`}
-            >
-              {badge.text}
-            </span>
-          </div>
-          {phase !== 'done' && (
-            <Button
-              type="button"
-              variant="ghost"
-              tone="neutral"
-              size="sm"
-              iconOnly
-              aria-label={paused ? 'Resume' : 'Pause'}
-              onPress={() => setPaused(!paused)}
-            >
-              {paused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
-            </Button>
-          )}
-        </div>
-
-        <div className="relative min-h-[240px] overflow-hidden">
-          <AnimatePresence mode="wait">
-            {phase === 'done' ? (
-              <PipelineSummary confetti={confetti} stats={stats} t={t} restart={restart} />
-            ) : (
-              <PipelineJobList
-                jobs={jobs}
-                shown={shown}
-                checked={checked}
-                reduced={reduced}
-                batch={batch}
-              />
-            )}
-          </AnimatePresence>
-        </div>
-
-        <div className="mt-6 border-t border-white/[0.07] pt-4">
-          <p className="font-mono text-xs text-zinc-500">{t('landing.pipeline.footerStats')}</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function PipelineSummary(props: {
-  confetti: { id: number; left: string; delay: number; dur: number; color: string; size: number }[];
-  stats: { key: string; value: string }[];
-  t: ReturnType<typeof useI18n>['t'];
-  restart: () => void;
-}) {
-  const { confetti, stats, t, restart } = props;
-
-  return (
-    <motion.div
-      key="summary"
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className="flex flex-col items-center py-8"
-    >
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        {confetti.map((c) => (
-          <motion.div
-            key={c.id}
-            className="absolute top-0"
-            style={{
-              left: c.left,
-              width: c.size,
-              height: c.size,
-              backgroundColor: c.color,
-              borderRadius: 2,
-            }}
-            initial={{ opacity: 1, y: -20, rotate: 0 }}
-            animate={{ opacity: 0, y: 200, rotate: 720 }}
-            transition={{ duration: c.dur, delay: c.delay, ease: 'easeOut' }}
-          />
-        ))}
-      </div>
-      <p className="mb-1 font-mono text-xs uppercase text-green-400">
-        {t('landing.pipeline.completed')}
-      </p>
-      <p className="mb-6 text-xl font-bold text-white">{t('landing.pipeline.summaryTitle')}</p>
-      <div className="grid w-full grid-cols-2 gap-4 text-center">
-        {stats.map((s) => (
-          <div key={s.key} className="rounded-lg bg-zinc-800/50 p-3">
-            <p className="font-mono text-2xl font-bold text-cyan-400">{s.value}</p>
-            <p className="text-xs text-zinc-500">{t(s.key as 'landing.pipeline.applications')}</p>
-          </div>
-        ))}
-      </div>
-      <span className="mt-6 block">
-        <Button
-          type="button"
-          variant="ghost"
-          tone="neutral"
-          size="sm"
-          leftIcon={<RefreshCw className="h-4 w-4" />}
-          onPress={restart}
-        >
-          {t('landing.pipeline.restart')}
-        </Button>
-      </span>
-    </motion.div>
-  );
-}
-
-function PipelineJobList(props: {
-  jobs: typeof PIPELINE_JOBS;
-  shown: number;
-  checked: number;
-  reduced: boolean;
-  batch: number;
-}) {
-  const { jobs, shown, checked, reduced, batch } = props;
-
-  return (
-    <motion.div
-      key={`batch-${batch}`}
-      exit={{ x: 100, opacity: 0 }}
-      transition={{ duration: 0.3 }}
-      className="space-y-3"
-    >
-      {jobs.slice(0, shown).map((job, i) => (
-        <motion.div
-          key={`${job.company}-${batch}`}
-          initial={reduced ? false : { opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.2 }}
-          className="flex items-center justify-between rounded-sm border-l-4 border-cyan-500 bg-zinc-800 p-4"
-        >
-          <div>
-            <p className="text-sm font-bold text-zinc-100">
-              {job.role} @ {job.company}
-            </p>
-            <p className="font-mono text-xs text-zinc-400">
-              Score: {job.score}% · {job.detail}
-            </p>
-          </div>
-          {(reduced || i < checked) && <CheckCircle className="h-5 w-5 text-green-400" />}
-        </motion.div>
-      ))}
-    </motion.div>
   );
 }

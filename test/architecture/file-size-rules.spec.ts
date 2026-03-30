@@ -31,14 +31,8 @@ const SKIP_DIRS = new Set([
 // Files that exceed the 300-line hard limit.
 // These are tracked debt - remove from this list as files are refactored.
 // Target: 0 files in this list.
-const HARD_LIMIT_GRANDFATHERED = new Set([
-  // SVG chart with many inline paths - needs decomposition
-  'apps/web/src/components/landing/sections/chart/chart-svg.tsx',
-  // Command palette - complex keyboard navigation
-  'apps/web/src/components/navigation/command-palette/index.tsx',
-  // Pipeline animation state machine
-  'apps/web/src/components/landing/sections/pipeline-section.tsx',
-]);
+// 🎉 All files refactored! No more exceptions needed.
+const HARD_LIMIT_GRANDFATHERED = new Set<string>([]);
 
 interface FileSizeViolation {
   file: string;
