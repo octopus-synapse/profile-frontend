@@ -1,6 +1,7 @@
 'use client';
 
-import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Button } from '@octopus-synapse/profile-ui';
+import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 
 interface SectionVisibilityToggleProps {
@@ -34,27 +35,18 @@ export function SectionVisibilityToggle({
   };
 
   return (
-    <button
+    <Button
       type="button"
-      onClick={handleToggle}
+      variant="ghost"
+      tone="neutral"
+      size="sm"
+      loading={isPending}
       disabled={isPending}
-      className="flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-50"
       aria-label={`${optimisticVisible ? 'Hide' : 'Show'} ${label}`}
+      leftIcon={optimisticVisible ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+      onPress={() => void handleToggle()}
     >
-      {isPending ? (
-        <Loader2 className="h-4 w-4 animate-spin text-zinc-400" />
-      ) : optimisticVisible ? (
-        <Eye className="h-4 w-4 text-zinc-600 dark:text-zinc-300" />
-      ) : (
-        <EyeOff className="h-4 w-4 text-zinc-400" />
-      )}
-      <span
-        className={
-          optimisticVisible ? 'text-zinc-900 dark:text-zinc-100' : 'text-zinc-400 line-through'
-        }
-      >
-        {label}
-      </span>
-    </button>
+      <span className={optimisticVisible ? '' : 'line-through opacity-50'}>{label}</span>
+    </Button>
   );
 }

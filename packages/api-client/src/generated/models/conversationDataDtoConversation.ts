@@ -35,5 +35,15 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
+import type { ConversationDataDtoConversationLastMessage } from './conversationDataDtoConversationLastMessage';
+import type { ConversationDataDtoConversationParticipant } from './conversationDataDtoConversationParticipant';
 
-export type ConversationDataDtoConversation = { [key: string]: unknown };
+export type ConversationDataDtoConversation = {
+  id: string;
+  participant: ConversationDataDtoConversationParticipant;
+  /** @nullable */
+  lastMessage: ConversationDataDtoConversationLastMessage;
+  unreadCount: number;
+  createdAt: string;
+  updatedAt: string;
+};

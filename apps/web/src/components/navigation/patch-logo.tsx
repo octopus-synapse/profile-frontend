@@ -153,15 +153,7 @@ export function PatchLogo({ className }: PatchLogoProps) {
 
       <ellipse cx="27" cy="27" rx="9" ry="2.5" fill="#3a3a3a" />
 
-      <ellipse
-        cx="27"
-        cy="26.5"
-        rx="5"
-        ry="1.5"
-        fill="white"
-        opacity="0.8"
-        filter="blur(0.5px)"
-      />
+      <ellipse cx="27" cy="26.5" rx="5" ry="1.5" fill="white" opacity="0.8" filter="blur(0.5px)" />
 
       {/* Reflexo extra na lateral da tampa */}
       <path

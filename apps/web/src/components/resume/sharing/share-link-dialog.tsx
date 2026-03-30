@@ -1,9 +1,5 @@
 'use client';
 
-import { apiFetch, getResumesCreateShareUrl } from '@profile/api-client';
-import { useMutation } from '@tanstack/react-query';
-import { Check, Copy, Loader2 } from 'lucide-react';
-import { useCallback, useState } from 'react';
 import {
   Button,
   Dialog,
@@ -15,8 +11,13 @@ import {
   Input,
   Label,
   Switch,
-} from '@/shared/components/ui';
-import { showToast } from '@/shared/components/ui/toast';
+  showToast,
+} from '@octopus-synapse/profile-ui';
+import { apiFetch, getResumesCreateShareUrl } from '@profile/api-client';
+import { useI18n } from '@profile/i18n';
+import { useMutation } from '@tanstack/react-query';
+import { Check, Copy, Loader2 } from 'lucide-react';
+import { useCallback, useState } from 'react';
 import { useCopyFeedback } from '@/shared/hooks/use-copy-feedback';
 
 import { buildFullUrl, type ShareLink } from './share-utils';
@@ -97,6 +98,7 @@ interface ShareLinkDialogProps {
 }
 
 export function ShareLinkDialog({ resumeId, open, onOpenChange, onCreated }: ShareLinkDialogProps) {
+  const { t } = useI18n();
   const [usePassword, setUsePassword] = useState(false);
   const [password, setPassword] = useState('');
   const [expiresAt, setExpiresAt] = useState('');
@@ -143,8 +145,8 @@ export function ShareLinkDialog({ resumeId, open, onOpenChange, onCreated }: Sha
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Create Share Link</DialogTitle>
-          <DialogDescription>Generate a link to share your resume publicly.</DialogDescription>
+          <DialogTitle>{t('resume.sharing.createLink')}</DialogTitle>
+          <DialogDescription>{t('resume.sharing.createLinkDesc')}</DialogDescription>
         </DialogHeader>
 
         {createdLink ? (
@@ -152,21 +154,21 @@ export function ShareLinkDialog({ resumeId, open, onOpenChange, onCreated }: Sha
         ) : (
           <div className="space-y-4 py-2">
             <div className="flex items-center justify-between">
-              <Label htmlFor="use-password">Password protection</Label>
+              <Label htmlFor="use-password">{t('resume.sharing.passwordProtection')}</Label>
               <Switch id="use-password" checked={usePassword} onCheckedChange={setUsePassword} />
             </div>
 
             {usePassword && (
               <Input
                 type="password"
-                placeholder="Enter password"
+                placeholder={t('resume.sharing.passwordPlaceholder')}
                 value={password}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
               />
             )}
 
             <div className="space-y-1.5">
-              <Label htmlFor="expires-at">Expiry date (optional)</Label>
+              <Label htmlFor="expires-at">{t('resume.sharing.expiryDate')}</Label>
               <Input
                 id="expires-at"
                 type="date"
@@ -181,7 +183,7 @@ export function ShareLinkDialog({ resumeId, open, onOpenChange, onCreated }: Sha
         <DialogFooter>
           {createdLink ? (
             <Button type="button" onClick={() => handleOpenChange(false)}>
-              Done
+              {t('resume.sharing.done')}
             </Button>
           ) : (
             <Button

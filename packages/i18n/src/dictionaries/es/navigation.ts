@@ -40,6 +40,8 @@ export const navigation = {
   // Groups
   'nav.group.main': 'Principal',
   'nav.group.admin': 'Administración',
+  'nav.group.users': 'Usuarios',
+  'nav.group.actions': 'Acciones',
 
   // Mobile
   'nav.mobile.menu': 'Menú',
@@ -63,8 +65,11 @@ export const navigation = {
 
   // Search
   'nav.search.placeholder': 'Buscar cualquier cosa...',
-  'nav.search.commandPlaceholder': 'Buscar...',
+  'nav.search.commandPlaceholder': 'Buscar usuarios, páginas y acciones...',
   'nav.search.noResults': 'No se encontraron resultados.',
+  'nav.search.usersLoading': 'Buscando...',
+  'nav.search.viewProfile': 'Ver perfil',
+  'nav.search.viewAllResults': 'Ver todos los resultados',
 
   // User menu extras
   'nav.userMenu.adminLabel': 'Admin',

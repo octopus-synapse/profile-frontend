@@ -40,9 +40,6 @@ import type { ConversationNullableDataDtoConversation } from './conversationNull
 export interface ConversationNullableDataDto {
   /** @nullable */
   conversationId: string | null;
-  /**
-   * Conversation details
-   * @nullable
-   */
-  conversation: ConversationNullableDataDtoConversation;
+  /** @nullable */
+  conversation?: ConversationNullableDataDtoConversation;
 }

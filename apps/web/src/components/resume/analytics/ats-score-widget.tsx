@@ -1,9 +1,16 @@
 'use client';
 
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Skeleton,
+} from '@octopus-synapse/profile-ui';
 import { useResumeAnalyticsGetATSScore } from '@profile/api-client';
+import { useI18n } from '@profile/i18n';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
-
-import { Badge, Button, Card, CardContent, CardHeader, Skeleton } from '@/shared/components/ui';
 
 import {
   getScoreBadgeVariant,
@@ -101,6 +108,7 @@ function LoadingSkeleton() {
 }
 
 export function AtsScoreWidget({ resumeId, onViewFullAnalysis }: AtsScoreWidgetProps) {
+  const { t } = useI18n();
   const query = useResumeAnalyticsGetATSScore(resumeId, {
     query: { enabled: !!resumeId },
   });
@@ -138,7 +146,9 @@ export function AtsScoreWidget({ resumeId, onViewFullAnalysis }: AtsScoreWidgetP
 
           {data.sectionBreakdown.length > 0 && (
             <div className="space-y-2.5">
-              <p className="text-xs font-medium text-zinc-400">Section Breakdown</p>
+              <p className="text-xs font-medium text-zinc-400">
+                {t('resume.analytics.sectionBreakdown')}
+              </p>
               {data.sectionBreakdown.map((item: SectionBreakdown) => (
                 <SectionBar key={item.section} {...item} />
               ))}
@@ -147,7 +157,9 @@ export function AtsScoreWidget({ resumeId, onViewFullAnalysis }: AtsScoreWidgetP
 
           {topRecommendations.length > 0 && (
             <div className="space-y-2">
-              <p className="text-xs font-medium text-zinc-400">Top Recommendations</p>
+              <p className="text-xs font-medium text-zinc-400">
+                {t('resume.analytics.topRecommendations')}
+              </p>
               <ul className="space-y-1.5">
                 {topRecommendations.map((rec: string, idx: number) => (
                   <li key={idx} className="flex items-start gap-2 text-sm text-zinc-300">
@@ -167,7 +179,7 @@ export function AtsScoreWidget({ resumeId, onViewFullAnalysis }: AtsScoreWidgetP
               onClick={onViewFullAnalysis}
               rightIcon={<ArrowRight className="h-4 w-4" />}
             >
-              Full ATS Analysis
+              {t('resume.analytics.fullAnalysis')}
             </Button>
           )}
         </div>

@@ -35,5 +35,12 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
+import type { MecStatisticsDataDtoStatsCoursesByGrauItem } from './mecStatisticsDataDtoStatsCoursesByGrauItem';
+import type { MecStatisticsDataDtoStatsInstitutionsByUfItem } from './mecStatisticsDataDtoStatsInstitutionsByUfItem';
 
-export type MecStatisticsDataDtoStats = { [key: string]: unknown };
+export type MecStatisticsDataDtoStats = {
+  totalInstitutions: number;
+  totalCourses: number;
+  coursesByGrau: MecStatisticsDataDtoStatsCoursesByGrauItem[];
+  institutionsByUf: MecStatisticsDataDtoStatsInstitutionsByUfItem[];
+};

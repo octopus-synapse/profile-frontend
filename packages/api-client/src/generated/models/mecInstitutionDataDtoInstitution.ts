@@ -39,4 +39,28 @@ All errors follow a consistent format:
 /**
  * @nullable
  */
-export type MecInstitutionDataDtoInstitution = { [key: string]: unknown } | null;
+export type MecInstitutionDataDtoInstitution = {
+  id: string;
+  codigoIes: number;
+  nome: string;
+  /** @nullable */
+  sigla: string | null;
+  uf: string;
+  /** @nullable */
+  municipio: string | null;
+  /** @nullable */
+  categoria: string | null;
+  /** @nullable */
+  organizacao: string | null;
+  courses: ({
+  id: string;
+  codigoCurso: number;
+  nome: string;
+  /** @nullable */
+  grau: string | null;
+  /** @nullable */
+  modalidade: string | null;
+  /** @nullable */
+  areaConhecimento: string | null;
+})[];
+} | null;

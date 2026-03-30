@@ -39,4 +39,4 @@ All errors follow a consistent format:
 /**
  * @nullable
  */
-export type ThemeResolvedConfigDataDtoConfig = { [key: string]: unknown } | null;
+export type ThemeResolvedConfigDataDtoConfig = {[key: string]: unknown} | null;

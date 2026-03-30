@@ -66,14 +66,15 @@ import type {
   ChatGetConversation200,
   ChatGetConversationWith200,
   ChatGetConversations200,
+  ChatGetConversationsParams,
   ChatGetMessages200,
+  ChatGetMessagesParams,
   ChatGetUnreadCount200,
   ChatMarkConversationAsRead201,
   ChatSendMessage201,
   ChatSendMessageToConversation201,
-  MarkConversationAsReadRequestDto,
-  SendMessageRequestDto,
-  SendMessageToConversationRequestDto
+  SendMessageDto,
+  SendMessageToConversationDto
 } from '../../models';
 
 import { customFetch } from '../../../client/fetcher';
@@ -118,7 +119,7 @@ export const getChatSendMessageUrl = () => {
   return `/api/chat/messages`
 }
 
-export const chatSendMessage = async (sendMessageRequestDto: SendMessageRequestDto, options?: RequestInit): Promise<chatSendMessageResponse> => {
+export const chatSendMessage = async (sendMessageDto: SendMessageDto, options?: RequestInit): Promise<chatSendMessageResponse> => {
   
   return customFetch<chatSendMessageResponse>(getChatSendMessageUrl(),
   {      
@@ -126,7 +127,7 @@ export const chatSendMessage = async (sendMessageRequestDto: SendMessageRequestD
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...options?.headers },
     body: JSON.stringify(
-      sendMessageRequestDto,)
+      sendMessageDto,)
   }
 );}
 
@@ -134,8 +135,8 @@ export const chatSendMessage = async (sendMessageRequestDto: SendMessageRequestD
 
 
 export const getChatSendMessageMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof chatSendMessage>>, TError,{data: SendMessageRequestDto}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof chatSendMessage>>, TError,{data: SendMessageRequestDto}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof chatSendMessage>>, TError,{data: SendMessageDto}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof chatSendMessage>>, TError,{data: SendMessageDto}, TContext> => {
 
 const mutationKey = ['chatSendMessage'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -147,7 +148,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof chatSendMessage>>, {data: SendMessageRequestDto}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof chatSendMessage>>, {data: SendMessageDto}> = (props) => {
           const {data} = props ?? {};
 
           return  chatSendMessage(data,requestOptions)
@@ -161,18 +162,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type ChatSendMessageMutationResult = NonNullable<Awaited<ReturnType<typeof chatSendMessage>>>
-    export type ChatSendMessageMutationBody = SendMessageRequestDto
+    export type ChatSendMessageMutationBody = SendMessageDto
     export type ChatSendMessageMutationError = void
 
     /**
  * @summary Send a message to a user
  */
 export const useChatSendMessage = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof chatSendMessage>>, TError,{data: SendMessageRequestDto}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof chatSendMessage>>, TError,{data: SendMessageDto}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof chatSendMessage>>,
         TError,
-        {data: SendMessageRequestDto},
+        {data: SendMessageDto},
         TContext
       > => {
       return useMutation(getChatSendMessageMutationOptions(options), queryClient);
@@ -213,7 +214,7 @@ export const getChatSendMessageToConversationUrl = (conversationId: string,) => 
 }
 
 export const chatSendMessageToConversation = async (conversationId: string,
-    sendMessageToConversationRequestDto: SendMessageToConversationRequestDto, options?: RequestInit): Promise<chatSendMessageToConversationResponse> => {
+    sendMessageToConversationDto: SendMessageToConversationDto, options?: RequestInit): Promise<chatSendMessageToConversationResponse> => {
   
   return customFetch<chatSendMessageToConversationResponse>(getChatSendMessageToConversationUrl(conversationId),
   {      
@@ -221,7 +222,7 @@ export const chatSendMessageToConversation = async (conversationId: string,
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...options?.headers },
     body: JSON.stringify(
-      sendMessageToConversationRequestDto,)
+      sendMessageToConversationDto,)
   }
 );}
 
@@ -229,8 +230,8 @@ export const chatSendMessageToConversation = async (conversationId: string,
 
 
 export const getChatSendMessageToConversationMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof chatSendMessageToConversation>>, TError,{conversationId: string;data: SendMessageToConversationRequestDto}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof chatSendMessageToConversation>>, TError,{conversationId: string;data: SendMessageToConversationRequestDto}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof chatSendMessageToConversation>>, TError,{conversationId: string;data: SendMessageToConversationDto}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof chatSendMessageToConversation>>, TError,{conversationId: string;data: SendMessageToConversationDto}, TContext> => {
 
 const mutationKey = ['chatSendMessageToConversation'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -242,7 +243,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof chatSendMessageToConversation>>, {conversationId: string;data: SendMessageToConversationRequestDto}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof chatSendMessageToConversation>>, {conversationId: string;data: SendMessageToConversationDto}> = (props) => {
           const {conversationId,data} = props ?? {};
 
           return  chatSendMessageToConversation(conversationId,data,requestOptions)
@@ -256,18 +257,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type ChatSendMessageToConversationMutationResult = NonNullable<Awaited<ReturnType<typeof chatSendMessageToConversation>>>
-    export type ChatSendMessageToConversationMutationBody = SendMessageToConversationRequestDto
+    export type ChatSendMessageToConversationMutationBody = SendMessageToConversationDto
     export type ChatSendMessageToConversationMutationError = void
 
     /**
  * @summary Send a message to an existing conversation
  */
 export const useChatSendMessageToConversation = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof chatSendMessageToConversation>>, TError,{conversationId: string;data: SendMessageToConversationRequestDto}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof chatSendMessageToConversation>>, TError,{conversationId: string;data: SendMessageToConversationDto}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof chatSendMessageToConversation>>,
         TError,
-        {conversationId: string;data: SendMessageToConversationRequestDto},
+        {conversationId: string;data: SendMessageToConversationDto},
         TContext
       > => {
       return useMutation(getChatSendMessageToConversationMutationOptions(options), queryClient);
@@ -299,17 +300,26 @@ export type chatGetMessagesResponseError = (chatGetMessagesResponse401 | chatGet
 
 export type chatGetMessagesResponse = (chatGetMessagesResponseSuccess | chatGetMessagesResponseError)
 
-export const getChatGetMessagesUrl = (conversationId: string,) => {
+export const getChatGetMessagesUrl = (conversationId: string,
+    params?: ChatGetMessagesParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
+    
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
 
-  
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/api/chat/conversations/${conversationId}/messages`
+  return stringifiedParams.length > 0 ? `/api/chat/conversations/${conversationId}/messages?${stringifiedParams}` : `/api/chat/conversations/${conversationId}/messages`
 }
 
-export const chatGetMessages = async (conversationId: string, options?: RequestInit): Promise<chatGetMessagesResponse> => {
+export const chatGetMessages = async (conversationId: string,
+    params?: ChatGetMessagesParams, options?: RequestInit): Promise<chatGetMessagesResponse> => {
   
-  return customFetch<chatGetMessagesResponse>(getChatGetMessagesUrl(conversationId),
+  return customFetch<chatGetMessagesResponse>(getChatGetMessagesUrl(conversationId,params),
   {      
     ...options,
     method: 'GET'
@@ -322,29 +332,32 @@ export const chatGetMessages = async (conversationId: string, options?: RequestI
 
 
 
-export const getChatGetMessagesInfiniteQueryKey = (conversationId: string,) => {
+export const getChatGetMessagesInfiniteQueryKey = (conversationId: string,
+    params?: ChatGetMessagesParams,) => {
     return [
-    'infinite', `/api/chat/conversations/${conversationId}/messages`
+    'infinite', `/api/chat/conversations/${conversationId}/messages`, ...(params ? [params] : [])
     ] as const;
     }
 
-export const getChatGetMessagesQueryKey = (conversationId: string,) => {
+export const getChatGetMessagesQueryKey = (conversationId: string,
+    params?: ChatGetMessagesParams,) => {
     return [
-    `/api/chat/conversations/${conversationId}/messages`
+    `/api/chat/conversations/${conversationId}/messages`, ...(params ? [params] : [])
     ] as const;
     }
 
     
-export const getChatGetMessagesInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof chatGetMessages>>>, TError = void>(conversationId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getChatGetMessagesInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof chatGetMessages>>>, TError = void>(conversationId: string,
+    params?: ChatGetMessagesParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getChatGetMessagesInfiniteQueryKey(conversationId);
+  const queryKey =  queryOptions?.queryKey ?? getChatGetMessagesInfiniteQueryKey(conversationId,params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof chatGetMessages>>> = ({ signal }) => chatGetMessages(conversationId, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof chatGetMessages>>> = ({ signal }) => chatGetMessages(conversationId,params, { signal, ...requestOptions });
 
       
 
@@ -358,7 +371,8 @@ export type ChatGetMessagesInfiniteQueryError = void
 
 
 export function useChatGetMessagesInfinite<TData = InfiniteData<Awaited<ReturnType<typeof chatGetMessages>>>, TError = void>(
- conversationId: string, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>> & Pick<
+ conversationId: string,
+    params: undefined |  ChatGetMessagesParams, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof chatGetMessages>>,
           TError,
@@ -368,7 +382,8 @@ export function useChatGetMessagesInfinite<TData = InfiniteData<Awaited<ReturnTy
  , queryClient?: QueryClient
   ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useChatGetMessagesInfinite<TData = InfiniteData<Awaited<ReturnType<typeof chatGetMessages>>>, TError = void>(
- conversationId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>> & Pick<
+ conversationId: string,
+    params?: ChatGetMessagesParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof chatGetMessages>>,
           TError,
@@ -378,7 +393,8 @@ export function useChatGetMessagesInfinite<TData = InfiniteData<Awaited<ReturnTy
  , queryClient?: QueryClient
   ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useChatGetMessagesInfinite<TData = InfiniteData<Awaited<ReturnType<typeof chatGetMessages>>>, TError = void>(
- conversationId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ conversationId: string,
+    params?: ChatGetMessagesParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -386,11 +402,12 @@ export function useChatGetMessagesInfinite<TData = InfiniteData<Awaited<ReturnTy
  */
 
 export function useChatGetMessagesInfinite<TData = InfiniteData<Awaited<ReturnType<typeof chatGetMessages>>>, TError = void>(
- conversationId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ conversationId: string,
+    params?: ChatGetMessagesParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient 
  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getChatGetMessagesInfiniteQueryOptions(conversationId,options)
+  const queryOptions = getChatGetMessagesInfiniteQueryOptions(conversationId,params,options)
 
   const query = useInfiniteQuery(queryOptions, queryClient) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -401,11 +418,12 @@ export function useChatGetMessagesInfinite<TData = InfiniteData<Awaited<ReturnTy
  * @summary Get messages for a conversation
  */
 export const prefetchChatGetMessagesInfiniteQuery = async <TData = Awaited<ReturnType<typeof chatGetMessages>>, TError = void>(
- queryClient: QueryClient, conversationId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ queryClient: QueryClient, conversationId: string,
+    params?: ChatGetMessagesParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 
   ): Promise<QueryClient> => {
 
-  const queryOptions = getChatGetMessagesInfiniteQueryOptions(conversationId,options)
+  const queryOptions = getChatGetMessagesInfiniteQueryOptions(conversationId,params,options)
 
   await queryClient.prefetchInfiniteQuery(queryOptions);
 
@@ -414,16 +432,17 @@ export const prefetchChatGetMessagesInfiniteQuery = async <TData = Awaited<Retur
 
 
 
-export const getChatGetMessagesQueryOptions = <TData = Awaited<ReturnType<typeof chatGetMessages>>, TError = void>(conversationId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getChatGetMessagesQueryOptions = <TData = Awaited<ReturnType<typeof chatGetMessages>>, TError = void>(conversationId: string,
+    params?: ChatGetMessagesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getChatGetMessagesQueryKey(conversationId);
+  const queryKey =  queryOptions?.queryKey ?? getChatGetMessagesQueryKey(conversationId,params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof chatGetMessages>>> = ({ signal }) => chatGetMessages(conversationId, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof chatGetMessages>>> = ({ signal }) => chatGetMessages(conversationId,params, { signal, ...requestOptions });
 
       
 
@@ -437,7 +456,8 @@ export type ChatGetMessagesQueryError = void
 
 
 export function useChatGetMessages<TData = Awaited<ReturnType<typeof chatGetMessages>>, TError = void>(
- conversationId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>> & Pick<
+ conversationId: string,
+    params: undefined |  ChatGetMessagesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof chatGetMessages>>,
           TError,
@@ -447,7 +467,8 @@ export function useChatGetMessages<TData = Awaited<ReturnType<typeof chatGetMess
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useChatGetMessages<TData = Awaited<ReturnType<typeof chatGetMessages>>, TError = void>(
- conversationId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>> & Pick<
+ conversationId: string,
+    params?: ChatGetMessagesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof chatGetMessages>>,
           TError,
@@ -457,7 +478,8 @@ export function useChatGetMessages<TData = Awaited<ReturnType<typeof chatGetMess
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useChatGetMessages<TData = Awaited<ReturnType<typeof chatGetMessages>>, TError = void>(
- conversationId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ conversationId: string,
+    params?: ChatGetMessagesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -465,11 +487,12 @@ export function useChatGetMessages<TData = Awaited<ReturnType<typeof chatGetMess
  */
 
 export function useChatGetMessages<TData = Awaited<ReturnType<typeof chatGetMessages>>, TError = void>(
- conversationId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ conversationId: string,
+    params?: ChatGetMessagesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getChatGetMessagesQueryOptions(conversationId,options)
+  const queryOptions = getChatGetMessagesQueryOptions(conversationId,params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -480,11 +503,12 @@ export function useChatGetMessages<TData = Awaited<ReturnType<typeof chatGetMess
  * @summary Get messages for a conversation
  */
 export const prefetchChatGetMessagesQuery = async <TData = Awaited<ReturnType<typeof chatGetMessages>>, TError = void>(
- queryClient: QueryClient, conversationId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ queryClient: QueryClient, conversationId: string,
+    params?: ChatGetMessagesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 
   ): Promise<QueryClient> => {
 
-  const queryOptions = getChatGetMessagesQueryOptions(conversationId,options)
+  const queryOptions = getChatGetMessagesQueryOptions(conversationId,params,options)
 
   await queryClient.prefetchQuery(queryOptions);
 
@@ -493,16 +517,17 @@ export const prefetchChatGetMessagesQuery = async <TData = Awaited<ReturnType<ty
 
 
 
-export const getChatGetMessagesSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof chatGetMessages>>, TError = void>(conversationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getChatGetMessagesSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof chatGetMessages>>, TError = void>(conversationId: string,
+    params?: ChatGetMessagesParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getChatGetMessagesQueryKey(conversationId);
+  const queryKey =  queryOptions?.queryKey ?? getChatGetMessagesQueryKey(conversationId,params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof chatGetMessages>>> = ({ signal }) => chatGetMessages(conversationId, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof chatGetMessages>>> = ({ signal }) => chatGetMessages(conversationId,params, { signal, ...requestOptions });
 
       
 
@@ -516,15 +541,18 @@ export type ChatGetMessagesSuspenseQueryError = void
 
 
 export function useChatGetMessagesSuspense<TData = Awaited<ReturnType<typeof chatGetMessages>>, TError = void>(
- conversationId: string, options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ conversationId: string,
+    params: undefined |  ChatGetMessagesParams, options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useChatGetMessagesSuspense<TData = Awaited<ReturnType<typeof chatGetMessages>>, TError = void>(
- conversationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ conversationId: string,
+    params?: ChatGetMessagesParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useChatGetMessagesSuspense<TData = Awaited<ReturnType<typeof chatGetMessages>>, TError = void>(
- conversationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ conversationId: string,
+    params?: ChatGetMessagesParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -532,11 +560,12 @@ export function useChatGetMessagesSuspense<TData = Awaited<ReturnType<typeof cha
  */
 
 export function useChatGetMessagesSuspense<TData = Awaited<ReturnType<typeof chatGetMessages>>, TError = void>(
- conversationId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ conversationId: string,
+    params?: ChatGetMessagesParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof chatGetMessages>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient 
  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getChatGetMessagesSuspenseQueryOptions(conversationId,options)
+  const queryOptions = getChatGetMessagesSuspenseQueryOptions(conversationId,params,options)
 
   const query = useSuspenseQuery(queryOptions, queryClient) as  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -573,17 +602,24 @@ export type chatGetConversationsResponseError = (chatGetConversationsResponse401
 
 export type chatGetConversationsResponse = (chatGetConversationsResponseSuccess | chatGetConversationsResponseError)
 
-export const getChatGetConversationsUrl = () => {
+export const getChatGetConversationsUrl = (params?: ChatGetConversationsParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
+    
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
 
-  
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/api/chat/conversations`
+  return stringifiedParams.length > 0 ? `/api/chat/conversations?${stringifiedParams}` : `/api/chat/conversations`
 }
 
-export const chatGetConversations = async ( options?: RequestInit): Promise<chatGetConversationsResponse> => {
+export const chatGetConversations = async (params?: ChatGetConversationsParams, options?: RequestInit): Promise<chatGetConversationsResponse> => {
   
-  return customFetch<chatGetConversationsResponse>(getChatGetConversationsUrl(),
+  return customFetch<chatGetConversationsResponse>(getChatGetConversationsUrl(params),
   {      
     ...options,
     method: 'GET'
@@ -596,29 +632,29 @@ export const chatGetConversations = async ( options?: RequestInit): Promise<chat
 
 
 
-export const getChatGetConversationsInfiniteQueryKey = () => {
+export const getChatGetConversationsInfiniteQueryKey = (params?: ChatGetConversationsParams,) => {
     return [
-    'infinite', `/api/chat/conversations`
+    'infinite', `/api/chat/conversations`, ...(params ? [params] : [])
     ] as const;
     }
 
-export const getChatGetConversationsQueryKey = () => {
+export const getChatGetConversationsQueryKey = (params?: ChatGetConversationsParams,) => {
     return [
-    `/api/chat/conversations`
+    `/api/chat/conversations`, ...(params ? [params] : [])
     ] as const;
     }
 
     
-export const getChatGetConversationsInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof chatGetConversations>>>, TError = void>( options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getChatGetConversationsInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof chatGetConversations>>>, TError = void>(params?: ChatGetConversationsParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getChatGetConversationsInfiniteQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getChatGetConversationsInfiniteQueryKey(params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof chatGetConversations>>> = ({ signal }) => chatGetConversations({ signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof chatGetConversations>>> = ({ signal }) => chatGetConversations(params, { signal, ...requestOptions });
 
       
 
@@ -632,7 +668,7 @@ export type ChatGetConversationsInfiniteQueryError = void
 
 
 export function useChatGetConversationsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof chatGetConversations>>>, TError = void>(
-  options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>> & Pick<
+ params: undefined |  ChatGetConversationsParams, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof chatGetConversations>>,
           TError,
@@ -642,7 +678,7 @@ export function useChatGetConversationsInfinite<TData = InfiniteData<Awaited<Ret
  , queryClient?: QueryClient
   ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useChatGetConversationsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof chatGetConversations>>>, TError = void>(
-  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>> & Pick<
+ params?: ChatGetConversationsParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof chatGetConversations>>,
           TError,
@@ -652,7 +688,7 @@ export function useChatGetConversationsInfinite<TData = InfiniteData<Awaited<Ret
  , queryClient?: QueryClient
   ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useChatGetConversationsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof chatGetConversations>>>, TError = void>(
-  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ params?: ChatGetConversationsParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -660,11 +696,11 @@ export function useChatGetConversationsInfinite<TData = InfiniteData<Awaited<Ret
  */
 
 export function useChatGetConversationsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof chatGetConversations>>>, TError = void>(
-  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ params?: ChatGetConversationsParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient 
  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getChatGetConversationsInfiniteQueryOptions(options)
+  const queryOptions = getChatGetConversationsInfiniteQueryOptions(params,options)
 
   const query = useInfiniteQuery(queryOptions, queryClient) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -675,11 +711,11 @@ export function useChatGetConversationsInfinite<TData = InfiniteData<Awaited<Ret
  * @summary Get all conversations for the current user
  */
 export const prefetchChatGetConversationsInfiniteQuery = async <TData = Awaited<ReturnType<typeof chatGetConversations>>, TError = void>(
- queryClient: QueryClient,  options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ queryClient: QueryClient, params?: ChatGetConversationsParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 
   ): Promise<QueryClient> => {
 
-  const queryOptions = getChatGetConversationsInfiniteQueryOptions(options)
+  const queryOptions = getChatGetConversationsInfiniteQueryOptions(params,options)
 
   await queryClient.prefetchInfiniteQuery(queryOptions);
 
@@ -688,16 +724,16 @@ export const prefetchChatGetConversationsInfiniteQuery = async <TData = Awaited<
 
 
 
-export const getChatGetConversationsQueryOptions = <TData = Awaited<ReturnType<typeof chatGetConversations>>, TError = void>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getChatGetConversationsQueryOptions = <TData = Awaited<ReturnType<typeof chatGetConversations>>, TError = void>(params?: ChatGetConversationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getChatGetConversationsQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getChatGetConversationsQueryKey(params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof chatGetConversations>>> = ({ signal }) => chatGetConversations({ signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof chatGetConversations>>> = ({ signal }) => chatGetConversations(params, { signal, ...requestOptions });
 
       
 
@@ -711,7 +747,7 @@ export type ChatGetConversationsQueryError = void
 
 
 export function useChatGetConversations<TData = Awaited<ReturnType<typeof chatGetConversations>>, TError = void>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>> & Pick<
+ params: undefined |  ChatGetConversationsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof chatGetConversations>>,
           TError,
@@ -721,7 +757,7 @@ export function useChatGetConversations<TData = Awaited<ReturnType<typeof chatGe
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useChatGetConversations<TData = Awaited<ReturnType<typeof chatGetConversations>>, TError = void>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>> & Pick<
+ params?: ChatGetConversationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof chatGetConversations>>,
           TError,
@@ -731,7 +767,7 @@ export function useChatGetConversations<TData = Awaited<ReturnType<typeof chatGe
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useChatGetConversations<TData = Awaited<ReturnType<typeof chatGetConversations>>, TError = void>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ params?: ChatGetConversationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -739,11 +775,11 @@ export function useChatGetConversations<TData = Awaited<ReturnType<typeof chatGe
  */
 
 export function useChatGetConversations<TData = Awaited<ReturnType<typeof chatGetConversations>>, TError = void>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ params?: ChatGetConversationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getChatGetConversationsQueryOptions(options)
+  const queryOptions = getChatGetConversationsQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -754,11 +790,11 @@ export function useChatGetConversations<TData = Awaited<ReturnType<typeof chatGe
  * @summary Get all conversations for the current user
  */
 export const prefetchChatGetConversationsQuery = async <TData = Awaited<ReturnType<typeof chatGetConversations>>, TError = void>(
- queryClient: QueryClient,  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ queryClient: QueryClient, params?: ChatGetConversationsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 
   ): Promise<QueryClient> => {
 
-  const queryOptions = getChatGetConversationsQueryOptions(options)
+  const queryOptions = getChatGetConversationsQueryOptions(params,options)
 
   await queryClient.prefetchQuery(queryOptions);
 
@@ -767,16 +803,16 @@ export const prefetchChatGetConversationsQuery = async <TData = Awaited<ReturnTy
 
 
 
-export const getChatGetConversationsSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof chatGetConversations>>, TError = void>( options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getChatGetConversationsSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof chatGetConversations>>, TError = void>(params?: ChatGetConversationsParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getChatGetConversationsQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getChatGetConversationsQueryKey(params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof chatGetConversations>>> = ({ signal }) => chatGetConversations({ signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof chatGetConversations>>> = ({ signal }) => chatGetConversations(params, { signal, ...requestOptions });
 
       
 
@@ -790,15 +826,15 @@ export type ChatGetConversationsSuspenseQueryError = void
 
 
 export function useChatGetConversationsSuspense<TData = Awaited<ReturnType<typeof chatGetConversations>>, TError = void>(
-  options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ params: undefined |  ChatGetConversationsParams, options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useChatGetConversationsSuspense<TData = Awaited<ReturnType<typeof chatGetConversations>>, TError = void>(
-  options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ params?: ChatGetConversationsParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useChatGetConversationsSuspense<TData = Awaited<ReturnType<typeof chatGetConversations>>, TError = void>(
-  options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ params?: ChatGetConversationsParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -806,11 +842,11 @@ export function useChatGetConversationsSuspense<TData = Awaited<ReturnType<typeo
  */
 
 export function useChatGetConversationsSuspense<TData = Awaited<ReturnType<typeof chatGetConversations>>, TError = void>(
-  options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ params?: ChatGetConversationsParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof chatGetConversations>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient 
  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getChatGetConversationsSuspenseQueryOptions(options)
+  const queryOptions = getChatGetConversationsSuspenseQueryOptions(params,options)
 
   const query = useSuspenseQuery(queryOptions, queryClient) as  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -1129,16 +1165,14 @@ export const getChatMarkConversationAsReadUrl = (conversationId: string,) => {
   return `/api/chat/conversations/${conversationId}/read`
 }
 
-export const chatMarkConversationAsRead = async (conversationId: string,
-    markConversationAsReadRequestDto: MarkConversationAsReadRequestDto, options?: RequestInit): Promise<chatMarkConversationAsReadResponse> => {
+export const chatMarkConversationAsRead = async (conversationId: string, options?: RequestInit): Promise<chatMarkConversationAsReadResponse> => {
   
   return customFetch<chatMarkConversationAsReadResponse>(getChatMarkConversationAsReadUrl(conversationId),
   {      
     ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      markConversationAsReadRequestDto,)
+    method: 'POST'
+    
+    
   }
 );}
 
@@ -1146,8 +1180,8 @@ export const chatMarkConversationAsRead = async (conversationId: string,
 
 
 export const getChatMarkConversationAsReadMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof chatMarkConversationAsRead>>, TError,{conversationId: string;data: MarkConversationAsReadRequestDto}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof chatMarkConversationAsRead>>, TError,{conversationId: string;data: MarkConversationAsReadRequestDto}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof chatMarkConversationAsRead>>, TError,{conversationId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof chatMarkConversationAsRead>>, TError,{conversationId: string}, TContext> => {
 
 const mutationKey = ['chatMarkConversationAsRead'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -1159,10 +1193,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof chatMarkConversationAsRead>>, {conversationId: string;data: MarkConversationAsReadRequestDto}> = (props) => {
-          const {conversationId,data} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof chatMarkConversationAsRead>>, {conversationId: string}> = (props) => {
+          const {conversationId} = props ?? {};
 
-          return  chatMarkConversationAsRead(conversationId,data,requestOptions)
+          return  chatMarkConversationAsRead(conversationId,requestOptions)
         }
 
 
@@ -1173,18 +1207,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type ChatMarkConversationAsReadMutationResult = NonNullable<Awaited<ReturnType<typeof chatMarkConversationAsRead>>>
-    export type ChatMarkConversationAsReadMutationBody = MarkConversationAsReadRequestDto
+    
     export type ChatMarkConversationAsReadMutationError = void
 
     /**
  * @summary Mark all messages in a conversation as read
  */
 export const useChatMarkConversationAsRead = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof chatMarkConversationAsRead>>, TError,{conversationId: string;data: MarkConversationAsReadRequestDto}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof chatMarkConversationAsRead>>, TError,{conversationId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof chatMarkConversationAsRead>>,
         TError,
-        {conversationId: string;data: MarkConversationAsReadRequestDto},
+        {conversationId: string},
         TContext
       > => {
       return useMutation(getChatMarkConversationAsReadMutationOptions(options), queryClient);

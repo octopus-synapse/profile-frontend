@@ -42,6 +42,10 @@ export type ImportJobDtoStatus = typeof ImportJobDtoStatus[keyof typeof ImportJo
 export const ImportJobDtoStatus = {
   PENDING: 'PENDING',
   PROCESSING: 'PROCESSING',
+  MAPPING: 'MAPPING',
+  VALIDATING: 'VALIDATING',
+  IMPORTING: 'IMPORTING',
   COMPLETED: 'COMPLETED',
   FAILED: 'FAILED',
+  PARTIAL: 'PARTIAL',
 } as const;

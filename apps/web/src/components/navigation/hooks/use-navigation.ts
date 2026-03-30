@@ -5,11 +5,7 @@
  * Provides filtered navigation items based on auth state and role
  */
 
-import {
-  type SessionUserResponseDtoRole,
-  selectEnvelopeData,
-  useAuthSession,
-} from '@profile/api-client';
+import { selectEnvelopeData, useAuthSession } from '@profile/api-client';
 import { removeLocalePrefix } from '@profile/i18n';
 import { usePathname } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
@@ -30,10 +26,7 @@ export function useNavigation() {
   const pathname = usePathname();
 
   // Helper to check role
-  const hasRole = useCallback(
-    (role: SessionUserResponseDtoRole) => user?.role === role,
-    [user?.role],
-  );
+  const hasRole = useCallback((role: 'USER' | 'ADMIN') => user?.role === role, [user?.role]);
 
   // Filter items based on auth state and role
   const filterItems = useMemo(() => {

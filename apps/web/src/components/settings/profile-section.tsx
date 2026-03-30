@@ -4,6 +4,7 @@
 
 'use client';
 
+import { Button, showToast } from '@octopus-synapse/profile-ui';
 import {
   type UpdateUserProfileRequestDto,
   useUsersGetProfile,
@@ -12,7 +13,6 @@ import {
 import { useI18n } from '@profile/i18n';
 import { Check, Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { showToast } from '@/shared/components/ui/toast';
 import { UsernameField } from './username-field';
 
 export function ProfileSection() {
@@ -89,19 +89,17 @@ export function ProfileSection() {
           <p className="mt-1 text-[13px] text-zinc-500">{t('settings.profile.description')}</p>
         </div>
         {isDirty && (
-          <button
+          <Button
             type="button"
-            onClick={() => void handleSave()}
-            disabled={updateProfileMutation.isPending}
-            className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition-opacity hover:opacity-90 disabled:opacity-50"
+            variant="solid"
+            tone="neutral"
+            size="sm"
+            loading={updateProfileMutation.isPending}
+            leftIcon={<Check className="h-4 w-4" />}
+            onPress={() => void handleSave()}
           >
-            {updateProfileMutation.isPending ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Check className="h-4 w-4" />
-            )}
-            <span>{t('settings.profile.saveChanges')}</span>
-          </button>
+            {t('settings.profile.saveChanges')}
+          </Button>
         )}
       </div>
 
@@ -145,7 +143,7 @@ export function ProfileSection() {
       </Section>
 
       {/* Contact */}
-      <Section title="Contact">
+      <Section title={t('settings.profile.contact')}>
         <div className="grid gap-6 sm:grid-cols-2">
           <Field
             label={t('settings.profile.phone')}
@@ -165,7 +163,7 @@ export function ProfileSection() {
       </Section>
 
       {/* Social */}
-      <Section title="Social">
+      <Section title={t('settings.profile.social')}>
         <div className="grid gap-6 sm:grid-cols-2">
           <Field
             label={t('settings.profile.linkedin')}

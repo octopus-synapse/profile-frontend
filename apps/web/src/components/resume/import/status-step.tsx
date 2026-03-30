@@ -4,9 +4,10 @@
 
 'use client';
 
+import { Button } from '@octopus-synapse/profile-ui';
 import { type ImportJobDto, useResumeImportGetStatus } from '@profile/api-client';
+import { useI18n } from '@profile/i18n';
 import { AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
-import { Button } from '@/shared/components/ui';
 
 interface StatusStepProps {
   importId: string;
@@ -15,6 +16,7 @@ interface StatusStepProps {
 }
 
 export function StatusStep({ importId, onSuccess, onClose }: StatusStepProps) {
+  const { t } = useI18n();
   const statusQuery = useResumeImportGetStatus(importId, {
     query: { refetchInterval: 1000 },
   });
@@ -27,8 +29,8 @@ export function StatusStep({ importId, onSuccess, onClose }: StatusStepProps) {
           <CheckCircle2 className="h-8 w-8 text-emerald-400" />
         </div>
         <div>
-          <p className="text-base font-medium text-white">Import Complete</p>
-          <p className="mt-1 text-sm text-zinc-400">Your resume has been imported successfully.</p>
+          <p className="text-base font-medium text-white">{t('resume.import.wizard.complete')}</p>
+          <p className="mt-1 text-sm text-zinc-400">{t('resume.import.wizard.completeDesc')}</p>
         </div>
         <Button
           onClick={() => {
@@ -37,7 +39,7 @@ export function StatusStep({ importId, onSuccess, onClose }: StatusStepProps) {
           }}
           className="gap-2"
         >
-          View Resume
+          {t('resume.import.wizard.viewResume')}
         </Button>
       </div>
     );
@@ -50,11 +52,11 @@ export function StatusStep({ importId, onSuccess, onClose }: StatusStepProps) {
           <AlertCircle className="h-8 w-8 text-red-400" />
         </div>
         <div>
-          <p className="text-base font-medium text-white">Import Failed</p>
-          {job.error && <p className="mt-1 text-sm text-red-400">{job.error}</p>}
+          <p className="text-base font-medium text-white">{t('resume.import.wizard.failed')}</p>
+          {job.errors?.length && <p className="mt-1 text-sm text-red-400">{job.errors[0]}</p>}
         </div>
         <Button variant="outline" onClick={onClose}>
-          Close
+          {t('action.close')}
         </Button>
       </div>
     );
@@ -67,7 +69,7 @@ export function StatusStep({ importId, onSuccess, onClose }: StatusStepProps) {
         <p className="text-base font-medium text-white">
           {job?.status === 'PROCESSING' ? 'Processing…' : 'Waiting to start…'}
         </p>
-        <p className="mt-1 text-sm text-zinc-400">This usually takes a few seconds.</p>
+        <p className="mt-1 text-sm text-zinc-400">{t('resume.import.wizard.processing')}</p>
       </div>
     </div>
   );

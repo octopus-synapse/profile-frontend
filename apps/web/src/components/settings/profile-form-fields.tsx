@@ -4,8 +4,8 @@
 
 'use client';
 
+import { FormLabel, HelpTooltip } from '@octopus-synapse/profile-ui';
 import type { LucideIcon } from 'lucide-react';
-import { FormLabel, HelpTooltip } from '@/shared/components/ui';
 
 interface ProfileFormFieldProps {
   icon?: LucideIcon;

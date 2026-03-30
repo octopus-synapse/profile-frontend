@@ -6,17 +6,18 @@
  * Step 2: Opens SectionItemDialog to add item data
  */
 
-import { useI18n } from '@profile/i18n';
-import { Plus, Search } from 'lucide-react';
-import { useMemo, useState } from 'react';
-import { SectionIcon } from '@/shared/components/section-icon';
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/shared/components/ui/dialog';
+} from '@octopus-synapse/profile-ui';
+import { useI18n } from '@profile/i18n';
+import { Plus, Search } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { SectionIcon } from '@/shared/components/section-icon';
 import { SectionItemDialog } from './section-item-dialog';
 import type { DynamicSettingsNavItem } from './settings-page.utils';
 
@@ -109,16 +110,22 @@ export function AddSectionDialog({
             ) : (
               <div className="space-y-1">
                 {filteredSections.map((section) => (
-                  <button
+                  <Button
                     key={section.key}
                     type="button"
-                    onClick={() => handleSelectSection(section)}
-                    className="group flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left transition-all hover:bg-white/[0.04]"
+                    variant="ghost"
+                    tone="neutral"
+                    size="lg"
+                    fullWidth
+                    leftIcon={
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-zinc-900">
+                        <SectionIcon iconType={section.iconType} icon={section.icon} size={16} />
+                      </div>
+                    }
+                    rightIcon={<Plus className="h-4 w-4" />}
+                    onPress={() => handleSelectSection(section)}
                   >
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-zinc-900 transition-colors group-hover:bg-zinc-800">
-                      <SectionIcon iconType={section.iconType} icon={section.icon} size={16} />
-                    </div>
-                    <div className="min-w-0 flex-1">
+                    <div className="min-w-0 flex-1 text-left">
                       <p className="text-sm font-medium text-white">{section.label}</p>
                       {section.description && (
                         <p className="mt-0.5 truncate text-[12px] text-zinc-500">
@@ -126,8 +133,7 @@ export function AddSectionDialog({
                         </p>
                       )}
                     </div>
-                    <Plus className="h-4 w-4 text-zinc-600 opacity-0 transition-opacity group-hover:opacity-100" />
-                  </button>
+                  </Button>
                 ))}
               </div>
             )}

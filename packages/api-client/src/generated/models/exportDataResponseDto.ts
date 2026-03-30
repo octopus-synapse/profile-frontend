@@ -35,18 +35,16 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
-import type { AuditLogDto } from './auditLogDto';
-import type { ConsentDto } from './consentDto';
-import type { ResumeDto } from './resumeDto';
-import type { UserDataDto } from './userDataDto';
+import type { ExportDataResponseDtoAuditLogsItem } from './exportDataResponseDtoAuditLogsItem';
+import type { ExportDataResponseDtoConsentsItem } from './exportDataResponseDtoConsentsItem';
+import type { ExportDataResponseDtoResumesItem } from './exportDataResponseDtoResumesItem';
+import type { ExportDataResponseDtoUser } from './exportDataResponseDtoUser';
 
 export interface ExportDataResponseDto {
-  /** Timestamp when the export was generated */
   exportedAt: string;
-  /** Data retention policy explanation */
   dataRetentionPolicy: string;
-  user: UserDataDto;
-  consents: ConsentDto[];
-  resumes: ResumeDto[];
-  auditLogs: AuditLogDto[];
+  user: ExportDataResponseDtoUser;
+  consents: ExportDataResponseDtoConsentsItem[];
+  resumes: ExportDataResponseDtoResumesItem[];
+  auditLogs: ExportDataResponseDtoAuditLogsItem[];
 }

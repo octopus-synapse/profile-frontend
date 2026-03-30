@@ -157,7 +157,7 @@ export function TemplateStep() {
               type="button"
               key={palette.id}
               onClick={() => handleSelectPalette(palette.id)}
-              className={`border p-4 text-left transition-all ${
+              className={`cursor-pointer border p-4 text-left transition-all ${
                 isSelected
                   ? 'rounded-2xl border-blue-500 bg-blue-500/10'
                   : 'rounded-2xl border-white/10 hover:border-blue-500/40'

@@ -4,16 +4,17 @@
  * Import Wizard — multi-step dialog for importing a resume from JSON Resume.
  */
 
-import { useResumeImportImportJson } from '@profile/api-client';
-import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/shared/components/ui/dialog';
-import { showToast } from '@/shared/components/ui/toast';
+  showToast,
+} from '@octopus-synapse/profile-ui';
+import { useResumeImportImportJson } from '@profile/api-client';
+import { useI18n } from '@profile/i18n';
+import { useState } from 'react';
 import { PreviewStep } from './preview-step';
 import { StatusStep } from './status-step';
 import { type ImportStep, StepIndicator } from './step-indicator';
@@ -27,6 +28,7 @@ interface ImportWizardProps {
 }
 
 export function ImportWizard({ open, onOpenChange, onSuccess }: ImportWizardProps) {
+  const { t } = useI18n();
   const [step, setStep] = useState<ImportStep>('upload');
   const [rawJson, setRawJson] = useState('');
   const [preview, setPreview] = useState<ParsedData | null>(null);
@@ -66,8 +68,8 @@ export function ImportWizard({ open, onOpenChange, onSuccess }: ImportWizardProp
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-h-[85vh] max-w-xl overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Import Resume</DialogTitle>
-          <DialogDescription>Import your resume from JSON Resume format.</DialogDescription>
+          <DialogTitle>{t('resume.import.wizard.title')}</DialogTitle>
+          <DialogDescription>{t('resume.import.wizard.description')}</DialogDescription>
         </DialogHeader>
 
         <StepIndicator current={step} />

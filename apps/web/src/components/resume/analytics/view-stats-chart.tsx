@@ -1,10 +1,9 @@
 'use client';
 
+import { Card, CardContent, CardHeader, Skeleton } from '@octopus-synapse/profile-ui';
 import { useResumeAnalyticsGetViewStats } from '@profile/api-client';
 import { useI18n } from '@profile/i18n';
 import { Eye, Globe, Users } from 'lucide-react';
-
-import { Card, CardContent, CardHeader, Skeleton } from '@/shared/components/ui';
 
 interface ViewStatsChartProps {
   resumeId: string;
@@ -99,9 +98,11 @@ function LoadingSkeleton() {
 
 export function ViewStatsChart({ resumeId }: ViewStatsChartProps) {
   const { t } = useI18n();
-  const query = useResumeAnalyticsGetViewStats(resumeId, {
-    query: { enabled: !!resumeId },
-  });
+  const query = useResumeAnalyticsGetViewStats(
+    resumeId,
+    { period: 'month' },
+    { query: { enabled: !!resumeId } },
+  );
   const data = query.data?.data?.data as
     | {
         totalViews: number;

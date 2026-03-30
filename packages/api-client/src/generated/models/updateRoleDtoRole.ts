@@ -36,9 +36,6 @@ All errors follow a consistent format:
  * OpenAPI spec version: 1.0.0
  */
 
-/**
- * New role for the collaborator
- */
 export type UpdateRoleDtoRole = typeof UpdateRoleDtoRole[keyof typeof UpdateRoleDtoRole];
 
 

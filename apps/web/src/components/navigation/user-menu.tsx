@@ -11,6 +11,7 @@
  * - Recognition over recall (clear labels and icons)
  */
 
+import { Avatar, Button, cn } from '@octopus-synapse/profile-ui';
 import {
   authLogout,
   getAuthSessionQueryKey,
@@ -23,9 +24,7 @@ import { ChevronDown, LogOut, Moon, Sun } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { LocalizedLink } from '@/shared/components/localized-link';
-import { Avatar } from '@/shared/components/ui';
 import { useThemeOptional } from '@/shared/providers/theme-provider';
-import { cn } from '@/shared/utils';
 import { ADMIN_MENU_ITEMS, USER_MENU_ITEMS } from './config/nav-items';
 
 export function UserMenu() {
@@ -93,28 +92,28 @@ export function UserMenu() {
   return (
     <div ref={menuRef} className="relative">
       {/* Trigger */}
-      <button
+      <Button
         type="button"
         ref={triggerRef}
-        onClick={() => setIsOpen(!isOpen)}
-        className={cn(
-          'flex items-center gap-2 rounded-full py-1 pr-2 pl-1 transition-colors duration-150',
-          'hover:bg-pf-hover-subtle',
-          isOpen && 'bg-pf-hover-subtle',
-        )}
+        variant="ghost"
+        tone="neutral"
+        size="sm"
         aria-expanded={isOpen}
         aria-haspopup="menu"
         aria-label={`Account menu for ${displayName}`}
+        rightIcon={
+          <ChevronDown
+            className={cn(
+              'h-3.5 w-3.5 text-pf-fg-muted transition-transform duration-150',
+              isOpen && 'rotate-180',
+            )}
+            strokeWidth={1.5}
+          />
+        }
+        onPress={() => setIsOpen(!isOpen)}
       >
         <Avatar src={undefined} alt="" fallback={initials} size="sm" className="h-7 w-7" />
-        <ChevronDown
-          className={cn(
-            'h-3.5 w-3.5 text-pf-fg-muted transition-transform duration-150',
-            isOpen && 'rotate-180',
-          )}
-          strokeWidth={1.5}
-        />
-      </button>
+      </Button>
 
       {/* Dropdown */}
       {isOpen && (
@@ -174,34 +173,30 @@ export function UserMenu() {
             <div className="flex items-center justify-between rounded-lg px-3 py-2">
               <span className="text-sm text-pf-fg-muted">{t('nav.preferences.theme')}</span>
               <div className="flex items-center gap-0.5 rounded-lg bg-pf-hover-subtle p-0.5">
-                <button
+                <Button
                   type="button"
-                  onClick={() => themeContext?.setTheme('light')}
-                  className={cn(
-                    'flex h-6 w-6 items-center justify-center rounded-md transition-all duration-150',
-                    themeContext?.theme === 'light'
-                      ? 'bg-pf-canvas-subtle/95 text-pf-fg-default shadow-sm'
-                      : 'text-pf-fg-muted hover:text-pf-fg-default',
-                  )}
+                  variant={themeContext?.theme === 'light' ? 'soft' : 'ghost'}
+                  tone="neutral"
+                  size="xs"
+                  iconOnly
+                  pressed={themeContext?.theme === 'light'}
                   aria-label={t('nav.aria.lightTheme')}
-                  aria-pressed={themeContext?.theme === 'light'}
+                  onPress={() => themeContext?.setTheme('light')}
                 >
                   <Sun className="h-3.5 w-3.5" strokeWidth={1.5} />
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
-                  onClick={() => themeContext?.setTheme('dark')}
-                  className={cn(
-                    'flex h-6 w-6 items-center justify-center rounded-md transition-all duration-150',
-                    themeContext?.theme === 'dark'
-                      ? 'bg-pf-canvas-subtle/95 text-pf-fg-default shadow-sm'
-                      : 'text-pf-fg-muted hover:text-pf-fg-default',
-                  )}
+                  variant={themeContext?.theme === 'dark' ? 'soft' : 'ghost'}
+                  tone="neutral"
+                  size="xs"
+                  iconOnly
+                  pressed={themeContext?.theme === 'dark'}
                   aria-label={t('nav.aria.darkTheme')}
-                  aria-pressed={themeContext?.theme === 'dark'}
+                  onPress={() => themeContext?.setTheme('dark')}
                 >
                   <Moon className="h-3.5 w-3.5" strokeWidth={1.5} />
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -210,20 +205,17 @@ export function UserMenu() {
               <span className="text-sm text-pf-fg-muted">{t('nav.preferences.language')}</span>
               <div className="flex items-center gap-0.5 rounded-lg bg-pf-hover-subtle p-0.5">
                 {locales.map((locale: LocaleInfo) => (
-                  <button
+                  <Button
                     type="button"
                     key={locale.code}
-                    onClick={() => setLanguage(locale.code)}
-                    className={cn(
-                      'flex h-6 items-center rounded-md px-2 text-xs font-medium transition-all duration-150',
-                      language === locale.code
-                        ? 'bg-pf-canvas-subtle/95 text-pf-fg-default shadow-sm'
-                        : 'text-pf-fg-muted hover:text-pf-fg-default',
-                    )}
-                    aria-pressed={language === locale.code}
+                    variant={language === locale.code ? 'soft' : 'ghost'}
+                    tone="neutral"
+                    size="xs"
+                    pressed={language === locale.code}
+                    onPress={() => setLanguage(locale.code)}
                   >
                     {locale.code === 'pt-BR' ? 'PT' : 'EN'}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
@@ -232,18 +224,20 @@ export function UserMenu() {
           {/* Sign Out */}
           <div className="mx-1 border-t border-pf-border-default" />
           <div className="p-1">
-            <button
+            <Button
               type="button"
-              onClick={() => {
+              variant="ghost"
+              tone="danger"
+              size="sm"
+              fullWidth
+              leftIcon={<LogOut className="h-4 w-4" strokeWidth={1.5} />}
+              onPress={() => {
                 close();
                 void handleSignOut();
               }}
-              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-500 transition-colors duration-150 hover:bg-red-500/10"
-              role="menuitem"
             >
-              <LogOut className="h-4 w-4" strokeWidth={1.5} />
               {t('nav.signOut')}
-            </button>
+            </Button>
           </div>
         </div>
       )}

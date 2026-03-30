@@ -5,10 +5,9 @@
 
 'use client';
 
+import { Input, Label } from '@octopus-synapse/profile-ui';
 import type { LucideIcon } from 'lucide-react';
 import { memo, useCallback } from 'react';
-import { Input } from '@/shared/components/ui';
-import { Label } from '@/shared/components/ui/label';
 
 interface Props {
   id: string;
@@ -39,7 +38,7 @@ export const FormField = memo(function FormField({
 }: Props) {
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value),
-    [onChange]
+    [onChange],
   );
 
   return (

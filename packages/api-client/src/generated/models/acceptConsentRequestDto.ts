@@ -38,10 +38,7 @@ All errors follow a consistent format:
 import type { AcceptConsentRequestDtoDocumentType } from './acceptConsentRequestDtoDocumentType';
 
 export interface AcceptConsentRequestDto {
-  /** Type of document being accepted */
   documentType: AcceptConsentRequestDtoDocumentType;
-  /** Client IP address (auto-detected if not provided) */
   ipAddress?: string;
-  /** Client user agent (auto-detected if not provided) */
   userAgent?: string;
 }

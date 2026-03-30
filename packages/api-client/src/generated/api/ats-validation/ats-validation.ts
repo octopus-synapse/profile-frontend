@@ -47,7 +47,7 @@ import type {
 
 import type {
   AtsValidationValidateCV200,
-  ValidateCVRequestDto
+  ValidateCVOptionsDto
 } from '../../models';
 
 import { customFetch } from '../../../client/fetcher';
@@ -93,29 +93,28 @@ export const getAtsValidationValidateCVUrl = () => {
   return `/api/v1/ats/validate`
 }
 
-export const atsValidationValidateCV = async (validateCVRequestDto: ValidateCVRequestDto, options?: RequestInit): Promise<atsValidationValidateCVResponse> => {
+export const atsValidationValidateCV = async (validateCVOptionsDto: ValidateCVOptionsDto, options?: RequestInit): Promise<atsValidationValidateCVResponse> => {
     const formData = new FormData();
-formData.append(`file`, validateCVRequestDto.file);
-if(validateCVRequestDto.checkFormat !== undefined) {
- formData.append(`checkFormat`, validateCVRequestDto.checkFormat.toString())
+if(validateCVOptionsDto.checkFormat !== undefined) {
+ formData.append(`checkFormat`, validateCVOptionsDto.checkFormat.toString())
  }
-if(validateCVRequestDto.checkSections !== undefined) {
- formData.append(`checkSections`, validateCVRequestDto.checkSections.toString())
+if(validateCVOptionsDto.checkSections !== undefined) {
+ formData.append(`checkSections`, validateCVOptionsDto.checkSections.toString())
  }
-if(validateCVRequestDto.checkGrammar !== undefined) {
- formData.append(`checkGrammar`, validateCVRequestDto.checkGrammar.toString())
+if(validateCVOptionsDto.checkGrammar !== undefined) {
+ formData.append(`checkGrammar`, validateCVOptionsDto.checkGrammar.toString())
  }
-if(validateCVRequestDto.checkOrder !== undefined) {
- formData.append(`checkOrder`, validateCVRequestDto.checkOrder.toString())
+if(validateCVOptionsDto.checkOrder !== undefined) {
+ formData.append(`checkOrder`, validateCVOptionsDto.checkOrder.toString())
  }
-if(validateCVRequestDto.checkLayout !== undefined) {
- formData.append(`checkLayout`, validateCVRequestDto.checkLayout.toString())
+if(validateCVOptionsDto.checkLayout !== undefined) {
+ formData.append(`checkLayout`, validateCVOptionsDto.checkLayout.toString())
  }
-if(validateCVRequestDto.resumeId !== undefined) {
- formData.append(`resumeId`, validateCVRequestDto.resumeId);
+if(validateCVOptionsDto.resumeId !== undefined) {
+ formData.append(`resumeId`, validateCVOptionsDto.resumeId);
  }
-if(validateCVRequestDto.checkSemantic !== undefined) {
- formData.append(`checkSemantic`, validateCVRequestDto.checkSemantic.toString())
+if(validateCVOptionsDto.checkSemantic !== undefined) {
+ formData.append(`checkSemantic`, validateCVOptionsDto.checkSemantic.toString())
  }
 
   return customFetch<atsValidationValidateCVResponse>(getAtsValidationValidateCVUrl(),
@@ -132,8 +131,8 @@ if(validateCVRequestDto.checkSemantic !== undefined) {
 
 
 export const getAtsValidationValidateCVMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof atsValidationValidateCV>>, TError,{data: ValidateCVRequestDto}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof atsValidationValidateCV>>, TError,{data: ValidateCVRequestDto}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof atsValidationValidateCV>>, TError,{data: ValidateCVOptionsDto}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof atsValidationValidateCV>>, TError,{data: ValidateCVOptionsDto}, TContext> => {
 
 const mutationKey = ['atsValidationValidateCV'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -145,7 +144,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof atsValidationValidateCV>>, {data: ValidateCVRequestDto}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof atsValidationValidateCV>>, {data: ValidateCVOptionsDto}> = (props) => {
           const {data} = props ?? {};
 
           return  atsValidationValidateCV(data,requestOptions)
@@ -159,18 +158,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type AtsValidationValidateCVMutationResult = NonNullable<Awaited<ReturnType<typeof atsValidationValidateCV>>>
-    export type AtsValidationValidateCVMutationBody = ValidateCVRequestDto
+    export type AtsValidationValidateCVMutationBody = ValidateCVOptionsDto
     export type AtsValidationValidateCVMutationError = void
 
     /**
  * @summary Validate CV for ATS compatibility
  */
 export const useAtsValidationValidateCV = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof atsValidationValidateCV>>, TError,{data: ValidateCVRequestDto}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof atsValidationValidateCV>>, TError,{data: ValidateCVOptionsDto}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof atsValidationValidateCV>>,
         TError,
-        {data: ValidateCVRequestDto},
+        {data: ValidateCVOptionsDto},
         TContext
       > => {
       return useMutation(getAtsValidationValidateCVMutationOptions(options), queryClient);

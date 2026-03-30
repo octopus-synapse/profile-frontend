@@ -35,5 +35,16 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
+import type { ChatMessageDataDtoMessageSender } from './chatMessageDataDtoMessageSender';
 
-export type ChatMessageDataDtoMessage = { [key: string]: unknown };
+export type ChatMessageDataDtoMessage = {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  content: string;
+  isRead: boolean;
+  /** @nullable */
+  readAt: string | null;
+  createdAt: string;
+  sender: ChatMessageDataDtoMessageSender;
+};

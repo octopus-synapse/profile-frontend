@@ -6,10 +6,10 @@
 
 'use client';
 
+import { PhoneInput } from '@octopus-synapse/profile-ui';
 import { type DictionaryKey, useI18n } from '@profile/i18n';
 import { AlertCircle, Mail, MapPin, Phone, User } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
-import { PhoneInput } from '@/shared/components/ui';
 import { type PersonalInfo, useOnboarding } from '../hooks';
 import { OnboardingStepHeader } from '../step-header';
 import { StepNavigation } from '../step-navigation';

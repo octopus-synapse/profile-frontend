@@ -35,9 +35,9 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
-import type { ConsentRecordDto } from './consentRecordDto';
+import type { AcceptConsentResponseDtoConsent } from './acceptConsentResponseDtoConsent';
 
 export interface AcceptConsentResponseDto {
   message: string;
-  consent: ConsentRecordDto;
+  consent: AcceptConsentResponseDtoConsent;
 }

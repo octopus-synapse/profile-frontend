@@ -37,6 +37,6 @@ All errors follow a consistent format:
  */
 
 export interface DeleteResponseDto {
-  success: boolean;
-  message?: string;
+  /** Whether the file was successfully deleted */
+  deleted: boolean;
 }

@@ -38,6 +38,5 @@ All errors follow a consistent format:
 import type { ImportJsonDtoData } from './importJsonDtoData';
 
 export interface ImportJsonDto {
-  /** JSON Resume format data (jsonresume.org) */
   data: ImportJsonDtoData;
 }

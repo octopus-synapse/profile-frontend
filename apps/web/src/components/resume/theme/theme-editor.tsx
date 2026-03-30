@@ -9,14 +9,13 @@
 
 'use client';
 
+import { Button, showToast } from '@octopus-synapse/profile-ui';
 import {
   useThemesCreateThemeForUser,
   useThemesFork,
   useThemesUpdateThemeForUser,
 } from '@profile/api-client';
 import { useState } from 'react';
-import { showToast } from '@/shared/components/ui/toast';
-import { cn } from '@/shared/utils';
 import type { ResumeStyleConfig, Theme } from '../types/config';
 
 interface Props {
@@ -116,38 +115,34 @@ export function ThemeEditor({ theme, onSave, onCancel }: Props) {
           )}
         </div>
         <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="border-pf-border-default text-pf-fg-default hover:bg-pf-canvas-subtle rounded-lg border px-4 py-2 text-sm font-medium transition-colors"
-          >
+          <Button type="button" variant="outline" tone="neutral" size="sm" onPress={onCancel}>
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
-            onClick={() => void handleSave()}
-            disabled={
-              createMutation.isPending || updateMutation.isPending || forkMutation.isPending
-            }
-            className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis rounded-lg px-4 py-2 text-sm font-medium transition-colors hover:opacity-90 disabled:opacity-50"
+            variant="solid"
+            tone="neutral"
+            size="sm"
+            loading={createMutation.isPending || updateMutation.isPending || forkMutation.isPending}
+            onPress={() => void handleSave()}
           >
             {isPublicOrSystem ? 'Save as Copy' : 'Save'}
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Tabs - Only JSON for now until backend schema is available */}
       <div className="border-pf-border-default flex border-b">
-        <button
+        <Button
           type="button"
-          onClick={() => setTab('json')}
-          className={cn(
-            'border-b-2 px-4 py-2.5 text-sm font-medium capitalize transition-colors',
-            'border-pf-border-emphasis text-pf-fg-default',
-          )}
+          variant="ghost"
+          tone="neutral"
+          size="sm"
+          pressed
+          onPress={() => setTab('json')}
         >
           JSON
-        </button>
+        </Button>
       </div>
 
       {/* Editor Content */}

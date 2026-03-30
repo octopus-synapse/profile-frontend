@@ -38,5 +38,6 @@ All errors follow a consistent format:
 
 export interface OnboardingStatusResponseDto {
   hasCompletedOnboarding: boolean;
-  onboardingCompletedAt?: string;
+  /** @nullable */
+  onboardingCompletedAt?: string | null;
 }

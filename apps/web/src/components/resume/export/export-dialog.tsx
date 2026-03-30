@@ -6,19 +6,19 @@
  * Modal for exporting a resume in multiple formats (PDF, DOCX, JSON, LaTeX, PNG banner).
  */
 
-import { useI18n } from '@profile/i18n';
-import type { LucideIcon } from 'lucide-react';
-import { Code, Download, FileCode, FileText, Image, Loader2 } from 'lucide-react';
-import { useState } from 'react';
-import { Button } from '@/shared/components/ui';
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/shared/components/ui/dialog';
-import { showToast } from '@/shared/components/ui/toast';
+  showToast,
+} from '@octopus-synapse/profile-ui';
+import { useI18n } from '@profile/i18n';
+import type { LucideIcon } from 'lucide-react';
+import { Code, Download, FileCode, FileText, Image, Loader2 } from 'lucide-react';
+import { useState } from 'react';
 import {
   handleExportBanner,
   handleExportDOCX,

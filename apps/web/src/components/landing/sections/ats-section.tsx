@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@octopus-synapse/profile-ui';
 import { useI18n } from '@profile/i18n';
 import { Loader2, Pause, Play, X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -102,14 +103,17 @@ export function AtsSection() {
               <span className="h-3 w-3 rounded-full bg-zinc-600" />
               <span className="h-3 w-3 rounded-full bg-zinc-600" />
             </div>
-            <button
+            <Button
               type="button"
-              onClick={() => setIsPaused((p) => !p)}
-              className="rounded p-1 text-zinc-500 transition-colors hover:text-white"
+              variant="ghost"
+              tone="neutral"
+              size="xs"
+              iconOnly
               aria-label={isPaused ? 'Play' : 'Pause'}
+              onPress={() => setIsPaused((p) => !p)}
             >
               {isPaused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
-            </button>
+            </Button>
           </div>
 
           {/* Content area */}

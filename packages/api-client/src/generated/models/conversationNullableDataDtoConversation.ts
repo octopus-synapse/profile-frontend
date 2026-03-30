@@ -37,7 +37,27 @@ All errors follow a consistent format:
  */
 
 /**
- * Conversation details
  * @nullable
  */
-export type ConversationNullableDataDtoConversation = { [key: string]: unknown } | null;
+export type ConversationNullableDataDtoConversation = {
+  id: string;
+  participant: {
+  id: string;
+  /** @nullable */
+  displayName: string | null;
+  /** @nullable */
+  photoURL: string | null;
+  /** @nullable */
+  username: string | null;
+};
+  /** @nullable */
+  lastMessage: {
+  content: string;
+  senderId: string;
+  createdAt: string;
+  isRead: boolean;
+} | null;
+  unreadCount: number;
+  createdAt: string;
+  updatedAt: string;
+} | null;

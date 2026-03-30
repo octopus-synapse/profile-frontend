@@ -35,12 +35,11 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
-import type { ParsedPersonalInfoDto } from './parsedPersonalInfoDto';
-import type { ParsedSectionDto } from './parsedSectionDto';
+import type { ParsedResumeDataDtoPersonalInfo } from './parsedResumeDataDtoPersonalInfo';
+import type { ParsedResumeDataDtoSectionsItem } from './parsedResumeDataDtoSectionsItem';
 
 export interface ParsedResumeDataDto {
-  personalInfo: ParsedPersonalInfoDto;
+  personalInfo: ParsedResumeDataDtoPersonalInfo;
   summary?: string;
-  /** Generic sections with items */
-  sections: ParsedSectionDto[];
+  sections: ParsedResumeDataDtoSectionsItem[];
 }

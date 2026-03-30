@@ -9,27 +9,31 @@
 'use client';
 
 import type {
-  ResolvedSectionTypeDto,
-  ResumeDto,
-  ResumeItemDto,
-  ResumeSectionDto,
+  ResumeDetailsDataDtoResume,
+  ResumeSectionTypesDataDtoSectionTypesItem,
 } from '@profile/api-client';
 import { useEnumsGetSectionTypes } from '@profile/api-client';
 import { SectionIcon } from '@/shared/components/section-icon';
 import { CardItem, CompactItem, ListItem, TimelineItem } from './layout-item-renderers';
-import type { FieldStyleMap, RenderHints } from './public-profile-types';
+import type {
+  FieldStyleMap,
+  PublicProfileSection,
+  PublicProfileSectionItem,
+  RenderHints,
+} from './public-profile-types';
 
 interface PublicProfileResumeProps {
-  resume: ResumeDto;
+  resume: ResumeDetailsDataDtoResume;
 }
 
 export function PublicProfileResume({ resume }: PublicProfileResumeProps) {
   const sectionTypesQuery = useEnumsGetSectionTypes();
   const sectionTypes = (sectionTypesQuery.data?.data?.data?.sectionTypes ??
-    []) as ResolvedSectionTypeDto[];
+    []) as ResumeSectionTypesDataDtoSectionTypesItem[];
   const typeMap = new Map(sectionTypes.map((t) => [t.key, t]));
 
-  const contentSections = (resume.sections ?? []).filter(
+  const rawSections = resume.sections as PublicProfileSection[] | undefined;
+  const contentSections = (rawSections ?? []).filter(
     (s) => s.semanticKind?.toUpperCase() !== 'HEADER',
   );
 
@@ -48,8 +52,11 @@ export function PublicProfileResume({ resume }: PublicProfileResumeProps) {
   );
 }
 
-function getSectionTitle(section: ResumeSectionDto, sectionType?: ResolvedSectionTypeDto): string {
-  if (sectionType?.title) return sectionType.title;
+function getSectionTitle(
+  section: PublicProfileSection,
+  sectionType?: ResumeSectionTypesDataDtoSectionTypesItem,
+): string {
+  if (sectionType?.title) return sectionType.title as string;
   return section.sectionTypeKey
     .replace(/_v\d+$/, '')
     .replace(/_/g, ' ')
@@ -60,8 +67,8 @@ function GenericSection({
   section,
   sectionType,
 }: {
-  section: ResumeSectionDto;
-  sectionType?: ResolvedSectionTypeDto;
+  section: PublicProfileSection;
+  sectionType?: ResumeSectionTypesDataDtoSectionTypesItem;
 }) {
   const title = getSectionTitle(section, sectionType);
   const items = section.items ?? [];
@@ -92,7 +99,7 @@ function LayoutRenderer({
   layout: string;
   renderHints: RenderHints;
   fieldStyles: FieldStyleMap;
-  items: ResumeItemDto[];
+  items: PublicProfileSectionItem[];
 }) {
   switch (layout) {
     case 'timeline':
@@ -147,7 +154,7 @@ function Section({
   title,
   children,
 }: {
-  sectionType?: ResolvedSectionTypeDto;
+  sectionType?: ResumeSectionTypesDataDtoSectionTypesItem;
   title: string;
   children: React.ReactNode;
 }) {

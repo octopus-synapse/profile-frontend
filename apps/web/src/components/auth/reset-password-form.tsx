@@ -5,6 +5,7 @@
  * Uses centralized error handler for API errors
  */
 
+import { Spinner } from '@octopus-synapse/profile-ui';
 import { type ResetPasswordDto, resetPasswordHandle } from '@profile/api-client';
 import { useT } from '@profile/i18n';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -13,7 +14,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 import { VALIDATION } from '@/config/constants';
 import { ROUTES } from '@/config/routes';
-import { Spinner } from '@/shared/components/ui';
 import { useErrorHandler } from '@/shared/hooks/use-error-handler';
 import { AuthSubmitButton } from './auth-submit-button';
 import { SecurePasswordField } from './secure-password-field';

@@ -1,11 +1,11 @@
 import type {
-  OnboardingPersonalInfoDto,
-  OnboardingProfessionalProfileDto,
   OnboardingSessionDto,
-  OnboardingTemplateSelectionDto,
-  SectionProgressDto,
-  StepFieldDto,
-  StepMetaDto,
+  OnboardingSessionDtoPersonalInfo,
+  OnboardingSessionDtoProfessionalProfile,
+  OnboardingSessionDtoSectionsItem,
+  OnboardingSessionDtoStepsItem,
+  OnboardingSessionDtoStepsItemFieldsItem,
+  OnboardingSessionDtoTemplateSelection,
 } from '@profile/api-client';
 
 export { useGitHubUser } from './use-github-user';
@@ -24,11 +24,16 @@ export type SectionStep = `section:${string}`;
 export const isSectionStep = (step: string): step is SectionStep => step.startsWith('section:');
 export const getSectionTypeFromStep = (step: SectionStep | string) => step.replace('section:', '');
 
-export type { OnboardingSessionDto, StepMetaDto, StepFieldDto };
-export type PersonalInfo = OnboardingPersonalInfoDto;
-export type ProfessionalProfile = OnboardingProfessionalProfileDto;
-export type TemplateSelection = OnboardingTemplateSelectionDto;
+// Re-export types with shorter aliases for convenience
+export type { OnboardingSessionDto };
+export type StepMetaDto = OnboardingSessionDtoStepsItem;
+export type StepFieldDto = OnboardingSessionDtoStepsItemFieldsItem;
+export type PersonalInfo = OnboardingSessionDtoPersonalInfo;
+export type ProfessionalProfile = OnboardingSessionDtoProfessionalProfile;
+export type TemplateSelection = OnboardingSessionDtoTemplateSelection;
+export type SectionProgressDto = OnboardingSessionDtoSectionsItem;
 export type SectionItem = { id?: string; content: Record<string, unknown> };
 export type SectionData = Omit<SectionProgressDto, 'items'> & {
+  sectionTypeKey: string;
   items: SectionItem[];
 };

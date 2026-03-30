@@ -36,7 +36,4 @@ All errors follow a consistent format:
  * OpenAPI spec version: 1.0.0
  */
 
-export interface AutoSyncGitHubRequestDto {
-  /** Force sync even if recently synced */
-  force?: boolean;
-}
+export interface AutoSyncGitHubRequestDto { [key: string]: unknown }

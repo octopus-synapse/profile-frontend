@@ -37,11 +37,8 @@ All errors follow a consistent format:
  */
 
 export interface BlockUserRequestDto {
-  /** The ID of the user to block */
+  /** @minLength 1 */
   userId: string;
-  /**
-   * Optional reason for blocking
-   * @maxLength 500
-   */
+  /** @maxLength 500 */
   reason?: string;
 }

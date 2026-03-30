@@ -3,9 +3,10 @@
  */
 'use client';
 
+import { showToast } from '@octopus-synapse/profile-ui';
+import { useI18n } from '@profile/i18n';
 import { FileUp, Upload } from 'lucide-react';
 import { type DragEvent, type RefObject, useCallback, useState } from 'react';
-import { showToast } from '@/shared/components/ui/toast';
 
 const ACCEPTED_TYPES = [
   'application/pdf',
@@ -19,6 +20,7 @@ interface Props {
 }
 
 export function FileDropZone({ selectedFile, inputRef, onFileSelect }: Props) {
+  const { t } = useI18n();
   const [isDragging, setIsDragging] = useState(false);
 
   const isValidFile = useCallback((file: File) => {
@@ -84,10 +86,8 @@ export function FileDropZone({ selectedFile, inputRef, onFileSelect }: Props) {
         <>
           <Upload className="h-8 w-8 text-zinc-500" />
           <div>
-            <p className="text-sm font-medium text-zinc-300">
-              Drop your resume here or click to browse
-            </p>
-            <p className="mt-1 text-xs text-zinc-500">Supports PDF and DOCX</p>
+            <p className="text-sm font-medium text-zinc-300">{t('resume.ats.dropzone')}</p>
+            <p className="mt-1 text-xs text-zinc-500">{t('resume.ats.supportedFormats')}</p>
           </div>
         </>
       )}

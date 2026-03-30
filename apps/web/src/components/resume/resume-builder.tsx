@@ -6,6 +6,7 @@
 
 'use client';
 
+import { showToast } from '@octopus-synapse/profile-ui';
 import {
   useDslRender,
   useResumeConfigBatchUpdate,
@@ -16,7 +17,6 @@ import {
 } from '@profile/api-client';
 import { useI18n } from '@profile/i18n';
 import { useCallback } from 'react';
-import { showToast } from '@/shared/components/ui/toast';
 import { useCopyFeedback } from '@/shared/hooks/use-copy-feedback';
 import { ASTRenderer } from './ast-renderer';
 import { BuilderDialogs } from './builder/builder-dialogs';

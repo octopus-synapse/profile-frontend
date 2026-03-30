@@ -3,10 +3,11 @@
  * Handles queries, mutations, and form state.
  */
 
+import { useConfirmDialog } from '@octopus-synapse/profile-ui';
 import {
   type GenericSectionItemDto,
   getResumesListResumeSectionsQueryKey,
-  type ResolvedSectionTypeDto,
+  type ResumeSectionTypesDataDtoSectionTypesItem,
   type SectionItemPayloadDto,
   useResumesCreateItem,
   useResumesDeleteItem,
@@ -17,7 +18,6 @@ import {
 import { useI18n } from '@profile/i18n';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo, useState } from 'react';
-import { useConfirmDialog } from '@/shared/components/ui/confirm-dialog';
 import type { FieldDefinition } from './field-input-shared';
 import {
   type FormErrors,
@@ -33,8 +33,10 @@ interface UseGenericSectionEditorProps {
 }
 
 function hasValidDefinition(
-  sectionType: ResolvedSectionTypeDto | undefined,
-): sectionType is ResolvedSectionTypeDto & { definition: { fields: FieldDefinition[] } } {
+  sectionType: ResumeSectionTypesDataDtoSectionTypesItem | undefined,
+): sectionType is ResumeSectionTypesDataDtoSectionTypesItem & {
+  definition: { fields: FieldDefinition[] };
+} {
   return (
     sectionType != null &&
     typeof sectionType.definition === 'object' &&

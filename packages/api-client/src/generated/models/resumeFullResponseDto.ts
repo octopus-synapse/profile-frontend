@@ -35,7 +35,8 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
-import type { ResumeSectionResponseDto } from './resumeSectionResponseDto';
+import type { ResumeFullResponseDtoActiveTheme } from './resumeFullResponseDtoActiveTheme';
+import type { ResumeFullResponseDtoResumeSectionsItem } from './resumeFullResponseDtoResumeSectionsItem';
 
 export interface ResumeFullResponseDto {
   id: string;
@@ -46,7 +47,9 @@ export interface ResumeFullResponseDto {
   slug?: string;
   createdAt: string;
   updatedAt: string;
-  resumeSections: ResumeSectionResponseDto[];
+  resumeSections: ResumeFullResponseDtoResumeSectionsItem[];
+  activeThemeId?: string;
+  activeTheme?: ResumeFullResponseDtoActiveTheme;
   fullName?: string;
   email?: string;
   phone?: string;

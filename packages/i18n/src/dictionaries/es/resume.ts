@@ -235,7 +235,12 @@ export const resume = {
   // Analytics
   'resume.analytics.title': 'Analíticas del Currículum',
   'resume.analytics.keywordDensity': 'Densidad de Palabras Clave',
+  'resume.analytics.densityOptimal': 'Óptima',
+  'resume.analytics.densityTooLow': 'Muy Baja',
+  'resume.analytics.densityTooHigh': 'Muy Alta',
   'resume.analytics.keywordAnalysis': 'Análisis de Palabras Clave',
+  'resume.analytics.foundKeywords': 'Palabras Clave Encontradas',
+  'resume.analytics.missingKeywords': 'Palabras Clave Faltantes',
   'resume.analytics.warnings': 'Advertencias',
   'resume.analytics.recommendations': 'Recomendaciones',
   'resume.analytics.sectionBreakdown': 'Desglose por Sección',

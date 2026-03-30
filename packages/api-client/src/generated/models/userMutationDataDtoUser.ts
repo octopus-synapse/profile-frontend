@@ -36,4 +36,21 @@ All errors follow a consistent format:
  * OpenAPI spec version: 1.0.0
  */
 
-export type UserMutationDataDtoUser = { [key: string]: unknown };
+export type UserMutationDataDtoUser = {
+  id: string;
+  /** @nullable */
+  email: string | null;
+  /** @nullable */
+  name: string | null;
+  createdAt: string;
+} | {
+  id: string;
+  /** @nullable */
+  email: string | null;
+  /** @nullable */
+  name: string | null;
+  /** @nullable */
+  username: string | null;
+  hasCompletedOnboarding: boolean;
+  updatedAt: string;
+};

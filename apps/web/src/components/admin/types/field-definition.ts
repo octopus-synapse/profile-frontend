@@ -1,140 +1,142 @@
-'use client';
-
 /**
- * Field Definition Types
- *
- * Typed representation of the section type definition schema.
- * Matches the backend seed data structure at schemaVersion 1.
+ * Field Definition Types for Admin Section Type Management.
+ * Frontend UI types for form editing - not SDK types.
  */
 
-export type FieldType = 'string' | 'date' | 'enum' | 'array';
+export const FIELD_TYPES = [
+  'string',
+  'text',
+  'number',
+  'boolean',
+  'date',
+  'enum',
+  'url',
+  'email',
+  'phone',
+  'array',
+] as const;
 
-export type SemanticRole =
-  | 'TITLE'
-  | 'ORGANIZATION'
-  | 'JOB_TITLE'
-  | 'DEGREE'
-  | 'FIELD_OF_STUDY'
-  | 'START_DATE'
-  | 'END_DATE'
-  | 'DATE_RANGE'
-  | 'DESCRIPTION'
-  | 'LOCATION'
-  | 'URL'
-  | 'EMAIL'
-  | 'PHONE'
-  | 'SKILL_NAME'
-  | 'PROFICIENCY'
-  | 'CATEGORY'
-  | 'LANGUAGE_NAME'
-  | 'ISSUER'
-  | 'CREDENTIAL_ID'
-  | 'CUSTOM';
+export type FieldType = (typeof FIELD_TYPES)[number];
 
-export interface FieldMeta {
+export const SEMANTIC_ROLES = [
+  'title',
+  'subtitle',
+  'description',
+  'date',
+  'dateRange',
+  'location',
+  'badge',
+  'chip',
+  'link',
+  'image',
+] as const;
+
+export type SemanticRole = (typeof SEMANTIC_ROLES)[number];
+
+export const WIDGETS = [
+  'text',
+  'textarea',
+  'select',
+  'checkbox',
+  'date',
+  'dateRange',
+  'url',
+  'email',
+  'phone',
+  'richtext',
+] as const;
+
+export type Widget = (typeof WIDGETS)[number];
+
+export interface FieldEntryMeta {
   label: string;
-  widget?: 'text' | 'textarea' | 'date' | 'select' | 'url' | 'email';
-  format?: 'uri' | 'email';
+  widget?: Widget;
+  format?: 'uri' | 'email' | 'phone';
   minLength?: number;
   maxLength?: number;
   allowPresentFlag?: boolean;
+  placeholder?: string;
+  helpText?: string;
 }
 
 export interface FieldEntry {
   key: string;
   type: FieldType;
+  semanticRole: string;
   required: boolean;
   nullable?: boolean;
-  semanticRole: SemanticRole | string;
   enum?: string[];
-  items?: { type: string };
-  meta: FieldMeta;
+  meta: FieldEntryMeta;
+  order?: number;
 }
 
 export interface FieldDefinition {
-  schemaVersion: number;
-  kind: string;
   fields: FieldEntry[];
   ats?: AtsConfig;
 }
 
-export interface AtsConfig {
-  isMandatory: boolean;
-  recommendedPosition: number;
-  sectionDetection: {
-    keywords: string[];
-    multiWord: string[];
-  };
-  scoring: {
-    baseScore: number;
-    fieldWeights: Record<string, number>;
-  };
+export interface AtsScoring {
+  weight?: number;
+  minScore?: number;
+  maxScore?: number;
+  baseScore?: number;
+  fieldWeights: Record<string, number>;
 }
 
-export const FIELD_TYPES: FieldType[] = ['string', 'date', 'enum', 'array'];
+export interface AtsSectionDetection {
+  keywords: string[];
+  patterns?: string[];
+  multiWord: string[];
+}
 
-export const SEMANTIC_ROLES: SemanticRole[] = [
-  'TITLE',
-  'ORGANIZATION',
-  'JOB_TITLE',
-  'DEGREE',
-  'FIELD_OF_STUDY',
-  'START_DATE',
-  'END_DATE',
-  'DATE_RANGE',
-  'DESCRIPTION',
-  'LOCATION',
-  'URL',
-  'EMAIL',
-  'PHONE',
-  'SKILL_NAME',
-  'PROFICIENCY',
-  'CATEGORY',
-  'LANGUAGE_NAME',
-  'ISSUER',
-  'CREDENTIAL_ID',
-  'CUSTOM',
-];
-
-export const WIDGETS = ['text', 'textarea', 'date', 'select', 'url', 'email'] as const;
+export interface AtsConfig {
+  required: string[];
+  recommended: string[];
+  weights: Record<string, number>;
+  scoring: AtsScoring;
+  sectionDetection: AtsSectionDetection;
+  isMandatory?: boolean;
+  recommendedPosition?: number;
+}
 
 export function createEmptyField(): FieldEntry {
   return {
     key: '',
     type: 'string',
+    semanticRole: '',
     required: false,
-    semanticRole: 'CUSTOM',
-    meta: { label: '' },
+    meta: {
+      label: '',
+    },
   };
 }
 
 export function createEmptyAtsConfig(): AtsConfig {
   return {
-    isMandatory: false,
-    recommendedPosition: 1,
-    sectionDetection: { keywords: [], multiWord: [] },
-    scoring: { baseScore: 0, fieldWeights: {} },
+    required: [],
+    recommended: [],
+    weights: {},
+    scoring: {
+      baseScore: 0,
+      fieldWeights: {},
+    },
+    sectionDetection: {
+      keywords: [],
+      multiWord: [],
+    },
   };
 }
 
-export function parseDefinition(raw: Record<string, unknown>): FieldDefinition {
-  if (!raw || !Array.isArray(raw.fields)) {
-    return { schemaVersion: 1, kind: '', fields: [] };
-  }
+export function parseDefinition(data: Record<string, unknown>): FieldDefinition {
+  const fields = Array.isArray(data.fields) ? (data.fields as FieldEntry[]) : [];
+  return { fields };
+}
+
+export function serializeDefinition(
+  definition: FieldDefinition & { kind?: string },
+): Record<string, unknown> {
   return {
-    schemaVersion: (raw.schemaVersion as number) ?? 1,
-    kind: (raw.kind as string) ?? '',
-    fields: (raw.fields as FieldEntry[]) ?? [],
-    ats: (raw.ats as AtsConfig) ?? undefined,
+    fields: definition.fields,
+    kind: definition.kind,
   };
-}
-
-export function serializeDefinition(def: FieldDefinition): Record<string, unknown> {
-  const result: Record<string, unknown> = {
-    schemaVersion: def.schemaVersion,
-    kind: def.kind,
-    fields: def.fields.filter((f) => f.key.trim() !== ''),
-  };
-  if (def.ats) result.ats = def.ats;
-  return result;
 }

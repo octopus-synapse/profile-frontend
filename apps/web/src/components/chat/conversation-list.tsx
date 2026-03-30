@@ -1,11 +1,13 @@
 'use client';
 
+import { Avatar, Badge, Button, Skeleton } from '@octopus-synapse/profile-ui';
+import {
+  type ConversationsListDataDtoConversationsConversationsItem,
+  useChatGetConversations,
+} from '@profile/api-client';
 import { useT } from '@profile/i18n';
 import { formatDistanceToNow } from 'date-fns';
 import { MessageSquare } from 'lucide-react';
-import { Avatar, Badge, Skeleton } from '@/shared/components/ui';
-import type { Conversation } from './hooks/use-chat';
-import { useConversations } from './hooks/use-chat';
 
 // --- Sub-components ---
 
@@ -34,9 +36,8 @@ function EmptyConversations() {
 }
 
 interface ConversationItemProps {
-  conversation: Conversation;
+  conversation: ConversationsListDataDtoConversationsConversationsItem;
   isSelected: boolean;
-  currentUserId: string;
   onSelect: (id: string) => void;
   isOnline?: boolean;
 }
@@ -44,16 +45,14 @@ interface ConversationItemProps {
 function ConversationItem({
   conversation,
   isSelected,
-  currentUserId,
   onSelect,
   isOnline = false,
 }: ConversationItemProps) {
-  const otherParticipant = conversation.participants.find((p) => p.userId !== currentUserId);
-  const displayName = otherParticipant?.displayName ?? 'Unknown';
-  const avatarUrl = otherParticipant?.avatarUrl ?? undefined;
+  const t = useT();
+  const displayName = conversation.participant.displayName ?? 'Unknown';
+  const avatarUrl = conversation.participant.photoURL ?? undefined;
   const initials = displayName.charAt(0).toUpperCase();
 
-  const t = useT();
   const preview = conversation.lastMessage?.content ?? t('social.chat.noMessagesPreview');
   const truncatedPreview = preview.length > 50 ? `${preview.slice(0, 50)}…` : preview;
 
@@ -64,46 +63,50 @@ function ConversationItem({
     : '';
 
   return (
-    <button
+    <Button
       type="button"
-      onClick={() => onSelect(conversation.id)}
-      className={`flex w-full items-center gap-3 rounded-lg p-3 text-left transition-colors ${
-        isSelected ? 'bg-neutral-800 ring-1 ring-neutral-600' : 'hover:bg-neutral-800/50'
-      }`}
+      variant={isSelected ? 'soft' : 'ghost'}
+      tone="neutral"
+      size="lg"
+      fullWidth
+      pressed={isSelected}
+      onPress={() => onSelect(conversation.id)}
     >
-      <div className="relative shrink-0">
-        <Avatar className="h-10 w-10">
-          {avatarUrl ? (
-            <img
-              src={avatarUrl}
-              alt={displayName}
-              className="h-full w-full rounded-full object-cover"
-            />
-          ) : (
-            <span className="flex h-full w-full items-center justify-center rounded-full bg-neutral-700 text-sm font-medium text-neutral-200">
-              {initials}
-            </span>
-          )}
-        </Avatar>
-        {isOnline && (
-          <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-neutral-900 bg-green-500" />
-        )}
-      </div>
-
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center justify-between gap-2">
-          <span className="truncate text-sm font-medium text-neutral-100">{displayName}</span>
-          {conversation.unreadCount > 0 && (
-            <Badge variant="default" className="shrink-0 text-xs">
-              {conversation.unreadCount}
-            </Badge>
+      <div className="flex w-full items-center gap-3">
+        <div className="relative shrink-0">
+          <Avatar className="h-10 w-10">
+            {avatarUrl ? (
+              <img
+                src={avatarUrl}
+                alt={displayName}
+                className="h-full w-full rounded-full object-cover"
+              />
+            ) : (
+              <span className="flex h-full w-full items-center justify-center rounded-full bg-neutral-700 text-sm font-medium text-neutral-200">
+                {initials}
+              </span>
+            )}
+          </Avatar>
+          {isOnline && (
+            <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-neutral-900 bg-green-500" />
           )}
         </div>
-        <p className="truncate text-xs text-neutral-400">{truncatedPreview}</p>
-      </div>
 
-      {timestamp && <span className="shrink-0 text-[10px] text-neutral-500">{timestamp}</span>}
-    </button>
+        <div className="min-w-0 flex-1 text-left">
+          <div className="flex items-center justify-between gap-2">
+            <span className="truncate text-sm font-medium text-neutral-100">{displayName}</span>
+            {conversation.unreadCount > 0 && (
+              <Badge variant="default" className="shrink-0 text-xs">
+                {conversation.unreadCount}
+              </Badge>
+            )}
+          </div>
+          <p className="truncate text-xs text-neutral-400">{truncatedPreview}</p>
+        </div>
+
+        {timestamp && <span className="shrink-0 text-[10px] text-neutral-500">{timestamp}</span>}
+      </div>
+    </Button>
   );
 }
 
@@ -111,18 +114,13 @@ function ConversationItem({
 
 interface ConversationListProps {
   selectedId: string | null;
-  currentUserId: string;
   onSelect: (conversationId: string) => void;
   isUserOnline?: (userId: string) => boolean;
 }
 
-export function ConversationList({
-  selectedId,
-  currentUserId,
-  onSelect,
-  isUserOnline,
-}: ConversationListProps) {
-  const { data: conversations, isLoading } = useConversations();
+export function ConversationList({ selectedId, onSelect, isUserOnline }: ConversationListProps) {
+  const { data: response, isLoading } = useChatGetConversations();
+  const conversations = response?.data?.data?.conversations?.conversations ?? [];
 
   if (isLoading) {
     return (
@@ -134,25 +132,21 @@ export function ConversationList({
     );
   }
 
-  if (!conversations?.length) {
+  if (!conversations.length) {
     return <EmptyConversations />;
   }
 
   return (
     <div className="space-y-1 overflow-y-auto">
-      {conversations.map((conversation) => {
-        const otherUser = conversation.participants.find((p) => p.userId !== currentUserId);
-        return (
-          <ConversationItem
-            key={conversation.id}
-            conversation={conversation}
-            isSelected={selectedId === conversation.id}
-            currentUserId={currentUserId}
-            onSelect={onSelect}
-            isOnline={otherUser ? isUserOnline?.(otherUser.userId) : false}
-          />
-        );
-      })}
+      {conversations.map((conversation) => (
+        <ConversationItem
+          key={conversation.id}
+          conversation={conversation}
+          isSelected={selectedId === conversation.id}
+          onSelect={onSelect}
+          isOnline={isUserOnline?.(conversation.participant.id) ?? false}
+        />
+      ))}
     </div>
   );
 }

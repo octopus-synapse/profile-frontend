@@ -1,97 +1,79 @@
-'use client';
-
 /**
- * Render Hints & Field Styles Types
- *
- * Typed representation matching backend Zod schemas.
+ * Style Config Types for Admin Section Type Management.
+ * Defines field styling and render hint options.
  */
 
-export type LayoutType = 'timeline' | 'list' | 'grid' | 'cards' | 'compact';
-export type ItemLayout = 'horizontal' | 'vertical' | 'stacked';
+export const FIELD_SEMANTICS = [
+  'title',
+  'subtitle',
+  'description',
+  'date',
+  'dateRange',
+  'location',
+  'badge',
+  'chip',
+  'link',
+  'image',
+] as const;
 
-export interface RenderHints {
-  layout?: LayoutType;
-  itemLayout?: ItemLayout;
-  groupBy?: string;
-  dateFormat?: string;
-  showDividers?: boolean;
-  columns?: number;
-}
+export type FieldSemantic = (typeof FIELD_SEMANTICS)[number];
 
-export type FieldSemantic =
-  | 'title'
-  | 'subtitle'
-  | 'date'
-  | 'dateRange'
-  | 'link'
-  | 'email'
-  | 'phone'
-  | 'location'
-  | 'description'
-  | 'chip'
-  | 'badge'
-  | 'hidden';
+export const FIELD_WIDGETS = [
+  'text',
+  'textarea',
+  'select',
+  'checkbox',
+  'date',
+  'dateRange',
+  'url',
+  'email',
+  'phone',
+  'richtext',
+  'hidden',
+] as const;
 
-export type FieldWidget =
-  | 'text'
-  | 'textarea'
-  | 'date'
-  | 'dateRange'
-  | 'select'
-  | 'multiselect'
-  | 'chips'
-  | 'rating'
-  | 'toggle'
-  | 'url';
+export type FieldWidget = (typeof FIELD_WIDGETS)[number];
 
-export type FieldWidth = 'full' | 'half' | 'third' | 'quarter' | 'auto';
+export const FIELD_WIDTHS = ['full', 'half', 'third', 'quarter'] as const;
+
+export type FieldWidth = (typeof FIELD_WIDTHS)[number];
+
+export const LAYOUTS = ['timeline', 'cards', 'grid', 'compact', 'list'] as const;
+
+export type Layout = (typeof LAYOUTS)[number];
+export type LayoutType = Layout;
+
+export const ITEM_LAYOUTS = ['horizontal', 'vertical', 'card', 'inline'] as const;
+
+export type ItemLayout = (typeof ITEM_LAYOUTS)[number];
 
 export interface FieldStyleEntry {
   semantic?: FieldSemantic;
   widget?: FieldWidget;
   width?: FieldWidth;
-  icon?: string;
   order?: number;
+  hidden?: boolean;
 }
 
 export type FieldStylesMap = Record<string, FieldStyleEntry>;
 
-export const LAYOUTS: LayoutType[] = ['timeline', 'list', 'grid', 'cards', 'compact'];
-export const ITEM_LAYOUTS: ItemLayout[] = ['horizontal', 'vertical', 'stacked'];
-export const FIELD_SEMANTICS: FieldSemantic[] = [
-  'title',
-  'subtitle',
-  'date',
-  'dateRange',
-  'link',
-  'email',
-  'phone',
-  'location',
-  'description',
-  'chip',
-  'badge',
-  'hidden',
-];
-export const FIELD_WIDGETS: FieldWidget[] = [
-  'text',
-  'textarea',
-  'date',
-  'dateRange',
-  'select',
-  'multiselect',
-  'chips',
-  'rating',
-  'toggle',
-  'url',
-];
-export const FIELD_WIDTHS: FieldWidth[] = ['full', 'half', 'third', 'quarter', 'auto'];
-
-export function parseRenderHints(raw: unknown): RenderHints {
-  if (!raw || typeof raw !== 'object') return {};
-  return raw as RenderHints;
+export interface RenderHints {
+  layout?: Layout;
+  itemLayout?: ItemLayout;
+  columns?: number;
+  showBorder?: boolean;
+  showDivider?: boolean;
+  showDividers?: boolean;
+  compact?: boolean;
+  dateFormat?: string;
 }
 
-export function parseFieldStyles(raw: unknown): FieldStylesMap {
-  if (!raw || typeof raw !== 'object') return {};
-  return raw as FieldStylesMap;
+export function parseFieldStyles(data: unknown): FieldStylesMap {
+  if (!data || typeof data !== 'object') return {};
+  return data as FieldStylesMap;
+}
+
+export function parseRenderHints(data: unknown): RenderHints {
+  if (!data || typeof data !== 'object') return {};
+  return data as RenderHints;
 }

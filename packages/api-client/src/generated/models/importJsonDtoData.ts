@@ -42,12 +42,8 @@ import type { ImportJsonDtoDataLanguagesItem } from './importJsonDtoDataLanguage
 import type { ImportJsonDtoDataProjectsItem } from './importJsonDtoDataProjectsItem';
 import type { ImportJsonDtoDataSkillsItem } from './importJsonDtoDataSkillsItem';
 import type { ImportJsonDtoDataWorkItem } from './importJsonDtoDataWorkItem';
-import type { JsonResumeSchemaDto } from './jsonResumeSchemaDto';
 
-/**
- * JSON Resume format data (jsonresume.org)
- */
-export type ImportJsonDtoData = JsonResumeSchemaDto & {
+export type ImportJsonDtoData = {
   basics: ImportJsonDtoDataBasics;
   work?: ImportJsonDtoDataWorkItem[];
   education?: ImportJsonDtoDataEducationItem[];

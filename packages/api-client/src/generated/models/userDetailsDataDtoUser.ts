@@ -35,5 +35,25 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
+import type { UserDetailsDataDtoUserCounts } from './userDetailsDataDtoUserCounts';
+import type { UserDetailsDataDtoUserResumesItem } from './userDetailsDataDtoUserResumesItem';
 
-export type UserDetailsDataDtoUser = { [key: string]: unknown };
+export type UserDetailsDataDtoUser = {
+  id: string;
+  /** @nullable */
+  email: string | null;
+  /** @nullable */
+  name: string | null;
+  /** @nullable */
+  username: string | null;
+  hasCompletedOnboarding: boolean;
+  createdAt: string;
+  updatedAt: string;
+  /** @nullable */
+  image: string | null;
+  /** @nullable */
+  emailVerified: string | null;
+  resumes: UserDetailsDataDtoUserResumesItem[];
+  preferences: unknown | null;
+  counts: UserDetailsDataDtoUserCounts;
+};

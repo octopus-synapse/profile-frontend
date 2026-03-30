@@ -35,5 +35,10 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
+import type { PaginatedResumesDataDtoDataItem } from './paginatedResumesDataDtoDataItem';
+import type { PaginatedResumesDataDtoMeta } from './paginatedResumesDataDtoMeta';
 
-export interface PaginatedResumesDataDto { [key: string]: unknown }
+export interface PaginatedResumesDataDto {
+  data: PaginatedResumesDataDtoDataItem[];
+  meta: PaginatedResumesDataDtoMeta;
+}

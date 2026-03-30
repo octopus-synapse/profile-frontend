@@ -35,11 +35,10 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
-import type { ConsentHistoryResponseDtoDocumentType } from './consentHistoryResponseDtoDocumentType';
 
 export interface ConsentHistoryResponseDto {
   id: string;
-  documentType: ConsentHistoryResponseDtoDocumentType;
+  documentType: string;
   version: string;
   acceptedAt: string;
   ipAddress: string;

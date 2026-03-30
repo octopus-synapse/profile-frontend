@@ -6,6 +6,7 @@
 
 'use client';
 
+import { Button } from '@octopus-synapse/profile-ui';
 import { useI18n } from '@profile/i18n';
 import {
   AlertCircle,
@@ -87,14 +88,17 @@ export function ReviewSectionCard({ section, onEdit }: ReviewSectionCardProps) {
             </span>
           )}
         </div>
-        <button
+        <Button
           type="button"
-          onClick={() => onEdit(section.id)}
+          variant="ghost"
+          tone="neutral"
+          size="xs"
+          iconOnly
           aria-label={`Edit ${section.label}`}
-          className="rounded-lg p-1 text-zinc-500 transition-colors hover:bg-white/5 hover:text-blue-400"
+          onPress={() => onEdit(section.id)}
         >
           <Edit2 className="h-3.5 w-3.5" strokeWidth={1.5} />
-        </button>
+        </Button>
       </div>
       {section.summary && (
         <p className="mt-2 truncate pl-6 text-sm text-zinc-400">{section.summary}</p>

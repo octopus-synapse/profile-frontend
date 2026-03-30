@@ -5,9 +5,9 @@
 
 'use client';
 
+import { Avatar } from '@octopus-synapse/profile-ui';
 import { useAuthSession } from '@profile/api-client';
 import { AtSign, Github, Globe, Linkedin, Mail, MapPin, Phone } from 'lucide-react';
-import { Avatar } from '@/shared/components/ui';
 import { SendMessageButton } from '@/components/chat/send-message-button';
 
 interface ProfileDisplayData {

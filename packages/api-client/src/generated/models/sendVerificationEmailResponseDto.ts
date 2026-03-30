@@ -37,6 +37,5 @@ All errors follow a consistent format:
  */
 
 export interface SendVerificationEmailResponseDto {
-  /** Confirmation message */
   message: string;
 }

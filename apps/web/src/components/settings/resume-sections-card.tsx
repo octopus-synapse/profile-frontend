@@ -27,10 +27,10 @@ export function ResumeSectionsCard({ dynamicSections, onOpenSection }: ResumeSec
           {dynamicSections.map((section) => {
             return (
               <button
-                key={section.key}
                 type="button"
+                key={section.key}
+                className="group cursor-pointer rounded-xl border border-white/10 bg-[#0A0A0A]/60 p-4 text-left transition-all hover:border-blue-500/40 hover:bg-white/5"
                 onClick={() => onOpenSection?.(section.key)}
-                className="group rounded-xl border border-white/10 bg-[#0A0A0A]/60 p-4 text-left transition-all hover:border-blue-500/40 hover:bg-white/5"
               >
                 <div className="flex items-start gap-3">
                   <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">

@@ -20,6 +20,12 @@ function makeQueryClient() {
         staleTime: 60 * 1000, // 1 minute
         gcTime: 5 * 60 * 1000, // 5 minutes (formerly cacheTime)
         refetchOnWindowFocus: false,
+        // Show stale data immediately, refetch in background
+        // This prevents blocking renders while waiting for fresh data
+        refetchOnMount: true,
+        // Allow components to render with stale data
+        // while refetch happens in background
+        networkMode: 'offlineFirst',
         retry: (failureCount, error) => {
           // Don't retry on 4xx errors
           if (error && typeof error === 'object' && 'statusCode' in error) {

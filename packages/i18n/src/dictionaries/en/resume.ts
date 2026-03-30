@@ -232,7 +232,12 @@ export const resume = {
   // Analytics
   'resume.analytics.title': 'Resume Analytics',
   'resume.analytics.keywordDensity': 'Keyword Density',
+  'resume.analytics.densityOptimal': 'Optimal',
+  'resume.analytics.densityTooLow': 'Too Low',
+  'resume.analytics.densityTooHigh': 'Too High',
   'resume.analytics.keywordAnalysis': 'Keyword Analysis',
+  'resume.analytics.foundKeywords': 'Found Keywords',
+  'resume.analytics.missingKeywords': 'Missing Keywords',
   'resume.analytics.warnings': 'Warnings',
   'resume.analytics.recommendations': 'Recommendations',
   'resume.analytics.sectionBreakdown': 'Section Breakdown',

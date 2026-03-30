@@ -4,9 +4,9 @@
 
 'use client';
 
+import { Skeleton } from '@octopus-synapse/profile-ui';
 import { useI18n } from '@profile/i18n';
 import { History } from 'lucide-react';
-import { Skeleton } from '@/shared/components/ui';
 
 export function VersionSkeleton() {
   return (

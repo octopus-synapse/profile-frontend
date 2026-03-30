@@ -6,12 +6,14 @@
  * Displays a list of past resume import jobs with status badges and actions.
  */
 
+import { Badge, Button, cn, Skeleton, showToast } from '@octopus-synapse/profile-ui';
 import {
   type ImportJobDto,
   useResumeImportCancel,
   useResumeImportGetHistory,
   useResumeImportRetry,
 } from '@profile/api-client';
+import { useI18n } from '@profile/i18n';
 import {
   AlertCircle,
   CheckCircle2,
@@ -23,9 +25,6 @@ import {
   RefreshCw,
   XCircle,
 } from 'lucide-react';
-import { Badge, Button, Skeleton } from '@/shared/components/ui';
-import { showToast } from '@/shared/components/ui/toast';
-import { cn } from '@/shared/utils';
 
 // ============================================================================
 // Status Config
@@ -68,6 +67,7 @@ function ImportStatusBadge({ status }: { status: string }) {
 // ============================================================================
 
 function RowActions({ job }: { job: ImportJobDto }) {
+  const { t } = useI18n();
   const retryMutation = useResumeImportRetry();
   const cancelMutation = useResumeImportCancel();
 
@@ -127,7 +127,7 @@ function RowActions({ job }: { job: ImportJobDto }) {
         <Button variant="outline" asChild className="h-8 gap-1.5 px-3 text-xs">
           <a href={`/resumes/${job.resumeId}`}>
             <ExternalLink className="h-3.5 w-3.5" />
-            View Resume
+            {t('resume.import.history.viewResume')}
           </a>
         </Button>
       )}
@@ -183,13 +183,14 @@ function ImportHistorySkeleton() {
 // ============================================================================
 
 function ImportHistoryEmpty() {
+  const { t } = useI18n();
   return (
     <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-white/10 px-4 py-12 text-center">
       <div className="mb-4 rounded-full bg-white/5 p-4">
         <Inbox className="h-8 w-8 text-zinc-400" strokeWidth={1.5} />
       </div>
-      <p className="text-base font-medium text-white">No imports yet</p>
-      <p className="mt-1 text-sm text-zinc-400">Import a resume to see your history here.</p>
+      <p className="text-base font-medium text-white">{t('resume.import.history.noImports')}</p>
+      <p className="mt-1 text-sm text-zinc-400">{t('resume.import.history.noImportsDesc')}</p>
     </div>
   );
 }
@@ -199,6 +200,7 @@ function ImportHistoryEmpty() {
 // ============================================================================
 
 export function ImportHistory() {
+  const { t } = useI18n();
   const historyQuery = useResumeImportGetHistory();
   const jobs = (historyQuery.data?.data?.data as ImportJobDto[] | undefined) ?? [];
 
@@ -208,7 +210,7 @@ export function ImportHistory() {
 
   return (
     <div className="space-y-3">
-      <h2 className="text-lg font-semibold text-white">Import History</h2>
+      <h2 className="text-lg font-semibold text-white">{t('resume.import.history.title')}</h2>
       <div className="space-y-2">
         {jobs.map((job) => (
           <JobRow key={job.id} job={job} />

@@ -35,5 +35,11 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
+import type { ConversationsListDataDtoConversationsConversationsItem } from './conversationsListDataDtoConversationsConversationsItem';
 
-export type ConversationsListDataDtoConversations = { [key: string]: unknown };
+export type ConversationsListDataDtoConversations = {
+  conversations: ConversationsListDataDtoConversationsConversationsItem[];
+  /** @nullable */
+  nextCursor: string | null;
+  hasMore: boolean;
+};

@@ -35,8 +35,8 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
-import type { UserRoleResponseDto } from './userRoleResponseDto';
+import type { UserRolesDataDtoRolesItem } from './userRolesDataDtoRolesItem';
 
 export interface UserRolesDataDto {
-  roles: UserRoleResponseDto[];
+  roles: UserRolesDataDtoRolesItem[];
 }

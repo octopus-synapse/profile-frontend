@@ -5,20 +5,20 @@
  * Reuses the existing SectionItemForm and useGenericSectionEditor hook
  */
 
+import {
+  ConfirmDialog,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@octopus-synapse/profile-ui';
 import type { GenericSectionItemDto } from '@profile/api-client';
 import { useI18n } from '@profile/i18n';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { SectionItemForm } from '@/components/resume/generic/section-item-form';
 import { useGenericSectionEditor } from '@/components/resume/generic/use-generic-section-editor';
-import { ConfirmDialog } from '@/shared/components/ui/confirm-dialog';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/shared/components/ui/dialog';
 
 interface SectionItemDialogProps {
   open: boolean;

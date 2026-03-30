@@ -1,11 +1,18 @@
 'use client';
 
+import { Avatar, Button } from '@octopus-synapse/profile-ui';
+import {
+  getChatGetConversationWithQueryKey,
+  useChatGetConversationWith,
+  useChatGetMessages,
+  useChatSendMessage,
+  useChatSendMessageToConversation,
+} from '@profile/api-client';
+import { useI18n } from '@profile/i18n';
 import { useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Loader2, Send, X } from 'lucide-react';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
-import { Avatar } from '@/shared/components/ui';
-import { chatKeys, useConversationWith, useCreateConversation, useMessages, useSendMessage } from './hooks/use-chat';
 
 interface ChatDrawerProps {
   isOpen: boolean;
@@ -26,22 +33,29 @@ export const ChatDrawer = memo(function ChatDrawer({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
+  const { t } = useI18n();
 
   // Get or create conversation
-  const { data: conversationData, isLoading: isLoadingConversation } = useConversationWith(recipientId);
-  const conversationId = conversationData?.conversationId;
+  const { data: conversationResponse, isLoading: isLoadingConversation } =
+    useChatGetConversationWith(recipientId, { query: { enabled: !!recipientId } });
+  const conversationId = conversationResponse?.data?.data?.conversationId ?? null;
 
   // Get messages if conversation exists
-  const { data: messages, isLoading: isLoadingMessages } = useMessages(conversationId ?? '');
+  const { data: messagesResponse, isLoading: isLoadingMessages } = useChatGetMessages(
+    conversationId ?? '',
+    undefined,
+    { query: { enabled: !!conversationId } },
+  );
+  const messages = messagesResponse?.data?.data?.messages?.messages ?? [];
 
   // Mutations
-  const sendMessageMutation = useSendMessage();
-  const createConversationMutation = useCreateConversation();
+  const sendMessageMutation = useChatSendMessage();
+  const sendToConversationMutation = useChatSendMessageToConversation();
 
   // Scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, []);
 
   // Focus input when drawer opens
   useEffect(() => {
@@ -59,24 +73,32 @@ export const ChatDrawer = memo(function ChatDrawer({
     try {
       if (conversationId) {
         // Existing conversation
-        await sendMessageMutation.mutateAsync({
+        await sendToConversationMutation.mutateAsync({
           conversationId,
-          content: trimmedMessage,
+          data: { content: trimmedMessage },
         });
       } else {
-        // Create new conversation
-        await createConversationMutation.mutateAsync({
-          recipientId,
-          content: trimmedMessage,
+        // Create new conversation by sending first message
+        await sendMessageMutation.mutateAsync({
+          data: { recipientId, content: trimmedMessage },
         });
         // Refetch conversation to get the ID
-        queryClient.invalidateQueries({ queryKey: [...chatKeys.all, 'conversation-with', recipientId] });
+        queryClient.invalidateQueries({
+          queryKey: getChatGetConversationWithQueryKey(recipientId),
+        });
       }
     } catch {
       // Error handling - restore message
       setMessage(trimmedMessage);
     }
-  }, [message, conversationId, recipientId, sendMessageMutation, createConversationMutation, queryClient]);
+  }, [
+    message,
+    conversationId,
+    recipientId,
+    sendMessageMutation,
+    sendToConversationMutation,
+    queryClient,
+  ]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -88,7 +110,7 @@ export const ChatDrawer = memo(function ChatDrawer({
     [handleSend],
   );
 
-  const isSending = sendMessageMutation.isPending || createConversationMutation.isPending;
+  const isSending = sendMessageMutation.isPending || sendToConversationMutation.isPending;
 
   return (
     <AnimatePresence>
@@ -129,16 +151,20 @@ export const ChatDrawer = memo(function ChatDrawer({
                 </Avatar>
                 <div>
                   <h3 className="text-sm font-medium text-white">{recipientName}</h3>
-                  <p className="text-xs text-zinc-500">Mensagem direta</p>
+                  <p className="text-xs text-zinc-500">{t('chat.directMessage')}</p>
                 </div>
               </div>
-              <button
+              <Button
                 type="button"
-                onClick={onClose}
-                className="rounded-lg p-2 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
+                variant="ghost"
+                tone="neutral"
+                size="sm"
+                iconOnly
+                aria-label="Close chat"
+                onPress={onClose}
               >
                 <X className="h-5 w-5" />
-              </button>
+              </Button>
             </div>
 
             {/* Messages */}
@@ -177,9 +203,7 @@ export const ChatDrawer = memo(function ChatDrawer({
                     </Avatar>
                   </div>
                   <h4 className="text-sm font-medium text-white">{recipientName}</h4>
-                  <p className="mt-1 text-xs text-zinc-500">
-                    Envie uma mensagem para iniciar a conversa
-                  </p>
+                  <p className="mt-1 text-xs text-zinc-500">{t('chat.startConversation')}</p>
                 </div>
               )}
             </div>
@@ -193,22 +217,23 @@ export const ChatDrawer = memo(function ChatDrawer({
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="Digite sua mensagem..."
+                  placeholder={t('chat.inputPlaceholder')}
                   disabled={isSending}
                   className="flex-1 rounded-lg border border-zinc-800 bg-zinc-900/50 px-4 py-2.5 text-sm text-white placeholder-zinc-500 transition-colors focus:border-zinc-700 focus:outline-none disabled:opacity-50"
                 />
-                <button
+                <Button
                   type="button"
-                  onClick={() => void handleSend()}
-                  disabled={!message.trim() || isSending}
-                  className="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-black transition-all hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-50"
+                  variant="solid"
+                  tone="neutral"
+                  size="md"
+                  iconOnly
+                  aria-label="Send message"
+                  disabled={!message.trim()}
+                  loading={isSending}
+                  onPress={() => void handleSend()}
                 >
-                  {isSending ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Send className="h-4 w-4" />
-                  )}
-                </button>
+                  <Send className="h-4 w-4" />
+                </Button>
               </div>
             </div>
           </motion.div>
@@ -237,19 +262,11 @@ const MessageBubble = memo(function MessageBubble({
     <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
       <div
         className={`max-w-[80%] rounded-2xl px-4 py-2 ${
-          isOwn
-            ? 'bg-white text-black'
-            : 'bg-zinc-800 text-white'
+          isOwn ? 'bg-white text-black' : 'bg-zinc-800 text-white'
         }`}
       >
         <p className="text-sm whitespace-pre-wrap break-words">{content}</p>
-        <p
-          className={`mt-1 text-[10px] ${
-            isOwn ? 'text-zinc-500' : 'text-zinc-500'
-          }`}
-        >
-          {time}
-        </p>
+        <p className={`mt-1 text-[10px] ${isOwn ? 'text-zinc-500' : 'text-zinc-500'}`}>{time}</p>
       </div>
     </div>
   );

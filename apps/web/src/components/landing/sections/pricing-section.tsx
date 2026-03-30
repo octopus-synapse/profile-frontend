@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@octopus-synapse/profile-ui';
 import { useI18n } from '@profile/i18n';
 import { Check } from 'lucide-react';
 
@@ -69,12 +70,11 @@ export function PricingSection() {
                 </div>
               </div>
 
-              <button
-                type="button"
-                className="mb-3 w-full rounded-xl bg-cyan-500 py-4 text-center font-bold uppercase tracking-wide text-black transition-all hover:bg-cyan-400 hover:shadow-lg hover:shadow-cyan-500/25 active:scale-[0.98]"
-              >
-                {t('landing.pricing.ctaButton')}
-              </button>
+              <span className="mb-3 block">
+                <Button type="button" variant="solid" tone="info" size="lg" fullWidth>
+                  {t('landing.pricing.ctaButton')}
+                </Button>
+              </span>
 
               <p className="text-center text-xs text-zinc-500">{t('landing.pricing.ctaNote')}</p>
             </div>

@@ -35,28 +35,29 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
-import type { OnboardingPersonalInfoDto } from './onboardingPersonalInfoDto';
-import type { OnboardingProfessionalProfileDto } from './onboardingProfessionalProfileDto';
-import type { OnboardingTemplateSelectionDto } from './onboardingTemplateSelectionDto';
-import type { SectionProgressDto } from './sectionProgressDto';
-import type { StepMetaDto } from './stepMetaDto';
+import type { OnboardingSessionDtoPersonalInfo } from './onboardingSessionDtoPersonalInfo';
+import type { OnboardingSessionDtoProfessionalProfile } from './onboardingSessionDtoProfessionalProfile';
+import type { OnboardingSessionDtoSectionsItem } from './onboardingSessionDtoSectionsItem';
+import type { OnboardingSessionDtoStepsItem } from './onboardingSessionDtoStepsItem';
+import type { OnboardingSessionDtoTemplateSelection } from './onboardingSessionDtoTemplateSelection';
 
 export interface OnboardingSessionDto {
   currentStep: string;
   completedSteps: string[];
-  /** Progress percentage 0-100 */
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
   progress: number;
-  /** Can proceed to next step */
   canProceed: boolean;
-  /** Next step ID or null */
-  nextStep?: string;
-  /** Previous step ID or null */
-  previousStep?: string;
-  /** All onboarding steps with field defs */
-  steps: StepMetaDto[];
+  /** @nullable */
+  nextStep?: string | null;
+  /** @nullable */
+  previousStep?: string | null;
+  steps: OnboardingSessionDtoStepsItem[];
   username?: string;
-  personalInfo?: OnboardingPersonalInfoDto;
-  professionalProfile?: OnboardingProfessionalProfileDto;
-  sections?: SectionProgressDto[];
-  templateSelection?: OnboardingTemplateSelectionDto;
+  personalInfo?: OnboardingSessionDtoPersonalInfo;
+  professionalProfile?: OnboardingSessionDtoProfessionalProfile;
+  sections?: OnboardingSessionDtoSectionsItem[];
+  templateSelection?: OnboardingSessionDtoTemplateSelection;
 }

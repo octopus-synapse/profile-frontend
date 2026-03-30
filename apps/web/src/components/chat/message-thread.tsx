@@ -1,14 +1,17 @@
 'use client';
 
+import { Button, Input, Skeleton, showToast } from '@octopus-synapse/profile-ui';
+import {
+  type MessagesListDataDtoMessagesMessagesItem,
+  useChatGetMessages,
+  useChatMarkConversationAsRead,
+  useChatSendMessageToConversation,
+} from '@profile/api-client';
 import { useT } from '@profile/i18n';
 import { Loader2, MessageSquare, Send } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Button, Input, Skeleton } from '@/shared/components/ui';
-import { showToast } from '@/shared/components/ui/toast';
+import { useTyping } from '@/shared/hooks/use-typing';
 import { useSocket } from '@/shared/providers/socket-provider';
-import type { Message } from './hooks/use-chat';
-import { useMarkAsRead, useMessages, useSendMessage } from './hooks/use-chat';
-import { useTyping } from './hooks/use-typing';
 
 // --- Sub-components ---
 
@@ -39,7 +42,7 @@ function EmptyThread() {
 }
 
 interface MessageBubbleProps {
-  message: Message;
+  message: MessagesListDataDtoMessagesMessagesItem;
   isOwn: boolean;
 }
 
@@ -157,11 +160,24 @@ interface MessageThreadProps {
 export function MessageThread({ conversationId, currentUserId }: MessageThreadProps) {
   const t = useT();
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { data: messages, isLoading } = useMessages(conversationId);
-  const sendMessage = useSendMessage();
-  const markAsRead = useMarkAsRead();
+
+  const { data: messagesResponse, isLoading } = useChatGetMessages(conversationId, undefined, {
+    query: { enabled: !!conversationId },
+  });
+  const messages = messagesResponse?.data?.data?.messages?.messages ?? [];
+
+  const sendMessage = useChatSendMessageToConversation();
+  const markAsReadMutation = useChatMarkConversationAsRead();
   const { socket, isConnected } = useSocket();
   const { isOtherTyping, emitTypingStart, emitTypingStop } = useTyping(conversationId);
+
+  // Mark as read helper
+  const markAsRead = useCallback(
+    (convId: string) => {
+      markAsReadMutation.mutate({ conversationId: convId });
+    },
+    [markAsReadMutation],
+  );
 
   // Auto-join conversation room and mark as read
   useEffect(() => {
@@ -185,7 +201,7 @@ export function MessageThread({ conversationId, currentUserId }: MessageThreadPr
   const handleSend = useCallback(
     (content: string) => {
       sendMessage.mutate(
-        { conversationId, content },
+        { conversationId, data: { content } },
         {
           onError: () => {
             showToast.error(t('social.chat.sendFailed'));
@@ -207,7 +223,7 @@ export function MessageThread({ conversationId, currentUserId }: MessageThreadPr
   return (
     <div className="flex flex-1 flex-col">
       <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto p-4">
-        {!messages?.length ? (
+        {!messages.length ? (
           <EmptyThread />
         ) : (
           messages.map((msg) => (

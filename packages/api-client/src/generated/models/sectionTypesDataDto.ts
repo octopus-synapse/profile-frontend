@@ -35,8 +35,8 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
-import type { SectionTypeResponseDto } from './sectionTypeResponseDto';
+import type { SectionTypesDataDtoTypesItem } from './sectionTypesDataDtoTypesItem';
 
 export interface SectionTypesDataDto {
-  types: SectionTypeResponseDto[];
+  types: SectionTypesDataDtoTypesItem[];
 }

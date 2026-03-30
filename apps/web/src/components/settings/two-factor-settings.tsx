@@ -4,29 +4,30 @@
  * Two-Factor Settings — Minimal design
  */
 
-import { useI18n } from '@profile/i18n';
-import { Copy, KeyRound, Loader2, ShieldCheck, ShieldOff } from 'lucide-react';
-import { useState } from 'react';
 import {
-  use2FAStatus,
-  useDisable2FA,
-  useRegenerateBackupCodes,
-} from '@/components/auth/hooks/use-2fa';
-import { TwoFactorSetupWizard } from '@/components/auth/two-factor/setup-wizard';
-import { Button } from '@/shared/components/ui';
-import {
+  Button,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/shared/components/ui/dialog';
-import { showToast } from '@/shared/components/ui/toast';
+  showToast,
+} from '@octopus-synapse/profile-ui';
+import {
+  useAuthDisable,
+  useTwoFactorAuthGetStatus,
+  useTwoFactorAuthRegenerate,
+} from '@profile/api-client';
+import { useI18n } from '@profile/i18n';
+import { Copy, KeyRound, Loader2, ShieldCheck, ShieldOff } from 'lucide-react';
+import { useState } from 'react';
+import { TwoFactorSetupWizard } from '@/components/auth/two-factor/setup-wizard';
 
 export function TwoFactorSettings() {
   const { t } = useI18n();
-  const { data: status, isLoading } = use2FAStatus();
+  const { data: statusResponse, isLoading } = useTwoFactorAuthGetStatus();
+  const status = statusResponse?.data?.data;
   const [setupOpen, setSetupOpen] = useState(false);
   const [disableOpen, setDisableOpen] = useState(false);
   const [regenOpen, setRegenOpen] = useState(false);
@@ -80,22 +81,26 @@ export function TwoFactorSettings() {
               </div>
 
               <div className="flex gap-3">
-                <button
+                <Button
                   type="button"
-                  onClick={() => setRegenOpen(true)}
-                  className="flex items-center gap-2 rounded-lg border border-zinc-700 px-4 py-2 text-[13px] text-zinc-300 transition-colors hover:border-zinc-600 hover:text-white"
+                  variant="outline"
+                  tone="neutral"
+                  size="sm"
+                  leftIcon={<KeyRound className="h-4 w-4" />}
+                  onPress={() => setRegenOpen(true)}
                 >
-                  <KeyRound className="h-4 w-4" />
-                  <span>{t('settings.twoFactor.regenerateBackup')}</span>
-                </button>
-                <button
+                  {t('settings.twoFactor.regenerateBackup')}
+                </Button>
+                <Button
                   type="button"
-                  onClick={() => setDisableOpen(true)}
-                  className="flex items-center gap-2 rounded-lg border border-red-900/50 px-4 py-2 text-[13px] text-red-400 transition-colors hover:border-red-800 hover:bg-red-950/20"
+                  variant="outline"
+                  tone="danger"
+                  size="sm"
+                  leftIcon={<ShieldOff className="h-4 w-4" />}
+                  onPress={() => setDisableOpen(true)}
                 >
-                  <ShieldOff className="h-4 w-4" />
-                  <span>{t('settings.twoFactor.disable')}</span>
-                </button>
+                  {t('settings.twoFactor.disable')}
+                </Button>
               </div>
             </div>
           ) : (
@@ -106,14 +111,16 @@ export function TwoFactorSettings() {
                 </div>
                 <p className="text-sm text-zinc-400">{t('settings.twoFactor.notEnabled')}</p>
               </div>
-              <button
+              <Button
                 type="button"
-                onClick={() => setSetupOpen(true)}
-                className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition-opacity hover:opacity-90"
+                variant="solid"
+                tone="neutral"
+                size="sm"
+                leftIcon={<ShieldCheck className="h-4 w-4" />}
+                onPress={() => setSetupOpen(true)}
               >
-                <ShieldCheck className="h-4 w-4" />
-                <span>{t('settings.twoFactor.enable')}</span>
-              </button>
+                {t('settings.twoFactor.enable')}
+              </Button>
             </div>
           )}
         </div>
@@ -134,7 +141,7 @@ function DisableConfirmDialog({
   onOpenChange: (v: boolean) => void;
 }) {
   const { t } = useI18n();
-  const disable = useDisable2FA();
+  const disable = useAuthDisable();
 
   async function handleDisable() {
     try {
@@ -176,7 +183,8 @@ function RegenerateCodesDialog({
   onOpenChange: (v: boolean) => void;
 }) {
   const { t } = useI18n();
-  const regen = useRegenerateBackupCodes();
+  const regen = useTwoFactorAuthRegenerate();
+  const regenData = regen.data?.data?.data;
 
   async function handleRegenerate() {
     try {
@@ -188,9 +196,9 @@ function RegenerateCodesDialog({
   }
 
   async function copyBackupCodes() {
-    if (!regen.data) return;
+    if (!regenData) return;
     const { copyToClipboard } = await import('@/shared/lib/clipboard');
-    const success = await copyToClipboard(regen.data.backupCodes.join('\n'));
+    const success = await copyToClipboard(regenData.backupCodes.join('\n'));
     if (success) {
       showToast.success(t('settings.twoFactor.copySuccess'));
     } else {
@@ -204,15 +212,15 @@ function RegenerateCodesDialog({
         <DialogHeader>
           <DialogTitle>{t('settings.twoFactor.regenDialogTitle')}</DialogTitle>
           <DialogDescription>
-            {regen.data
+            {regenData
               ? t('settings.twoFactor.regenDialogDescAfter')
               : t('settings.twoFactor.regenDialogDescBefore')}
           </DialogDescription>
         </DialogHeader>
-        {regen.data ? (
+        {regenData ? (
           <div className="flex flex-col gap-3">
             <div className="grid grid-cols-2 gap-2 rounded-lg bg-zinc-900 p-4">
-              {regen.data.backupCodes.map((code) => (
+              {regenData.backupCodes.map((code) => (
                 <code key={code} className="text-center font-mono text-sm text-white">
                   {code}
                 </code>
@@ -225,7 +233,7 @@ function RegenerateCodesDialog({
           </div>
         ) : null}
         <DialogFooter>
-          {regen.data ? (
+          {regenData ? (
             <Button onClick={() => onOpenChange(false)}>{t('settings.twoFactor.done')}</Button>
           ) : (
             <>

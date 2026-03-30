@@ -7,6 +7,7 @@
 
 'use client';
 
+import { Button } from '@octopus-synapse/profile-ui';
 import { useI18n } from '@profile/i18n';
 import { Check, ChevronRight } from 'lucide-react';
 import { type OnboardingStep, useOnboarding } from './hooks';
@@ -88,45 +89,44 @@ export function OnboardingShell({ children }: OnboardingShellProps) {
                 const isAccessible = index <= currentStepIndex || isCompleted;
 
                 return (
-                  <button
+                  <Button
                     type="button"
                     key={step.id}
+                    variant={isCurrent ? 'soft' : isCompleted ? 'ghost' : 'ghost'}
+                    tone={isCurrent ? 'info' : 'neutral'}
+                    size="lg"
+                    fullWidth
+                    disabled={!isAccessible || isCurrent}
                     aria-current={isCurrent ? 'step' : undefined}
                     aria-label={t('onboarding.shell.goToStep', { step: step.label })}
-                    disabled={!isAccessible || isCurrent}
-                    onClick={() => {
+                    leftIcon={
+                      <span
+                        className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-medium ${
+                          isCompleted
+                            ? 'bg-blue-500/15 text-blue-400'
+                            : isCurrent
+                              ? 'bg-blue-500 text-white'
+                              : 'bg-zinc-800 text-zinc-500'
+                        }`}
+                      >
+                        {isCompleted ? (
+                          <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
+                        ) : (
+                          <span>{index + 1}</span>
+                        )}
+                      </span>
+                    }
+                    rightIcon={
+                      isCurrent ? (
+                        <ChevronRight className="h-4 w-4 text-blue-400" strokeWidth={2} />
+                      ) : undefined
+                    }
+                    onPress={() => {
                       if (!isAccessible || isCurrent) return;
                       void goToStep(step.id);
                     }}
-                    className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm transition-all ${
-                      isCurrent
-                        ? 'bg-white/8 text-white ring-1 ring-blue-500/30'
-                        : isCompleted
-                          ? 'text-white'
-                          : isAccessible
-                            ? 'text-zinc-400 hover:bg-white/5 hover:text-zinc-200'
-                            : 'cursor-not-allowed text-zinc-600'
-                    }`}
                   >
-                    {/* Step indicator */}
-                    <span
-                      className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-medium ${
-                        isCompleted
-                          ? 'bg-blue-500/15 text-blue-400'
-                          : isCurrent
-                            ? 'bg-blue-500 text-white'
-                            : 'bg-zinc-800 text-zinc-500'
-                      }`}
-                    >
-                      {isCompleted ? (
-                        <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
-                      ) : (
-                        <span>{index + 1}</span>
-                      )}
-                    </span>
-
-                    {/* Step label */}
-                    <span className="flex flex-1 flex-col">
+                    <span className="flex flex-1 flex-col text-left">
                       <span>{step.label}</span>
                       {!step.required && (
                         <span className="text-xs text-zinc-600">
@@ -134,12 +134,7 @@ export function OnboardingShell({ children }: OnboardingShellProps) {
                         </span>
                       )}
                     </span>
-
-                    {/* Current indicator */}
-                    {isCurrent && (
-                      <ChevronRight className="h-4 w-4 text-blue-400" strokeWidth={2} />
-                    )}
-                  </button>
+                  </Button>
                 );
               })}
             </nav>

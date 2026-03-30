@@ -39,4 +39,4 @@ All errors follow a consistent format:
 /**
  * @nullable
  */
-export type PublicProfileDataDtoResume = { [key: string]: unknown } | null;
+export type PublicProfileDataDtoResume = {[key: string]: unknown} | null;

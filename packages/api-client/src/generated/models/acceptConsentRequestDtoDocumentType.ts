@@ -36,9 +36,6 @@ All errors follow a consistent format:
  * OpenAPI spec version: 1.0.0
  */
 
-/**
- * Type of document being accepted
- */
 export type AcceptConsentRequestDtoDocumentType = typeof AcceptConsentRequestDtoDocumentType[keyof typeof AcceptConsentRequestDtoDocumentType];
 
 

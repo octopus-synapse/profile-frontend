@@ -1,6 +1,8 @@
+'use client';
+
+import { GoBackButton } from '@octopus-synapse/profile-ui';
 import { Home, Search, Terminal } from 'lucide-react';
 import Link from 'next/link';
-import { GoBackButton } from '@/shared/components/ui/go-back-button';
 
 /**
  * Global 404 Not Found Page

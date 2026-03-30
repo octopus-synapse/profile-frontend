@@ -8,6 +8,7 @@
  * For landing: Logo | Nav Links | Auth Buttons (traditional)
  */
 
+import { Button } from '@octopus-synapse/profile-ui';
 import { selectEnvelopeData, useAuthSession } from '@profile/api-client';
 import { useI18n } from '@profile/i18n';
 import { Menu, X } from 'lucide-react';
@@ -134,20 +135,24 @@ export function Navbar({
                 ))}
 
             {/* Mobile Menu Toggle */}
-            <button
-              type="button"
-              onClick={mobileMenu.toggle}
-              className="-mr-2 flex h-10 w-10 items-center justify-center rounded-md text-pf-fg-muted transition-colors duration-150 hover:text-pf-fg-default md:hidden"
-              aria-label={mobileMenu.isOpen ? 'Close menu' : 'Open menu'}
-              aria-expanded={mobileMenu.isOpen}
-              aria-controls="mobile-menu"
-            >
-              {mobileMenu.isOpen ? (
-                <X className="h-5 w-5" strokeWidth={1.5} />
-              ) : (
-                <Menu className="h-5 w-5" strokeWidth={1.5} />
-              )}
-            </button>
+            <span className="-mr-2 md:hidden">
+              <Button
+                type="button"
+                variant="ghost"
+                tone="neutral"
+                emphasis="low"
+                size="md"
+                iconOnly
+                aria-label={mobileMenu.isOpen ? 'Close menu' : 'Open menu'}
+                onPress={mobileMenu.toggle}
+              >
+                {mobileMenu.isOpen ? (
+                  <X className="h-5 w-5" strokeWidth={1.5} />
+                ) : (
+                  <Menu className="h-5 w-5" strokeWidth={1.5} />
+                )}
+              </Button>
+            </span>
           </div>
         </nav>
       </header>

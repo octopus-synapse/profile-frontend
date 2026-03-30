@@ -1,6 +1,7 @@
 'use client';
 
-import { Loader2 } from 'lucide-react';
+import { Button } from '@octopus-synapse/profile-ui';
+import { useI18n } from '@profile/i18n';
 import type { FieldDefinition } from './field-input-shared';
 import { GenericFieldInput } from './generic-field-input';
 
@@ -28,6 +29,7 @@ export function SectionItemForm({
   isSaving,
   isNew,
 }: SectionItemFormProps) {
+  const { t } = useI18n();
   return (
     <div className="space-y-5 rounded-xl border border-white/10 bg-white/5 p-6">
       {fields.map((field) => (
@@ -41,23 +43,26 @@ export function SectionItemForm({
         />
       ))}
       <div className="flex justify-end gap-3 pt-2">
-        <button
+        <Button
           type="button"
-          onClick={onCancel}
+          variant="ghost"
+          tone="neutral"
+          size="sm"
           disabled={isSaving}
-          className="px-4 py-2 text-sm font-medium text-zinc-400 transition-colors hover:text-white disabled:opacity-50"
+          onPress={onCancel}
         >
-          Cancel
-        </button>
-        <button
+          {t('action.cancel')}
+        </Button>
+        <Button
           type="button"
-          onClick={() => void onSave()}
-          disabled={isSaving}
-          className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition-opacity hover:opacity-90 disabled:opacity-50"
+          variant="solid"
+          tone="neutral"
+          size="sm"
+          loading={isSaving}
+          onPress={() => void onSave()}
         >
-          {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
           {isNew ? 'Add' : 'Update'}
-        </button>
+        </Button>
       </div>
     </div>
   );

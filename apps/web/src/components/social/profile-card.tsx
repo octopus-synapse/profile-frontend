@@ -1,14 +1,15 @@
 'use client';
 
+/**
+ * Profile Card Component
+ * Uses SDK hooks and types directly.
+ */
+
+import { useFollowGetSocialStats } from '@profile/api-client';
 import { useT } from '@profile/i18n';
-import { FileText, Users } from 'lucide-react';
+import { Users } from 'lucide-react';
 import { cn } from '@/shared/utils';
 import { FollowButton } from './follow-button';
-import { useSocialStats } from './hooks/use-social';
-
-// ============================================================================
-// Types
-// ============================================================================
 
 interface ProfileCardProps {
   userId: string;
@@ -20,10 +21,6 @@ interface ProfileCardProps {
   isSelf?: boolean;
   className?: string;
 }
-
-// ============================================================================
-// Subcomponents
-// ============================================================================
 
 function StatItem({
   icon: Icon,
@@ -52,10 +49,6 @@ function AvatarFallback({ name }: { name: string | null }) {
   );
 }
 
-// ============================================================================
-// Main Component
-// ============================================================================
-
 export function ProfileCard({
   userId,
   name,
@@ -66,7 +59,9 @@ export function ProfileCard({
   className,
 }: ProfileCardProps) {
   const t = useT();
-  const { data: stats } = useSocialStats(userId);
+  const { data: response } = useFollowGetSocialStats(userId);
+
+  const stats = response?.status === 200 ? response.data.data : null;
 
   return (
     <div className={cn('rounded-xl border border-white/10 bg-[#0A0A0A]/70 p-5', className)}>
@@ -98,17 +93,8 @@ export function ProfileCard({
       {/* Stats row */}
       {stats && (
         <div className="mt-4 flex gap-5 border-t border-white/5 pt-4">
-          <StatItem
-            icon={Users}
-            label={t('social.profile.followers')}
-            value={stats.followersCount}
-          />
-          <StatItem
-            icon={Users}
-            label={t('social.profile.following')}
-            value={stats.followingCount}
-          />
-          <StatItem icon={FileText} label={t('social.profile.resumes')} value={stats.resumeCount} />
+          <StatItem icon={Users} label={t('social.profile.followers')} value={stats.followers} />
+          <StatItem icon={Users} label={t('social.profile.following')} value={stats.following} />
         </div>
       )}
     </div>

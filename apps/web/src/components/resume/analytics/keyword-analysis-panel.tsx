@@ -1,29 +1,35 @@
 'use client';
 
+import { Badge, Card, CardContent, CardHeader, Skeleton } from '@octopus-synapse/profile-ui';
 import { useResumeAnalyticsGetKeywordSuggestions } from '@profile/api-client';
+import { useI18n } from '@profile/i18n';
 import { AlertTriangle, CheckCircle2, Lightbulb, Tags } from 'lucide-react';
-
-import { Badge, Card, CardContent, CardHeader, Skeleton } from '@/shared/components/ui';
 
 interface KeywordAnalysisPanelProps {
   resumeId: string;
 }
 
 function DensityIndicator({ density }: { density: number }) {
+  const { t } = useI18n();
   const percentage = Math.min(density * 100, 100);
   const status = percentage >= 2 && percentage <= 4 ? 'optimal' : percentage < 2 ? 'low' : 'high';
 
   const color =
     status === 'optimal' ? 'bg-emerald-500' : status === 'low' ? 'bg-amber-500' : 'bg-red-500';
 
-  const label = status === 'optimal' ? 'Optimal' : status === 'low' ? 'Too Low' : 'Too High';
+  const labelKey =
+    status === 'optimal'
+      ? 'resume.analytics.densityOptimal'
+      : status === 'low'
+        ? 'resume.analytics.densityTooLow'
+        : 'resume.analytics.densityTooHigh';
 
   return (
     <div className="rounded-lg border border-white/5 bg-white/[0.02] p-3">
       <div className="flex items-center justify-between text-xs">
-        <span className="text-zinc-400">Keyword Density</span>
+        <span className="text-zinc-400">{t('resume.analytics.keywordDensity')}</span>
         <span className="font-medium text-zinc-300">
-          {percentage.toFixed(1)}% — {label}
+          {percentage.toFixed(1)}% — {t(labelKey)}
         </span>
       </div>
       <div className="mt-2 h-1.5 w-full rounded-full bg-white/[0.06]">
@@ -74,9 +80,12 @@ function LoadingSkeleton() {
 }
 
 export function KeywordAnalysisPanel({ resumeId }: KeywordAnalysisPanelProps) {
-  const query = useResumeAnalyticsGetKeywordSuggestions(resumeId, {
-    query: { enabled: !!resumeId },
-  });
+  const { t } = useI18n();
+  const query = useResumeAnalyticsGetKeywordSuggestions(
+    resumeId,
+    { industry: 'software_engineering' },
+    { query: { enabled: !!resumeId } },
+  );
   const data = query.data?.data?.data as
     | {
         keywordDensity: number;
@@ -95,7 +104,9 @@ export function KeywordAnalysisPanel({ resumeId }: KeywordAnalysisPanelProps) {
       <CardHeader>
         <div className="flex items-center gap-2">
           <Tags className="h-5 w-5 text-zinc-400" />
-          <h3 className="text-lg font-semibold text-white">Keyword Analysis</h3>
+          <h3 className="text-lg font-semibold text-white">
+            {t('resume.analytics.keywordAnalysis')}
+          </h3>
         </div>
       </CardHeader>
       <CardContent>
@@ -106,7 +117,7 @@ export function KeywordAnalysisPanel({ resumeId }: KeywordAnalysisPanelProps) {
             <div className="space-y-2">
               <div className="flex items-center gap-1.5 text-xs font-medium text-zinc-400">
                 <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
-                Found Keywords ({data.existingKeywords.length})
+                {t('resume.analytics.foundKeywords')} ({data.existingKeywords.length})
               </div>
               <KeywordBadges keywords={data.existingKeywords} variant="success" />
             </div>
@@ -116,7 +127,7 @@ export function KeywordAnalysisPanel({ resumeId }: KeywordAnalysisPanelProps) {
             <div className="space-y-2">
               <div className="flex items-center gap-1.5 text-xs font-medium text-zinc-400">
                 <AlertTriangle className="h-3.5 w-3.5 text-red-400" />
-                Missing Keywords ({data.missingKeywords.length})
+                {t('resume.analytics.missingKeywords')} ({data.missingKeywords.length})
               </div>
               <KeywordBadges keywords={data.missingKeywords} variant="error" />
             </div>
@@ -124,7 +135,7 @@ export function KeywordAnalysisPanel({ resumeId }: KeywordAnalysisPanelProps) {
 
           {data.warnings.length > 0 && (
             <div className="space-y-1.5">
-              <p className="text-xs font-medium text-zinc-400">Warnings</p>
+              <p className="text-xs font-medium text-zinc-400">{t('resume.analytics.warnings')}</p>
               <ul className="space-y-1">
                 {data.warnings.map((w: string, idx: number) => (
                   <li key={idx} className="flex items-start gap-2 text-sm text-amber-300/80">
@@ -138,7 +149,9 @@ export function KeywordAnalysisPanel({ resumeId }: KeywordAnalysisPanelProps) {
 
           {data.recommendations.length > 0 && (
             <div className="space-y-1.5">
-              <p className="text-xs font-medium text-zinc-400">Recommendations</p>
+              <p className="text-xs font-medium text-zinc-400">
+                {t('resume.analytics.recommendations')}
+              </p>
               <ul className="space-y-1">
                 {data.recommendations.map((rec: string, idx: number) => (
                   <li key={idx} className="flex items-start gap-2 text-sm text-zinc-300">

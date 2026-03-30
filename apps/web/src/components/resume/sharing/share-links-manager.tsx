@@ -1,10 +1,5 @@
 'use client';
 
-import { apiFetch } from '@profile/api-client';
-import { useI18n } from '@profile/i18n';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Check, Copy, ExternalLink, Lock, Share2, Trash2 } from 'lucide-react';
-import { useCallback } from 'react';
 import {
   Badge,
   Button,
@@ -13,8 +8,13 @@ import {
   CardHeader,
   CardTitle,
   Skeleton,
-} from '@/shared/components/ui';
-import { showToast } from '@/shared/components/ui/toast';
+  showToast,
+} from '@octopus-synapse/profile-ui';
+import { apiFetch } from '@profile/api-client';
+import { useI18n } from '@profile/i18n';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Check, Copy, ExternalLink, Lock, Share2, Trash2 } from 'lucide-react';
+import { useCallback } from 'react';
 import { useCopyFeedback } from '@/shared/hooks/use-copy-feedback';
 
 import { buildFullUrl, type ShareLink } from './share-utils';

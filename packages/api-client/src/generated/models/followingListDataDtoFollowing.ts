@@ -36,4 +36,10 @@ All errors follow a consistent format:
  * OpenAPI spec version: 1.0.0
  */
 
-export type FollowingListDataDtoFollowing = { [key: string]: unknown };
+export type FollowingListDataDtoFollowing = {
+  data: unknown[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+};

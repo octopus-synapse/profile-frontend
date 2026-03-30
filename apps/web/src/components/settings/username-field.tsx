@@ -4,12 +4,12 @@
 
 'use client';
 
+import { showToast } from '@octopus-synapse/profile-ui';
 import { useUsersGetProfile, useUsersUpdateUsername } from '@profile/api-client';
 import { useI18n } from '@profile/i18n';
 import { AlertCircle, AtSign, ExternalLink, Loader2 } from 'lucide-react';
 import { useMemo } from 'react';
 import { APP_URL } from '@/config';
-import { showToast } from '@/shared/components/ui/toast';
 import { useUsernameEditor } from './username/use-username-editor';
 import { UsernameActionButtons } from './username/username-action-buttons';
 import { UsernameRestrictionBanner } from './username/username-restriction-banner';

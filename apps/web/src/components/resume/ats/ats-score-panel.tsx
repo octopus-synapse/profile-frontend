@@ -5,11 +5,18 @@
  * Uses SDK hook directly.
  */
 
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  showToast,
+} from '@octopus-synapse/profile-ui';
 import { useAtsValidationValidateCV } from '@profile/api-client';
+import { useI18n } from '@profile/i18n';
 import { RefreshCw, ShieldCheck } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
-import { Badge, Button, Card, CardContent, CardHeader } from '@/shared/components/ui';
-import { showToast } from '@/shared/components/ui/toast';
 import { AtsIssueList } from './ats-issue-list';
 import { FileDropZone } from './file-drop-zone';
 import { ScoreGauge } from './score-gauge';
@@ -19,18 +26,24 @@ interface Props {
   resumeId: string;
 }
 
-export function AtsScorePanel({ resumeId: _resumeId }: Props) {
+export function AtsScorePanel({ resumeId }: Props) {
+  const { t } = useI18n();
   const validateMutation = useAtsValidationValidateCV();
   const [validationResult, setValidationResult] = useState<AtsValidationResult | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const handleValidate = useCallback(async () => {
-    if (!selectedFile) return;
     try {
-      // SDK types file as string but FormData append works with File at runtime
+      // Validate stored resume using resumeId
       const response = await validateMutation.mutateAsync({
-        data: { file: selectedFile as unknown as string },
+        data: {
+          resumeId,
+          checkFormat: true,
+          checkSections: true,
+          checkGrammar: true,
+          checkLayout: true,
+        },
       });
       const result = response.data?.data as AtsValidationResult | undefined;
       if (result) {
@@ -40,7 +53,7 @@ export function AtsScorePanel({ resumeId: _resumeId }: Props) {
     } catch {
       showToast.error('Validation failed', 'Please try again.');
     }
-  }, [selectedFile, validateMutation]);
+  }, [resumeId, validateMutation]);
 
   const handleRevalidate = useCallback(() => {
     setSelectedFile(null);
@@ -63,7 +76,7 @@ export function AtsScorePanel({ resumeId: _resumeId }: Props) {
               onClick={handleRevalidate}
               leftIcon={<RefreshCw className="h-4 w-4" />}
             >
-              Re-validate
+              {t('resume.ats.revalidate')}
             </Button>
           </div>
         </CardHeader>

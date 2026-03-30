@@ -6,6 +6,7 @@
 
 'use client';
 
+import { Button, HelpTooltip } from '@octopus-synapse/profile-ui';
 import {
   isApiError,
   selectEnvelopeData,
@@ -16,7 +17,6 @@ import { type DictionaryKey, useI18n } from '@profile/i18n';
 import { AlertCircle, AtSign, Check, ExternalLink, Loader2, RefreshCw, X } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
 import { APP_URL } from '@/config';
-import { HelpTooltip } from '@/shared/components/ui';
 import { useDebounce } from '@/shared/hooks/use-debounce';
 import { useOnboarding } from '../hooks';
 import { OnboardingStepHeader } from '../step-header';
@@ -271,14 +271,16 @@ function StatusMessage({
         {message.text}
       </p>
       {apiError && (
-        <button
+        <Button
           type="button"
-          onClick={onRetry}
-          className="flex items-center gap-1 text-blue-400 transition-colors hover:text-blue-300"
+          variant="link"
+          tone="info"
+          size="xs"
+          leftIcon={<RefreshCw className="h-3 w-3" />}
+          onPress={onRetry}
         >
-          <RefreshCw className="h-3 w-3" />
           {t('onboarding.username.retry')}
-        </button>
+        </Button>
       )}
     </div>
   );

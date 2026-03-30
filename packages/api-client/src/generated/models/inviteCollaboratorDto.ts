@@ -38,11 +38,7 @@ All errors follow a consistent format:
 import type { InviteCollaboratorDtoRole } from './inviteCollaboratorDtoRole';
 
 export interface InviteCollaboratorDto {
-  /**
-   * User ID to invite as collaborator
-   * @minLength 1
-   */
+  /** @minLength 1 */
   userId: string;
-  /** Role to assign to the collaborator */
   role: InviteCollaboratorDtoRole;
 }

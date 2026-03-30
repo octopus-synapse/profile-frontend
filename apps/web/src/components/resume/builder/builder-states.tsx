@@ -4,10 +4,10 @@
 
 'use client';
 
+import { LoadingState } from '@octopus-synapse/profile-ui';
 import { useI18n } from '@profile/i18n';
 import { FileText, Settings } from 'lucide-react';
 import Link from 'next/link';
-import { LoadingState } from '@/shared/components/ui';
 
 export function BuilderLoadingState() {
   const { t } = useI18n();

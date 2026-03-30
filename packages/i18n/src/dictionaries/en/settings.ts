@@ -11,6 +11,8 @@ export const settings = {
   'settings.profile.title': 'Public profile',
   'settings.profile.description':
     'Keep account-level identity here. Resume identity lives in the Resume section.',
+  'settings.profile.contact': 'Contact',
+  'settings.profile.social': 'Social',
   'settings.profile.saveChanges': 'Save Changes',
   'settings.profile.failedUpdate': 'Failed to update profile',
   'settings.profile.failedLoad': 'Failed to load profile',

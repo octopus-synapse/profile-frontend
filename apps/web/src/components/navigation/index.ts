@@ -3,6 +3,7 @@
  */
 
 // Components
+export { BottomNav } from './bottom-nav';
 export { CommandPalette } from './command-palette';
 // Navigation configuration
 export {

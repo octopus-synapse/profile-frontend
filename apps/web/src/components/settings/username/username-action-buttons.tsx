@@ -4,9 +4,8 @@
 
 'use client';
 
+import { Button, SaveButton } from '@octopus-synapse/profile-ui';
 import { useI18n } from '@profile/i18n';
-import { Check } from 'lucide-react';
-import { SaveButton } from '@/shared/components/ui';
 
 interface Props {
   canSave: boolean;
@@ -20,17 +19,19 @@ export function UsernameActionButtons({ canSave, isPending, onSave, onCancel }: 
 
   return (
     <div className="flex items-center gap-2">
-      <SaveButton icon={Check} isPending={isPending} disabled={!canSave} onClick={onSave}>
-        Save
+      <SaveButton isPending={isPending} disabled={!canSave} onClick={onSave}>
+        {t('action.save')}
       </SaveButton>
-      <button
+      <Button
         type="button"
-        onClick={onCancel}
+        variant="ghost"
+        tone="neutral"
+        size="md"
         disabled={isPending}
-        className="rounded-lg px-4 py-2 text-sm font-medium text-zinc-400 transition-colors hover:text-white"
+        onPress={onCancel}
       >
         {t('action.cancel')}
-      </button>
+      </Button>
     </div>
   );
 }

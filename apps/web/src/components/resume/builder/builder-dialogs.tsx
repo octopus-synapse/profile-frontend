@@ -5,14 +5,14 @@
 
 'use client';
 
-import { useI18n } from '@profile/i18n';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/shared/components/ui/dialog';
+} from '@octopus-synapse/profile-ui';
+import { useI18n } from '@profile/i18n';
 import { AnalyticsDashboard } from '../analytics/analytics-dashboard';
 import { AtsScorePanel } from '../ats/ats-score-panel';
 import type { SectionItem } from '../config/section-reorder-panel';

@@ -2,32 +2,55 @@
 
 /**
  * Sign Up Form Component
+ * Uses SDK hooks directly per CLAUDE.md guidelines
  */
 
+import { Button } from '@octopus-synapse/profile-ui';
+import { useAccountsSignup } from '@profile/api-client';
 import { useT } from '@profile/i18n';
 import { ChevronRight, Mail, User } from 'lucide-react';
-import { Button } from '@/shared/components/ui';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { FormErrorAlert } from './form-error-alert';
 import { FormField } from './form-field';
-import { useSignUp } from './hooks/use-sign-up';
 import { PasswordField } from './password-field';
 import { PasswordStrengthIndicator } from './password-strength-indicator';
 
 export function SignUpForm() {
   const t = useT();
-  const {
-    name,
-    setName,
-    email,
-    setEmail,
-    password,
-    setPassword,
-    confirmPassword,
-    setConfirmPassword,
-    error,
-    isLoading,
-    handleSubmit,
-  } = useSignUp();
+  const router = useRouter();
+
+  // Form state
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+
+  // SDK mutation
+  const signupMutation = useAccountsSignup();
+
+  const isLoading = signupMutation.isPending;
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    try {
+      await signupMutation.mutateAsync({
+        data: { name, email, password },
+      });
+
+      router.push('/auth/verify-email');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Sign up failed');
+    }
+  }
 
   return (
     <form onSubmit={(e) => void handleSubmit(e)} className="space-y-5">

@@ -36,10 +36,10 @@ All errors follow a consistent format:
  * OpenAPI spec version: 1.0.0
  */
 import type { PublicResumeDataDtoResume } from './publicResumeDataDtoResume';
-import type { PublicShareInfoDto } from './publicShareInfoDto';
+import type { PublicResumeDataDtoShare } from './publicResumeDataDtoShare';
 
 export interface PublicResumeDataDto {
   /** @nullable */
   resume: PublicResumeDataDtoResume;
-  share: PublicShareInfoDto;
+  share: PublicResumeDataDtoShare;
 }

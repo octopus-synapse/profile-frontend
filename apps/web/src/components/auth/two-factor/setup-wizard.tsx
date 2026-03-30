@@ -6,22 +6,23 @@
  * Multi-step flow: QR code → TOTP verification → backup codes display.
  */
 
-import { useT } from '@profile/i18n';
-import { Copy, KeyRound, QrCode, ShieldCheck } from 'lucide-react';
-import Image from 'next/image';
-import { useState } from 'react';
-import { Button, Input } from '@/shared/components/ui';
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/shared/components/ui/dialog';
-import { showToast } from '@/shared/components/ui/toast';
+  Input,
+  showToast,
+} from '@octopus-synapse/profile-ui';
+import { useTwoFactorAuthSetup, useTwoFactorAuthVerify } from '@profile/api-client';
+import { useT } from '@profile/i18n';
+import { Copy, KeyRound, QrCode, ShieldCheck } from 'lucide-react';
+import Image from 'next/image';
+import { useState } from 'react';
 import { copyToClipboard } from '@/shared/lib/clipboard';
-import { useSetup2FA, useVerify2FA } from '../hooks/use-2fa';
 
 type Step = 'qr' | 'verify' | 'backup';
 
@@ -36,11 +37,12 @@ export function TwoFactorSetupWizard({ open, onOpenChange }: SetupWizardProps) {
   const [totpCode, setTotpCode] = useState('');
   const [backupCodes, setBackupCodes] = useState<string[]>([]);
 
-  const setup = useSetup2FA();
-  const verify = useVerify2FA();
+  const setup = useTwoFactorAuthSetup();
+  const verify = useTwoFactorAuthVerify();
+  const setupData = setup.data?.data?.data;
 
   function handleOpen(v: boolean) {
-    if (v && !setup.data) setup.mutate(undefined);
+    if (v && !setupData) setup.mutate();
     if (!v) resetState();
     onOpenChange(v);
   }
@@ -56,8 +58,8 @@ export function TwoFactorSetupWizard({ open, onOpenChange }: SetupWizardProps) {
   async function handleVerify() {
     if (totpCode.length !== 6) return;
     try {
-      const result = await verify.mutateAsync({ token: totpCode });
-      setBackupCodes(result.backupCodes);
+      const result = await verify.mutateAsync({ data: { token: totpCode } });
+      setBackupCodes(result.data?.data?.backupCodes ?? []);
       setStep('backup');
       showToast.success(t('auth.2fa.enabled'));
     } catch {
@@ -92,7 +94,7 @@ export function TwoFactorSetupWizard({ open, onOpenChange }: SetupWizardProps) {
         </DialogHeader>
 
         {step === 'qr' && (
-          <QrStep qrCode={setup.data?.qrCode} manualKey={setup.data?.manualEntryKey} />
+          <QrStep qrCode={setupData?.qrCode} manualKey={setupData?.manualEntryKey} />
         )}
         {step === 'verify' && (
           <VerifyStep code={totpCode} onChange={setTotpCode} isPending={verify.isPending} />
@@ -101,7 +103,7 @@ export function TwoFactorSetupWizard({ open, onOpenChange }: SetupWizardProps) {
 
         <DialogFooter>
           {step === 'qr' && (
-            <Button onClick={() => setStep('verify')} disabled={!setup.data}>
+            <Button onClick={() => setStep('verify')} disabled={!setupData}>
               {t('action.next')}
             </Button>
           )}

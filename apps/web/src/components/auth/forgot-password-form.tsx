@@ -5,14 +5,13 @@
  * Ultra Premium Version - Inspired by Linear, Vercel & Cursor
  */
 
+import { Button, Input, Label, Spinner } from '@octopus-synapse/profile-ui';
 import { type ForgotPasswordDto, forgotPasswordHandle } from '@profile/api-client';
 import { useT } from '@profile/i18n';
 import { useMutation } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle, CheckCircle2, ChevronRight, Mail } from 'lucide-react';
 import { useState } from 'react';
-import { Button, Input, Spinner } from '@/shared/components/ui';
-import { Label } from '@/shared/components/ui/label';
 
 async function requestPasswordReset(dto: ForgotPasswordDto) {
   return forgotPasswordHandle(dto);

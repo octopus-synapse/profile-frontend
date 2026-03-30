@@ -36,4 +36,8 @@ All errors follow a consistent format:
  * OpenAPI spec version: 1.0.0
  */
 
-export type ATSValidationResponseDtoIssuesItem = { [key: string]: unknown };
+export type ATSValidationResponseDtoIssuesItem = {
+  field: string;
+  message: string;
+  severity: string;
+};

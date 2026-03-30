@@ -35,9 +35,9 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
-import type { ApiResponse } from './apiResponse';
+import type { ApiResponseDto } from './apiResponseDto';
 import type { DslPreviewResultDto } from './dslPreviewResultDto';
 
-export type DslPreview200 = ApiResponse & {
+export type DslPreview200 = ApiResponseDto & {
   data: DslPreviewResultDto;
 };

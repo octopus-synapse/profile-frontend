@@ -37,6 +37,5 @@ All errors follow a consistent format:
  */
 
 export interface RetryImportRequestDto {
-  /** Optional flag to force retry even if not failed */
   force?: boolean;
 }

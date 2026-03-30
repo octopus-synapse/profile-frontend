@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@octopus-synapse/profile-ui';
 import { ArrowLeft, Code2, LayoutDashboard, ShieldAlert, Users } from 'lucide-react';
 import Link from 'next/link';
 
@@ -76,14 +77,18 @@ export default function AdminNotFound() {
         </div>
 
         {/* Back link */}
-        <button
-          type="button"
-          onClick={() => history.back()}
-          className="mt-6 inline-flex items-center gap-2 font-mono text-xs text-zinc-400 transition-colors hover:text-white"
-        >
-          <ArrowLeft className="h-3 w-3" strokeWidth={1.5} />
-          go_back()
-        </button>
+        <span className="mt-6 block">
+          <Button
+            type="button"
+            variant="ghost"
+            tone="neutral"
+            size="xs"
+            leftIcon={<ArrowLeft className="h-3 w-3" strokeWidth={1.5} />}
+            onPress={() => history.back()}
+          >
+            go_back()
+          </Button>
+        </span>
       </div>
     </div>
   );

@@ -5,10 +5,9 @@
 
 'use client';
 
+import { Input, Label } from '@octopus-synapse/profile-ui';
 import { Mail } from 'lucide-react';
 import { memo, useCallback } from 'react';
-import { Input } from '@/shared/components/ui';
-import { Label } from '@/shared/components/ui/label';
 
 interface EmailFieldProps {
   id?: string;
@@ -31,7 +30,7 @@ export const EmailField = memo(function EmailField({
 }: EmailFieldProps) {
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value),
-    [onChange]
+    [onChange],
   );
 
   return (

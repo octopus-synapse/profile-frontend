@@ -2,8 +2,9 @@
  * AtsIssueList — displays validation issues from ATS scan.
  */
 
+import { Badge } from '@octopus-synapse/profile-ui';
+import { useI18n } from '@profile/i18n';
 import { AlertCircle, AlertTriangle, CheckCircle2, Info } from 'lucide-react';
-import { Badge } from '@/shared/components/ui';
 import { getSeverityIconColor } from './score-utils';
 
 type IssueSeverity = 'error' | 'warning' | 'info';
@@ -66,13 +67,14 @@ function IssueItem({ issue }: { issue: Issue }) {
 }
 
 export function AtsIssueList({ issues, suggestions }: Props) {
+  const { t } = useI18n();
   const sortedIssues = sortBySeverity(issues);
 
   return (
     <div className="space-y-6">
       {sortedIssues.length > 0 && (
         <div className="space-y-2">
-          <h4 className="text-sm font-medium text-zinc-300">Issues</h4>
+          <h4 className="text-sm font-medium text-zinc-300">{t('resume.ats.issues')}</h4>
           <ul className="space-y-2">
             {sortedIssues.map((issue, idx) => (
               <IssueItem key={`${issue.category}-${idx}`} issue={issue} />
@@ -83,7 +85,7 @@ export function AtsIssueList({ issues, suggestions }: Props) {
 
       {suggestions.length > 0 && (
         <div className="space-y-2">
-          <h4 className="text-sm font-medium text-zinc-300">Suggestions</h4>
+          <h4 className="text-sm font-medium text-zinc-300">{t('resume.ats.suggestions')}</h4>
           <ul className="space-y-1.5">
             {suggestions.map((tip, idx) => (
               <li key={idx} className="flex items-start gap-2 text-sm text-zinc-400">

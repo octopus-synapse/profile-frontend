@@ -40,4 +40,7 @@ export interface CreateAccountResponseDto {
   userId: string;
   email: string;
   message: string;
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
 }

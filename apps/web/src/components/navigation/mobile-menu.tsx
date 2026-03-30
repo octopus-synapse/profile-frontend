@@ -6,6 +6,7 @@
  * Mobile menu with search bar (for app pages) or nav links (for landing).
  */
 
+import { Button } from '@octopus-synapse/profile-ui';
 import {
   authLogout,
   getAuthSessionQueryKey,
@@ -20,7 +21,6 @@ import { useCallback, useEffect } from 'react';
 import { ROUTES } from '@/config/routes';
 import { LocalizedLink } from '@/shared/components/localized-link';
 import { useThemeOptional } from '@/shared/providers/theme-provider';
-import { cn } from '@/shared/utils';
 import type { MobileMenuState, NavItem } from './config/types';
 import { Logo } from './logo';
 import { NavLink } from './nav-link';
@@ -80,14 +80,20 @@ export function MobileMenu({ menu, navItems, onOpenCommandPalette }: MobileMenuP
       {/* Header */}
       <header className="flex h-14 items-center justify-between border-b border-pf-border-muted px-4 sm:px-6">
         <Logo />
-        <button
-          type="button"
-          onClick={menu.close}
-          className="-mr-2 flex h-10 w-10 items-center justify-center rounded-md text-pf-fg-muted transition-colors duration-150 hover:text-pf-fg-default"
-          aria-label={t('nav.aria.closeMenu')}
-        >
-          <X className="h-5 w-5" strokeWidth={1.5} />
-        </button>
+        <span className="-mr-2">
+          <Button
+            type="button"
+            variant="ghost"
+            tone="neutral"
+            emphasis="low"
+            size="md"
+            iconOnly
+            aria-label={t('nav.aria.closeMenu')}
+            onPress={menu.close}
+          >
+            <X className="h-5 w-5" strokeWidth={1.5} />
+          </Button>
+        </span>
       </header>
 
       {/* Content */}
@@ -104,14 +110,17 @@ export function MobileMenu({ menu, navItems, onOpenCommandPalette }: MobileMenuP
           </nav>
         ) : (
           <div className="border-b border-pf-border-muted py-4">
-            <button
+            <Button
               type="button"
-              onClick={handleOpenSearch}
-              className="flex w-full items-center gap-3 rounded-xl border border-pf-border-default bg-pf-hover-subtle px-4 py-3 transition-all hover:border-pf-border-default hover:bg-pf-hover-default"
+              variant="outline"
+              tone="neutral"
+              size="lg"
+              fullWidth
+              leftIcon={<Search className="h-5 w-5" strokeWidth={1.5} />}
+              onPress={handleOpenSearch}
             >
-              <Search className="h-5 w-5 text-pf-fg-subtle" strokeWidth={1.5} />
-              <span className="text-sm text-pf-fg-subtle">{t('nav.search.placeholder')}</span>
-            </button>
+              {t('nav.search.placeholder')}
+            </Button>
           </div>
         )}
 
@@ -125,34 +134,30 @@ export function MobileMenu({ menu, navItems, onOpenCommandPalette }: MobileMenuP
           <div className="flex items-center justify-between py-2">
             <span className="text-[15px] text-pf-fg-default">{t('nav.preferences.theme')}</span>
             <div className="flex items-center gap-1">
-              <button
+              <Button
                 type="button"
-                onClick={() => themeContext?.setTheme('light')}
-                className={cn(
-                  'flex h-9 w-9 items-center justify-center rounded-md transition-colors duration-150',
-                  themeContext?.theme === 'light'
-                    ? 'bg-pf-neutral-muted text-pf-fg-default'
-                    : 'text-pf-fg-subtle',
-                )}
+                variant={themeContext?.theme === 'light' ? 'soft' : 'ghost'}
+                tone="neutral"
+                size="sm"
+                iconOnly
+                pressed={themeContext?.theme === 'light'}
                 aria-label={t('nav.aria.lightTheme')}
-                aria-pressed={themeContext?.theme === 'light'}
+                onPress={() => themeContext?.setTheme('light')}
               >
                 <Sun className="h-[18px] w-[18px]" strokeWidth={1.5} />
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
-                onClick={() => themeContext?.setTheme('dark')}
-                className={cn(
-                  'flex h-9 w-9 items-center justify-center rounded-md transition-colors duration-150',
-                  themeContext?.theme === 'dark'
-                    ? 'bg-pf-neutral-muted text-pf-fg-default'
-                    : 'text-pf-fg-subtle',
-                )}
+                variant={themeContext?.theme === 'dark' ? 'soft' : 'ghost'}
+                tone="neutral"
+                size="sm"
+                iconOnly
+                pressed={themeContext?.theme === 'dark'}
                 aria-label={t('nav.aria.darkTheme')}
-                aria-pressed={themeContext?.theme === 'dark'}
+                onPress={() => themeContext?.setTheme('dark')}
               >
                 <Moon className="h-[18px] w-[18px]" strokeWidth={1.5} />
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -161,21 +166,22 @@ export function MobileMenu({ menu, navItems, onOpenCommandPalette }: MobileMenuP
             <span className="text-[15px] text-pf-fg-default">{t('nav.preferences.language')}</span>
             <div className="flex items-center gap-1">
               {locales.map((locale) => (
-                <button
+                <Button
                   type="button"
                   key={locale.code}
-                  onClick={() => setLanguage(locale.code)}
-                  className={cn(
-                    'flex h-9 items-center gap-1.5 rounded-md px-3 text-sm font-medium transition-colors duration-150',
-                    language === locale.code
-                      ? 'bg-pf-neutral-muted text-pf-fg-default'
-                      : 'text-pf-fg-subtle',
-                  )}
-                  aria-pressed={language === locale.code}
+                  variant={language === locale.code ? 'soft' : 'ghost'}
+                  tone="neutral"
+                  size="sm"
+                  pressed={language === locale.code}
+                  rightIcon={
+                    language === locale.code ? (
+                      <Check className="h-3.5 w-3.5" strokeWidth={2} />
+                    ) : undefined
+                  }
+                  onPress={() => setLanguage(locale.code)}
                 >
                   {locale.code === 'pt-BR' ? 'PT' : 'EN'}
-                  {language === locale.code && <Check className="h-3.5 w-3.5" strokeWidth={2} />}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
@@ -185,17 +191,20 @@ export function MobileMenu({ menu, navItems, onOpenCommandPalette }: MobileMenuP
       {/* Footer */}
       <footer className="border-t border-pf-border-muted p-4 sm:p-6">
         {isAuthenticated ? (
-          <button
+          <Button
             type="button"
-            onClick={() => {
+            variant="ghost"
+            tone="neutral"
+            size="lg"
+            fullWidth
+            leftIcon={<LogOut className="h-[18px] w-[18px]" strokeWidth={1.5} />}
+            onPress={() => {
               menu.close();
               void handleSignOut();
             }}
-            className="flex w-full items-center justify-center gap-2 rounded-md py-3 text-[15px] font-medium text-pf-fg-default transition-colors duration-150 hover:bg-pf-neutral-emphasis"
           >
-            <LogOut className="h-[18px] w-[18px]" strokeWidth={1.5} />
             {t('nav.signOut')}
-          </button>
+          </Button>
         ) : (
           <div className="flex flex-col gap-2">
             <LocalizedLink

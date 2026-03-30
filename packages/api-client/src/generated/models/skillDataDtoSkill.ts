@@ -36,4 +36,11 @@ All errors follow a consistent format:
  * OpenAPI spec version: 1.0.0
  */
 
-export type SkillDataDtoSkill = { [key: string]: unknown };
+export type SkillDataDtoSkill = {
+  id: string;
+  resumeId: string;
+  name: string;
+  category: string;
+  level?: number;
+  order: number;
+};

@@ -40,7 +40,9 @@ export type ImportJobDtoSource = typeof ImportJobDtoSource[keyof typeof ImportJo
 
 
 export const ImportJobDtoSource = {
-  JSON: 'JSON',
-  PDF: 'PDF',
   LINKEDIN: 'LINKEDIN',
+  PDF: 'PDF',
+  DOCX: 'DOCX',
+  JSON: 'JSON',
+  GITHUB: 'GITHUB',
 } as const;

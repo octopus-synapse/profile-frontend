@@ -37,6 +37,5 @@ All errors follow a consistent format:
  */
 
 export interface MarkAsReadDataDto {
-  /** Number of messages marked as read */
   count: number;
 }

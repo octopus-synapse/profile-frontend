@@ -37,8 +37,6 @@ All errors follow a consistent format:
  */
 
 export interface TriggerMecSyncRequestDto {
-  /** Force full sync instead of incremental */
   fullSync?: boolean;
-  /** Sync source identifier */
   source?: string;
 }

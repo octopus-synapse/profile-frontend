@@ -38,6 +38,5 @@ All errors follow a consistent format:
 import type { UpdateRoleDtoRole } from './updateRoleDtoRole';
 
 export interface UpdateRoleDto {
-  /** New role for the collaborator */
   role: UpdateRoleDtoRole;
 }

@@ -1,92 +1,89 @@
 'use client';
 
+/**
+ * Follow Button Component
+ * Uses SDK hooks and types directly.
+ */
+
+import { Button } from '@octopus-synapse/profile-ui';
+import { useFollowFollow, useFollowIsFollowing, useFollowUnfollow } from '@profile/api-client';
 import { useT } from '@profile/i18n';
-import { Loader2, UserMinus, UserPlus } from 'lucide-react';
+import { UserMinus, UserPlus } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/shared/utils';
-import { useFollowUser, useIsFollowing, useUnfollowUser } from './hooks/use-social';
-
-// ============================================================================
-// Types
-// ============================================================================
 
 interface FollowButtonProps {
   targetUserId: string;
   className?: string;
 }
 
-// ============================================================================
-// Component
-// ============================================================================
-
 export function FollowButton({ targetUserId, className }: FollowButtonProps) {
   const t = useT();
-  const { data, isLoading: isChecking } = useIsFollowing(targetUserId);
-  const follow = useFollowUser();
-  const unfollow = useUnfollowUser();
+  const { data: response, isLoading: isChecking } = useFollowIsFollowing(targetUserId);
+  const follow = useFollowFollow();
+  const unfollow = useFollowUnfollow();
   const [hovered, setHovered] = useState(false);
 
-  const isFollowing = data?.isFollowing ?? false;
+  const isFollowing = response?.status === 200 ? response.data.data.isFollowing : false;
   const isBusy = follow.isPending || unfollow.isPending;
 
   const handleClick = () => {
     if (isBusy) return;
     if (isFollowing) {
-      unfollow.mutate(targetUserId);
+      unfollow.mutate({ userId: targetUserId });
     } else {
-      follow.mutate(targetUserId);
+      follow.mutate({ userId: targetUserId });
     }
   };
 
   // While checking follow status, show a neutral placeholder
   if (isChecking) {
     return (
-      <div
-        className={cn(
-          'flex h-9 w-24 items-center justify-center rounded-lg border border-white/10 bg-white/5',
-          className,
-        )}
-      >
-        <Loader2 className="h-4 w-4 animate-spin text-zinc-400" />
-      </div>
+      <span className={cn('inline-flex', className)}>
+        <Button type="button" variant="outline" tone="neutral" size="sm" loading disabled>
+          {t('action.loading')}
+        </Button>
+      </span>
     );
   }
 
   const showUnfollow = isFollowing && hovered;
 
+  // Determine variant and tone based on follow state
+  const variant = isFollowing ? (showUnfollow ? 'soft' : 'outline') : 'solid';
+  const tone = isFollowing ? (showUnfollow ? 'danger' : 'neutral') : 'primary';
+  const icon = showUnfollow ? (
+    <UserMinus className="h-3.5 w-3.5" strokeWidth={1.5} />
+  ) : !isFollowing ? (
+    <UserPlus className="h-3.5 w-3.5" strokeWidth={1.5} />
+  ) : undefined;
+
+  const label = isBusy
+    ? t('action.loading')
+    : showUnfollow
+      ? t('social.follow.unfollow')
+      : isFollowing
+        ? t('social.follow.following')
+        : t('social.follow.follow');
+
   return (
-    <button
-      type="button"
-      onClick={handleClick}
+    // biome-ignore lint/a11y/noStaticElementInteractions: Hover is purely visual feedback, Button handles actual interaction
+    <div
+      className={cn('inline-flex', className)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      disabled={isBusy}
-      className={cn(
-        'flex h-9 items-center gap-1.5 rounded-lg px-4 text-xs font-medium transition-all',
-        isFollowing
-          ? showUnfollow
-            ? 'border border-red-500/40 bg-red-500/10 text-red-400'
-            : 'border border-white/10 bg-white/5 text-zinc-300'
-          : 'bg-blue-600 text-white hover:bg-blue-500',
-        isBusy && 'pointer-events-none opacity-60',
-        className,
-      )}
     >
-      {isBusy ? (
-        <Loader2 className="h-3.5 w-3.5 animate-spin" />
-      ) : showUnfollow ? (
-        <UserMinus className="h-3.5 w-3.5" strokeWidth={1.5} />
-      ) : !isFollowing ? (
-        <UserPlus className="h-3.5 w-3.5" strokeWidth={1.5} />
-      ) : null}
-
-      {isBusy
-        ? t('action.loading')
-        : showUnfollow
-          ? t('social.follow.unfollow')
-          : isFollowing
-            ? t('social.follow.following')
-            : t('social.follow.follow')}
-    </button>
+      <Button
+        type="button"
+        variant={variant}
+        tone={tone}
+        size="sm"
+        loading={isBusy}
+        leftIcon={!isBusy ? icon : undefined}
+        onPress={handleClick}
+      >
+        {label}
+      </Button>
+    </div>
   );
 }

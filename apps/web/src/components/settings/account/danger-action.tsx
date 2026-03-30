@@ -2,8 +2,8 @@
  * DangerAction — single action row in danger zone.
  */
 
+import { Button } from '@octopus-synapse/profile-ui';
 import type { LucideIcon } from 'lucide-react';
-import { Button } from '@/shared/components/ui';
 
 interface Props {
   icon: LucideIcon;

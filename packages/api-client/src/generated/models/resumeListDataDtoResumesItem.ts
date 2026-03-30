@@ -36,4 +36,4 @@ All errors follow a consistent format:
  * OpenAPI spec version: 1.0.0
  */
 
-export type ResumeListDataDtoResumesItem = { [key: string]: unknown };
+export type ResumeListDataDtoResumesItem = {[key: string]: unknown};

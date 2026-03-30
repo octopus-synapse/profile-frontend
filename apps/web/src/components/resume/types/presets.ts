@@ -1,105 +1,128 @@
 /**
  * Theme Presets
- *
- * Default style configurations that can be used as starting points for themes.
+ * Pre-defined theme configurations for quick setup.
  */
 
-import type { ResumeStyleConfig } from './config';
+import type { ThemePreset, ThemeStyleConfig } from './config';
 
-export const modernPreset: ResumeStyleConfig = {
+export const DEFAULT_STYLE_CONFIG: ThemeStyleConfig = {
   colors: {
-    primary: '#0f172a',
-    secondary: '#334155',
-    accent: '#0ea5e9',
-    background: '#ffffff',
-    text: '#1e293b',
-    muted: '#64748b',
-    border: '#e2e8f0',
+    primary: '#3B82F6',
+    background: '#FFFFFF',
+    text: '#1E293B',
+    accent: '#8B5CF6',
+    muted: '#94A3B8',
   },
-  typography: {
-    fontFamily: 'Inter, system-ui, sans-serif',
-    headingFontFamily: 'Inter, system-ui, sans-serif',
-    baseFontSize: '14px',
-    lineHeight: 1.5,
-    headingScale: 1.25,
-  },
-  layout: {
-    pageSize: 'A4',
-    margins: { top: 20, right: 20, bottom: 20, left: 20 },
-    columns: 1,
-    sectionSpacing: 24,
+  fonts: {
+    heading: 'Inter',
+    body: 'Inter',
   },
   spacing: {
-    sectionGap: 24,
-    itemGap: 12,
-    contentPadding: 16,
+    base: 16,
+    section: 24,
   },
 };
 
-export const minimalPreset: ResumeStyleConfig = {
-  colors: {
-    primary: '#000000',
-    secondary: '#333333',
-    accent: '#000000',
-    background: '#ffffff',
-    text: '#000000',
-    muted: '#666666',
-    border: '#cccccc',
+export const THEME_PRESETS: ThemePreset[] = [
+  {
+    id: 'professional',
+    name: 'Professional',
+    description: 'Clean and professional design for corporate roles',
+    styleConfig: {
+      colors: {
+        primary: '#1E40AF',
+        background: '#FFFFFF',
+        text: '#1F2937',
+        accent: '#3B82F6',
+        muted: '#6B7280',
+      },
+      fonts: {
+        heading: 'Inter',
+        body: 'Inter',
+      },
+    },
   },
-  typography: {
-    fontFamily: 'Georgia, serif',
-    headingFontFamily: 'Georgia, serif',
-    baseFontSize: '12px',
-    lineHeight: 1.4,
-    headingScale: 1.2,
+  {
+    id: 'modern',
+    name: 'Modern',
+    description: 'Contemporary design with bold accents',
+    styleConfig: {
+      colors: {
+        primary: '#6366F1',
+        background: '#FAFAFA',
+        text: '#18181B',
+        accent: '#A855F7',
+        muted: '#71717A',
+      },
+      fonts: {
+        heading: 'Plus Jakarta Sans',
+        body: 'Inter',
+      },
+    },
   },
-  layout: {
-    pageSize: 'A4',
-    margins: { top: 25, right: 25, bottom: 25, left: 25 },
-    columns: 1,
-    sectionSpacing: 20,
+  {
+    id: 'minimal',
+    name: 'Minimal',
+    description: 'Simple and elegant with focus on content',
+    styleConfig: {
+      colors: {
+        primary: '#18181B',
+        background: '#FFFFFF',
+        text: '#3F3F46',
+        accent: '#27272A',
+        muted: '#A1A1AA',
+      },
+      fonts: {
+        heading: 'Inter',
+        body: 'Inter',
+      },
+    },
   },
-  spacing: {
-    sectionGap: 20,
-    itemGap: 8,
-    contentPadding: 12,
+  {
+    id: 'creative',
+    name: 'Creative',
+    description: 'Vibrant design for creative professionals',
+    styleConfig: {
+      colors: {
+        primary: '#EC4899',
+        background: '#FDF4FF',
+        text: '#581C87',
+        accent: '#8B5CF6',
+        muted: '#A78BFA',
+      },
+      fonts: {
+        heading: 'Playfair Display',
+        body: 'Lato',
+      },
+    },
   },
-};
+  {
+    id: 'dark',
+    name: 'Dark Mode',
+    description: 'Modern dark theme for tech professionals',
+    styleConfig: {
+      colors: {
+        primary: '#3B82F6',
+        background: '#0F172A',
+        text: '#F8FAFC',
+        accent: '#22D3EE',
+        muted: '#64748B',
+      },
+      fonts: {
+        heading: 'Inter',
+        body: 'Inter',
+      },
+    },
+  },
+];
 
-export const creativePreset: ResumeStyleConfig = {
-  colors: {
-    primary: '#7c3aed',
-    secondary: '#a78bfa',
-    accent: '#f59e0b',
-    background: '#faf5ff',
-    text: '#1f2937',
-    muted: '#6b7280',
-    border: '#ddd6fe',
-  },
-  typography: {
-    fontFamily: 'Poppins, sans-serif',
-    headingFontFamily: 'Poppins, sans-serif',
-    baseFontSize: '14px',
-    lineHeight: 1.6,
-    headingScale: 1.3,
-  },
-  layout: {
-    pageSize: 'A4',
-    margins: { top: 15, right: 15, bottom: 15, left: 15 },
-    columns: 1,
-    sectionSpacing: 28,
-  },
-  spacing: {
-    sectionGap: 28,
-    itemGap: 14,
-    contentPadding: 20,
-  },
-};
+export function getPresetById(id: string): ThemePreset | undefined {
+  return THEME_PRESETS.find((p) => p.id === id);
+}
 
-export const THEME_PRESETS = {
-  modern: modernPreset,
-  minimal: minimalPreset,
-  creative: creativePreset,
-} as const;
-
-export type PresetName = keyof typeof THEME_PRESETS;
+// Named presets for direct import
+export const modernPreset = THEME_PRESETS.find((p) => p.id === 'modern')!;
+export const professionalPreset = THEME_PRESETS.find((p) => p.id === 'professional')!;
+export const minimalPreset = THEME_PRESETS.find((p) => p.id === 'minimal')!;
+export const creativePreset = THEME_PRESETS.find((p) => p.id === 'creative')!;
+export const darkPreset = THEME_PRESETS.find((p) => p.id === 'dark')!;

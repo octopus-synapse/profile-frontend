@@ -3,7 +3,7 @@
  * Dark mode premium styling.
  */
 
-import { cn } from '@/shared/utils';
+import { Button } from '@octopus-synapse/profile-ui';
 
 interface TabButtonProps {
   active: boolean;
@@ -14,19 +14,20 @@ interface TabButtonProps {
 
 export function SidebarTabButton({ active, onClick, icon, label }: TabButtonProps) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        'flex flex-1 items-center justify-center gap-2 border-b-2 px-4 py-3.5 text-sm font-medium transition-all',
-        active
-          ? 'border-pf-accent-fg bg-pf-accent-subtle text-pf-fg-default'
-          : 'border-transparent text-pf-fg-subtle hover:bg-pf-hover-subtle hover:text-pf-fg-muted',
-      )}
-    >
-      {icon}
-      {label}
-    </button>
+    <span className="flex flex-1">
+      <Button
+        type="button"
+        variant={active ? 'soft' : 'ghost'}
+        tone={active ? 'info' : 'neutral'}
+        size="md"
+        fullWidth
+        leftIcon={icon}
+        pressed={active}
+        onPress={onClick}
+      >
+        {label}
+      </Button>
+    </span>
   );
 }
 
@@ -54,16 +55,16 @@ interface ActionButtonProps {
 
 export function SidebarActionButton({ icon: Icon, label, onClick }: ActionButtonProps) {
   return (
-    <button
+    <Button
       type="button"
-      onClick={onClick}
-      className="group flex w-full items-center gap-3 rounded-lg border border-pf-border-muted bg-pf-hover-subtle/50 p-3 text-sm font-medium text-pf-fg-muted transition-all hover:border-pf-border-default hover:bg-pf-hover-subtle hover:text-pf-fg-default"
+      variant="outline"
+      tone="neutral"
+      size="md"
+      fullWidth
+      leftIcon={<Icon className="h-4 w-4" strokeWidth={1.5} />}
+      onPress={onClick}
     >
-      <Icon
-        className="h-4 w-4 text-pf-fg-subtle transition-colors group-hover:text-pf-accent-fg"
-        strokeWidth={1.5}
-      />
       {label}
-    </button>
+    </Button>
   );
 }

@@ -1,13 +1,19 @@
 'use client';
 
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Skeleton,
+  showToast,
+  Textarea,
+} from '@octopus-synapse/profile-ui';
 import { useResumeAnalyticsMatchJob } from '@profile/api-client';
 import { useI18n } from '@profile/i18n';
 import { Briefcase, Search, Sparkles } from 'lucide-react';
 import { useCallback, useState } from 'react';
-
-import { Badge, Button, Card, CardContent, CardHeader, Skeleton } from '@/shared/components/ui';
-import { Textarea } from '@/shared/components/ui/textarea';
-import { showToast } from '@/shared/components/ui/toast';
 
 import {
   getScoreBadgeVariant,
@@ -106,8 +112,10 @@ export function JobMatchTool({ resumeId }: JobMatchToolProps) {
     }
 
     try {
-      // TODO: Backend needs to accept jobDescription in request body
-      const response = await matchMutation.mutateAsync({ resumeId });
+      const response = await matchMutation.mutateAsync({
+        resumeId,
+        data: { jobDescription },
+      });
       const matchData = response.data?.data as MatchJobResult | undefined;
       if (matchData) {
         setResult(matchData);
@@ -136,7 +144,9 @@ export function JobMatchTool({ resumeId }: JobMatchToolProps) {
               id="job-description"
               placeholder={t('resume.jobMatch.placeholder')}
               value={jobDescription}
-              onChange={(e) => setJobDescription(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setJobDescription(e.target.value)
+              }
               rows={4}
               disabled={matchMutation.isPending}
             />

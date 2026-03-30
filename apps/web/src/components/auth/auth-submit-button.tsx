@@ -4,8 +4,8 @@
 
 'use client';
 
+import { Button, Spinner } from '@octopus-synapse/profile-ui';
 import { ChevronRight } from 'lucide-react';
-import { Button, Spinner } from '@/shared/components/ui';
 
 interface AuthSubmitButtonProps {
   label: string;

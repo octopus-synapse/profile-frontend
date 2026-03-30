@@ -5,27 +5,42 @@
 
 'use client';
 
-import type { ResumeStyleConfig } from '../types/config';
+import type { ResumeStyleConfig, ThemePreset } from '../types/config';
 import { modernPreset } from '../types/presets';
 
 interface Props {
-  config?: ResumeStyleConfig;
+  config?: ResumeStyleConfig | ThemePreset;
   className?: string;
 }
 
 export function ThemePreview({ config, className = '' }: Props) {
-  const style = config || modernPreset;
-  const { tokens, layout } = style;
+  // Extract styleConfig from preset or use config directly
+  const style: ResumeStyleConfig = (() => {
+    if (!config) return modernPreset.styleConfig;
+    if ('styleConfig' in config && typeof (config as ThemePreset).styleConfig === 'object') {
+      return (config as ThemePreset).styleConfig;
+    }
+    return config as ResumeStyleConfig;
+  })();
 
-  // Extract colors for preview (colors are nested under tokens.colors.colors)
-  const colorPalette = tokens?.colors?.colors;
-  const primaryColor = getColor(colorPalette?.primary, '#2563eb');
-  const bgColor = getColor(colorPalette?.background, '#ffffff');
-  const textColor = getColor(colorPalette?.text?.primary, '#1f2937');
-  const borderRadius = tokens?.colors?.borderRadius || 'rounded';
+  const tokens = style.tokens;
+  const layout = style as { layout?: { type?: string } };
 
-  const isCompact = tokens?.spacing?.density === 'compact';
-  const isTwoColumn = layout?.type === 'two-column';
+  // Extract colors for preview
+  const colorPalette = tokens?.colors ?? style.colors;
+  const primaryRaw = colorPalette?.primary;
+  const primaryColor = typeof primaryRaw === 'string' ? primaryRaw : '#2563eb';
+  const bgRaw = colorPalette?.background;
+  const bgColor = typeof bgRaw === 'string' ? bgRaw : '#ffffff';
+  const textRaw = colorPalette?.text;
+  const textColor =
+    typeof textRaw === 'string'
+      ? textRaw
+      : ((textRaw as Record<string, string>)?.primary ?? '#1f2937');
+  const borderRadius = 'rounded';
+
+  const isCompact = tokens?.spacing === 'compact';
+  const isTwoColumn = layout.layout?.type === 'two-column';
 
   return (
     <div
@@ -166,11 +181,4 @@ function PreviewItem({ textColor }: { textColor: string }) {
       <div className="h-0.5 w-3/4 rounded-sm" style={{ backgroundColor: `${textColor}40` }} />
     </div>
   );
-}
-
-function getColor(color: string | undefined, fallback: string): string {
-  if (!color) return fallback;
-  // Handle Tailwind class names by returning fallback
-  if (color.startsWith('text-') || color.startsWith('bg-')) return fallback;
-  return color;
 }

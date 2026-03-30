@@ -35,17 +35,17 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
-import type { OnboardingPersonalInfoDto } from './onboardingPersonalInfoDto';
-import type { OnboardingProfessionalProfileDto } from './onboardingProfessionalProfileDto';
-import type { OnboardingTemplateSelectionDto } from './onboardingTemplateSelectionDto';
-import type { SectionProgressInputDto } from './sectionProgressInputDto';
+import type { SaveProgressRequestDtoPersonalInfo } from './saveProgressRequestDtoPersonalInfo';
+import type { SaveProgressRequestDtoProfessionalProfile } from './saveProgressRequestDtoProfessionalProfile';
+import type { SaveProgressRequestDtoSectionsItem } from './saveProgressRequestDtoSectionsItem';
+import type { SaveProgressRequestDtoTemplateSelection } from './saveProgressRequestDtoTemplateSelection';
 
 export interface SaveProgressRequestDto {
   currentStep: string;
   completedSteps: string[];
   username?: string;
-  personalInfo?: OnboardingPersonalInfoDto;
-  professionalProfile?: OnboardingProfessionalProfileDto;
-  sections?: SectionProgressInputDto[];
-  templateSelection?: OnboardingTemplateSelectionDto;
+  personalInfo?: SaveProgressRequestDtoPersonalInfo;
+  professionalProfile?: SaveProgressRequestDtoProfessionalProfile;
+  sections?: SaveProgressRequestDtoSectionsItem[];
+  templateSelection?: SaveProgressRequestDtoTemplateSelection;
 }

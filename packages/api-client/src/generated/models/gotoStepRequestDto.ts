@@ -37,6 +37,5 @@ All errors follow a consistent format:
  */
 
 export interface GotoStepRequestDto {
-  /** Step ID to navigate to */
   stepId: string;
 }

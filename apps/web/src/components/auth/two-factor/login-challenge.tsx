@@ -7,12 +7,11 @@
  * Supports TOTP code and backup code entry.
  */
 
+import { Button, Input, showToast } from '@octopus-synapse/profile-ui';
+import { useAuthLoginVerify2fa } from '@profile/api-client';
 import { useT } from '@profile/i18n';
 import { KeyRound, ShieldAlert } from 'lucide-react';
 import { useState } from 'react';
-import { Button, Input } from '@/shared/components/ui';
-import { showToast } from '@/shared/components/ui/toast';
-import { useVerifyLogin2FA } from '../hooks/use-2fa';
 
 interface LoginChallengeProps {
   userId: string;
@@ -24,7 +23,7 @@ export function TwoFactorLoginChallenge({ userId, onVerified }: LoginChallengePr
   const [mode, setMode] = useState<'totp' | 'backup'>('totp');
   const [totpCode, setTotpCode] = useState('');
   const [backupCode, setBackupCode] = useState('');
-  const verify = useVerifyLogin2FA();
+  const verify = useAuthLoginVerify2fa();
 
   const code = mode === 'totp' ? totpCode : backupCode;
   const isValid = mode === 'totp' ? totpCode.length === 6 : backupCode.length >= 6;
@@ -34,7 +33,7 @@ export function TwoFactorLoginChallenge({ userId, onVerified }: LoginChallengePr
     if (!isValid) return;
 
     try {
-      await verify.mutateAsync({ userId, code });
+      await verify.mutateAsync({ data: { userId, code } });
       onVerified();
     } catch {
       showToast.error(
@@ -98,13 +97,9 @@ export function TwoFactorLoginChallenge({ userId, onVerified }: LoginChallengePr
         </Button>
       </form>
 
-      <button
-        type="button"
-        onClick={toggleMode}
-        className="text-pf-fg-muted hover:text-pf-fg-default text-sm underline-offset-4 hover:underline"
-      >
+      <Button type="button" variant="link" tone="neutral" size="sm" onPress={toggleMode}>
         {mode === 'totp' ? t('auth.2fa.useBackup') : t('auth.2fa.useAuthenticator')}
-      </button>
+      </Button>
     </div>
   );
 }

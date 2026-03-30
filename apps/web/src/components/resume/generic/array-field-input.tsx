@@ -7,6 +7,7 @@
 
 'use client';
 
+import { Button } from '@octopus-synapse/profile-ui';
 import {
   type FieldDefinition,
   type FieldRenderProps,
@@ -79,25 +80,30 @@ function ArrayFieldInput({
             aria-invalid={!!error}
             aria-describedby={error ? errorId : undefined}
           />
-          <button
+          <Button
             type="button"
-            onClick={() => removeItem(index)}
+            variant="ghost"
+            tone="danger"
+            size="xs"
+            iconOnly
             disabled={disabled}
-            className="shrink-0 rounded-lg p-2 text-zinc-400 transition-colors hover:text-red-400 disabled:opacity-50"
             aria-label={`Remove ${(field.label || field.key || 'item').toLowerCase()} item`}
+            onPress={() => removeItem(index)}
           >
             ✕
-          </button>
+          </Button>
         </div>
       ))}
-      <button
+      <Button
         type="button"
-        onClick={addItem}
+        variant="link"
+        tone="neutral"
+        size="sm"
         disabled={disabled}
-        className="text-sm text-zinc-400 transition-colors hover:text-white disabled:opacity-50"
+        onPress={addItem}
       >
         + Add {(field.label || field.key || 'item').toLowerCase()}
-      </button>
+      </Button>
       {error && (
         <p id={errorId} className="text-xs text-red-400">
           {error}

@@ -38,5 +38,5 @@ All errors follow a consistent format:
 
 export interface HealthCheckResponseDto {
   status: string;
-  timestamp?: string;
+  timestamp: string;
 }

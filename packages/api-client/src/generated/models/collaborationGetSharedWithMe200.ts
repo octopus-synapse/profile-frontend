@@ -35,9 +35,9 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
-import type { ApiResponse } from './apiResponse';
+import type { ApiResponseDto } from './apiResponseDto';
 import type { SharedResumesListDataDto } from './sharedResumesListDataDto';
 
-export type CollaborationGetSharedWithMe200 = ApiResponse & {
+export type CollaborationGetSharedWithMe200 = ApiResponseDto & {
   data: SharedResumesListDataDto;
 };

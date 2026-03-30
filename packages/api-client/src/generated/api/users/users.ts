@@ -63,6 +63,9 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  AdminCreateUserDto,
+  AdminResetPasswordDto,
+  AdminUpdateUserDto,
   UpdateUserProfileRequestDto,
   UpdateUsernameRequestDto,
   UsersCheckUsernameAvailability200,
@@ -2122,14 +2125,15 @@ export const getUsersCreateUserUrl = () => {
   return `/api/v1/users/manage`
 }
 
-export const usersCreateUser = async ( options?: RequestInit): Promise<usersCreateUserResponse> => {
+export const usersCreateUser = async (adminCreateUserDto: AdminCreateUserDto, options?: RequestInit): Promise<usersCreateUserResponse> => {
   
   return customFetch<usersCreateUserResponse>(getUsersCreateUserUrl(),
   {      
     ...options,
-    method: 'POST'
-    
-    
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      adminCreateUserDto,)
   }
 );}
 
@@ -2137,8 +2141,8 @@ export const usersCreateUser = async ( options?: RequestInit): Promise<usersCrea
 
 
 export const getUsersCreateUserMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof usersCreateUser>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof usersCreateUser>>, TError,void, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof usersCreateUser>>, TError,{data: AdminCreateUserDto}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof usersCreateUser>>, TError,{data: AdminCreateUserDto}, TContext> => {
 
 const mutationKey = ['usersCreateUser'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -2150,10 +2154,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof usersCreateUser>>, void> = () => {
-          
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof usersCreateUser>>, {data: AdminCreateUserDto}> = (props) => {
+          const {data} = props ?? {};
 
-          return  usersCreateUser(requestOptions)
+          return  usersCreateUser(data,requestOptions)
         }
 
 
@@ -2164,18 +2168,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type UsersCreateUserMutationResult = NonNullable<Awaited<ReturnType<typeof usersCreateUser>>>
-    
+    export type UsersCreateUserMutationBody = AdminCreateUserDto
     export type UsersCreateUserMutationError = unknown
 
     /**
  * @summary Create a new user
  */
 export const useUsersCreateUser = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof usersCreateUser>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof usersCreateUser>>, TError,{data: AdminCreateUserDto}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof usersCreateUser>>,
         TError,
-        void,
+        {data: AdminCreateUserDto},
         TContext
       > => {
       return useMutation(getUsersCreateUserMutationOptions(options), queryClient);
@@ -2465,14 +2469,16 @@ export const getUsersUpdateUserUrl = (id: string,) => {
   return `/api/v1/users/manage/${id}`
 }
 
-export const usersUpdateUser = async (id: string, options?: RequestInit): Promise<usersUpdateUserResponse> => {
+export const usersUpdateUser = async (id: string,
+    adminUpdateUserDto: AdminUpdateUserDto, options?: RequestInit): Promise<usersUpdateUserResponse> => {
   
   return customFetch<usersUpdateUserResponse>(getUsersUpdateUserUrl(id),
   {      
     ...options,
-    method: 'PATCH'
-    
-    
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      adminUpdateUserDto,)
   }
 );}
 
@@ -2480,8 +2486,8 @@ export const usersUpdateUser = async (id: string, options?: RequestInit): Promis
 
 
 export const getUsersUpdateUserMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof usersUpdateUser>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof usersUpdateUser>>, TError,{id: string}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof usersUpdateUser>>, TError,{id: string;data: AdminUpdateUserDto}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof usersUpdateUser>>, TError,{id: string;data: AdminUpdateUserDto}, TContext> => {
 
 const mutationKey = ['usersUpdateUser'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -2493,10 +2499,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof usersUpdateUser>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof usersUpdateUser>>, {id: string;data: AdminUpdateUserDto}> = (props) => {
+          const {id,data} = props ?? {};
 
-          return  usersUpdateUser(id,requestOptions)
+          return  usersUpdateUser(id,data,requestOptions)
         }
 
 
@@ -2507,18 +2513,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type UsersUpdateUserMutationResult = NonNullable<Awaited<ReturnType<typeof usersUpdateUser>>>
-    
+    export type UsersUpdateUserMutationBody = AdminUpdateUserDto
     export type UsersUpdateUserMutationError = unknown
 
     /**
  * @summary Update user information
  */
 export const useUsersUpdateUser = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof usersUpdateUser>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof usersUpdateUser>>, TError,{id: string;data: AdminUpdateUserDto}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof usersUpdateUser>>,
         TError,
-        {id: string},
+        {id: string;data: AdminUpdateUserDto},
         TContext
       > => {
       return useMutation(getUsersUpdateUserMutationOptions(options), queryClient);
@@ -2628,14 +2634,16 @@ export const getUsersResetPasswordUrl = (id: string,) => {
   return `/api/v1/users/manage/${id}/reset-password`
 }
 
-export const usersResetPassword = async (id: string, options?: RequestInit): Promise<usersResetPasswordResponse> => {
+export const usersResetPassword = async (id: string,
+    adminResetPasswordDto: AdminResetPasswordDto, options?: RequestInit): Promise<usersResetPasswordResponse> => {
   
   return customFetch<usersResetPasswordResponse>(getUsersResetPasswordUrl(id),
   {      
     ...options,
-    method: 'POST'
-    
-    
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      adminResetPasswordDto,)
   }
 );}
 
@@ -2643,8 +2651,8 @@ export const usersResetPassword = async (id: string, options?: RequestInit): Pro
 
 
 export const getUsersResetPasswordMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof usersResetPassword>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof usersResetPassword>>, TError,{id: string}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof usersResetPassword>>, TError,{id: string;data: AdminResetPasswordDto}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof usersResetPassword>>, TError,{id: string;data: AdminResetPasswordDto}, TContext> => {
 
 const mutationKey = ['usersResetPassword'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -2656,10 +2664,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof usersResetPassword>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof usersResetPassword>>, {id: string;data: AdminResetPasswordDto}> = (props) => {
+          const {id,data} = props ?? {};
 
-          return  usersResetPassword(id,requestOptions)
+          return  usersResetPassword(id,data,requestOptions)
         }
 
 
@@ -2670,18 +2678,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type UsersResetPasswordMutationResult = NonNullable<Awaited<ReturnType<typeof usersResetPassword>>>
-    
+    export type UsersResetPasswordMutationBody = AdminResetPasswordDto
     export type UsersResetPasswordMutationError = unknown
 
     /**
  * @summary Reset user password
  */
 export const useUsersResetPassword = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof usersResetPassword>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof usersResetPassword>>, TError,{id: string;data: AdminResetPasswordDto}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof usersResetPassword>>,
         TError,
-        {id: string},
+        {id: string;data: AdminResetPasswordDto},
         TContext
       > => {
       return useMutation(getUsersResetPasswordMutationOptions(options), queryClient);

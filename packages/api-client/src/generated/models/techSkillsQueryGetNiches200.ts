@@ -35,9 +35,9 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
-import type { ApiResponse } from './apiResponse';
-import type { TechNichesListDataDto } from './techNichesListDataDto';
+import type { ApiResponseDto } from './apiResponseDto';
+import type { TechNicheListDataDto } from './techNicheListDataDto';
 
-export type TechSkillsQueryGetNiches200 = ApiResponse & {
-  data: TechNichesListDataDto;
+export type TechSkillsQueryGetNiches200 = ApiResponseDto & {
+  data: TechNicheListDataDto;
 };

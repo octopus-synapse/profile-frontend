@@ -5,10 +5,9 @@
 
 'use client';
 
+import { Button, Input, Label } from '@octopus-synapse/profile-ui';
 import { Eye, EyeOff, Lock } from 'lucide-react';
 import { useState } from 'react';
-import { Input } from '@/shared/components/ui';
-import { Label } from '@/shared/components/ui/label';
 
 interface SecurePasswordFieldProps {
   id: string;
@@ -53,14 +52,20 @@ export function SecurePasswordField({
           disabled={disabled}
           className="h-11 border-white/10 bg-white/[0.02] pr-10 pl-10 transition-all focus:border-cyan-500/50 focus:bg-white/[0.05] focus:ring-cyan-500/20 disabled:opacity-50"
         />
-        <button
-          type="button"
-          onClick={() => setShowPassword(!showPassword)}
-          className="absolute inset-y-0 right-3 flex items-center text-zinc-500 transition-colors hover:text-white disabled:opacity-50"
-          disabled={disabled}
-        >
-          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-        </button>
+        <span className="absolute inset-y-0 right-3 flex items-center">
+          <Button
+            type="button"
+            variant="ghost"
+            tone="neutral"
+            size="xs"
+            iconOnly
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
+            disabled={disabled}
+            onPress={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </Button>
+        </span>
       </div>
     </div>
   );

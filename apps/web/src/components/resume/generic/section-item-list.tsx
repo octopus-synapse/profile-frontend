@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@octopus-synapse/profile-ui';
 import { useI18n } from '@profile/i18n';
 import { Pencil, Trash2 } from 'lucide-react';
 import type { FieldDefinition, SectionItem } from './field-input-shared';
@@ -64,23 +65,29 @@ export function SectionItemList({
               )}
             </div>
             <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-              <button
+              <Button
                 type="button"
-                onClick={() => onEdit(item)}
-                className="rounded-lg p-2 text-zinc-400 transition-colors hover:bg-white/5 hover:text-white"
+                variant="ghost"
+                tone="neutral"
+                size="sm"
+                iconOnly
                 aria-label={t('action.edit')}
+                onPress={() => onEdit(item)}
               >
                 <Pencil className="h-4 w-4" strokeWidth={1.5} />
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
-                onClick={() => void onDelete(item.id)}
+                variant="ghost"
+                tone="danger"
+                size="sm"
+                iconOnly
                 disabled={isDeleting}
-                className="rounded-lg p-2 text-zinc-400 transition-colors hover:bg-white/5 hover:text-red-400 disabled:opacity-50"
                 aria-label={t('action.delete')}
+                onPress={() => void onDelete(item.id)}
               >
                 <Trash2 className="h-4 w-4" strokeWidth={1.5} />
-              </button>
+              </Button>
             </div>
           </div>
         </div>

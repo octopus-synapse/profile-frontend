@@ -2,8 +2,7 @@
  * Layout item renderer components for public profile resume.
  */
 
-import type { ResumeItemDto } from '@profile/api-client';
-import type { FieldStyleMap } from './public-profile-types';
+import type { FieldStyleMap, PublicProfileSectionItem } from './public-profile-types';
 import {
   findAllFieldsByRole,
   findFieldByRole,
@@ -15,7 +14,7 @@ export function TimelineItem({
   item,
   fieldStyles,
 }: {
-  item: ResumeItemDto;
+  item: PublicProfileSectionItem;
   fieldStyles: FieldStyleMap;
 }) {
   const content = getContentObject(item);
@@ -52,7 +51,7 @@ export function CardItem({
   item,
   fieldStyles,
 }: {
-  item: ResumeItemDto;
+  item: PublicProfileSectionItem;
   fieldStyles: FieldStyleMap;
 }) {
   const content = getContentObject(item);
@@ -72,7 +71,7 @@ export function CompactItem({
   item,
   fieldStyles,
 }: {
-  item: ResumeItemDto;
+  item: PublicProfileSectionItem;
   fieldStyles: FieldStyleMap;
 }) {
   const content = getContentObject(item);
@@ -104,7 +103,7 @@ export function ListItem({
   item,
   fieldStyles,
 }: {
-  item: ResumeItemDto;
+  item: PublicProfileSectionItem;
   fieldStyles: FieldStyleMap;
 }) {
   const content = getContentObject(item);

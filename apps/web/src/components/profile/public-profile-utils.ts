@@ -2,10 +2,13 @@
  * Utility functions for public profile resume rendering.
  */
 
-import type { ResumeItemDto } from '@profile/api-client';
-import type { FieldStyleMap, FieldStyleSemantic } from './public-profile-types';
+import type {
+  FieldStyleMap,
+  FieldStyleSemantic,
+  PublicProfileSectionItem,
+} from './public-profile-types';
 
-export function getContentObject(item: ResumeItemDto): Record<string, unknown> {
+export function getContentObject(item: PublicProfileSectionItem): Record<string, unknown> {
   return typeof item.content === 'string'
     ? JSON.parse(item.content)
     : (item.content as Record<string, unknown>);

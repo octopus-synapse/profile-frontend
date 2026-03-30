@@ -35,15 +35,20 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
+import type { ImportJobDtoData } from './importJobDtoData';
+import type { ImportJobDtoParsedData } from './importJobDtoParsedData';
 import type { ImportJobDtoSource } from './importJobDtoSource';
 import type { ImportJobDtoStatus } from './importJobDtoStatus';
 
 export interface ImportJobDto {
   id: string;
-  status: ImportJobDtoStatus;
+  userId: string;
   source: ImportJobDtoSource;
+  status: ImportJobDtoStatus;
+  data?: ImportJobDtoData;
+  parsedData?: ImportJobDtoParsedData;
   resumeId?: string;
-  error?: string;
+  errors?: string[];
   createdAt: string;
-  completedAt?: string;
+  updatedAt?: string;
 }

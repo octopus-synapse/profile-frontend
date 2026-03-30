@@ -5,25 +5,20 @@
  * Clean, professional design
  */
 
+import { usePlatformCheck, usePlatformGetStatistics, useUsersListUsers } from '@profile/api-client';
 import { useT } from '@profile/i18n';
 import { CheckCircle2, FileText, Globe, UserCheck, Users } from 'lucide-react';
-import {
-  RecentActivityWidget,
-  RecentUsersWidget,
-  StatCard,
-  SystemHealthWidget,
-  useAdminStats,
-  useRecentActivity,
-  useRecentUsers,
-  useSystemHealth,
-} from '@/components/admin';
+import { RecentUsersWidget, StatCard, SystemHealthWidget } from '@/components/admin';
 
 export default function AdminDashboardPage() {
   const t = useT();
-  const { data: stats, isLoading: statsLoading } = useAdminStats();
-  const { data: health, isLoading: healthLoading } = useSystemHealth();
-  const { data: recentUsers, isLoading: usersLoading } = useRecentUsers(5);
-  const { data: activities, isLoading: activitiesLoading } = useRecentActivity(10);
+  const { data: statsResponse, isLoading: statsLoading } = usePlatformGetStatistics();
+  const { data: healthResponse, isLoading: healthLoading } = usePlatformCheck();
+  const { data: usersResponse, isLoading: usersLoading } = useUsersListUsers({ page: 1, limit: 5 });
+
+  const stats = statsResponse?.status === 200 ? statsResponse.data.data : null;
+  const healthData = healthResponse?.status === 200 ? healthResponse.data : null;
+  const recentUsers = usersResponse?.status === 200 ? (usersResponse.data.data?.users ?? []) : [];
 
   return (
     <div className="space-y-8">
@@ -54,13 +49,11 @@ export default function AdminDashboardPage() {
           label={t('admin.dashboard.totalUsers')}
           value={stats?.totalUsers ?? 0}
           icon={Users}
-          trend={`+${stats?.newUsersThisWeek ?? 0} this week`}
-          trendUp={(stats?.newUsersThisWeek ?? 0) > 0}
           loading={statsLoading}
         />
         <StatCard
           label={t('admin.dashboard.activeUsers')}
-          value={stats?.activeUsers ?? 0}
+          value={stats?.activeUsersWeek ?? 0}
           icon={UserCheck}
           loading={statsLoading}
         />
@@ -71,8 +64,8 @@ export default function AdminDashboardPage() {
           loading={statsLoading}
         />
         <StatCard
-          label={t('admin.dashboard.publicProfiles')}
-          value={stats?.publicProfiles ?? 0}
+          label={t('admin.dashboard.activeToday')}
+          value={stats?.activeUsersToday ?? 0}
           icon={Globe}
           loading={statsLoading}
         />
@@ -80,12 +73,9 @@ export default function AdminDashboardPage() {
 
       {/* Main Grid */}
       <div className="grid gap-6 lg:grid-cols-2">
-        <RecentUsersWidget users={recentUsers} loading={usersLoading} />
-        <SystemHealthWidget health={health} loading={healthLoading} />
+        <RecentUsersWidget users={recentUsers as never[]} loading={usersLoading} />
+        <SystemHealthWidget health={healthData as never} loading={healthLoading} />
       </div>
-
-      {/* Activity Feed */}
-      <RecentActivityWidget activities={activities} loading={activitiesLoading} />
     </div>
   );
 }

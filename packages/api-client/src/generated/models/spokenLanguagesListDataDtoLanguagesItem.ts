@@ -36,4 +36,11 @@ All errors follow a consistent format:
  * OpenAPI spec version: 1.0.0
  */
 
-export type SpokenLanguagesListDataDtoLanguagesItem = { [key: string]: unknown };
+export type SpokenLanguagesListDataDtoLanguagesItem = {
+  code: string;
+  nameEn: string;
+  namePtBr: string;
+  nameEs: string;
+  /** @nullable */
+  nativeName: string | null;
+};

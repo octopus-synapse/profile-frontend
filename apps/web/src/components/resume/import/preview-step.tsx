@@ -4,8 +4,9 @@
 
 'use client';
 
+import { Button } from '@octopus-synapse/profile-ui';
+import { useI18n } from '@profile/i18n';
 import { ArrowLeft, Loader2, Upload } from 'lucide-react';
-import { Button } from '@/shared/components/ui';
 import type { ParsedData } from './upload-step';
 
 interface PreviewStepProps {
@@ -16,6 +17,7 @@ interface PreviewStepProps {
 }
 
 export function PreviewStep({ data, onBack, onConfirm, isPending }: PreviewStepProps) {
+  const { t } = useI18n();
   const rows = [
     { label: 'Name', value: data.basics?.name },
     { label: 'Email', value: data.basics?.email },
@@ -39,7 +41,7 @@ export function PreviewStep({ data, onBack, onConfirm, isPending }: PreviewStepP
       </div>
       <div className="flex justify-between">
         <Button variant="outline" onClick={onBack} className="gap-2">
-          <ArrowLeft className="h-4 w-4" /> Back
+          <ArrowLeft className="h-4 w-4" /> {t('action.back')}
         </Button>
         <Button onClick={onConfirm} disabled={isPending} className="gap-2">
           {isPending ? (

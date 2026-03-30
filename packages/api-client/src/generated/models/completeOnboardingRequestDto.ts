@@ -35,17 +35,15 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
-import type { OnboardingPersonalInfoDto } from './onboardingPersonalInfoDto';
-import type { OnboardingProfessionalProfileDto } from './onboardingProfessionalProfileDto';
-import type { OnboardingSectionDto } from './onboardingSectionDto';
-import type { OnboardingTemplateSelectionDto } from './onboardingTemplateSelectionDto';
+import type { CompleteOnboardingRequestDtoPersonalInfo } from './completeOnboardingRequestDtoPersonalInfo';
+import type { CompleteOnboardingRequestDtoProfessionalProfile } from './completeOnboardingRequestDtoProfessionalProfile';
+import type { CompleteOnboardingRequestDtoSectionsItem } from './completeOnboardingRequestDtoSectionsItem';
+import type { CompleteOnboardingRequestDtoTemplateSelection } from './completeOnboardingRequestDtoTemplateSelection';
 
 export interface CompleteOnboardingRequestDto {
-  /** Unique username */
   username: string;
-  personalInfo: OnboardingPersonalInfoDto;
-  professionalProfile: OnboardingProfessionalProfileDto;
-  templateSelection: OnboardingTemplateSelectionDto;
-  /** Generic sections array */
-  sections?: OnboardingSectionDto[];
+  personalInfo: CompleteOnboardingRequestDtoPersonalInfo;
+  professionalProfile: CompleteOnboardingRequestDtoProfessionalProfile;
+  templateSelection: CompleteOnboardingRequestDtoTemplateSelection;
+  sections?: CompleteOnboardingRequestDtoSectionsItem[];
 }

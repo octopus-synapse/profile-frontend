@@ -4,16 +4,17 @@
 
 'use client';
 
-import { useI18n } from '@profile/i18n';
-import { Button, Separator } from '@/shared/components/ui';
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/shared/components/ui/dialog';
+  Separator,
+} from '@octopus-synapse/profile-ui';
+import { useI18n } from '@profile/i18n';
 
 interface Props {
   versionLabel: string | null;

@@ -35,8 +35,8 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
-import type { ResumeVersionItemDto } from './resumeVersionItemDto';
+import type { ResumeVersionListDataDtoVersionsItem } from './resumeVersionListDataDtoVersionsItem';
 
 export interface ResumeVersionListDataDto {
-  versions: ResumeVersionItemDto[];
+  versions: ResumeVersionListDataDtoVersionsItem[];
 }

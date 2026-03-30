@@ -35,9 +35,9 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
-import type { ApiResponse } from './apiResponse';
+import type { ApiResponseDto } from './apiResponseDto';
 import type { ChatMessageDataDto } from './chatMessageDataDto';
 
-export type ChatSendMessageToConversation201 = ApiResponse & {
+export type ChatSendMessageToConversation201 = ApiResponseDto & {
   data: ChatMessageDataDto;
 };

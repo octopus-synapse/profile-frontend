@@ -3,21 +3,25 @@
 import {
   authLogout,
   getAuthSessionQueryKey,
+  type SearchResultItemDto,
+  type SearchResultsResponseDto,
   selectEnvelopeData,
   useAuthSession,
+  useSearchSearch,
 } from '@profile/api-client';
-import { type LocaleInfo, useI18n } from '@profile/i18n';
+import { type DictionaryKey, type LocaleInfo, useI18n } from '@profile/i18n';
 import { useQueryClient } from '@tanstack/react-query';
-import { Search } from 'lucide-react';
+import { ExternalLink, Loader2, Search, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ROUTES } from '@/config/routes';
 import { useBodyScrollLock } from '@/shared/hooks/use-body-scroll-lock';
 import { useThemeOptional } from '@/shared/providers/theme-provider';
 import { cn } from '@/shared/utils';
 import { buildCommandGroups } from './build-command-groups';
 import { CommandGroup } from './command-group';
 import { CommandItem } from './command-item';
-import type { CommandItem as CommandItemType } from './types';
+import type { CommandGroup as CommandGroupType, CommandItem as CommandItemType } from './types';
 
 interface CommandPaletteProps {
   isOpen: boolean;
@@ -35,10 +39,44 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
 
+  const [debouncedQuery, setDebouncedQuery] = useState('');
+
   const handleQueryChange = useCallback((newQuery: string) => {
     setQuery(newQuery);
     setSelectedIndex(0);
   }, []);
+
+  // Debounce query for API search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  // Search users when query is >= 2 chars
+  const userSearchQuery = useSearchSearch(
+    {
+      q: debouncedQuery,
+      skills: '',
+      location: '',
+      minExp: '',
+      maxExp: '',
+      page: '1',
+      limit: '5',
+      sortBy: '',
+    },
+    {
+      query: {
+        enabled: isOpen && debouncedQuery.length >= 2,
+        staleTime: 30000,
+      },
+    },
+  );
+
+  const searchData = userSearchQuery.data?.data?.data as SearchResultsResponseDto | undefined;
+  const isSearching = userSearchQuery.isFetching;
+  const searchResults = searchData?.data ?? [];
 
   const isAuthenticated = !!user;
   const isAdmin = user?.isAdmin;
@@ -100,12 +138,51 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
     ],
   );
 
+  // Build user search group
+  const userGroup: CommandGroupType | null = useMemo(() => {
+    if (searchResults.length === 0) return null;
+
+    const items: CommandItemType[] = searchResults.map((result: SearchResultItemDto) => ({
+      id: `user-${result.id}`,
+      label: result.fullName || result.jobTitle || 'User',
+      icon: User,
+      href: `/protected/p/${result.slug || result.id}`,
+      keywords: [result.fullName, result.jobTitle, result.slug].filter(Boolean) as string[],
+    }));
+
+    // Add "View all results" link if there are results
+    if (searchResults.length > 0) {
+      items.push({
+        id: 'search-all',
+        label: t('nav.search.viewAllResults' as DictionaryKey),
+        icon: ExternalLink,
+        href: `${ROUTES.PROTECTED.SEARCH}?q=${encodeURIComponent(debouncedQuery)}`,
+        keywords: ['search', 'all', 'results'],
+      });
+    }
+
+    return {
+      id: 'users',
+      label: t('nav.group.users' as DictionaryKey),
+      items,
+    };
+  }, [searchResults, debouncedQuery, t]);
+
   const filteredGroups = useMemo(() => {
-    if (!query.trim()) return groups;
+    const result: CommandGroupType[] = [];
+
+    // Add user search results first if available
+    if (userGroup) {
+      result.push(userGroup);
+    }
+
+    if (!query.trim()) {
+      return [...result, ...groups];
+    }
 
     const lowerQuery = query.toLowerCase();
 
-    return groups
+    const filteredCommandGroups = groups
       .map((group) => ({
         ...group,
         items: group.items.filter(
@@ -115,7 +192,9 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
         ),
       }))
       .filter((group) => group.items.length > 0);
-  }, [groups, query]);
+
+    return [...result, ...filteredCommandGroups];
+  }, [groups, query, userGroup]);
 
   const flatItems = useMemo(() => filteredGroups.flatMap((g) => g.items), [filteredGroups]);
 
@@ -134,6 +213,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   useEffect(() => {
     if (isOpen) {
       setQuery('');
+      setDebouncedQuery('');
       setSelectedIndex(0);
       setTimeout(() => inputRef.current?.focus(), 0);
     }
@@ -217,7 +297,15 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
 
         {/* Results */}
         <div className="max-h-[60vh] overflow-y-auto py-2">
-          {filteredGroups.length === 0 ? (
+          {/* Loading indicator */}
+          {isSearching && debouncedQuery.length >= 2 && (
+            <div className="flex items-center gap-2 px-4 py-2 text-sm text-pf-fg-subtle">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              {t('nav.search.usersLoading' as DictionaryKey)}
+            </div>
+          )}
+
+          {filteredGroups.length === 0 && !isSearching ? (
             <p className="px-4 py-8 text-center text-sm text-pf-fg-subtle">
               {t('nav.search.noResults')}
             </p>

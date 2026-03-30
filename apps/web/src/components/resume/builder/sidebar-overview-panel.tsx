@@ -78,8 +78,8 @@ export function SidebarOverviewPanel({
       <SidebarSection title={t('resume.sidebar.activeTheme')}>
         <button
           type="button"
+          className="group flex w-full cursor-pointer items-center justify-between rounded-lg border border-pf-border-muted bg-pf-neutral-subtle p-3 text-left transition-all hover:border-pf-accent-fg/30 hover:bg-pf-accent-subtle"
           onClick={onThemeClick}
-          className="group flex w-full items-center justify-between rounded-lg border border-pf-border-muted bg-pf-neutral-subtle p-3 text-left transition-all hover:border-pf-accent-fg/30 hover:bg-pf-accent-subtle"
         >
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-pf-accent-fg/20 to-purple-400/20 ring-1 ring-pf-border-default transition-all group-hover:ring-pf-accent-fg/30">

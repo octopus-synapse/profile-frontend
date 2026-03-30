@@ -5,18 +5,18 @@
 
 'use client';
 
-import { useDeactivateAccountHandle } from '@profile/api-client';
-import { useI18n } from '@profile/i18n';
-import { Button } from '@/shared/components/ui';
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/shared/components/ui/dialog';
-import { showToast } from '@/shared/components/ui/toast';
+  showToast,
+} from '@octopus-synapse/profile-ui';
+import { useDeactivateAccountHandle } from '@profile/api-client';
+import { useI18n } from '@profile/i18n';
 
 interface Props {
   open: boolean;

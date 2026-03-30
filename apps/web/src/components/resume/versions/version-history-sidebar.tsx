@@ -4,8 +4,9 @@
  * VersionHistorySidebar — slide-out panel showing resume version history.
  */
 
+import { Button, showToast } from '@octopus-synapse/profile-ui';
 import {
-  type ResumeVersionItemDto,
+  type ResumeVersionListDataDtoVersionsItem,
   useResumeVersionGetVersionsNested,
   useResumeVersionRestoreVersionNested,
 } from '@profile/api-client';
@@ -13,7 +14,6 @@ import { useI18n } from '@profile/i18n';
 import { AnimatePresence, motion } from 'framer-motion';
 import { History, X } from 'lucide-react';
 import { useCallback, useState } from 'react';
-import { showToast } from '@/shared/components/ui/toast';
 import { cn } from '@/shared/utils/cn';
 import { RestoreConfirmDialog } from './restore-confirm-dialog';
 import { VersionListItem } from './version-list-item';
@@ -35,7 +35,9 @@ export function VersionHistorySidebar({ resumeId, open, onOpenChange }: Props) {
   const [confirmLabel, setConfirmLabel] = useState<string | null>(null);
 
   const versions =
-    (versionsQuery.data?.data?.data?.versions as ResumeVersionItemDto[] | undefined) ?? [];
+    (versionsQuery.data?.data?.data?.versions as
+      | ResumeVersionListDataDtoVersionsItem[]
+      | undefined) ?? [];
   const isLoading = versionsQuery.isLoading;
   const error = versionsQuery.error;
 
@@ -84,14 +86,17 @@ export function VersionHistorySidebar({ resumeId, open, onOpenChange }: Props) {
                   <History className="h-5 w-5 text-cyan-400" />
                   <h2 className="text-lg font-semibold text-white">{t('resume.versions.title')}</h2>
                 </div>
-                <button
+                <Button
                   type="button"
-                  onClick={() => onOpenChange(false)}
-                  className="rounded-md p-1 text-zinc-400 transition-colors hover:bg-white/5 hover:text-white"
+                  variant="ghost"
+                  tone="neutral"
+                  size="sm"
+                  iconOnly
                   aria-label={t('resume.versions.close')}
+                  onPress={() => onOpenChange(false)}
                 >
                   <X className="h-5 w-5" />
-                </button>
+                </Button>
               </div>
               <div className="flex-1 overflow-y-auto">
                 {isLoading && <VersionSkeleton />}
@@ -99,7 +104,7 @@ export function VersionHistorySidebar({ resumeId, open, onOpenChange }: Props) {
                 {!isLoading && !error && versions.length === 0 && <VersionEmptyState />}
                 {!isLoading && !error && versions.length > 0 && (
                   <ul className="divide-y divide-white/5">
-                    {versions.map((v: ResumeVersionItemDto) => (
+                    {versions.map((v: ResumeVersionListDataDtoVersionsItem) => (
                       <VersionListItem
                         key={v.id}
                         version={v}

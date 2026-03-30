@@ -12,9 +12,9 @@
  *   if (result) { // success }
  */
 
+import { showToast } from '@octopus-synapse/profile-ui';
 import { type ApiError, isApiError } from '@profile/api-client';
 import { useCallback } from 'react';
-import { showToast } from '@/shared/components/ui/toast';
 
 // ============================================================================
 // Error Types

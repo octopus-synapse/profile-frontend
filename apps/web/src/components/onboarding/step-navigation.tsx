@@ -7,9 +7,9 @@
 
 'use client';
 
+import { Button } from '@octopus-synapse/profile-ui';
 import { useI18n } from '@profile/i18n';
 import { ArrowLeft, ArrowRight, SkipForward } from 'lucide-react';
-import { Button } from '@/shared/components/ui';
 import { useOnboarding } from './hooks';
 
 interface StepNavigationProps {

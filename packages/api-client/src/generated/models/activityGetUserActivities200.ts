@@ -36,8 +36,8 @@ All errors follow a consistent format:
  * OpenAPI spec version: 1.0.0
  */
 import type { ActivityListDataDto } from './activityListDataDto';
-import type { ApiResponse } from './apiResponse';
+import type { ApiResponseDto } from './apiResponseDto';
 
-export type ActivityGetUserActivities200 = ApiResponse & {
+export type ActivityGetUserActivities200 = ApiResponseDto & {
   data: ActivityListDataDto;
 };

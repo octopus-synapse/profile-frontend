@@ -36,9 +36,6 @@ All errors follow a consistent format:
  * OpenAPI spec version: 1.0.0
  */
 
-/**
- * Role to assign to the collaborator
- */
 export type InviteCollaboratorDtoRole = typeof InviteCollaboratorDtoRole[keyof typeof InviteCollaboratorDtoRole];
 
 

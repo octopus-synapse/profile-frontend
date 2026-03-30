@@ -5,6 +5,7 @@
 
 'use client';
 
+import { Button } from '@octopus-synapse/profile-ui';
 import {
   useResumesGetAllUserResumes,
   useResumesListResumeSections,
@@ -159,14 +160,19 @@ export function SettingsPage() {
                       </NavItem>
                     ))}
                     {availableSections.length > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => setAddSectionOpen(true)}
-                        className="mt-2 flex w-full items-center gap-2 rounded-lg border border-dashed border-zinc-800 px-3 py-2 text-[13px] text-zinc-500 transition-all hover:border-zinc-700 hover:text-zinc-300"
-                      >
-                        <Plus className="h-3.5 w-3.5" />
-                        <span>{t('settings.sections.addNew')}</span>
-                      </button>
+                      <span className="mt-2 block">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          tone="neutral"
+                          size="sm"
+                          fullWidth
+                          leftIcon={<Plus className="h-3.5 w-3.5" />}
+                          onPress={() => setAddSectionOpen(true)}
+                        >
+                          {t('settings.sections.addNew')}
+                        </Button>
+                      </span>
                     )}
                   </>
                 )}
@@ -189,16 +195,18 @@ export function SettingsPage() {
           {/* Mobile Navigation */}
           <div className="mb-8 flex gap-2 overflow-x-auto pb-2 lg:hidden">
             {STATIC_TABS.map(({ id, labelKey }) => (
-              <button
+              <Button
                 key={id}
                 type="button"
-                onClick={() => setActiveTab(id)}
-                className={`shrink-0 rounded-full px-4 py-2 text-sm transition-colors ${
-                  activeTab === id ? 'bg-white text-black' : 'text-zinc-400 hover:text-white'
-                }`}
+                variant={activeTab === id ? 'solid' : 'ghost'}
+                tone="neutral"
+                size="sm"
+                shape="pill"
+                pressed={activeTab === id}
+                onPress={() => setActiveTab(id)}
               >
                 {t(labelKey)}
-              </button>
+              </Button>
             ))}
           </div>
 
@@ -243,19 +251,21 @@ function NavItem({
   badge?: number;
 }) {
   return (
-    <button
+    <Button
       type="button"
-      onClick={onClick}
-      className={`group flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-[13px] transition-all ${
-        active
-          ? 'bg-white/[0.08] text-white'
-          : 'text-zinc-500 hover:bg-white/[0.04] hover:text-zinc-300'
-      }`}
+      variant={active ? 'soft' : 'ghost'}
+      tone="neutral"
+      size="sm"
+      fullWidth
+      pressed={active}
+      onPress={onClick}
     >
-      <span className="flex items-center gap-2.5">{children}</span>
-      {badge !== undefined && (
-        <span className="text-[11px] tabular-nums text-zinc-600">{badge}</span>
-      )}
-    </button>
+      <span className="flex w-full items-center justify-between gap-2">
+        <span className="flex items-center gap-2.5">{children}</span>
+        {badge !== undefined && (
+          <span className="text-[11px] tabular-nums text-zinc-600">{badge}</span>
+        )}
+      </span>
+    </Button>
   );
 }

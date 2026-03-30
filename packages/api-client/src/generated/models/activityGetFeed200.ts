@@ -36,8 +36,8 @@ All errors follow a consistent format:
  * OpenAPI spec version: 1.0.0
  */
 import type { ActivityFeedDataDto } from './activityFeedDataDto';
-import type { ApiResponse } from './apiResponse';
+import type { ApiResponseDto } from './apiResponseDto';
 
-export type ActivityGetFeed200 = ApiResponse & {
+export type ActivityGetFeed200 = ApiResponseDto & {
   data: ActivityFeedDataDto;
 };

@@ -8,6 +8,7 @@
 
 'use client';
 
+import { Button, ConfirmDialog, useConfirmDialog } from '@octopus-synapse/profile-ui';
 import {
   type GenericSectionItemDto,
   getResumesListResumeSectionsQueryKey,
@@ -20,7 +21,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Loader2, Plus } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { SectionItemDialog } from '@/components/settings/section-item-dialog';
-import { ConfirmDialog, useConfirmDialog } from '@/shared/components/ui/confirm-dialog';
 import type { FieldDefinition } from './field-input-shared';
 import { SectionItemList } from './section-item-list';
 
@@ -170,15 +170,17 @@ export function GenericSectionEditor({
               : t('resume.section.itemCountOther', { count: items.length })}
           </p>
         </div>
-        <button
+        <Button
           type="button"
-          onClick={handleAddNew}
+          variant="outline"
+          tone="neutral"
+          size="sm"
           disabled={deleteMutation.isPending}
-          className="flex items-center gap-2 rounded-lg border border-pf-border-default px-4 py-2 text-sm font-medium text-pf-fg-default transition-colors hover:bg-pf-hover-subtle disabled:opacity-50"
+          leftIcon={<Plus className="h-4 w-4" strokeWidth={1.5} />}
+          onPress={handleAddNew}
         >
-          <Plus className="h-4 w-4" strokeWidth={1.5} />
           {t('resume.section.addButton', { title: displayTitle })}
-        </button>
+        </Button>
       </div>
 
       <SectionItemList

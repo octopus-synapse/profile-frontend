@@ -13,6 +13,7 @@ export const common = {
   'action.submit': 'Submit',
   'action.confirm': 'Confirm',
   'action.back': 'Back',
+  'action.previous': 'Previous',
   'action.next': 'Next',
   'action.close': 'Close',
   'action.loading': 'Loading...',
@@ -54,4 +55,22 @@ export const common = {
   'ui.theme.dark': 'Dark mode',
   'ui.theme.system': 'System theme',
   'ui.theme.toggle': 'Toggle theme',
+  'ui.theme.switchToDark': 'Switch to dark mode',
+  'ui.theme.switchToLight': 'Switch to light mode',
+
+  // Autocomplete
+  'ui.autocomplete.select': 'Select...',
+  'ui.autocomplete.search': 'Search...',
+  'ui.autocomplete.noResults': 'No results found',
+  'ui.autocomplete.minChars': 'Type at least {min} characters to search',
+
+  // Icon picker
+  'ui.iconPicker.search': 'Search icons...',
+  'ui.iconPicker.noResults': 'No icons found',
+
+  // Chat
+  'chat.sendMessage': 'Send Message',
+  'chat.directMessage': 'Direct message',
+  'chat.startConversation': 'Send a message to start the conversation',
+  'chat.inputPlaceholder': 'Type your message...',
 } as const;

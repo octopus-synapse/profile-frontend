@@ -58,7 +58,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
 /**
- * Registers a new user account.
+ * Registers a new user account and returns auth tokens for auto-login.
  * @summary Create new account
  */
 export type accountsSignupResponse201 = {

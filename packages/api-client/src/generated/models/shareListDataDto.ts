@@ -35,8 +35,8 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
-import type { ShareLinkDataDto } from './shareLinkDataDto';
+import type { ShareListDataDtoSharesItem } from './shareListDataDtoSharesItem';
 
 export interface ShareListDataDto {
-  shares: ShareLinkDataDto[];
+  shares: ShareListDataDtoSharesItem[];
 }

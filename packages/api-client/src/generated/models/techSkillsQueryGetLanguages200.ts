@@ -35,9 +35,9 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
-import type { ApiResponse } from './apiResponse';
-import type { TechLanguagesListDataDto } from './techLanguagesListDataDto';
+import type { ApiResponseDto } from './apiResponseDto';
+import type { ProgrammingLanguageListDataDto } from './programmingLanguageListDataDto';
 
-export type TechSkillsQueryGetLanguages200 = ApiResponse & {
-  data: TechLanguagesListDataDto;
+export type TechSkillsQueryGetLanguages200 = ApiResponseDto & {
+  data: ProgrammingLanguageListDataDto;
 };

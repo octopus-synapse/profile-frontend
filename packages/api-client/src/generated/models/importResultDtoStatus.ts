@@ -42,7 +42,10 @@ export type ImportResultDtoStatus = typeof ImportResultDtoStatus[keyof typeof Im
 export const ImportResultDtoStatus = {
   PENDING: 'PENDING',
   PROCESSING: 'PROCESSING',
+  MAPPING: 'MAPPING',
+  VALIDATING: 'VALIDATING',
+  IMPORTING: 'IMPORTING',
   COMPLETED: 'COMPLETED',
   FAILED: 'FAILED',
-  CANCELLED: 'CANCELLED',
+  PARTIAL: 'PARTIAL',
 } as const;

@@ -40,6 +40,12 @@ export const ACCOUNTS_ROUTES = {
   ACCOUNTS_SIGNUP: '/api/accounts',
 } as const;
 
+export const ADMIN_SECTION_TYPES_ROUTES = {
+  ADMIN_SECTION_TYPES_FIND_ALL: '/api/v1/admin/section-types',
+  ADMIN_SECTION_TYPES_CREATE: '/api/v1/admin/section-types',
+  ADMIN_SECTION_TYPES_GET_SEMANTIC_KINDS: '/api/v1/admin/section-types/semantic-kinds',
+} as const;
+
 export const APP_ROUTES = {
   APP_GET_VERSION: '/api/version',
   APP_GET_OPEN_API_SPEC: '/api/openapi.json',
@@ -132,6 +138,10 @@ export const MEC_METADATA_ROUTES = {
   MEC_METADATA_LIST_ALL_STATE_CODES: '/api/v1/mec/ufs',
   MEC_METADATA_LIST_ALL_KNOWLEDGE_AREAS: '/api/v1/mec/areas',
   MEC_METADATA_GET_MEC_STATISTICS: '/api/v1/mec/stats',
+} as const;
+
+export const METRICS_ROUTES = {
+  METRICS_GET_METRICS: '/api/metrics',
 } as const;
 
 export const ONBOARDING_ROUTES = {
@@ -234,7 +244,11 @@ export const TRANSLATION_ROUTES = {
 } as const;
 
 export const TWO_FACTOR_AUTH_ROUTES = {
+  TWO_FACTOR_AUTH_SETUP: '/api/auth/2fa/setup',
+  TWO_FACTOR_AUTH_VERIFY: '/api/auth/2fa/verify',
   AUTH_DISABLE: '/api/auth/2fa',
+  TWO_FACTOR_AUTH_GET_STATUS: '/api/auth/2fa/status',
+  TWO_FACTOR_AUTH_REGENERATE: '/api/auth/2fa/backup-codes/regenerate',
 } as const;
 
 export const UPLOAD_ROUTES = {
@@ -272,6 +286,16 @@ export {
 
 // accounts
 export { getAccountsSignupUrl } from '../generated/api/accounts/accounts';
+
+// admin-section-types
+export {
+  getAdminSectionTypesCreateUrl,
+  getAdminSectionTypesFindAllUrl,
+  getAdminSectionTypesFindOneUrl,
+  getAdminSectionTypesGetSemanticKindsUrl,
+  getAdminSectionTypesRemoveUrl,
+  getAdminSectionTypesUpdateUrl,
+} from '../generated/api/admin-section-types/admin-section-types';
 
 // app
 export {
@@ -400,6 +424,9 @@ export {
   getMecMetadataListAllKnowledgeAreasUrl,
   getMecMetadataListAllStateCodesUrl,
 } from '../generated/api/mec-metadata/mec-metadata';
+
+// metrics
+export { getMetricsGetMetricsUrl } from '../generated/api/metrics/metrics';
 
 // onboarding
 export {
@@ -621,7 +648,13 @@ export {
 } from '../generated/api/translation/translation';
 
 // two-factor-auth
-export { getAuthDisableUrl } from '../generated/api/two-factor-auth/two-factor-auth';
+export {
+  getAuthDisableUrl,
+  getTwoFactorAuthGetStatusUrl,
+  getTwoFactorAuthRegenerateUrl,
+  getTwoFactorAuthSetupUrl,
+  getTwoFactorAuthVerifyUrl,
+} from '../generated/api/two-factor-auth/two-factor-auth';
 
 // upload
 export {

@@ -6,21 +6,17 @@
  * Uses Strategy Pattern for role checking
  */
 
-import {
-  type SessionUserResponseDtoRole,
-  selectEnvelopeData,
-  useAuthSession,
-} from '@profile/api-client';
+import { Spinner } from '@octopus-synapse/profile-ui';
+import { selectEnvelopeData, useAuthSession } from '@profile/api-client';
 import type { ReactNode } from 'react';
-import { Spinner } from '@/shared/components/ui';
 
 // ============================================================================
 // Strategy Pattern: Role Check Strategies
 // ============================================================================
 
 type RoleCheckStrategy = (
-  userRole: SessionUserResponseDtoRole | undefined,
-  requiredRoles: SessionUserResponseDtoRole[],
+  userRole: 'USER' | 'ADMIN' | undefined,
+  requiredRoles: ('USER' | 'ADMIN')[],
 ) => boolean;
 
 const roleStrategies: Record<string, RoleCheckStrategy> = {
@@ -46,7 +42,7 @@ const roleStrategies: Record<string, RoleCheckStrategy> = {
 
 interface RoleGuardProps {
   children: ReactNode;
-  roles: SessionUserResponseDtoRole[];
+  roles: ('USER' | 'ADMIN')[];
   strategy?: 'exact' | 'any' | 'all';
   fallback?: ReactNode;
   loading?: ReactNode;

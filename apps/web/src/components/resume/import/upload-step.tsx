@@ -6,11 +6,10 @@
  * File dropzone and JSON text area for the first step of the import wizard.
  */
 
+import { Button, cn } from '@octopus-synapse/profile-ui';
 import { useI18n } from '@profile/i18n';
 import { AlertCircle, Clipboard, FileJson, Upload } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
-import { Button } from '@/shared/components/ui';
-import { cn } from '@/shared/utils';
 
 // ============================================================================
 // Types
@@ -84,8 +83,8 @@ export function UploadStep({ onParsed }: UploadStepProps) {
     <div className="space-y-4 p-6 pt-0">
       <button
         type="button"
-        onClick={() => fileRef.current?.click()}
         className="flex w-full cursor-pointer flex-col items-center gap-3 rounded-lg border border-dashed border-white/10 bg-white/[0.02] p-8 transition-colors hover:border-white/20 hover:bg-white/5"
+        onClick={() => fileRef.current?.click()}
       >
         <Upload className="h-8 w-8 text-zinc-400" strokeWidth={1.5} />
         <p className="text-sm text-zinc-400">
@@ -107,14 +106,16 @@ export function UploadStep({ onParsed }: UploadStepProps) {
           <label className="text-sm font-medium text-zinc-300">
             {t('resume.import.jsonDataLabel')}
           </label>
-          <button
+          <Button
             type="button"
-            onClick={() => void handlePaste()}
-            className="flex items-center gap-1.5 text-xs text-zinc-400 transition-colors hover:text-white"
+            variant="link"
+            tone="neutral"
+            size="sm"
+            leftIcon={<Clipboard className="h-3.5 w-3.5" strokeWidth={1.5} />}
+            onPress={() => void handlePaste()}
           >
-            <Clipboard className="h-3.5 w-3.5" strokeWidth={1.5} />
             {t('resume.import.paste')}
-          </button>
+          </Button>
         </div>
         <textarea
           value={json}
@@ -137,11 +138,14 @@ export function UploadStep({ onParsed }: UploadStepProps) {
 
       <div className="flex justify-end">
         <Button
-          onClick={() => handleParse(json)}
+          type="button"
+          variant="solid"
+          tone="neutral"
+          size="md"
+          leftIcon={<FileJson className="h-4 w-4" />}
           disabled={!json.trim() || isParsing}
-          className="gap-2"
+          onPress={() => handleParse(json)}
         >
-          <FileJson className="h-4 w-4" />
           {t('resume.import.parsePreview')}
         </Button>
       </div>

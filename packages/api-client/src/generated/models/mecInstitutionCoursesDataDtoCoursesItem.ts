@@ -35,5 +35,17 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
+import type { MecInstitutionCoursesDataDtoCoursesItemInstitution } from './mecInstitutionCoursesDataDtoCoursesItemInstitution';
 
-export type MecInstitutionCoursesDataDtoCoursesItem = { [key: string]: unknown };
+export type MecInstitutionCoursesDataDtoCoursesItem = {
+  id: string;
+  codigoCurso: number;
+  nome: string;
+  /** @nullable */
+  grau: string | null;
+  /** @nullable */
+  modalidade: string | null;
+  /** @nullable */
+  areaConhecimento: string | null;
+  institution: MecInstitutionCoursesDataDtoCoursesItemInstitution;
+};

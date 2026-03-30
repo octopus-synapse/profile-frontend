@@ -1,92 +1,71 @@
 /**
- * Resume Style Config Types
- *
- * Note: These types should eventually be generated from the backend schema.
- * For now, they serve as frontend-only type definitions.
+ * Resume Configuration Types
+ * Frontend UI types for resume theme and configuration.
  */
 
-/**
- * Theme type - SDK provides { [key: string]: unknown } which is unusable.
- * This interface provides proper typing until backend generates proper types.
- */
+export interface ThemeColors {
+  primary?: string;
+  secondary?: string;
+  background?: string;
+  text?: string | { primary?: string; secondary?: string };
+  accent?: string;
+  muted?: string;
+  [key: string]: string | Record<string, string> | undefined;
+}
+
+export interface ThemeStyleConfig {
+  colors?: ThemeColors;
+  fonts?: Record<string, string>;
+  spacing?: Record<string, string | number>;
+  tokens?: {
+    colors?: ThemeColors;
+    fonts?: Record<string, string>;
+    [key: string]: unknown;
+  };
+  [key: string]: unknown;
+}
+
+// Alias for backward compatibility
+export type ResumeStyleConfig = ThemeStyleConfig;
+
+export type ThemeStatus = 'PUBLISHED' | 'PRIVATE' | 'PENDING_APPROVAL' | 'REJECTED';
+export type ThemeCategory =
+  | 'PROFESSIONAL'
+  | 'CREATIVE'
+  | 'TECHNICAL'
+  | 'ACADEMIC'
+  | 'MINIMAL'
+  | 'MODERN'
+  | 'CLASSIC'
+  | 'EXECUTIVE';
+
 export interface Theme {
   id: string;
   name: string;
   description?: string | null;
-  category?: string;
-  tags?: string[];
-  status?: 'DRAFT' | 'PENDING' | 'PENDING_APPROVAL' | 'PUBLISHED' | 'REJECTED' | 'PRIVATE';
+  styleConfig: ThemeStyleConfig;
+  isPublic: boolean;
+  isDefault: boolean;
   isSystemTheme?: boolean;
-  styleConfig?: ResumeStyleConfig | Record<string, unknown>;
-  createdAt?: string;
-  updatedAt?: string;
-  author?: { id: string; name?: string };
+  status?: ThemeStatus;
+  category?: ThemeCategory;
+  tags?: string[];
+  authorId: string;
+  author?: {
+    id: string;
+    name?: string;
+    email?: string;
+  };
+  parentThemeId?: string | null;
   rejectionReason?: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface ColorTokens {
-  primary?: string;
-  secondary?: string;
-  accent?: string;
-  background?: string;
-  text?: string | { primary?: string; secondary?: string };
-  muted?: string;
-  border?: string;
-  colors?: {
-    primary?: string;
-    background?: string;
-    text?: { primary?: string };
-  };
-  borderRadius?: string;
-}
-
-export interface TypographyTokens {
-  fontFamily?: string;
-  headingFontFamily?: string;
-  baseFontSize?: string;
-  lineHeight?: number;
-  headingScale?: number;
-}
-
-export interface LayoutConfig {
-  type?: 'single-column' | 'two-column';
-  pageSize?: 'A4' | 'LETTER' | 'LEGAL';
-  margins?: {
-    top?: number;
-    right?: number;
-    bottom?: number;
-    left?: number;
-  };
-  columns?: number;
-  sectionSpacing?: number;
-}
-
-export interface SpacingConfig {
-  sectionGap?: number;
-  itemGap?: number;
-  contentPadding?: number;
-}
-
-export interface SectionStyleConfig {
-  headerClass?: string;
-  itemClass?: string;
-  containerClass?: string;
-  dividerClass?: string;
-  visible?: boolean;
-  order?: number;
-}
-
-export interface ResumeStyleConfig {
-  colors?: ColorTokens;
-  typography?: TypographyTokens;
-  layout?: LayoutConfig;
-  spacing?: SpacingConfig;
-  tokens?: {
-    colors?: ColorTokens;
-    typography?: TypographyTokens;
-    spacing?: {
-      density?: 'compact' | 'normal' | 'relaxed';
-    };
-  };
-  sections?: Record<string, SectionStyleConfig>;
+export interface ThemePreset {
+  id: string;
+  name: string;
+  description?: string;
+  thumbnail?: string;
+  styleConfig: ThemeStyleConfig;
 }

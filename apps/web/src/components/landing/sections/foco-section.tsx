@@ -1,14 +1,26 @@
 'use client';
 
 import { type DictionaryKey, useI18n } from '@profile/i18n';
-import { Briefcase, FileText, MapPin, Building2 } from 'lucide-react';
+import { Briefcase, Building2, FileText, MapPin } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 const JOBS = [
-  { key: 'landing.foco.job.seniorTechLead' as DictionaryKey, company: 'TechCorp', location: 'Remote' },
-  { key: 'landing.foco.job.staffEngineer' as DictionaryKey, company: 'StartupX', location: 'São Paulo' },
+  {
+    key: 'landing.foco.job.seniorTechLead' as DictionaryKey,
+    company: 'TechCorp',
+    location: 'Remote',
+  },
+  {
+    key: 'landing.foco.job.staffEngineer' as DictionaryKey,
+    company: 'StartupX',
+    location: 'São Paulo',
+  },
   { key: 'landing.foco.job.frontendLead' as DictionaryKey, company: 'FinBank', location: 'Remote' },
-  { key: 'landing.foco.job.productEngineer' as DictionaryKey, company: 'ScaleAI', location: 'Hybrid' },
+  {
+    key: 'landing.foco.job.productEngineer' as DictionaryKey,
+    company: 'ScaleAI',
+    location: 'Hybrid',
+  },
 ] as const;
 
 const SKILL_KEYS: DictionaryKey[] = [
@@ -83,9 +95,7 @@ function JobPostCard({
           <Building2 className="h-6 w-6 text-white" strokeWidth={1.5} />
         </div>
         <div className="flex-1">
-          <p className="font-semibold text-zinc-900 transition-all duration-300">
-            {t(job.key)}
-          </p>
+          <p className="font-semibold text-zinc-900 transition-all duration-300">{t(job.key)}</p>
           <p className="text-sm text-zinc-500">{job.company}</p>
         </div>
       </div>

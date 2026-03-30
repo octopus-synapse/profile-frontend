@@ -9,6 +9,7 @@ import {
   useThemesGetAllThemesByUser,
   useThemesSubmit,
 } from '@profile/api-client';
+import { useI18n } from '@profile/i18n';
 import { useState } from 'react';
 import type { Theme } from '../types/config';
 import { CreateThemeModal } from './create-theme-modal';
@@ -23,6 +24,7 @@ interface Props {
 }
 
 export function MyThemesManager({ onApply }: Props) {
+  const { t } = useI18n();
   const [editingTheme, setEditingTheme] = useState<Theme | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
@@ -56,8 +58,8 @@ export function MyThemesManager({ onApply }: Props) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold">My Themes</h2>
-          <p className="text-muted-foreground text-sm">Create and manage your personal themes</p>
+          <h2 className="text-xl font-semibold">{t('resume.theme.myThemes.title')}</h2>
+          <p className="text-muted-foreground text-sm">{t('resume.theme.myThemes.subtitle')}</p>
         </div>
         <div className="flex gap-2">
           <ImportButton onClick={() => setShowImportModal(true)} />

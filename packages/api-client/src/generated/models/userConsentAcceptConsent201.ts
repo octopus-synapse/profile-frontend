@@ -36,8 +36,8 @@ All errors follow a consistent format:
  * OpenAPI spec version: 1.0.0
  */
 import type { AcceptConsentResponseDto } from './acceptConsentResponseDto';
-import type { ApiResponse } from './apiResponse';
+import type { ApiResponseDto } from './apiResponseDto';
 
-export type UserConsentAcceptConsent201 = ApiResponse & {
+export type UserConsentAcceptConsent201 = ApiResponseDto & {
   data: AcceptConsentResponseDto;
 };

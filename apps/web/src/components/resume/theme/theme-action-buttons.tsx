@@ -2,19 +2,27 @@
  * ThemeActionButtons — import and create buttons for theme manager.
  */
 
+import { Button } from '@octopus-synapse/profile-ui';
+import { useI18n } from '@profile/i18n';
+
 interface ImportButtonProps {
   onClick: () => void;
 }
 
 export function ImportButton({ onClick }: ImportButtonProps) {
+  const { t } = useI18n();
+
   return (
-    <button
+    <Button
       type="button"
-      onClick={onClick}
-      className="hover:bg-muted flex items-center gap-2 rounded border px-3 py-2 text-sm"
+      variant="outline"
+      tone="neutral"
+      size="sm"
+      leftIcon={<span>📥</span>}
+      onPress={onClick}
     >
-      <span>📥</span> Import JSON
-    </button>
+      {t('resume.theme.myThemes.importJson')}
+    </Button>
   );
 }
 
@@ -23,13 +31,18 @@ interface CreateButtonProps {
 }
 
 export function CreateButton({ onClick }: CreateButtonProps) {
+  const { t } = useI18n();
+
   return (
-    <button
+    <Button
       type="button"
-      onClick={onClick}
-      className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-2 rounded px-3 py-2 text-sm"
+      variant="solid"
+      tone="primary"
+      size="sm"
+      leftIcon={<span>➕</span>}
+      onPress={onClick}
     >
-      <span>➕</span> New Theme
-    </button>
+      {t('resume.theme.myThemes.newTheme')}
+    </Button>
   );
 }

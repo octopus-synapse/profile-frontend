@@ -35,10 +35,10 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
+import type { ThemePaginatedListDataDtoPagination } from './themePaginatedListDataDtoPagination';
 import type { ThemePaginatedListDataDtoThemesItem } from './themePaginatedListDataDtoThemesItem';
-import type { ThemePaginationDataDto } from './themePaginationDataDto';
 
 export interface ThemePaginatedListDataDto {
   themes: ThemePaginatedListDataDtoThemesItem[];
-  pagination: ThemePaginationDataDto;
+  pagination: ThemePaginatedListDataDtoPagination;
 }

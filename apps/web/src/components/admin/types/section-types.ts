@@ -1,56 +1,50 @@
 /**
- * Admin Section Types - Type Definitions
- *
- * Maps to the backend AdminSectionTypesController API contract.
- * All types derived from the orval-generated SDK.
+ * Section Type Types for Admin Management.
+ * Frontend UI types that mirror SDK SectionTypeDataDto structure.
  */
 
+import type { FieldDefinition } from './field-definition';
+import type { FieldStylesMap, RenderHints } from './style-config';
+
 export interface SectionTypeTranslation {
-  title: string;
+  title?: string;
+  label?: string;
   description?: string;
-  label: string;
-  noDataLabel: string;
-  placeholder: string;
-  addLabel: string;
+  noDataLabel?: string;
+  placeholder?: string;
+  addLabel?: string;
 }
 
 export interface SectionTypeData {
+  id: string;
   key: string;
   slug: string;
   title: string;
-  description: string | null;
+  description?: string | null;
   semanticKind: string;
   version: number;
   isActive: boolean;
   isSystem: boolean;
   isRepeatable: boolean;
   minItems: number;
-  maxItems: number | null;
-  definition: Record<string, unknown>;
-  uiSchema: Record<string, unknown> | null;
-  renderHints: Record<string, unknown> | null;
-  fieldStyles: Record<string, unknown> | null;
-  iconType: 'emoji' | 'lucide';
+  maxItems?: number | null;
+  definition: FieldDefinition;
+  uiSchema?: Record<string, unknown>;
+  renderHints: RenderHints;
+  fieldStyles: FieldStylesMap;
+  iconType: string;
   icon: string;
   translations: Record<string, SectionTypeTranslation>;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface SectionTypeListResponse {
-  items: SectionTypeData[];
-  total: number;
-  page: number;
-  pageSize: number;
-  totalPages: number;
-}
-
 export interface SectionTypeListParams {
-  page?: number;
-  pageSize?: number;
   search?: string;
-  isActive?: boolean;
   semanticKind?: string;
+  isActive?: boolean;
+  page?: number;
+  limit?: number;
 }
 
 export interface CreateSectionTypePayload {
@@ -59,32 +53,28 @@ export interface CreateSectionTypePayload {
   title: string;
   description?: string;
   semanticKind: string;
-  version?: number;
-  isRepeatable?: boolean;
-  minItems?: number;
+  iconType: 'emoji' | 'lucide';
+  icon: string;
+  isRepeatable: boolean;
+  minItems: number;
   maxItems?: number;
   definition: Record<string, unknown>;
-  uiSchema?: Record<string, unknown>;
-  renderHints?: Record<string, unknown>;
-  fieldStyles?: Record<string, unknown>;
-  iconType?: 'emoji' | 'lucide';
-  icon?: string;
-  translations?: Record<string, Partial<SectionTypeTranslation>>;
+  renderHints: Record<string, unknown>;
+  fieldStyles: Record<string, unknown>;
+  translations: Record<string, Partial<SectionTypeTranslation>>;
 }
 
 export interface UpdateSectionTypePayload {
-  slug?: string;
-  title?: string;
+  title: string;
   description?: string | null;
-  isActive?: boolean;
-  isRepeatable?: boolean;
-  minItems?: number;
+  isActive: boolean;
+  isRepeatable: boolean;
+  iconType: 'emoji' | 'lucide';
+  icon: string;
+  minItems: number;
   maxItems?: number | null;
-  definition?: Record<string, unknown>;
-  uiSchema?: Record<string, unknown> | null;
-  renderHints?: Record<string, unknown>;
-  fieldStyles?: Record<string, unknown>;
-  iconType?: 'emoji' | 'lucide';
-  icon?: string;
-  translations?: Record<string, Partial<SectionTypeTranslation>>;
+  definition: Record<string, unknown>;
+  renderHints: Record<string, unknown>;
+  fieldStyles: Record<string, unknown>;
+  translations: Record<string, Partial<SectionTypeTranslation>>;
 }

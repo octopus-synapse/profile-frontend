@@ -4,6 +4,7 @@
 
 'use client';
 
+import { Button } from '@octopus-synapse/profile-ui';
 import {
   customFetch,
   getUsersGetFullPreferencesQueryKey,
@@ -155,18 +156,16 @@ export function PreferencesSection() {
 
         <div className="flex gap-2">
           {locales.map((locale: LocaleInfo) => (
-            <button
+            <Button
               key={locale.code}
               type="button"
-              onClick={() => handleLanguageChange(locale.code)}
-              className={`rounded-lg px-4 py-2.5 text-[13px] font-medium transition-all ${
-                language === locale.code
-                  ? 'bg-white text-black'
-                  : 'text-zinc-500 hover:bg-zinc-800/50 hover:text-white'
-              }`}
+              variant={language === locale.code ? 'solid' : 'ghost'}
+              tone="neutral"
+              size="sm"
+              onPress={() => handleLanguageChange(locale.code)}
             >
               {locale.label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -188,29 +187,26 @@ function VisibilityOption({
   disabled: boolean;
 }) {
   return (
-    <button
+    <Button
       type="button"
-      onClick={onClick}
+      variant={selected ? 'soft' : 'outline'}
+      tone="neutral"
+      size="lg"
       disabled={disabled}
-      className={`group relative flex-1 rounded-xl border p-5 text-left transition-all ${
-        selected ? 'border-white/20 bg-white/[0.04]' : 'border-zinc-800/50 hover:border-zinc-700'
-      } ${disabled ? 'opacity-50' : ''}`}
-    >
-      <div className="flex items-start justify-between">
-        <div>
-          <span
-            className={`block text-sm font-medium ${selected ? 'text-white' : 'text-zinc-400'}`}
-          >
-            {label}
-          </span>
-          <span className="mt-1 block text-[12px] text-zinc-600">{description}</span>
-        </div>
-        {selected && (
+      pressed={selected}
+      rightIcon={
+        selected ? (
           <div className="flex h-5 w-5 items-center justify-center rounded-full bg-white">
             <Check className="h-3 w-3 text-black" strokeWidth={2.5} />
           </div>
-        )}
+        ) : undefined
+      }
+      onPress={onClick}
+    >
+      <div className="flex-1 text-left">
+        <span className="block text-sm font-medium">{label}</span>
+        <span className="mt-1 block text-[12px] text-zinc-600">{description}</span>
       </div>
-    </button>
+    </Button>
   );
 }

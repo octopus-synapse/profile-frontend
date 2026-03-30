@@ -1,13 +1,22 @@
 'use client';
 
+/**
+ * Activity Feed Component
+ * Uses SDK hooks and types directly.
+ */
+
+import { useActivityGetFeed, useAuthSession } from '@profile/api-client';
 import { useT } from '@profile/i18n';
 import { Activity as ActivityIcon, Clock } from 'lucide-react';
-import type { Activity } from './hooks/use-social';
-import { useActivityFeed } from './hooks/use-social';
 
-// ============================================================================
-// Helpers
-// ============================================================================
+// Activity item type based on API response structure
+interface Activity {
+  id: string;
+  actorPhotoURL?: string | null;
+  actorName: string;
+  description: string;
+  createdAt: string;
+}
 
 function formatRelativeTime(dateStr: string): string {
   const now = Date.now();
@@ -23,10 +32,6 @@ function formatRelativeTime(dateStr: string): string {
   if (days < 7) return `${days}d ago`;
   return new Date(dateStr).toLocaleDateString();
 }
-
-// ============================================================================
-// Subcomponents
-// ============================================================================
 
 function FeedSkeleton() {
   return (
@@ -86,14 +91,17 @@ function ActivityItem({ activity }: { activity: Activity }) {
   );
 }
 
-// ============================================================================
-// Main Component
-// ============================================================================
-
 export function ActivityFeed() {
   const t = useT();
-  const { data, isLoading } = useActivityFeed();
-  const activities = data?.activities ?? [];
+  const { data: sessionResponse } = useAuthSession();
+  const userId = sessionResponse?.status === 200 ? sessionResponse.data.data.user?.id : undefined;
+
+  const { data: feedResponse, isLoading } = useActivityGetFeed(userId ?? '', {
+    query: { enabled: !!userId },
+  });
+
+  const activities: Activity[] =
+    feedResponse?.status === 200 ? ((feedResponse.data.data.feed.data as Activity[]) ?? []) : [];
 
   return (
     <div className="space-y-1">

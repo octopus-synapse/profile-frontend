@@ -1,5 +1,6 @@
 'use client';
 
+import { SaveButton, Spinner, StatusMessage, showToast } from '@octopus-synapse/profile-ui';
 import {
   type ResumeFullResponseDto,
   type ResumeResponseDto,
@@ -8,11 +9,9 @@ import {
   useResumesUpdateResumeForUser,
 } from '@profile/api-client';
 import { useI18n } from '@profile/i18n';
-import { FileText, Save, Sparkles } from 'lucide-react';
+import { FileText, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { ThemePicker } from '@/components/resume/theme';
-import { SaveButton, Spinner, StatusMessage } from '@/shared/components/ui';
-import { showToast } from '@/shared/components/ui/toast';
 import { LabeledField } from './labeled-field';
 import {
   createEmptyResumeBasicsForm,
@@ -118,12 +117,8 @@ export function ResumeBasicsSection({
           <p className="mt-1 text-sm text-zinc-400">{t('settings.resume.description')}</p>
         </div>
         {isDirty && (
-          <SaveButton
-            icon={Save}
-            isPending={updateResume.isPending}
-            onClick={() => void handleSave()}
-          >
-            Save Resume
+          <SaveButton isPending={updateResume.isPending} onClick={() => void handleSave()}>
+            {t('action.save')}
           </SaveButton>
         )}
       </div>
@@ -201,10 +196,10 @@ export function ResumeBasicsSection({
       </div>
 
       {updateResume.isSuccess && !isDirty && (
-        <StatusMessage type="success" message={t('settings.resume.updateSuccess')} />
+        <StatusMessage tone="success" message={t('settings.resume.updateSuccess')} />
       )}
       {updateResume.isError && (
-        <StatusMessage type="error" message={t('settings.resume.updateFailed')} />
+        <StatusMessage tone="danger" message={t('settings.resume.updateFailed')} />
       )}
     </div>
   );

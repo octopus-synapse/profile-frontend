@@ -13,6 +13,7 @@ export const common = {
   'action.submit': 'Enviar',
   'action.confirm': 'Confirmar',
   'action.back': 'Voltar',
+  'action.previous': 'Anterior',
   'action.next': 'Próximo',
   'action.close': 'Fechar',
   'action.loading': 'Carregando...',
@@ -54,4 +55,22 @@ export const common = {
   'ui.theme.dark': 'Modo escuro',
   'ui.theme.system': 'Tema do sistema',
   'ui.theme.toggle': 'Alternar tema',
+  'ui.theme.switchToDark': 'Mudar para modo escuro',
+  'ui.theme.switchToLight': 'Mudar para modo claro',
+
+  // Autocomplete
+  'ui.autocomplete.select': 'Selecione...',
+  'ui.autocomplete.search': 'Buscar...',
+  'ui.autocomplete.noResults': 'Nenhum resultado encontrado',
+  'ui.autocomplete.minChars': 'Digite pelo menos {min} caracteres para buscar',
+
+  // Icon picker
+  'ui.iconPicker.search': 'Buscar ícones...',
+  'ui.iconPicker.noResults': 'Nenhum ícone encontrado',
+
+  // Chat
+  'chat.sendMessage': 'Enviar Mensagem',
+  'chat.directMessage': 'Mensagem direta',
+  'chat.startConversation': 'Envie uma mensagem para iniciar a conversa',
+  'chat.inputPlaceholder': 'Digite sua mensagem...',
 } as const;

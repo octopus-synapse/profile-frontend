@@ -36,7 +36,4 @@ All errors follow a consistent format:
  * OpenAPI spec version: 1.0.0
  */
 
-/**
- * Unread count by conversation ID
- */
-export type UnreadCountDataDtoByConversation = { [key: string]: unknown };
+export type UnreadCountDataDtoByConversation = {[key: string]: number};

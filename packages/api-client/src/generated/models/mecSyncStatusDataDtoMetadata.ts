@@ -39,4 +39,11 @@ All errors follow a consistent format:
 /**
  * @nullable
  */
-export type MecSyncStatusDataDtoMetadata = { [key: string]: unknown } | null;
+export type MecSyncStatusDataDtoMetadata = {
+  lastSyncAt: string;
+  lastSyncStatus: 'success' | 'failed' | 'partial';
+  lastSyncDuration: number;
+  totalInstitutions: number;
+  totalCourses: number;
+  triggeredBy: string;
+} | null;

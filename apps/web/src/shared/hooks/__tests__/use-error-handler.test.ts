@@ -11,7 +11,7 @@ void mock.module('@profile/api-client', () => ({
   isApiError: isApiErrorMock,
 }));
 
-void mock.module('@/shared/components/ui/toast', () => ({
+void mock.module('@octopus-synapse/profile-ui', () => ({
   showToast: { error: mock(), success: mock(), info: mock() },
 }));
 

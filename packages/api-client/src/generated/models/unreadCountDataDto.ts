@@ -38,8 +38,6 @@ All errors follow a consistent format:
 import type { UnreadCountDataDtoByConversation } from './unreadCountDataDtoByConversation';
 
 export interface UnreadCountDataDto {
-  /** Total unread messages */
   totalUnread: number;
-  /** Unread count by conversation ID */
   byConversation: UnreadCountDataDtoByConversation;
 }

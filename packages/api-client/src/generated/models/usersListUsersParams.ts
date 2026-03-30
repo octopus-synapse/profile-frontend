@@ -40,4 +40,5 @@ export type UsersListUsersParams = {
 page?: number;
 limit?: number;
 search?: string;
+roleName?: string;
 };

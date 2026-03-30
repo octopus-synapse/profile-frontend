@@ -1,23 +1,22 @@
-"use client";
+'use client';
 
+import { useI18n } from '@profile/i18n';
 import {
-	AtsSection,
-	ComparisonSection,
-	CtaGenericSection,
-	FocoSection,
-	FooterSection,
-	HeroSection,
-	HookSection,
-	HowItWorksSection,
-	PainClosingSection,
-	PainMarketSection,
-	PainTimeSection,
-	PipelineSection,
-	PricingSection,
-	TestimonialsSection,
-} from "./sections";
-
-import { useI18n } from "@profile/i18n";
+  AtsSection,
+  ComparisonSection,
+  CtaGenericSection,
+  FocoSection,
+  FooterSection,
+  HeroSection,
+  HookSection,
+  HowItWorksSection,
+  PainClosingSection,
+  PainMarketSection,
+  PainTimeSection,
+  PipelineSection,
+  PricingSection,
+  TestimonialsSection,
+} from './sections';
 
 /**
  * Landing Page - Narrative Flow
@@ -36,40 +35,40 @@ import { useI18n } from "@profile/i18n";
  * 12. PRICING     → "Simples. Como deveria ser" (conversão)
  */
 export function PatchLanding() {
-	const { t } = useI18n();
+  const { t } = useI18n();
 
-	return (
-		<div className="min-h-screen overflow-x-hidden bg-zinc-950 text-zinc-200 antialiased selection:bg-cyan-300/20">
-			<main>
-				{/* ═══ ACT 1: HOOK ═══ */}
-				<HeroSection />
-				<HookSection />
+  return (
+    <div className="min-h-screen overflow-x-hidden bg-zinc-950 text-zinc-200 antialiased selection:bg-cyan-300/20">
+      <main>
+        {/* ═══ ACT 1: HOOK ═══ */}
+        <HeroSection />
+        <HookSection />
 
-				{/* ═══ ACT 2: PROBLEMA ═══ */}
-				<PainMarketSection />
-				<PainTimeSection />
-				<PainClosingSection />
-				<AtsSection />
+        {/* ═══ ACT 2: PROBLEMA ═══ */}
+        <PainMarketSection />
+        <PainTimeSection />
+        <PainClosingSection />
+        <AtsSection />
 
-				{/* ═══ ACT 3: PROVA DO PROBLEMA ═══ */}
-				<ComparisonSection />
+        {/* ═══ ACT 3: PROVA DO PROBLEMA ═══ */}
+        <ComparisonSection />
 
-				{/* ═══ ACT 4: SOLUÇÃO ═══ */}
-				<FocoSection />
-				<HowItWorksSection />
-				<PipelineSection />
+        {/* ═══ ACT 4: SOLUÇÃO ═══ */}
+        <FocoSection />
+        <HowItWorksSection />
+        <PipelineSection />
 
-				{/* ═══ ACT 5: PROVA SOCIAL ═══ */}
-				<TestimonialsSection />
+        {/* ═══ ACT 5: PROVA SOCIAL ═══ */}
+        <TestimonialsSection />
 
-				{/* ═══ ACT 6: CONVERSÃO ═══ */}
-				<CtaGenericSection
-					title={t("landing.cta.title")}
-					titleAccent={t("landing.cta.titleAccent")}
-				/>
-				<PricingSection />
-			</main>
-			<FooterSection />
-		</div>
-	);
+        {/* ═══ ACT 6: CONVERSÃO ═══ */}
+        <CtaGenericSection
+          title={t('landing.cta.title')}
+          titleAccent={t('landing.cta.titleAccent')}
+        />
+        <PricingSection />
+      </main>
+      <FooterSection />
+    </div>
+  );
 }

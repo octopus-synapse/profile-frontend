@@ -15,13 +15,12 @@ describe("Smoke: API Client SDK Exports", () => {
 
    expect(auth.authLogin).toBeDefined();
    expect(auth.authLogout).toBeDefined();
-   expect(auth.authRefresh).toBeDefined();
-   expect(auth.authGetSession).toBeDefined();
+   expect(auth.authSession).toBeDefined();
 
    // Hooks should also be exported
    expect(auth.useAuthLogin).toBeDefined();
    expect(auth.useAuthLogout).toBeDefined();
-   expect(auth.useAuthRefresh).toBeDefined();
+   expect(auth.useAuthSession).toBeDefined();
   });
 
   it("should export accounts functions", async () => {

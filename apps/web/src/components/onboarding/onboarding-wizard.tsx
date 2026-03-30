@@ -7,12 +7,12 @@
 
 'use client';
 
+import { Button, LoadingState } from '@octopus-synapse/profile-ui';
 import { selectEnvelopeData, useAuthSession } from '@profile/api-client';
 import { useI18n } from '@profile/i18n';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { ROUTES } from '@/config/routes';
-import { LoadingState } from '@/shared/components/ui';
 import { isSectionStep, type SectionStep, useOnboarding } from './hooks';
 import { OnboardingShell } from './onboarding-shell';
 import { shouldRedirectCompletedOnboarding } from './onboarding-wizard.utils';
@@ -102,13 +102,15 @@ export function OnboardingWizard() {
           <p className="text-muted-foreground text-sm">
             We couldn&apos;t load your onboarding session. Please try again.
           </p>
-          <button
+          <Button
             type="button"
-            onClick={() => window.location.reload()}
-            className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90"
+            variant="solid"
+            tone="primary"
+            size="sm"
+            onPress={() => window.location.reload()}
           >
             {t('onboarding.wizard.retry' as Parameters<typeof t>[0])}
-          </button>
+          </Button>
         </div>
       </OnboardingShell>
     );

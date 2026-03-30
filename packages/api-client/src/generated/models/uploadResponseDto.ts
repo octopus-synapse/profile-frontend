@@ -37,6 +37,8 @@ All errors follow a consistent format:
  */
 
 export interface UploadResponseDto {
+  /** Full URL to the uploaded file */
   url: string;
+  /** S3 key/path of the uploaded file */
   key: string;
 }

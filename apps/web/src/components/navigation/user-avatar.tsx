@@ -1,7 +1,7 @@
 'use client';
 
+import { Avatar } from '@octopus-synapse/profile-ui';
 import { selectEnvelopeData, useAuthSession } from '@profile/api-client';
-import { Avatar } from '@/shared/components/ui';
 
 export function UserAvatar() {
   const { data } = useAuthSession({ query: { select: selectEnvelopeData } });

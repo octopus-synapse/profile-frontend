@@ -35,5 +35,25 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
+import type { UserManagementListDataDtoUsersItemRole } from './userManagementListDataDtoUsersItemRole';
 
-export type UserManagementListDataDtoUsersItem = { [key: string]: unknown };
+export type UserManagementListDataDtoUsersItem = {
+  id: string;
+  /** @nullable */
+  email: string | null;
+  /** @nullable */
+  name: string | null;
+  /** @nullable */
+  username: string | null;
+  hasCompletedOnboarding: boolean;
+  createdAt: string;
+  updatedAt: string;
+  /** @nullable */
+  image: string | null;
+  /** @nullable */
+  emailVerified: string | null;
+  resumeCount: number;
+  role: UserManagementListDataDtoUsersItemRole;
+  /** @nullable */
+  lastLoginAt: string | null;
+};

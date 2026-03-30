@@ -6,9 +6,12 @@
 
 'use client';
 
-import { type ResumeDto, useUsersGetPublicProfileByUsername } from '@profile/api-client';
+import { LoadingState } from '@octopus-synapse/profile-ui';
+import {
+  type ResumeDetailsDataDtoResume,
+  useUsersGetPublicProfileByUsername,
+} from '@profile/api-client';
 import { useT } from '@profile/i18n';
-import { LoadingState } from '@/shared/components/ui';
 import { PublicProfileHeader } from './public-profile-header';
 import { PublicProfileNotFound } from './public-profile-not-found';
 import { PublicProfileResume } from './public-profile-resume';
@@ -37,7 +40,7 @@ export function PublicProfilePage({ username }: PublicProfilePageProps) {
 
   // Extract user and resume from SDK response
   const user = profile.user as Record<string, unknown>;
-  const resume = profile.resume as ResumeDto | null;
+  const resume = profile.resume as ResumeDetailsDataDtoResume | null;
   const personalInfo = resume?.personalInfo as Record<string, unknown> | undefined;
 
   const displayData = {

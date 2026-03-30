@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@octopus-synapse/profile-ui';
 import { useI18n } from '@profile/i18n';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Github } from 'lucide-react';
@@ -72,13 +73,16 @@ export default function SignInPage() {
                 </div>
               </div>
 
-              <button
+              <Button
                 type="button"
-                className="flex w-full items-center justify-center gap-3 rounded-lg border border-white/10 bg-white/5 py-3 font-mono text-sm font-medium transition-all hover:border-white/20 hover:bg-white/10 active:scale-[0.98]"
+                variant="outline"
+                tone="neutral"
+                size="lg"
+                fullWidth
+                leftIcon={<Github className="h-4 w-4" />}
               >
-                <Github className="h-4 w-4 text-white" />
-                <span className="text-white">{t('auth.continueWithGithub')}</span>
-              </button>
+                {t('auth.continueWithGithub')}
+              </Button>
             </div>
           </div>
 

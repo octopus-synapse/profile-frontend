@@ -35,11 +35,10 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
-import type { SessionUserResponseDto } from './sessionUserResponseDto';
+import type { SessionResponseDtoUser } from './sessionResponseDtoUser';
 
 export interface SessionResponseDto {
-  /** Whether session is valid */
   authenticated: boolean;
-  /** User data if authenticated */
-  user: SessionUserResponseDto | null;
+  /** @nullable */
+  user: SessionResponseDtoUser;
 }

@@ -5,7 +5,7 @@
  */
 
 import type { ReactNode } from 'react';
-import { Navbar } from '@/components/navigation';
+import { BottomNav, Navbar } from '@/components/navigation';
 import { ErrorBoundary } from '@/shared/components/error-boundary';
 
 interface AppLayoutProps {
@@ -18,9 +18,10 @@ export default function AppLayout({ children }: AppLayoutProps) {
       {/* Subtle grid background */}
       <div className="pointer-events-none fixed inset-0 z-0 bg-[linear-gradient(to_right,#80808005_1px,transparent_1px),linear-gradient(to_bottom,#80808005_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_0%,#000_70%,transparent_100%)] bg-[size:40px_40px]" />
       <Navbar />
-      <main className="relative z-10 flex-1">
+      <main className="relative z-10 flex-1 pb-20 md:pb-0">
         <ErrorBoundary>{children}</ErrorBoundary>
       </main>
+      <BottomNav />
     </div>
   );
 }

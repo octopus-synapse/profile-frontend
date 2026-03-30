@@ -4,13 +4,13 @@
  * DangerZone — Minimal design
  */
 
+import { Button, showToast } from '@octopus-synapse/profile-ui';
 import { authLogout, getAuthSessionQueryKey, userConsentExportData } from '@profile/api-client';
 import { useI18n } from '@profile/i18n';
 import { useQueryClient } from '@tanstack/react-query';
-import { Download, Loader2, Trash2, UserX } from 'lucide-react';
+import { Download, Trash2, UserX } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
-import { showToast } from '@/shared/components/ui/toast';
 import { DeactivateDialog } from './deactivate-dialog';
 import { DeleteDialog } from './delete-dialog';
 
@@ -67,19 +67,19 @@ export function DangerZone() {
           title={t('settings.danger.export.title')}
           description={t('settings.danger.export.description')}
         >
-          <button
+          <Button
             type="button"
-            onClick={() => void handleExport()}
-            disabled={isExporting}
-            className="flex items-center gap-2 rounded-lg border border-zinc-700 px-4 py-2 text-[13px] text-zinc-300 transition-colors hover:border-zinc-600 hover:text-white disabled:opacity-50"
+            variant="outline"
+            tone="neutral"
+            size="sm"
+            loading={isExporting}
+            leftIcon={<Download className="h-4 w-4" />}
+            onPress={() => void handleExport()}
           >
-            {isExporting ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Download className="h-4 w-4" />
-            )}
-            <span>{isExporting ? t('settings.danger.export.exporting') : t('settings.danger.export.button')}</span>
-          </button>
+            {isExporting
+              ? t('settings.danger.export.exporting')
+              : t('settings.danger.export.button')}
+          </Button>
         </ActionRow>
 
         {/* Deactivate */}
@@ -88,14 +88,16 @@ export function DangerZone() {
           title={t('settings.danger.deactivate.title')}
           description={t('settings.danger.deactivate.description')}
         >
-          <button
+          <Button
             type="button"
-            onClick={() => setDeactivateOpen(true)}
-            className="flex items-center gap-2 rounded-lg border border-zinc-700 px-4 py-2 text-[13px] text-zinc-300 transition-colors hover:border-amber-600/50 hover:text-amber-400"
+            variant="outline"
+            tone="warning"
+            size="sm"
+            leftIcon={<UserX className="h-4 w-4" />}
+            onPress={() => setDeactivateOpen(true)}
           >
-            <UserX className="h-4 w-4" />
-            <span>{t('settings.danger.deactivate.button')}</span>
-          </button>
+            {t('settings.danger.deactivate.button')}
+          </Button>
         </ActionRow>
 
         {/* Delete */}
@@ -104,14 +106,16 @@ export function DangerZone() {
           title={t('settings.danger.delete.title')}
           description={t('settings.danger.delete.description')}
         >
-          <button
+          <Button
             type="button"
-            onClick={() => setDeleteOpen(true)}
-            className="flex items-center gap-2 rounded-lg border border-red-900/50 bg-red-950/20 px-4 py-2 text-[13px] text-red-400 transition-colors hover:border-red-800 hover:bg-red-950/40"
+            variant="soft"
+            tone="danger"
+            size="sm"
+            leftIcon={<Trash2 className="h-4 w-4" />}
+            onPress={() => setDeleteOpen(true)}
           >
-            <Trash2 className="h-4 w-4" />
-            <span>{t('settings.danger.delete.button')}</span>
-          </button>
+            {t('settings.danger.delete.button')}
+          </Button>
         </ActionRow>
       </div>
 

@@ -30,7 +30,6 @@ export function ChatPage() {
         <aside className="w-80 shrink-0 border-r border-neutral-200 dark:border-neutral-800">
           <ConversationList
             selectedId={selectedConversationId}
-            currentUserId={currentUserId}
             onSelect={setSelectedConversationId}
             isUserOnline={isOnline}
           />

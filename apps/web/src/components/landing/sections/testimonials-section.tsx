@@ -1,7 +1,7 @@
 'use client';
 
 import { useI18n } from '@profile/i18n';
-import { Star, Zap, Target, TrendingUp } from 'lucide-react';
+import { Star, Target, TrendingUp, Zap } from 'lucide-react';
 
 const TESTIMONIALS = [
   {

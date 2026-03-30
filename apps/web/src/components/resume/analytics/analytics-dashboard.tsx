@@ -1,14 +1,13 @@
 'use client';
 
+import { Badge, Button, Skeleton, showToast } from '@octopus-synapse/profile-ui';
 import {
   useResumeAnalyticsCreateSnapshot,
   useResumeAnalyticsGetProgression,
 } from '@profile/api-client';
+import { useI18n } from '@profile/i18n';
 import { ArrowDownRight, ArrowUpRight, Camera, LayoutDashboard, Minus } from 'lucide-react';
 import { useCallback } from 'react';
-
-import { Badge, Button, Skeleton } from '@/shared/components/ui';
-import { showToast } from '@/shared/components/ui/toast';
 
 import { AtsScoreWidget } from './ats-score-widget';
 import { JobMatchTool } from './job-match-tool';
@@ -77,6 +76,7 @@ function ProgressionSkeleton() {
 }
 
 export function AnalyticsDashboard({ resumeId }: AnalyticsDashboardProps) {
+  const { t } = useI18n();
   // SDK hooks directly
   const progressionQuery = useResumeAnalyticsGetProgression(resumeId, {
     query: { enabled: !!resumeId },
@@ -104,7 +104,7 @@ export function AnalyticsDashboard({ resumeId }: AnalyticsDashboardProps) {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <LayoutDashboard className="h-6 w-6 text-cyan-400" />
-          <h2 className="text-xl font-bold text-white">Resume Analytics</h2>
+          <h2 className="text-xl font-bold text-white">{t('resume.analytics.title')}</h2>
         </div>
 
         <div className="flex items-center gap-4">

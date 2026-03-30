@@ -35,8 +35,8 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
-import type { ResolvedSectionTypeDto } from './resolvedSectionTypeDto';
+import type { ResumeSectionTypesDataDtoSectionTypesItem } from './resumeSectionTypesDataDtoSectionTypesItem';
 
 export interface ResumeSectionTypesDataDto {
-  sectionTypes: ResolvedSectionTypeDto[];
+  sectionTypes: ResumeSectionTypesDataDtoSectionTypesItem[];
 }

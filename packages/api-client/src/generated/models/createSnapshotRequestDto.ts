@@ -37,8 +37,6 @@ All errors follow a consistent format:
  */
 
 export interface CreateSnapshotRequestDto {
-  /** Optional label for the snapshot */
   label?: string;
-  /** Optional notes about the snapshot */
   notes?: string;
 }

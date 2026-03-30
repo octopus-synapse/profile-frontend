@@ -7,7 +7,7 @@
 
 'use client';
 
-import type { StepFieldDto } from '@profile/api-client';
+import { Button } from '@octopus-synapse/profile-ui';
 import { useI18n } from '@profile/i18n';
 import { CheckCircle2, Plus, X } from 'lucide-react';
 import { nanoid } from 'nanoid';
@@ -16,6 +16,7 @@ import {
   getSectionTypeFromStep,
   type SectionItem,
   type SectionStep,
+  type StepFieldDto,
   useOnboarding,
 } from '../hooks';
 import { StepNavigation } from '../step-navigation';
@@ -120,13 +121,19 @@ export function GenericSectionStep({ stepId }: GenericSectionStepProps) {
                   key={item.id}
                   className="border-white/10 bg-zinc-900/50 group relative rounded border p-4"
                 >
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveItem(item.id!)}
-                    className="hover:bg-red-500/20 hover:text-red-400 absolute right-2 top-2 rounded p-1 text-zinc-500 transition-colors"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
+                  <span className="absolute right-2 top-2">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      tone="danger"
+                      size="xs"
+                      iconOnly
+                      aria-label="Remove item"
+                      onPress={() => handleRemoveItem(item.id!)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </span>
                   <div className="grid gap-3 pr-8">
                     {fields.map((field) => (
                       <FieldInput
@@ -156,15 +163,17 @@ export function GenericSectionStep({ stepId }: GenericSectionStepProps) {
                 />
               ))}
             </div>
-            <button
+            <Button
               type="button"
-              onClick={handleAddItem}
+              variant="soft"
+              tone="info"
+              size="sm"
               disabled={!isNewItemValid}
-              className="mt-3 flex items-center gap-2 rounded bg-cyan-500/20 px-4 py-2 font-mono text-sm text-cyan-400 transition-colors hover:bg-cyan-500/30 disabled:cursor-not-allowed disabled:opacity-50"
+              leftIcon={<Plus className="h-4 w-4" />}
+              onPress={handleAddItem}
             >
-              <Plus className="h-4 w-4" />
               {addLabel}
-            </button>
+            </Button>
           </div>
         </>
       )}

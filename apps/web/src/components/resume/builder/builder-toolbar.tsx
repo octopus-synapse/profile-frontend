@@ -4,6 +4,7 @@
 
 'use client';
 
+import { Button } from '@octopus-synapse/profile-ui';
 import { useI18n } from '@profile/i18n';
 import { Check, Download, FileText, Link2 } from 'lucide-react';
 
@@ -33,35 +34,36 @@ export function BuilderToolbar({ resumeName, copied, hasResumeId, onExport, onSh
       </div>
 
       <div className="flex items-center gap-2">
-        <button
+        <Button
           type="button"
-          onClick={onExport}
-          className="inline-flex h-9 items-center gap-2 rounded-lg border border-pf-border-default bg-pf-hover-subtle px-3.5 text-sm font-medium text-pf-fg-muted transition-all hover:bg-pf-hover-default hover:text-pf-fg-default"
+          variant="outline"
+          tone="neutral"
+          size="sm"
+          leftIcon={<Download className="h-4 w-4" strokeWidth={1.5} />}
+          onPress={onExport}
         >
-          <Download className="h-4 w-4" strokeWidth={1.5} />
           {t('action.export')}
-        </button>
+        </Button>
 
         <div className="mx-1 h-5 w-px bg-pf-border-default" />
 
         {hasResumeId && (
-          <button
+          <Button
             type="button"
-            onClick={onShare}
-            className="inline-flex h-9 items-center gap-2 rounded-lg bg-pf-canvas-emphasis px-4 text-sm font-semibold text-pf-fg-on-emphasis transition-all hover:bg-pf-accent-fg"
-          >
-            {copied ? (
-              <>
+            variant="solid"
+            tone="primary"
+            size="sm"
+            leftIcon={
+              copied ? (
                 <Check className="h-4 w-4" strokeWidth={1.5} />
-                {t('resume.builder.copied')}
-              </>
-            ) : (
-              <>
+              ) : (
                 <Link2 className="h-4 w-4" strokeWidth={1.5} />
-                {t('resume.builder.share')}
-              </>
-            )}
-          </button>
+              )
+            }
+            onPress={onShare}
+          >
+            {copied ? t('resume.builder.copied') : t('resume.builder.share')}
+          </Button>
         )}
       </div>
     </header>

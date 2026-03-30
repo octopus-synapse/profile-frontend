@@ -4,8 +4,8 @@
 
 'use client';
 
+import { Button } from '@octopus-synapse/profile-ui';
 import { useT } from '@profile/i18n';
-import { cn } from '@/shared/utils';
 import { SKILL_CHIPS, SORT_OPTIONS } from './search-constants';
 
 interface SearchFilters {
@@ -26,19 +26,18 @@ export function SearchFiltersBar({ filters, onToggleSkill, onSortChange }: Props
   return (
     <div className="flex flex-wrap items-center gap-2">
       {SKILL_CHIPS.map((skill) => (
-        <button
+        <Button
           key={skill}
           type="button"
-          onClick={() => onToggleSkill(skill)}
-          className={cn(
-            'rounded-full px-3 py-1 text-xs font-medium transition-all',
-            activeSkills.includes(skill)
-              ? 'bg-blue-500/20 text-blue-300 ring-1 ring-blue-500/40'
-              : 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white',
-          )}
+          variant={activeSkills.includes(skill) ? 'soft' : 'ghost'}
+          tone={activeSkills.includes(skill) ? 'info' : 'neutral'}
+          size="xs"
+          shape="pill"
+          pressed={activeSkills.includes(skill)}
+          onPress={() => onToggleSkill(skill)}
         >
           {skill}
-        </button>
+        </Button>
       ))}
       <select
         value={filters.sortBy ?? 'relevance'}

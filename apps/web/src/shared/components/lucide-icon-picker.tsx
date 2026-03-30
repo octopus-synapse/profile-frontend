@@ -1,10 +1,11 @@
 'use client';
 
+import { Button, ScrollArea } from '@octopus-synapse/profile-ui';
+import { useI18n } from '@profile/i18n';
 import { Popover, PopoverContent, PopoverTrigger } from '@radix-ui/react-popover';
 import { FileText, Search } from 'lucide-react';
 import { DynamicIcon, iconNames } from 'lucide-react/dynamic';
 import { Suspense, useDeferredValue, useMemo, useState } from 'react';
-import { ScrollArea } from '@/shared/components/ui/scroll-area';
 
 const ICONS_PER_PAGE = 60;
 
@@ -32,6 +33,7 @@ function useFilteredIcons(search: string) {
 }
 
 export function LucideIconPicker({ value, onChange }: LucideIconPickerProps) {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
   const filteredIcons = useFilteredIcons(search);
@@ -45,13 +47,20 @@ export function LucideIconPicker({ value, onChange }: LucideIconPickerProps) {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button
-          type="button"
-          className="border-pf-border-default bg-pf-canvas-default hover:bg-pf-canvas-subtle flex h-9 w-full items-center gap-2 rounded-md border px-3 text-sm transition-colors"
-        >
-          {value ? <IconPreview name={value} /> : <FileText size={16} strokeWidth={1.5} />}
-          <span className="text-pf-fg-muted truncate">{value || 'Select icon...'}</span>
-        </button>
+        <span className="block w-full">
+          <Button
+            type="button"
+            variant="outline"
+            tone="neutral"
+            size="md"
+            fullWidth
+            leftIcon={
+              value ? <IconPreview name={value} /> : <FileText size={16} strokeWidth={1.5} />
+            }
+          >
+            {value || 'Select icon...'}
+          </Button>
+        </span>
       </PopoverTrigger>
       <PopoverContent
         className="bg-pf-canvas-default border-pf-border-default w-72 rounded-lg border p-0 shadow-lg"
@@ -62,7 +71,7 @@ export function LucideIconPicker({ value, onChange }: LucideIconPickerProps) {
           <Search size={14} className="text-pf-fg-muted" />
           <input
             className="text-pf-fg-default placeholder:text-pf-fg-muted w-full bg-transparent text-sm outline-none"
-            placeholder="Search icons..."
+            placeholder={t('ui.iconPicker.search')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -70,23 +79,25 @@ export function LucideIconPicker({ value, onChange }: LucideIconPickerProps) {
         <ScrollArea className="h-56">
           <div className="grid grid-cols-6 gap-1 p-2">
             {filteredIcons.map((name) => (
-              <button
+              <Button
                 key={name}
                 type="button"
+                variant={value === name ? 'solid' : 'ghost'}
+                tone={value === name ? 'primary' : 'neutral'}
+                size="sm"
+                iconOnly
                 title={name}
-                onClick={() => handleSelect(name)}
-                className={`flex h-9 w-9 items-center justify-center rounded transition-colors ${
-                  value === name
-                    ? 'bg-pf-canvas-emphasis text-pf-fg-on-emphasis'
-                    : 'hover:bg-pf-canvas-subtle text-pf-fg-default'
-                }`}
+                pressed={value === name}
+                onPress={() => handleSelect(name)}
               >
                 <IconPreview name={name} />
-              </button>
+              </Button>
             ))}
           </div>
           {filteredIcons.length === 0 && (
-            <p className="text-pf-fg-muted py-6 text-center text-sm">No icons found</p>
+            <p className="text-pf-fg-muted py-6 text-center text-sm">
+              {t('ui.iconPicker.noResults')}
+            </p>
           )}
         </ScrollArea>
       </PopoverContent>

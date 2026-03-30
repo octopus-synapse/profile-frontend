@@ -35,10 +35,10 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
-import type { FailedTranslationDto } from './failedTranslationDto';
-import type { TranslationResultDto } from './translationResultDto';
+import type { BatchTranslationResultDtoFailedItem } from './batchTranslationResultDtoFailedItem';
+import type { BatchTranslationResultDtoTranslationsItem } from './batchTranslationResultDtoTranslationsItem';
 
 export interface BatchTranslationResultDto {
-  translations: TranslationResultDto[];
-  failed: FailedTranslationDto[];
+  translations: BatchTranslationResultDtoTranslationsItem[];
+  failed: BatchTranslationResultDtoFailedItem[];
 }

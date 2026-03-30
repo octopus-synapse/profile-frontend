@@ -44,4 +44,8 @@ export const social = {
   'social.search.sortRelevance': 'Relevancia',
   'social.search.sortRecent': 'Más Recientes',
   'social.search.sortExperience': 'Experiencia',
+  'social.search.discoverTitle': 'Descubrir Profesionales',
+  'social.search.discoverDescription': 'Explorá y conectá con profesionales de tech',
+  'social.search.searchResults': 'Resultados de Búsqueda',
+  'social.search.resultsFor': 'Resultados para "{query}"',
 } as const;

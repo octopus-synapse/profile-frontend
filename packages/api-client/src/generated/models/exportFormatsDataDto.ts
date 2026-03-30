@@ -35,8 +35,8 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
-import type { ExportFormatResponseDto } from './exportFormatResponseDto';
+import type { ExportFormatsDataDtoFormatsItem } from './exportFormatsDataDtoFormatsItem';
 
 export interface ExportFormatsDataDto {
-  formats: ExportFormatResponseDto[];
+  formats: ExportFormatsDataDtoFormatsItem[];
 }

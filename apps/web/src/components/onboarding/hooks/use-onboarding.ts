@@ -5,10 +5,9 @@
  */
 'use client';
 
+import { showToast } from '@octopus-synapse/profile-ui';
 import {
   getOnboardingGetSessionQueryKey,
-  type SectionProgressDto,
-  type StepMetaDto,
   selectEnvelopeData,
   useOnboardingCompleteFromSession,
   useOnboardingGetSession,
@@ -18,10 +17,7 @@ import {
   useOnboardingSaveStepData,
 } from '@profile/api-client';
 import { useQueryClient } from '@tanstack/react-query';
-import { showToast } from '@/shared/components/ui/toast';
-
-type SectionItem = { id?: string; content: Record<string, unknown> };
-type SectionData = Omit<SectionProgressDto, 'items'> & { items: SectionItem[] };
+import type { SectionData, StepMetaDto } from './index';
 
 export function useOnboarding() {
   const qc = useQueryClient();

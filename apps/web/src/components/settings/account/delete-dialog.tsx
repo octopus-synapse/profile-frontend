@@ -5,19 +5,20 @@
 
 'use client';
 
-import { useDeleteAccountHandle } from '@profile/api-client';
-import { useI18n } from '@profile/i18n';
-import { useState } from 'react';
-import { Button, Input } from '@/shared/components/ui';
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/shared/components/ui/dialog';
-import { showToast } from '@/shared/components/ui/toast';
+  Input,
+  showToast,
+} from '@octopus-synapse/profile-ui';
+import { useDeleteAccountHandle } from '@profile/api-client';
+import { useI18n } from '@profile/i18n';
+import { useState } from 'react';
 
 const DELETION_PHRASE = 'DELETE MY ACCOUNT';
 

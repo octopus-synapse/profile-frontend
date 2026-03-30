@@ -11,6 +11,8 @@ export const settings = {
   'settings.profile.title': 'Perfil público',
   'settings.profile.description':
     'Mantené la identidad de la cuenta acá. La identidad del currículum va en la sección Currículum.',
+  'settings.profile.contact': 'Contacto',
+  'settings.profile.social': 'Social',
   'settings.profile.saveChanges': 'Guardar Cambios',
   'settings.profile.failedUpdate': 'Error al actualizar perfil',
   'settings.profile.failedLoad': 'Error al cargar perfil',

@@ -1,38 +1,40 @@
-'use client';
+/**
+ * useOnlineStatus - Track user online status via WebSocket.
+ * WebSocket hook - legitimate local state for real-time data.
+ */
 
 import { useCallback, useState } from 'react';
-import type { OnlineStatusMap } from './use-socket-events';
 
-/**
- * Maintains a map of user online statuses from socket events.
- * Feed the `handleUserStatus` callback into `useSocketEvents`.
- */
+interface UserStatusEvent {
+  userId: string;
+  isOnline: boolean;
+}
+
 export function useOnlineStatus() {
-  const [statusMap, setStatusMap] = useState<OnlineStatusMap>(new Map());
+  const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
 
-  const handleUserStatus = useCallback(
-    (event: { userId: string; isOnline: boolean; lastSeen?: string }) => {
-      setStatusMap((prev) => {
-        const next = new Map(prev);
-        next.set(event.userId, {
-          isOnline: event.isOnline,
-          lastSeen: event.lastSeen,
-        });
-        return next;
-      });
-    },
-    [],
-  );
+  const handleUserStatus = useCallback((event: UserStatusEvent) => {
+    setOnlineUsers((prev) => {
+      const next = new Set(prev);
+      if (event.isOnline) {
+        next.add(event.userId);
+      } else {
+        next.delete(event.userId);
+      }
+      return next;
+    });
+  }, []);
 
   const isOnline = useCallback(
-    (userId: string) => statusMap.get(userId)?.isOnline ?? false,
-    [statusMap],
+    (userId: string): boolean => {
+      return onlineUsers.has(userId);
+    },
+    [onlineUsers],
   );
 
-  const getLastSeen = useCallback(
-    (userId: string) => statusMap.get(userId)?.lastSeen ?? null,
-    [statusMap],
-  );
-
-  return { statusMap, handleUserStatus, isOnline, getLastSeen };
+  return {
+    onlineUsers,
+    handleUserStatus,
+    isOnline,
+  };
 }

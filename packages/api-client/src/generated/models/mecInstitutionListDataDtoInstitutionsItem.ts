@@ -36,4 +36,17 @@ All errors follow a consistent format:
  * OpenAPI spec version: 1.0.0
  */
 
-export type MecInstitutionListDataDtoInstitutionsItem = { [key: string]: unknown };
+export type MecInstitutionListDataDtoInstitutionsItem = {
+  id: string;
+  codigoIes: number;
+  nome: string;
+  /** @nullable */
+  sigla: string | null;
+  uf: string;
+  /** @nullable */
+  municipio: string | null;
+  /** @nullable */
+  categoria: string | null;
+  /** @nullable */
+  organizacao: string | null;
+};

@@ -4,14 +4,14 @@
 
 'use client';
 
-import type { ResumeVersionItemDto } from '@profile/api-client';
+import { Badge, Button } from '@octopus-synapse/profile-ui';
+import type { ResumeVersionListDataDtoVersionsItem } from '@profile/api-client';
 import { useI18n } from '@profile/i18n';
 import { Clock, RotateCcw } from 'lucide-react';
-import { Badge, Button } from '@/shared/components/ui';
 import { formatRelativeTime } from './version-utils';
 
 interface Props {
-  version: ResumeVersionItemDto;
+  version: ResumeVersionListDataDtoVersionsItem;
   onRestore: (versionId: string, label: string) => void;
 }
 

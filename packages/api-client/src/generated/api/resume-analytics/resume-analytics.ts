@@ -64,16 +64,22 @@ import type {
 
 import type {
   CreateSnapshotRequestDto,
+  JobMatchRequestDto,
   ResumeAnalyticsCreateSnapshot201,
   ResumeAnalyticsGetATSScore200,
   ResumeAnalyticsGetBenchmark200,
+  ResumeAnalyticsGetBenchmarkParams,
   ResumeAnalyticsGetDashboard200,
   ResumeAnalyticsGetHistory200,
+  ResumeAnalyticsGetHistoryParams,
   ResumeAnalyticsGetKeywordSuggestions200,
+  ResumeAnalyticsGetKeywordSuggestionsParams,
   ResumeAnalyticsGetProgression200,
   ResumeAnalyticsGetViewStats200,
+  ResumeAnalyticsGetViewStatsParams,
   ResumeAnalyticsMatchJob200,
-  ResumeAnalyticsTrackView201
+  ResumeAnalyticsTrackView201,
+  TrackViewRequestDto
 } from '../../models';
 
 import { customFetch } from '../../../client/fetcher';
@@ -106,14 +112,16 @@ export const getResumeAnalyticsTrackViewUrl = (resumeId: string,) => {
   return `/api/resume-analytics/${resumeId}/track-view`
 }
 
-export const resumeAnalyticsTrackView = async (resumeId: string, options?: RequestInit): Promise<resumeAnalyticsTrackViewResponse> => {
+export const resumeAnalyticsTrackView = async (resumeId: string,
+    trackViewRequestDto: TrackViewRequestDto, options?: RequestInit): Promise<resumeAnalyticsTrackViewResponse> => {
   
   return customFetch<resumeAnalyticsTrackViewResponse>(getResumeAnalyticsTrackViewUrl(resumeId),
   {      
     ...options,
-    method: 'POST'
-    
-    
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      trackViewRequestDto,)
   }
 );}
 
@@ -121,8 +129,8 @@ export const resumeAnalyticsTrackView = async (resumeId: string, options?: Reque
 
 
 export const getResumeAnalyticsTrackViewMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resumeAnalyticsTrackView>>, TError,{resumeId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof resumeAnalyticsTrackView>>, TError,{resumeId: string}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resumeAnalyticsTrackView>>, TError,{resumeId: string;data: TrackViewRequestDto}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof resumeAnalyticsTrackView>>, TError,{resumeId: string;data: TrackViewRequestDto}, TContext> => {
 
 const mutationKey = ['resumeAnalyticsTrackView'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -134,10 +142,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof resumeAnalyticsTrackView>>, {resumeId: string}> = (props) => {
-          const {resumeId} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof resumeAnalyticsTrackView>>, {resumeId: string;data: TrackViewRequestDto}> = (props) => {
+          const {resumeId,data} = props ?? {};
 
-          return  resumeAnalyticsTrackView(resumeId,requestOptions)
+          return  resumeAnalyticsTrackView(resumeId,data,requestOptions)
         }
 
 
@@ -148,18 +156,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type ResumeAnalyticsTrackViewMutationResult = NonNullable<Awaited<ReturnType<typeof resumeAnalyticsTrackView>>>
-    
+    export type ResumeAnalyticsTrackViewMutationBody = TrackViewRequestDto
     export type ResumeAnalyticsTrackViewMutationError = unknown
 
     /**
  * @summary Track resume view (public endpoint)
  */
 export const useResumeAnalyticsTrackView = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resumeAnalyticsTrackView>>, TError,{resumeId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resumeAnalyticsTrackView>>, TError,{resumeId: string;data: TrackViewRequestDto}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof resumeAnalyticsTrackView>>,
         TError,
-        {resumeId: string},
+        {resumeId: string;data: TrackViewRequestDto},
         TContext
       > => {
       return useMutation(getResumeAnalyticsTrackViewMutationOptions(options), queryClient);
@@ -191,17 +199,26 @@ export type resumeAnalyticsGetViewStatsResponseError = (resumeAnalyticsGetViewSt
 
 export type resumeAnalyticsGetViewStatsResponse = (resumeAnalyticsGetViewStatsResponseSuccess | resumeAnalyticsGetViewStatsResponseError)
 
-export const getResumeAnalyticsGetViewStatsUrl = (resumeId: string,) => {
+export const getResumeAnalyticsGetViewStatsUrl = (resumeId: string,
+    params: ResumeAnalyticsGetViewStatsParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
+    
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
 
-  
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/api/resume-analytics/${resumeId}/views`
+  return stringifiedParams.length > 0 ? `/api/resume-analytics/${resumeId}/views?${stringifiedParams}` : `/api/resume-analytics/${resumeId}/views`
 }
 
-export const resumeAnalyticsGetViewStats = async (resumeId: string, options?: RequestInit): Promise<resumeAnalyticsGetViewStatsResponse> => {
+export const resumeAnalyticsGetViewStats = async (resumeId: string,
+    params: ResumeAnalyticsGetViewStatsParams, options?: RequestInit): Promise<resumeAnalyticsGetViewStatsResponse> => {
   
-  return customFetch<resumeAnalyticsGetViewStatsResponse>(getResumeAnalyticsGetViewStatsUrl(resumeId),
+  return customFetch<resumeAnalyticsGetViewStatsResponse>(getResumeAnalyticsGetViewStatsUrl(resumeId,params),
   {      
     ...options,
     method: 'GET'
@@ -214,29 +231,32 @@ export const resumeAnalyticsGetViewStats = async (resumeId: string, options?: Re
 
 
 
-export const getResumeAnalyticsGetViewStatsInfiniteQueryKey = (resumeId: string,) => {
+export const getResumeAnalyticsGetViewStatsInfiniteQueryKey = (resumeId: string,
+    params?: ResumeAnalyticsGetViewStatsParams,) => {
     return [
-    'infinite', `/api/resume-analytics/${resumeId}/views`
+    'infinite', `/api/resume-analytics/${resumeId}/views`, ...(params ? [params] : [])
     ] as const;
     }
 
-export const getResumeAnalyticsGetViewStatsQueryKey = (resumeId: string,) => {
+export const getResumeAnalyticsGetViewStatsQueryKey = (resumeId: string,
+    params?: ResumeAnalyticsGetViewStatsParams,) => {
     return [
-    `/api/resume-analytics/${resumeId}/views`
+    `/api/resume-analytics/${resumeId}/views`, ...(params ? [params] : [])
     ] as const;
     }
 
     
-export const getResumeAnalyticsGetViewStatsInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>>, TError = void>(resumeId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getResumeAnalyticsGetViewStatsInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>>, TError = void>(resumeId: string,
+    params: ResumeAnalyticsGetViewStatsParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getResumeAnalyticsGetViewStatsInfiniteQueryKey(resumeId);
+  const queryKey =  queryOptions?.queryKey ?? getResumeAnalyticsGetViewStatsInfiniteQueryKey(resumeId,params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>> = ({ signal }) => resumeAnalyticsGetViewStats(resumeId, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>> = ({ signal }) => resumeAnalyticsGetViewStats(resumeId,params, { signal, ...requestOptions });
 
       
 
@@ -250,7 +270,8 @@ export type ResumeAnalyticsGetViewStatsInfiniteQueryError = void
 
 
 export function useResumeAnalyticsGetViewStatsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>>, TError = void>(
- resumeId: string, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>> & Pick<
+ resumeId: string,
+    params: ResumeAnalyticsGetViewStatsParams, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>,
           TError,
@@ -260,7 +281,8 @@ export function useResumeAnalyticsGetViewStatsInfinite<TData = InfiniteData<Awai
  , queryClient?: QueryClient
   ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumeAnalyticsGetViewStatsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>> & Pick<
+ resumeId: string,
+    params: ResumeAnalyticsGetViewStatsParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>,
           TError,
@@ -270,7 +292,8 @@ export function useResumeAnalyticsGetViewStatsInfinite<TData = InfiniteData<Awai
  , queryClient?: QueryClient
   ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumeAnalyticsGetViewStatsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params: ResumeAnalyticsGetViewStatsParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -278,11 +301,12 @@ export function useResumeAnalyticsGetViewStatsInfinite<TData = InfiniteData<Awai
  */
 
 export function useResumeAnalyticsGetViewStatsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params: ResumeAnalyticsGetViewStatsParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient 
  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getResumeAnalyticsGetViewStatsInfiniteQueryOptions(resumeId,options)
+  const queryOptions = getResumeAnalyticsGetViewStatsInfiniteQueryOptions(resumeId,params,options)
 
   const query = useInfiniteQuery(queryOptions, queryClient) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -293,11 +317,12 @@ export function useResumeAnalyticsGetViewStatsInfinite<TData = InfiniteData<Awai
  * @summary Get view statistics
  */
 export const prefetchResumeAnalyticsGetViewStatsInfiniteQuery = async <TData = Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError = void>(
- queryClient: QueryClient, resumeId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ queryClient: QueryClient, resumeId: string,
+    params: ResumeAnalyticsGetViewStatsParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 
   ): Promise<QueryClient> => {
 
-  const queryOptions = getResumeAnalyticsGetViewStatsInfiniteQueryOptions(resumeId,options)
+  const queryOptions = getResumeAnalyticsGetViewStatsInfiniteQueryOptions(resumeId,params,options)
 
   await queryClient.prefetchInfiniteQuery(queryOptions);
 
@@ -306,16 +331,17 @@ export const prefetchResumeAnalyticsGetViewStatsInfiniteQuery = async <TData = A
 
 
 
-export const getResumeAnalyticsGetViewStatsQueryOptions = <TData = Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError = void>(resumeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getResumeAnalyticsGetViewStatsQueryOptions = <TData = Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError = void>(resumeId: string,
+    params: ResumeAnalyticsGetViewStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getResumeAnalyticsGetViewStatsQueryKey(resumeId);
+  const queryKey =  queryOptions?.queryKey ?? getResumeAnalyticsGetViewStatsQueryKey(resumeId,params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>> = ({ signal }) => resumeAnalyticsGetViewStats(resumeId, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>> = ({ signal }) => resumeAnalyticsGetViewStats(resumeId,params, { signal, ...requestOptions });
 
       
 
@@ -329,7 +355,8 @@ export type ResumeAnalyticsGetViewStatsQueryError = void
 
 
 export function useResumeAnalyticsGetViewStats<TData = Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError = void>(
- resumeId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>> & Pick<
+ resumeId: string,
+    params: ResumeAnalyticsGetViewStatsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>,
           TError,
@@ -339,7 +366,8 @@ export function useResumeAnalyticsGetViewStats<TData = Awaited<ReturnType<typeof
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumeAnalyticsGetViewStats<TData = Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>> & Pick<
+ resumeId: string,
+    params: ResumeAnalyticsGetViewStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>,
           TError,
@@ -349,7 +377,8 @@ export function useResumeAnalyticsGetViewStats<TData = Awaited<ReturnType<typeof
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumeAnalyticsGetViewStats<TData = Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params: ResumeAnalyticsGetViewStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -357,11 +386,12 @@ export function useResumeAnalyticsGetViewStats<TData = Awaited<ReturnType<typeof
  */
 
 export function useResumeAnalyticsGetViewStats<TData = Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params: ResumeAnalyticsGetViewStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getResumeAnalyticsGetViewStatsQueryOptions(resumeId,options)
+  const queryOptions = getResumeAnalyticsGetViewStatsQueryOptions(resumeId,params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -372,11 +402,12 @@ export function useResumeAnalyticsGetViewStats<TData = Awaited<ReturnType<typeof
  * @summary Get view statistics
  */
 export const prefetchResumeAnalyticsGetViewStatsQuery = async <TData = Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError = void>(
- queryClient: QueryClient, resumeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ queryClient: QueryClient, resumeId: string,
+    params: ResumeAnalyticsGetViewStatsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 
   ): Promise<QueryClient> => {
 
-  const queryOptions = getResumeAnalyticsGetViewStatsQueryOptions(resumeId,options)
+  const queryOptions = getResumeAnalyticsGetViewStatsQueryOptions(resumeId,params,options)
 
   await queryClient.prefetchQuery(queryOptions);
 
@@ -385,16 +416,17 @@ export const prefetchResumeAnalyticsGetViewStatsQuery = async <TData = Awaited<R
 
 
 
-export const getResumeAnalyticsGetViewStatsSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError = void>(resumeId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getResumeAnalyticsGetViewStatsSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError = void>(resumeId: string,
+    params: ResumeAnalyticsGetViewStatsParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getResumeAnalyticsGetViewStatsQueryKey(resumeId);
+  const queryKey =  queryOptions?.queryKey ?? getResumeAnalyticsGetViewStatsQueryKey(resumeId,params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>> = ({ signal }) => resumeAnalyticsGetViewStats(resumeId, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>> = ({ signal }) => resumeAnalyticsGetViewStats(resumeId,params, { signal, ...requestOptions });
 
       
 
@@ -408,15 +440,18 @@ export type ResumeAnalyticsGetViewStatsSuspenseQueryError = void
 
 
 export function useResumeAnalyticsGetViewStatsSuspense<TData = Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError = void>(
- resumeId: string, options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params: ResumeAnalyticsGetViewStatsParams, options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumeAnalyticsGetViewStatsSuspense<TData = Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params: ResumeAnalyticsGetViewStatsParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumeAnalyticsGetViewStatsSuspense<TData = Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params: ResumeAnalyticsGetViewStatsParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -424,11 +459,12 @@ export function useResumeAnalyticsGetViewStatsSuspense<TData = Awaited<ReturnTyp
  */
 
 export function useResumeAnalyticsGetViewStatsSuspense<TData = Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params: ResumeAnalyticsGetViewStatsParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetViewStats>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient 
  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getResumeAnalyticsGetViewStatsSuspenseQueryOptions(resumeId,options)
+  const queryOptions = getResumeAnalyticsGetViewStatsSuspenseQueryOptions(resumeId,params,options)
 
   const query = useSuspenseQuery(queryOptions, queryClient) as  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -739,17 +775,26 @@ export type resumeAnalyticsGetKeywordSuggestionsResponseError = (resumeAnalytics
 
 export type resumeAnalyticsGetKeywordSuggestionsResponse = (resumeAnalyticsGetKeywordSuggestionsResponseSuccess | resumeAnalyticsGetKeywordSuggestionsResponseError)
 
-export const getResumeAnalyticsGetKeywordSuggestionsUrl = (resumeId: string,) => {
+export const getResumeAnalyticsGetKeywordSuggestionsUrl = (resumeId: string,
+    params: ResumeAnalyticsGetKeywordSuggestionsParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
+    
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
 
-  
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/api/resume-analytics/${resumeId}/keywords`
+  return stringifiedParams.length > 0 ? `/api/resume-analytics/${resumeId}/keywords?${stringifiedParams}` : `/api/resume-analytics/${resumeId}/keywords`
 }
 
-export const resumeAnalyticsGetKeywordSuggestions = async (resumeId: string, options?: RequestInit): Promise<resumeAnalyticsGetKeywordSuggestionsResponse> => {
+export const resumeAnalyticsGetKeywordSuggestions = async (resumeId: string,
+    params: ResumeAnalyticsGetKeywordSuggestionsParams, options?: RequestInit): Promise<resumeAnalyticsGetKeywordSuggestionsResponse> => {
   
-  return customFetch<resumeAnalyticsGetKeywordSuggestionsResponse>(getResumeAnalyticsGetKeywordSuggestionsUrl(resumeId),
+  return customFetch<resumeAnalyticsGetKeywordSuggestionsResponse>(getResumeAnalyticsGetKeywordSuggestionsUrl(resumeId,params),
   {      
     ...options,
     method: 'GET'
@@ -762,29 +807,32 @@ export const resumeAnalyticsGetKeywordSuggestions = async (resumeId: string, opt
 
 
 
-export const getResumeAnalyticsGetKeywordSuggestionsInfiniteQueryKey = (resumeId: string,) => {
+export const getResumeAnalyticsGetKeywordSuggestionsInfiniteQueryKey = (resumeId: string,
+    params?: ResumeAnalyticsGetKeywordSuggestionsParams,) => {
     return [
-    'infinite', `/api/resume-analytics/${resumeId}/keywords`
+    'infinite', `/api/resume-analytics/${resumeId}/keywords`, ...(params ? [params] : [])
     ] as const;
     }
 
-export const getResumeAnalyticsGetKeywordSuggestionsQueryKey = (resumeId: string,) => {
+export const getResumeAnalyticsGetKeywordSuggestionsQueryKey = (resumeId: string,
+    params?: ResumeAnalyticsGetKeywordSuggestionsParams,) => {
     return [
-    `/api/resume-analytics/${resumeId}/keywords`
+    `/api/resume-analytics/${resumeId}/keywords`, ...(params ? [params] : [])
     ] as const;
     }
 
     
-export const getResumeAnalyticsGetKeywordSuggestionsInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>>, TError = void>(resumeId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getResumeAnalyticsGetKeywordSuggestionsInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>>, TError = void>(resumeId: string,
+    params: ResumeAnalyticsGetKeywordSuggestionsParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getResumeAnalyticsGetKeywordSuggestionsInfiniteQueryKey(resumeId);
+  const queryKey =  queryOptions?.queryKey ?? getResumeAnalyticsGetKeywordSuggestionsInfiniteQueryKey(resumeId,params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>> = ({ signal }) => resumeAnalyticsGetKeywordSuggestions(resumeId, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>> = ({ signal }) => resumeAnalyticsGetKeywordSuggestions(resumeId,params, { signal, ...requestOptions });
 
       
 
@@ -798,7 +846,8 @@ export type ResumeAnalyticsGetKeywordSuggestionsInfiniteQueryError = void
 
 
 export function useResumeAnalyticsGetKeywordSuggestionsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>>, TError = void>(
- resumeId: string, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>> & Pick<
+ resumeId: string,
+    params: ResumeAnalyticsGetKeywordSuggestionsParams, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>,
           TError,
@@ -808,7 +857,8 @@ export function useResumeAnalyticsGetKeywordSuggestionsInfinite<TData = Infinite
  , queryClient?: QueryClient
   ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumeAnalyticsGetKeywordSuggestionsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>> & Pick<
+ resumeId: string,
+    params: ResumeAnalyticsGetKeywordSuggestionsParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>,
           TError,
@@ -818,7 +868,8 @@ export function useResumeAnalyticsGetKeywordSuggestionsInfinite<TData = Infinite
  , queryClient?: QueryClient
   ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumeAnalyticsGetKeywordSuggestionsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params: ResumeAnalyticsGetKeywordSuggestionsParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -826,11 +877,12 @@ export function useResumeAnalyticsGetKeywordSuggestionsInfinite<TData = Infinite
  */
 
 export function useResumeAnalyticsGetKeywordSuggestionsInfinite<TData = InfiniteData<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params: ResumeAnalyticsGetKeywordSuggestionsParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient 
  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getResumeAnalyticsGetKeywordSuggestionsInfiniteQueryOptions(resumeId,options)
+  const queryOptions = getResumeAnalyticsGetKeywordSuggestionsInfiniteQueryOptions(resumeId,params,options)
 
   const query = useInfiniteQuery(queryOptions, queryClient) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -841,11 +893,12 @@ export function useResumeAnalyticsGetKeywordSuggestionsInfinite<TData = Infinite
  * @summary Get keyword optimization suggestions
  */
 export const prefetchResumeAnalyticsGetKeywordSuggestionsInfiniteQuery = async <TData = Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError = void>(
- queryClient: QueryClient, resumeId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ queryClient: QueryClient, resumeId: string,
+    params: ResumeAnalyticsGetKeywordSuggestionsParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 
   ): Promise<QueryClient> => {
 
-  const queryOptions = getResumeAnalyticsGetKeywordSuggestionsInfiniteQueryOptions(resumeId,options)
+  const queryOptions = getResumeAnalyticsGetKeywordSuggestionsInfiniteQueryOptions(resumeId,params,options)
 
   await queryClient.prefetchInfiniteQuery(queryOptions);
 
@@ -854,16 +907,17 @@ export const prefetchResumeAnalyticsGetKeywordSuggestionsInfiniteQuery = async <
 
 
 
-export const getResumeAnalyticsGetKeywordSuggestionsQueryOptions = <TData = Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError = void>(resumeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getResumeAnalyticsGetKeywordSuggestionsQueryOptions = <TData = Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError = void>(resumeId: string,
+    params: ResumeAnalyticsGetKeywordSuggestionsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getResumeAnalyticsGetKeywordSuggestionsQueryKey(resumeId);
+  const queryKey =  queryOptions?.queryKey ?? getResumeAnalyticsGetKeywordSuggestionsQueryKey(resumeId,params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>> = ({ signal }) => resumeAnalyticsGetKeywordSuggestions(resumeId, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>> = ({ signal }) => resumeAnalyticsGetKeywordSuggestions(resumeId,params, { signal, ...requestOptions });
 
       
 
@@ -877,7 +931,8 @@ export type ResumeAnalyticsGetKeywordSuggestionsQueryError = void
 
 
 export function useResumeAnalyticsGetKeywordSuggestions<TData = Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError = void>(
- resumeId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>> & Pick<
+ resumeId: string,
+    params: ResumeAnalyticsGetKeywordSuggestionsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>,
           TError,
@@ -887,7 +942,8 @@ export function useResumeAnalyticsGetKeywordSuggestions<TData = Awaited<ReturnTy
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumeAnalyticsGetKeywordSuggestions<TData = Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>> & Pick<
+ resumeId: string,
+    params: ResumeAnalyticsGetKeywordSuggestionsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>,
           TError,
@@ -897,7 +953,8 @@ export function useResumeAnalyticsGetKeywordSuggestions<TData = Awaited<ReturnTy
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumeAnalyticsGetKeywordSuggestions<TData = Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params: ResumeAnalyticsGetKeywordSuggestionsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -905,11 +962,12 @@ export function useResumeAnalyticsGetKeywordSuggestions<TData = Awaited<ReturnTy
  */
 
 export function useResumeAnalyticsGetKeywordSuggestions<TData = Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params: ResumeAnalyticsGetKeywordSuggestionsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getResumeAnalyticsGetKeywordSuggestionsQueryOptions(resumeId,options)
+  const queryOptions = getResumeAnalyticsGetKeywordSuggestionsQueryOptions(resumeId,params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -920,11 +978,12 @@ export function useResumeAnalyticsGetKeywordSuggestions<TData = Awaited<ReturnTy
  * @summary Get keyword optimization suggestions
  */
 export const prefetchResumeAnalyticsGetKeywordSuggestionsQuery = async <TData = Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError = void>(
- queryClient: QueryClient, resumeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ queryClient: QueryClient, resumeId: string,
+    params: ResumeAnalyticsGetKeywordSuggestionsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 
   ): Promise<QueryClient> => {
 
-  const queryOptions = getResumeAnalyticsGetKeywordSuggestionsQueryOptions(resumeId,options)
+  const queryOptions = getResumeAnalyticsGetKeywordSuggestionsQueryOptions(resumeId,params,options)
 
   await queryClient.prefetchQuery(queryOptions);
 
@@ -933,16 +992,17 @@ export const prefetchResumeAnalyticsGetKeywordSuggestionsQuery = async <TData = 
 
 
 
-export const getResumeAnalyticsGetKeywordSuggestionsSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError = void>(resumeId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getResumeAnalyticsGetKeywordSuggestionsSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError = void>(resumeId: string,
+    params: ResumeAnalyticsGetKeywordSuggestionsParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getResumeAnalyticsGetKeywordSuggestionsQueryKey(resumeId);
+  const queryKey =  queryOptions?.queryKey ?? getResumeAnalyticsGetKeywordSuggestionsQueryKey(resumeId,params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>> = ({ signal }) => resumeAnalyticsGetKeywordSuggestions(resumeId, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>> = ({ signal }) => resumeAnalyticsGetKeywordSuggestions(resumeId,params, { signal, ...requestOptions });
 
       
 
@@ -956,15 +1016,18 @@ export type ResumeAnalyticsGetKeywordSuggestionsSuspenseQueryError = void
 
 
 export function useResumeAnalyticsGetKeywordSuggestionsSuspense<TData = Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError = void>(
- resumeId: string, options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params: ResumeAnalyticsGetKeywordSuggestionsParams, options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumeAnalyticsGetKeywordSuggestionsSuspense<TData = Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params: ResumeAnalyticsGetKeywordSuggestionsParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumeAnalyticsGetKeywordSuggestionsSuspense<TData = Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params: ResumeAnalyticsGetKeywordSuggestionsParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -972,11 +1035,12 @@ export function useResumeAnalyticsGetKeywordSuggestionsSuspense<TData = Awaited<
  */
 
 export function useResumeAnalyticsGetKeywordSuggestionsSuspense<TData = Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params: ResumeAnalyticsGetKeywordSuggestionsParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetKeywordSuggestions>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient 
  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getResumeAnalyticsGetKeywordSuggestionsSuspenseQueryOptions(resumeId,options)
+  const queryOptions = getResumeAnalyticsGetKeywordSuggestionsSuspenseQueryOptions(resumeId,params,options)
 
   const query = useSuspenseQuery(queryOptions, queryClient) as  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -1021,14 +1085,16 @@ export const getResumeAnalyticsMatchJobUrl = (resumeId: string,) => {
   return `/api/resume-analytics/${resumeId}/match-job`
 }
 
-export const resumeAnalyticsMatchJob = async (resumeId: string, options?: RequestInit): Promise<resumeAnalyticsMatchJobResponse> => {
+export const resumeAnalyticsMatchJob = async (resumeId: string,
+    jobMatchRequestDto: JobMatchRequestDto, options?: RequestInit): Promise<resumeAnalyticsMatchJobResponse> => {
   
   return customFetch<resumeAnalyticsMatchJobResponse>(getResumeAnalyticsMatchJobUrl(resumeId),
   {      
     ...options,
-    method: 'POST'
-    
-    
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      jobMatchRequestDto,)
   }
 );}
 
@@ -1036,8 +1102,8 @@ export const resumeAnalyticsMatchJob = async (resumeId: string, options?: Reques
 
 
 export const getResumeAnalyticsMatchJobMutationOptions = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resumeAnalyticsMatchJob>>, TError,{resumeId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof resumeAnalyticsMatchJob>>, TError,{resumeId: string}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resumeAnalyticsMatchJob>>, TError,{resumeId: string;data: JobMatchRequestDto}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof resumeAnalyticsMatchJob>>, TError,{resumeId: string;data: JobMatchRequestDto}, TContext> => {
 
 const mutationKey = ['resumeAnalyticsMatchJob'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -1049,10 +1115,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof resumeAnalyticsMatchJob>>, {resumeId: string}> = (props) => {
-          const {resumeId} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof resumeAnalyticsMatchJob>>, {resumeId: string;data: JobMatchRequestDto}> = (props) => {
+          const {resumeId,data} = props ?? {};
 
-          return  resumeAnalyticsMatchJob(resumeId,requestOptions)
+          return  resumeAnalyticsMatchJob(resumeId,data,requestOptions)
         }
 
 
@@ -1063,18 +1129,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type ResumeAnalyticsMatchJobMutationResult = NonNullable<Awaited<ReturnType<typeof resumeAnalyticsMatchJob>>>
-    
+    export type ResumeAnalyticsMatchJobMutationBody = JobMatchRequestDto
     export type ResumeAnalyticsMatchJobMutationError = void
 
     /**
  * @summary Match resume against job description
  */
 export const useResumeAnalyticsMatchJob = <TError = void,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resumeAnalyticsMatchJob>>, TError,{resumeId: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof resumeAnalyticsMatchJob>>, TError,{resumeId: string;data: JobMatchRequestDto}, TContext>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof resumeAnalyticsMatchJob>>,
         TError,
-        {resumeId: string},
+        {resumeId: string;data: JobMatchRequestDto},
         TContext
       > => {
       return useMutation(getResumeAnalyticsMatchJobMutationOptions(options), queryClient);
@@ -1106,17 +1172,26 @@ export type resumeAnalyticsGetBenchmarkResponseError = (resumeAnalyticsGetBenchm
 
 export type resumeAnalyticsGetBenchmarkResponse = (resumeAnalyticsGetBenchmarkResponseSuccess | resumeAnalyticsGetBenchmarkResponseError)
 
-export const getResumeAnalyticsGetBenchmarkUrl = (resumeId: string,) => {
+export const getResumeAnalyticsGetBenchmarkUrl = (resumeId: string,
+    params: ResumeAnalyticsGetBenchmarkParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
+    
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
 
-  
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/api/resume-analytics/${resumeId}/benchmark`
+  return stringifiedParams.length > 0 ? `/api/resume-analytics/${resumeId}/benchmark?${stringifiedParams}` : `/api/resume-analytics/${resumeId}/benchmark`
 }
 
-export const resumeAnalyticsGetBenchmark = async (resumeId: string, options?: RequestInit): Promise<resumeAnalyticsGetBenchmarkResponse> => {
+export const resumeAnalyticsGetBenchmark = async (resumeId: string,
+    params: ResumeAnalyticsGetBenchmarkParams, options?: RequestInit): Promise<resumeAnalyticsGetBenchmarkResponse> => {
   
-  return customFetch<resumeAnalyticsGetBenchmarkResponse>(getResumeAnalyticsGetBenchmarkUrl(resumeId),
+  return customFetch<resumeAnalyticsGetBenchmarkResponse>(getResumeAnalyticsGetBenchmarkUrl(resumeId,params),
   {      
     ...options,
     method: 'GET'
@@ -1129,29 +1204,32 @@ export const resumeAnalyticsGetBenchmark = async (resumeId: string, options?: Re
 
 
 
-export const getResumeAnalyticsGetBenchmarkInfiniteQueryKey = (resumeId: string,) => {
+export const getResumeAnalyticsGetBenchmarkInfiniteQueryKey = (resumeId: string,
+    params?: ResumeAnalyticsGetBenchmarkParams,) => {
     return [
-    'infinite', `/api/resume-analytics/${resumeId}/benchmark`
+    'infinite', `/api/resume-analytics/${resumeId}/benchmark`, ...(params ? [params] : [])
     ] as const;
     }
 
-export const getResumeAnalyticsGetBenchmarkQueryKey = (resumeId: string,) => {
+export const getResumeAnalyticsGetBenchmarkQueryKey = (resumeId: string,
+    params?: ResumeAnalyticsGetBenchmarkParams,) => {
     return [
-    `/api/resume-analytics/${resumeId}/benchmark`
+    `/api/resume-analytics/${resumeId}/benchmark`, ...(params ? [params] : [])
     ] as const;
     }
 
     
-export const getResumeAnalyticsGetBenchmarkInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>>, TError = void>(resumeId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getResumeAnalyticsGetBenchmarkInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>>, TError = void>(resumeId: string,
+    params: ResumeAnalyticsGetBenchmarkParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getResumeAnalyticsGetBenchmarkInfiniteQueryKey(resumeId);
+  const queryKey =  queryOptions?.queryKey ?? getResumeAnalyticsGetBenchmarkInfiniteQueryKey(resumeId,params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>> = ({ signal }) => resumeAnalyticsGetBenchmark(resumeId, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>> = ({ signal }) => resumeAnalyticsGetBenchmark(resumeId,params, { signal, ...requestOptions });
 
       
 
@@ -1165,7 +1243,8 @@ export type ResumeAnalyticsGetBenchmarkInfiniteQueryError = void
 
 
 export function useResumeAnalyticsGetBenchmarkInfinite<TData = InfiniteData<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>>, TError = void>(
- resumeId: string, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>> & Pick<
+ resumeId: string,
+    params: ResumeAnalyticsGetBenchmarkParams, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>,
           TError,
@@ -1175,7 +1254,8 @@ export function useResumeAnalyticsGetBenchmarkInfinite<TData = InfiniteData<Awai
  , queryClient?: QueryClient
   ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumeAnalyticsGetBenchmarkInfinite<TData = InfiniteData<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>> & Pick<
+ resumeId: string,
+    params: ResumeAnalyticsGetBenchmarkParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>,
           TError,
@@ -1185,7 +1265,8 @@ export function useResumeAnalyticsGetBenchmarkInfinite<TData = InfiniteData<Awai
  , queryClient?: QueryClient
   ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumeAnalyticsGetBenchmarkInfinite<TData = InfiniteData<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params: ResumeAnalyticsGetBenchmarkParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -1193,11 +1274,12 @@ export function useResumeAnalyticsGetBenchmarkInfinite<TData = InfiniteData<Awai
  */
 
 export function useResumeAnalyticsGetBenchmarkInfinite<TData = InfiniteData<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params: ResumeAnalyticsGetBenchmarkParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient 
  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getResumeAnalyticsGetBenchmarkInfiniteQueryOptions(resumeId,options)
+  const queryOptions = getResumeAnalyticsGetBenchmarkInfiniteQueryOptions(resumeId,params,options)
 
   const query = useInfiniteQuery(queryOptions, queryClient) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -1208,11 +1290,12 @@ export function useResumeAnalyticsGetBenchmarkInfinite<TData = InfiniteData<Awai
  * @summary Get industry benchmark comparison
  */
 export const prefetchResumeAnalyticsGetBenchmarkInfiniteQuery = async <TData = Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError = void>(
- queryClient: QueryClient, resumeId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ queryClient: QueryClient, resumeId: string,
+    params: ResumeAnalyticsGetBenchmarkParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 
   ): Promise<QueryClient> => {
 
-  const queryOptions = getResumeAnalyticsGetBenchmarkInfiniteQueryOptions(resumeId,options)
+  const queryOptions = getResumeAnalyticsGetBenchmarkInfiniteQueryOptions(resumeId,params,options)
 
   await queryClient.prefetchInfiniteQuery(queryOptions);
 
@@ -1221,16 +1304,17 @@ export const prefetchResumeAnalyticsGetBenchmarkInfiniteQuery = async <TData = A
 
 
 
-export const getResumeAnalyticsGetBenchmarkQueryOptions = <TData = Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError = void>(resumeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getResumeAnalyticsGetBenchmarkQueryOptions = <TData = Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError = void>(resumeId: string,
+    params: ResumeAnalyticsGetBenchmarkParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getResumeAnalyticsGetBenchmarkQueryKey(resumeId);
+  const queryKey =  queryOptions?.queryKey ?? getResumeAnalyticsGetBenchmarkQueryKey(resumeId,params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>> = ({ signal }) => resumeAnalyticsGetBenchmark(resumeId, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>> = ({ signal }) => resumeAnalyticsGetBenchmark(resumeId,params, { signal, ...requestOptions });
 
       
 
@@ -1244,7 +1328,8 @@ export type ResumeAnalyticsGetBenchmarkQueryError = void
 
 
 export function useResumeAnalyticsGetBenchmark<TData = Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError = void>(
- resumeId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>> & Pick<
+ resumeId: string,
+    params: ResumeAnalyticsGetBenchmarkParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>,
           TError,
@@ -1254,7 +1339,8 @@ export function useResumeAnalyticsGetBenchmark<TData = Awaited<ReturnType<typeof
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumeAnalyticsGetBenchmark<TData = Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>> & Pick<
+ resumeId: string,
+    params: ResumeAnalyticsGetBenchmarkParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>,
           TError,
@@ -1264,7 +1350,8 @@ export function useResumeAnalyticsGetBenchmark<TData = Awaited<ReturnType<typeof
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumeAnalyticsGetBenchmark<TData = Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params: ResumeAnalyticsGetBenchmarkParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -1272,11 +1359,12 @@ export function useResumeAnalyticsGetBenchmark<TData = Awaited<ReturnType<typeof
  */
 
 export function useResumeAnalyticsGetBenchmark<TData = Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params: ResumeAnalyticsGetBenchmarkParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getResumeAnalyticsGetBenchmarkQueryOptions(resumeId,options)
+  const queryOptions = getResumeAnalyticsGetBenchmarkQueryOptions(resumeId,params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -1287,11 +1375,12 @@ export function useResumeAnalyticsGetBenchmark<TData = Awaited<ReturnType<typeof
  * @summary Get industry benchmark comparison
  */
 export const prefetchResumeAnalyticsGetBenchmarkQuery = async <TData = Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError = void>(
- queryClient: QueryClient, resumeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ queryClient: QueryClient, resumeId: string,
+    params: ResumeAnalyticsGetBenchmarkParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 
   ): Promise<QueryClient> => {
 
-  const queryOptions = getResumeAnalyticsGetBenchmarkQueryOptions(resumeId,options)
+  const queryOptions = getResumeAnalyticsGetBenchmarkQueryOptions(resumeId,params,options)
 
   await queryClient.prefetchQuery(queryOptions);
 
@@ -1300,16 +1389,17 @@ export const prefetchResumeAnalyticsGetBenchmarkQuery = async <TData = Awaited<R
 
 
 
-export const getResumeAnalyticsGetBenchmarkSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError = void>(resumeId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getResumeAnalyticsGetBenchmarkSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError = void>(resumeId: string,
+    params: ResumeAnalyticsGetBenchmarkParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getResumeAnalyticsGetBenchmarkQueryKey(resumeId);
+  const queryKey =  queryOptions?.queryKey ?? getResumeAnalyticsGetBenchmarkQueryKey(resumeId,params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>> = ({ signal }) => resumeAnalyticsGetBenchmark(resumeId, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>> = ({ signal }) => resumeAnalyticsGetBenchmark(resumeId,params, { signal, ...requestOptions });
 
       
 
@@ -1323,15 +1413,18 @@ export type ResumeAnalyticsGetBenchmarkSuspenseQueryError = void
 
 
 export function useResumeAnalyticsGetBenchmarkSuspense<TData = Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError = void>(
- resumeId: string, options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params: ResumeAnalyticsGetBenchmarkParams, options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumeAnalyticsGetBenchmarkSuspense<TData = Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params: ResumeAnalyticsGetBenchmarkParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumeAnalyticsGetBenchmarkSuspense<TData = Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params: ResumeAnalyticsGetBenchmarkParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -1339,11 +1432,12 @@ export function useResumeAnalyticsGetBenchmarkSuspense<TData = Awaited<ReturnTyp
  */
 
 export function useResumeAnalyticsGetBenchmarkSuspense<TData = Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params: ResumeAnalyticsGetBenchmarkParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetBenchmark>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient 
  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getResumeAnalyticsGetBenchmarkSuspenseQueryOptions(resumeId,options)
+  const queryOptions = getResumeAnalyticsGetBenchmarkSuspenseQueryOptions(resumeId,params,options)
 
   const query = useSuspenseQuery(queryOptions, queryClient) as  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -1749,17 +1843,26 @@ export type resumeAnalyticsGetHistoryResponseError = (resumeAnalyticsGetHistoryR
 
 export type resumeAnalyticsGetHistoryResponse = (resumeAnalyticsGetHistoryResponseSuccess | resumeAnalyticsGetHistoryResponseError)
 
-export const getResumeAnalyticsGetHistoryUrl = (resumeId: string,) => {
+export const getResumeAnalyticsGetHistoryUrl = (resumeId: string,
+    params?: ResumeAnalyticsGetHistoryParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
+    
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
 
-  
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/api/resume-analytics/${resumeId}/history`
+  return stringifiedParams.length > 0 ? `/api/resume-analytics/${resumeId}/history?${stringifiedParams}` : `/api/resume-analytics/${resumeId}/history`
 }
 
-export const resumeAnalyticsGetHistory = async (resumeId: string, options?: RequestInit): Promise<resumeAnalyticsGetHistoryResponse> => {
+export const resumeAnalyticsGetHistory = async (resumeId: string,
+    params?: ResumeAnalyticsGetHistoryParams, options?: RequestInit): Promise<resumeAnalyticsGetHistoryResponse> => {
   
-  return customFetch<resumeAnalyticsGetHistoryResponse>(getResumeAnalyticsGetHistoryUrl(resumeId),
+  return customFetch<resumeAnalyticsGetHistoryResponse>(getResumeAnalyticsGetHistoryUrl(resumeId,params),
   {      
     ...options,
     method: 'GET'
@@ -1772,29 +1875,32 @@ export const resumeAnalyticsGetHistory = async (resumeId: string, options?: Requ
 
 
 
-export const getResumeAnalyticsGetHistoryInfiniteQueryKey = (resumeId: string,) => {
+export const getResumeAnalyticsGetHistoryInfiniteQueryKey = (resumeId: string,
+    params?: ResumeAnalyticsGetHistoryParams,) => {
     return [
-    'infinite', `/api/resume-analytics/${resumeId}/history`
+    'infinite', `/api/resume-analytics/${resumeId}/history`, ...(params ? [params] : [])
     ] as const;
     }
 
-export const getResumeAnalyticsGetHistoryQueryKey = (resumeId: string,) => {
+export const getResumeAnalyticsGetHistoryQueryKey = (resumeId: string,
+    params?: ResumeAnalyticsGetHistoryParams,) => {
     return [
-    `/api/resume-analytics/${resumeId}/history`
+    `/api/resume-analytics/${resumeId}/history`, ...(params ? [params] : [])
     ] as const;
     }
 
     
-export const getResumeAnalyticsGetHistoryInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>>, TError = void>(resumeId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getResumeAnalyticsGetHistoryInfiniteQueryOptions = <TData = InfiniteData<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>>, TError = void>(resumeId: string,
+    params?: ResumeAnalyticsGetHistoryParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getResumeAnalyticsGetHistoryInfiniteQueryKey(resumeId);
+  const queryKey =  queryOptions?.queryKey ?? getResumeAnalyticsGetHistoryInfiniteQueryKey(resumeId,params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>> = ({ signal }) => resumeAnalyticsGetHistory(resumeId, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>> = ({ signal }) => resumeAnalyticsGetHistory(resumeId,params, { signal, ...requestOptions });
 
       
 
@@ -1808,7 +1914,8 @@ export type ResumeAnalyticsGetHistoryInfiniteQueryError = void
 
 
 export function useResumeAnalyticsGetHistoryInfinite<TData = InfiniteData<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>>, TError = void>(
- resumeId: string, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>> & Pick<
+ resumeId: string,
+    params: undefined |  ResumeAnalyticsGetHistoryParams, options: { query:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>,
           TError,
@@ -1818,7 +1925,8 @@ export function useResumeAnalyticsGetHistoryInfinite<TData = InfiniteData<Awaite
  , queryClient?: QueryClient
   ):  DefinedUseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumeAnalyticsGetHistoryInfinite<TData = InfiniteData<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>> & Pick<
+ resumeId: string,
+    params?: ResumeAnalyticsGetHistoryParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>,
           TError,
@@ -1828,7 +1936,8 @@ export function useResumeAnalyticsGetHistoryInfinite<TData = InfiniteData<Awaite
  , queryClient?: QueryClient
   ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumeAnalyticsGetHistoryInfinite<TData = InfiniteData<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params?: ResumeAnalyticsGetHistoryParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -1836,11 +1945,12 @@ export function useResumeAnalyticsGetHistoryInfinite<TData = InfiniteData<Awaite
  */
 
 export function useResumeAnalyticsGetHistoryInfinite<TData = InfiniteData<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params?: ResumeAnalyticsGetHistoryParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient 
  ):  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getResumeAnalyticsGetHistoryInfiniteQueryOptions(resumeId,options)
+  const queryOptions = getResumeAnalyticsGetHistoryInfiniteQueryOptions(resumeId,params,options)
 
   const query = useInfiniteQuery(queryOptions, queryClient) as  UseInfiniteQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -1851,11 +1961,12 @@ export function useResumeAnalyticsGetHistoryInfinite<TData = InfiniteData<Awaite
  * @summary Get analytics history
  */
 export const prefetchResumeAnalyticsGetHistoryInfiniteQuery = async <TData = Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError = void>(
- queryClient: QueryClient, resumeId: string, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ queryClient: QueryClient, resumeId: string,
+    params?: ResumeAnalyticsGetHistoryParams, options?: { query?:Partial<UseInfiniteQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 
   ): Promise<QueryClient> => {
 
-  const queryOptions = getResumeAnalyticsGetHistoryInfiniteQueryOptions(resumeId,options)
+  const queryOptions = getResumeAnalyticsGetHistoryInfiniteQueryOptions(resumeId,params,options)
 
   await queryClient.prefetchInfiniteQuery(queryOptions);
 
@@ -1864,16 +1975,17 @@ export const prefetchResumeAnalyticsGetHistoryInfiniteQuery = async <TData = Awa
 
 
 
-export const getResumeAnalyticsGetHistoryQueryOptions = <TData = Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError = void>(resumeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getResumeAnalyticsGetHistoryQueryOptions = <TData = Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError = void>(resumeId: string,
+    params?: ResumeAnalyticsGetHistoryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getResumeAnalyticsGetHistoryQueryKey(resumeId);
+  const queryKey =  queryOptions?.queryKey ?? getResumeAnalyticsGetHistoryQueryKey(resumeId,params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>> = ({ signal }) => resumeAnalyticsGetHistory(resumeId, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>> = ({ signal }) => resumeAnalyticsGetHistory(resumeId,params, { signal, ...requestOptions });
 
       
 
@@ -1887,7 +1999,8 @@ export type ResumeAnalyticsGetHistoryQueryError = void
 
 
 export function useResumeAnalyticsGetHistory<TData = Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError = void>(
- resumeId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>> & Pick<
+ resumeId: string,
+    params: undefined |  ResumeAnalyticsGetHistoryParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>,
           TError,
@@ -1897,7 +2010,8 @@ export function useResumeAnalyticsGetHistory<TData = Awaited<ReturnType<typeof r
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumeAnalyticsGetHistory<TData = Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>> & Pick<
+ resumeId: string,
+    params?: ResumeAnalyticsGetHistoryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>,
           TError,
@@ -1907,7 +2021,8 @@ export function useResumeAnalyticsGetHistory<TData = Awaited<ReturnType<typeof r
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumeAnalyticsGetHistory<TData = Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params?: ResumeAnalyticsGetHistoryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -1915,11 +2030,12 @@ export function useResumeAnalyticsGetHistory<TData = Awaited<ReturnType<typeof r
  */
 
 export function useResumeAnalyticsGetHistory<TData = Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params?: ResumeAnalyticsGetHistoryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getResumeAnalyticsGetHistoryQueryOptions(resumeId,options)
+  const queryOptions = getResumeAnalyticsGetHistoryQueryOptions(resumeId,params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -1930,11 +2046,12 @@ export function useResumeAnalyticsGetHistory<TData = Awaited<ReturnType<typeof r
  * @summary Get analytics history
  */
 export const prefetchResumeAnalyticsGetHistoryQuery = async <TData = Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError = void>(
- queryClient: QueryClient, resumeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ queryClient: QueryClient, resumeId: string,
+    params?: ResumeAnalyticsGetHistoryParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 
   ): Promise<QueryClient> => {
 
-  const queryOptions = getResumeAnalyticsGetHistoryQueryOptions(resumeId,options)
+  const queryOptions = getResumeAnalyticsGetHistoryQueryOptions(resumeId,params,options)
 
   await queryClient.prefetchQuery(queryOptions);
 
@@ -1943,16 +2060,17 @@ export const prefetchResumeAnalyticsGetHistoryQuery = async <TData = Awaited<Ret
 
 
 
-export const getResumeAnalyticsGetHistorySuspenseQueryOptions = <TData = Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError = void>(resumeId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+export const getResumeAnalyticsGetHistorySuspenseQueryOptions = <TData = Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError = void>(resumeId: string,
+    params?: ResumeAnalyticsGetHistoryParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getResumeAnalyticsGetHistoryQueryKey(resumeId);
+  const queryKey =  queryOptions?.queryKey ?? getResumeAnalyticsGetHistoryQueryKey(resumeId,params);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>> = ({ signal }) => resumeAnalyticsGetHistory(resumeId, { signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>> = ({ signal }) => resumeAnalyticsGetHistory(resumeId,params, { signal, ...requestOptions });
 
       
 
@@ -1966,15 +2084,18 @@ export type ResumeAnalyticsGetHistorySuspenseQueryError = void
 
 
 export function useResumeAnalyticsGetHistorySuspense<TData = Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError = void>(
- resumeId: string, options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params: undefined |  ResumeAnalyticsGetHistoryParams, options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumeAnalyticsGetHistorySuspense<TData = Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params?: ResumeAnalyticsGetHistoryParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useResumeAnalyticsGetHistorySuspense<TData = Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params?: ResumeAnalyticsGetHistoryParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient
   ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
@@ -1982,11 +2103,12 @@ export function useResumeAnalyticsGetHistorySuspense<TData = Awaited<ReturnType<
  */
 
 export function useResumeAnalyticsGetHistorySuspense<TData = Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError = void>(
- resumeId: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
+ resumeId: string,
+    params?: ResumeAnalyticsGetHistoryParams, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof resumeAnalyticsGetHistory>>, TError, TData>>, request?: SecondParameter<typeof customFetch>}
  , queryClient?: QueryClient 
  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getResumeAnalyticsGetHistorySuspenseQueryOptions(resumeId,options)
+  const queryOptions = getResumeAnalyticsGetHistorySuspenseQueryOptions(resumeId,params,options)
 
   const query = useSuspenseQuery(queryOptions, queryClient) as  UseSuspenseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

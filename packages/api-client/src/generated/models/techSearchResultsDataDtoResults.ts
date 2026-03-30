@@ -35,5 +35,10 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
+import type { TechSearchResultsDataDtoResultsLanguagesItem } from './techSearchResultsDataDtoResultsLanguagesItem';
+import type { TechSearchResultsDataDtoResultsSkillsItem } from './techSearchResultsDataDtoResultsSkillsItem';
 
-export type TechSearchResultsDataDtoResults = { [key: string]: unknown };
+export type TechSearchResultsDataDtoResults = {
+  languages: TechSearchResultsDataDtoResultsLanguagesItem[];
+  skills: TechSearchResultsDataDtoResultsSkillsItem[];
+};

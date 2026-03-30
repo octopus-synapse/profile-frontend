@@ -35,10 +35,10 @@ All errors follow a consistent format:
 ```
  * OpenAPI spec version: 1.0.0
  */
-import type { PaginationMetaDto } from './paginationMetaDto';
+import type { UserManagementListDataDtoPagination } from './userManagementListDataDtoPagination';
 import type { UserManagementListDataDtoUsersItem } from './userManagementListDataDtoUsersItem';
 
 export interface UserManagementListDataDto {
   users: UserManagementListDataDtoUsersItem[];
-  pagination: PaginationMetaDto;
+  pagination: UserManagementListDataDtoPagination;
 }

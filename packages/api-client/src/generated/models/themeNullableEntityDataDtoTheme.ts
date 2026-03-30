@@ -39,4 +39,4 @@ All errors follow a consistent format:
 /**
  * @nullable
  */
-export type ThemeNullableEntityDataDtoTheme = { [key: string]: unknown } | null;
+export type ThemeNullableEntityDataDtoTheme = {[key: string]: unknown} | null;
