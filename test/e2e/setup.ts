@@ -109,8 +109,8 @@ export async function isBackendAvailable(): Promise<boolean> {
  * Re-export routes for E2E tests
  */
 export {
- ACCOUNT_LIFECYCLE_ROUTES,
- ADMIN_SECTION_TYPES_ROUTES,
+ ACCOUNTS_ROUTES,
+ AUTH_ROUTES,
  AUTHENTICATION_ROUTES,
  ENUMS_ROUTES,
  RESUMES_ROUTES,

@@ -18,6 +18,7 @@
 'use client';
 
 import type { GenericSectionItemDto, PlacedSectionDto } from '@profile/api-client';
+import { useI18n } from '@profile/i18n';
 import type { FieldStyles, RenderHints } from '../utils/style-dsl-interpreter';
 import { renderHintsToClasses } from '../utils/style-dsl-interpreter';
 import { GenericItemRenderer } from './generic-item-renderer';
@@ -111,8 +112,8 @@ function HeaderSectionRenderer({ section }: { section: PlacedSectionDto }) {
         {location && <div>{location}</div>}
         {links && links.length > 0 && (
           <div>
-            {links.map((link, idx) => (
-              <a key={idx} href={link.url} style={{ marginRight: '16px' }}>
+            {links.map((link) => (
+              <a key={link.url} href={link.url} style={{ marginRight: '16px' }}>
                 {link.label}
               </a>
             ))}
@@ -161,6 +162,7 @@ function ListSectionRenderer({
   renderHints?: RenderHints;
   fieldStyles?: FieldStyles;
 }) {
+  const { t } = useI18n();
   const { data, styles } = section;
   const items = data.items ?? [];
   const title = getSectionTitle(data);
@@ -179,7 +181,7 @@ function ListSectionRenderer({
     <section>
       <h3 style={titleStyle}>{title}</h3>
       {items.length === 0 ? (
-        <p className="text-muted-foreground italic">No items yet</p>
+        <p className="text-muted-foreground italic">{t('resume.generic.noItems')}</p>
       ) : (
         <div className={containerClass}>
           {items.map((item: GenericSectionItemDto, index: number) => (

@@ -5,32 +5,29 @@
  * Clean, professional design
  */
 
+import { usePlatformCheck, usePlatformGetStatistics, useUsersListUsers } from '@profile/api-client';
+import { useT } from '@profile/i18n';
 import { CheckCircle2, FileText, Globe, UserCheck, Users } from 'lucide-react';
-import {
-  RecentActivityWidget,
-  RecentUsersWidget,
-  StatCard,
-  SystemHealthWidget,
-  useAdminStats,
-  useRecentActivity,
-  useRecentUsers,
-  useSystemHealth,
-} from '@/components/admin';
+import { RecentUsersWidget, StatCard, SystemHealthWidget } from '@/components/admin';
 
 export default function AdminDashboardPage() {
-  const { data: stats, isLoading: statsLoading } = useAdminStats();
-  const { data: health, isLoading: healthLoading } = useSystemHealth();
-  const { data: recentUsers, isLoading: usersLoading } = useRecentUsers(5);
-  const { data: activities, isLoading: activitiesLoading } = useRecentActivity(10);
+  const t = useT();
+  const { data: statsResponse, isLoading: statsLoading } = usePlatformGetStatistics();
+  const { data: healthResponse, isLoading: healthLoading } = usePlatformCheck();
+  const { data: usersResponse, isLoading: usersLoading } = useUsersListUsers({ page: 1, limit: 5 });
+
+  const stats = statsResponse?.status === 200 ? statsResponse.data.data : null;
+  const healthData = healthResponse?.status === 200 ? healthResponse.data : null;
+  const recentUsers = usersResponse?.status === 200 ? (usersResponse.data.data?.users ?? []) : [];
 
   return (
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-pf-fg-default text-2xl font-semibold tracking-tight">Dashboard</h1>
-        <p className="text-pf-fg-muted mt-1 text-sm">
-          Overview of your platform&apos;s key metrics and activity
-        </p>
+        <h1 className="text-pf-fg-default text-2xl font-semibold tracking-tight">
+          {t('admin.dashboard.title')}
+        </h1>
+        <p className="text-pf-fg-muted mt-1 text-sm">{t('admin.dashboard.subtitle')}</p>
       </div>
 
       {/* Quick Status Banner */}
@@ -39,38 +36,36 @@ export default function AdminDashboardPage() {
           <CheckCircle2 className="text-pf-success-fg h-5 w-5" strokeWidth={2} />
         </div>
         <div>
-          <p className="text-pf-fg-default text-sm font-medium">All systems operational</p>
-          <p className="text-pf-fg-muted text-xs">
-            Services are running smoothly. Last checked just now.
+          <p className="text-pf-fg-default text-sm font-medium">
+            {t('admin.dashboard.allOperational')}
           </p>
+          <p className="text-pf-fg-muted text-xs">{t('admin.dashboard.servicesRunning')}</p>
         </div>
       </div>
 
       {/* Stats Grid */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          label="Total Users"
+          label={t('admin.dashboard.totalUsers')}
           value={stats?.totalUsers ?? 0}
           icon={Users}
-          trend={`+${stats?.newUsersThisWeek ?? 0} this week`}
-          trendUp={(stats?.newUsersThisWeek ?? 0) > 0}
           loading={statsLoading}
         />
         <StatCard
-          label="Active Users"
-          value={stats?.activeUsers ?? 0}
+          label={t('admin.dashboard.activeUsers')}
+          value={stats?.activeUsersWeek ?? 0}
           icon={UserCheck}
           loading={statsLoading}
         />
         <StatCard
-          label="Resumes Created"
+          label={t('admin.dashboard.resumesCreated')}
           value={stats?.totalResumes ?? 0}
           icon={FileText}
           loading={statsLoading}
         />
         <StatCard
-          label="Public Profiles"
-          value={stats?.publicProfiles ?? 0}
+          label={t('admin.dashboard.activeToday')}
+          value={stats?.activeUsersToday ?? 0}
           icon={Globe}
           loading={statsLoading}
         />
@@ -78,12 +73,9 @@ export default function AdminDashboardPage() {
 
       {/* Main Grid */}
       <div className="grid gap-6 lg:grid-cols-2">
-        <RecentUsersWidget users={recentUsers} loading={usersLoading} />
-        <SystemHealthWidget health={health} loading={healthLoading} />
+        <RecentUsersWidget users={recentUsers as never[]} loading={usersLoading} />
+        <SystemHealthWidget health={healthData as never} loading={healthLoading} />
       </div>
-
-      {/* Activity Feed */}
-      <RecentActivityWidget activities={activities} loading={activitiesLoading} />
     </div>
   );
 }

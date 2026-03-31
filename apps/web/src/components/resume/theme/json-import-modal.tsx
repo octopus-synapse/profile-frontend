@@ -5,10 +5,12 @@
 
 'use client';
 
+import { Button } from '@octopus-synapse/profile-ui';
+import { useThemesCreateThemeForUser } from '@profile/api-client';
+import { useI18n } from '@profile/i18n';
 import { AlertCircle, CheckCircle2, Clipboard, FileJson, Upload, X } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/shared/utils';
-import { useCreateTheme } from '../hooks';
 import type { ResumeStyleConfig } from '../types/config';
 
 interface Props {
@@ -18,12 +20,13 @@ interface Props {
 }
 
 export function JsonImportModal({ isOpen, onClose, onImported }: Props) {
+  const { t } = useI18n();
   const [json, setJson] = useState('');
   const [name, setName] = useState('My Custom Theme');
   const [error, setError] = useState<string | null>(null);
   const [isValid, setIsValid] = useState(false);
 
-  const createTheme = useCreateTheme();
+  const createMutation = useThemesCreateThemeForUser();
 
   if (!isOpen) return null;
 
@@ -36,8 +39,8 @@ export function JsonImportModal({ isOpen, onClose, onImported }: Props) {
 
     try {
       const parsed = JSON.parse(value) as Partial<ResumeStyleConfig>;
-      if (!parsed.layout && !parsed.tokens && !parsed.sections) {
-        setError('Must include layout, tokens, or sections');
+      if (!parsed.layout && !parsed.colors && !parsed.sections) {
+        setError('Must include layout, colors, or sections');
         return;
       }
       setIsValid(true);
@@ -50,17 +53,18 @@ export function JsonImportModal({ isOpen, onClose, onImported }: Props) {
     try {
       const parsed = JSON.parse(json) as Partial<ResumeStyleConfig>;
 
-      const themeResponse = await createTheme.mutateAsync({
-        name,
-        description: '',
-        category: 'MODERN',
-        styleConfig: parsed as Record<string, unknown>,
+      const response = await createMutation.mutateAsync({
+        data: {
+          name,
+          description: '',
+          category: 'MODERN',
+          styleConfig: parsed as Record<string, unknown>,
+        },
       });
 
-      // SDK response is now directly the DTO: { theme: { id } }
-      const themeId = (themeResponse as unknown as { theme?: { id?: string } })?.theme?.id;
-      if (themeId) {
-        onImported?.(themeId);
+      const themeData = response?.data?.data as { id?: string } | undefined;
+      if (themeData?.id) {
+        onImported?.(themeData.id);
       }
       onClose();
       setJson('');
@@ -91,30 +95,38 @@ export function JsonImportModal({ isOpen, onClose, onImported }: Props) {
               <FileJson className="h-5 w-5 text-zinc-300" strokeWidth={1.5} />
             </div>
             <div>
-              <h2 className="text-base font-semibold text-white">Import Theme</h2>
-              <p className="text-xs text-zinc-400">Create a theme from JSON configuration</p>
+              <h2 className="text-base font-semibold text-white">
+                {t('resume.theme.jsonImport.title')}
+              </h2>
+              <p className="text-xs text-zinc-400">{t('resume.theme.jsonImport.description')}</p>
             </div>
           </div>
-          <button
+          <Button
             type="button"
-            onClick={onClose}
-            className="rounded-lg p-2 text-zinc-400 transition-colors hover:bg-white/10 hover:text-white"
+            variant="ghost"
+            tone="neutral"
+            size="sm"
+            iconOnly
+            aria-label="Close"
+            onPress={onClose}
           >
             <X className="h-5 w-5" strokeWidth={1.5} />
-          </button>
+          </Button>
         </div>
 
         {/* Content */}
         <div className="flex-1 space-y-5 overflow-auto p-6">
           {/* Theme Name */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-zinc-300">Theme Name</label>
+            <label className="text-sm font-medium text-zinc-300">
+              {t('resume.theme.jsonImport.themeName')}
+            </label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white transition-colors placeholder:text-zinc-500 focus:border-white/20 focus:outline-none"
-              placeholder="My Custom Theme"
+              placeholder={t('resume.theme.jsonImport.namePlaceholder')}
             />
           </div>
 
@@ -122,14 +134,16 @@ export function JsonImportModal({ isOpen, onClose, onImported }: Props) {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <label className="text-sm font-medium text-zinc-300">JSON Configuration</label>
-              <button
+              <Button
                 type="button"
-                onClick={() => void handlePaste()}
-                className="flex items-center gap-1.5 text-xs font-medium text-zinc-400 transition-colors hover:text-white"
+                variant="link"
+                tone="neutral"
+                size="xs"
+                leftIcon={<Clipboard className="h-3.5 w-3.5" strokeWidth={1.5} />}
+                onPress={() => void handlePaste()}
               >
-                <Clipboard className="h-3.5 w-3.5" strokeWidth={1.5} />
-                Paste from clipboard
-              </button>
+                {t('resume.theme.jsonImport.pasteClipboard')}
+              </Button>
             </div>
             <div className="relative">
               <textarea
@@ -201,22 +215,21 @@ export function JsonImportModal({ isOpen, onClose, onImported }: Props) {
 
         {/* Footer */}
         <div className="flex items-center justify-end gap-3 border-t border-white/10 px-6 py-4">
-          <button
+          <Button type="button" variant="outline" tone="neutral" size="sm" onPress={onClose}>
+            {t('action.cancel')}
+          </Button>
+          <Button
             type="button"
-            onClick={onClose}
-            className="rounded-lg border border-white/10 bg-transparent px-4 py-2 text-sm font-medium text-zinc-300 transition-colors hover:bg-white/5"
+            variant="solid"
+            tone="neutral"
+            size="sm"
+            loading={createMutation.isPending}
+            disabled={!isValid || !name.trim()}
+            leftIcon={<Upload className="h-4 w-4" strokeWidth={1.5} />}
+            onPress={() => void handleImport()}
           >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={() => void handleImport()}
-            disabled={!isValid || !name.trim() || createTheme.isPending}
-            className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <Upload className="h-4 w-4" strokeWidth={1.5} />
-            {createTheme.isPending ? 'Creating...' : 'Create Theme'}
-          </button>
+            {t('resume.theme.myThemes.createTheme')}
+          </Button>
         </div>
       </div>
     </div>

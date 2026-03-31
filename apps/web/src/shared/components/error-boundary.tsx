@@ -5,7 +5,31 @@
  * Catches JavaScript errors in child components
  */
 
+import { Button } from '@octopus-synapse/profile-ui';
+import { useI18n } from '@profile/i18n';
 import { Component, type ReactNode, Suspense } from 'react';
+
+/**
+ * Default fallback UI component (uses i18n)
+ */
+function DefaultErrorFallback({ error, onRetry }: { error: Error | null; onRetry: () => void }) {
+  const { t } = useI18n();
+
+  return (
+    <div className="border border-white/10 bg-[#0A0A0A]/80 flex min-h-[200px] flex-col items-center justify-center rounded-lg p-6">
+      <h3 className="text-white mb-2 text-lg font-semibold">{t('error.boundary.title')}</h3>
+      <p className="text-zinc-400 mb-4 text-sm">{t('error.boundary.description')}</p>
+      <Button type="button" variant="solid" tone="neutral" size="sm" onPress={onRetry}>
+        {t('error.boundary.retry')}
+      </Button>
+      {process.env.NODE_ENV === 'development' && error && (
+        <pre className="bg-black/50 mt-4 max-w-full overflow-auto rounded p-2 text-xs text-red-400">
+          {error.message}
+        </pre>
+      )}
+    </div>
+  );
+}
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -33,32 +57,17 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     this.props.onError?.(error, errorInfo);
   }
 
+  handleRetry = () => {
+    this.setState({ hasError: false, error: null });
+  };
+
   render() {
     if (this.state.hasError) {
       if (this.props.fallback) {
         return this.props.fallback;
       }
 
-      return (
-        <div className="border border-white/10 bg-[#0A0A0A]/80 flex min-h-[200px] flex-col items-center justify-center rounded-lg p-6">
-          <h3 className="text-white mb-2 text-lg font-semibold">Something went wrong</h3>
-          <p className="text-zinc-400 mb-4 text-sm">
-            An error occurred while rendering this component.
-          </p>
-          <button
-            type="button"
-            onClick={() => this.setState({ hasError: false, error: null })}
-            className="bg-white text-black rounded-md px-4 py-2 text-sm font-medium transition-opacity hover:opacity-80"
-          >
-            Try again
-          </button>
-          {process.env.NODE_ENV === 'development' && this.state.error && (
-            <pre className="bg-black/50 mt-4 max-w-full overflow-auto rounded p-2 text-xs text-red-400">
-              {this.state.error.message}
-            </pre>
-          )}
-        </div>
-      );
+      return <DefaultErrorFallback error={this.state.error} onRetry={this.handleRetry} />;
     }
 
     return this.props.children;

@@ -7,11 +7,12 @@
 
 'use client';
 
-import { useAuthSession } from '@profile/api-client';
+import { Button, LoadingState } from '@octopus-synapse/profile-ui';
+import { selectEnvelopeData, useAuthSession } from '@profile/api-client';
+import { useI18n } from '@profile/i18n';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { ROUTES } from '@/config/routes';
-import { LoadingState } from '@/shared/components/ui';
 import { isSectionStep, type SectionStep, useOnboarding } from './hooks';
 import { OnboardingShell } from './onboarding-shell';
 import { shouldRedirectCompletedOnboarding } from './onboarding-wizard.utils';
@@ -27,10 +28,13 @@ import {
 } from './steps';
 
 export function OnboardingWizard() {
+  const { t } = useI18n();
   const router = useRouter();
-  const { data: authSession, isLoading: isAuthLoading } = useAuthSession();
+  const { data: authSession, isLoading: isAuthLoading } = useAuthSession({
+    query: { select: selectEnvelopeData },
+  });
   const { currentStep, isLoading, isError } = useOnboarding();
-  const user = authSession?.data?.user;
+  const user = authSession?.user;
   const mustRedirectCompletedUser = shouldRedirectCompletedOnboarding({
     hasCompletedOnboarding: user?.hasCompletedOnboarding,
     currentStep,
@@ -84,6 +88,30 @@ export function OnboardingWizard() {
     return (
       <OnboardingShell>
         <LoadingState message="Loading your progress..." minHeight="400px" />
+      </OnboardingShell>
+    );
+  }
+
+  if (isError) {
+    return (
+      <OnboardingShell>
+        <div className="flex flex-col items-center justify-center gap-4 py-16 text-center">
+          <p className="text-lg font-medium">
+            {t('onboarding.wizard.error' as Parameters<typeof t>[0])}
+          </p>
+          <p className="text-muted-foreground text-sm">
+            We couldn&apos;t load your onboarding session. Please try again.
+          </p>
+          <Button
+            type="button"
+            variant="solid"
+            tone="primary"
+            size="sm"
+            onPress={() => window.location.reload()}
+          >
+            {t('onboarding.wizard.retry' as Parameters<typeof t>[0])}
+          </Button>
+        </div>
       </OnboardingShell>
     );
   }

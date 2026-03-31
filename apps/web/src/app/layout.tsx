@@ -1,8 +1,8 @@
+import { i18nConfig, type Locale } from '@profile/i18n/server';
 import type { Metadata, Viewport } from 'next';
-import { Inter, JetBrains_Mono } from 'next/font/google';
+import { Inter, JetBrains_Mono, Syne } from 'next/font/google';
 import { headers } from 'next/headers';
 import Script from 'next/script';
-import { i18nConfig, type Locale } from '@/config/i18n.config';
 import { RootProvider } from '@/shared/providers';
 import { themeScript } from '@/shared/providers/theme-provider';
 import './globals.css';
@@ -17,6 +17,12 @@ const jetbrains = JetBrains_Mono({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-mono',
+});
+
+const syne = Syne({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-syne',
 });
 
 export const metadata: Metadata = {
@@ -69,7 +75,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} ${jetbrains.variable} min-h-screen bg-[#030303] font-sans text-white antialiased`}
+        className={`${inter.variable} ${jetbrains.variable} ${syne.variable} min-h-screen bg-[#030303] font-sans text-white antialiased`}
       >
         <RootProvider>{children}</RootProvider>
       </body>

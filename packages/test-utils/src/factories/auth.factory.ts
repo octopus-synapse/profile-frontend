@@ -8,20 +8,38 @@ export interface SessionFactoryOptions {
     id?: string;
     email?: string;
     name?: string;
+    username?: string;
     role?: 'USER' | 'ADMIN';
+    roles?: string[];
+    isAdmin?: boolean;
+    isApprover?: boolean;
+    hasCompletedOnboarding?: boolean;
+    emailVerified?: boolean;
+    needsOnboarding?: boolean;
+    needsEmailVerification?: boolean;
   };
   accessToken?: string;
   refreshToken?: string;
   expiresAt?: Date;
 }
 
+export interface MockSessionUser {
+  id: string;
+  email: string;
+  name: string | null;
+  username: string | null;
+  role: 'USER' | 'ADMIN';
+  roles: string[];
+  isAdmin: boolean;
+  isApprover: boolean;
+  hasCompletedOnboarding: boolean;
+  emailVerified: boolean;
+  needsOnboarding: boolean;
+  needsEmailVerification: boolean;
+}
+
 export interface MockSession {
-  user: {
-    id: string;
-    email: string;
-    name: string | null;
-    role: 'USER' | 'ADMIN';
-  };
+  user: MockSessionUser;
   accessToken: string;
   refreshToken: string;
   expiresAt: Date;
@@ -59,12 +77,26 @@ export function createSession(options: SessionFactoryOptions = {}): MockSession 
   const now = new Date();
   const expiresAt = options.expiresAt ?? new Date(now.getTime() + 24 * 60 * 60 * 1000);
 
+  const role = options.user?.role ?? 'USER';
+  const isAdmin = options.user?.isAdmin ?? role === 'ADMIN';
+  const roles = options.user?.roles ?? (isAdmin ? ['role_admin'] : ['role_user']);
+  const hasCompletedOnboarding = options.user?.hasCompletedOnboarding ?? true;
+  const emailVerified = options.user?.emailVerified ?? true;
+
   return {
     user: {
       id: options.user?.id ?? 'user-1',
       email: options.user?.email ?? 'user@example.com',
       name: options.user?.name ?? null,
-      role: options.user?.role ?? 'USER',
+      username: options.user?.username ?? null,
+      role,
+      roles,
+      isAdmin,
+      isApprover: options.user?.isApprover ?? false,
+      hasCompletedOnboarding,
+      emailVerified,
+      needsOnboarding: options.user?.needsOnboarding ?? !hasCompletedOnboarding,
+      needsEmailVerification: options.user?.needsEmailVerification ?? !emailVerified,
     },
     accessToken: options.accessToken ?? generateMockToken(),
     refreshToken: options.refreshToken ?? generateMockToken(),
@@ -77,12 +109,17 @@ export function createSession(options: SessionFactoryOptions = {}): MockSession 
  */
 export function createAdminSession(
   options: Omit<SessionFactoryOptions, 'user'> & {
-    user?: Omit<SessionFactoryOptions['user'], 'role'>;
+    user?: Omit<SessionFactoryOptions['user'], 'role' | 'isAdmin' | 'roles'>;
   } = {},
 ): MockSession {
   return createSession({
     ...options,
-    user: { ...options.user, role: 'ADMIN' },
+    user: {
+      ...options.user,
+      role: 'ADMIN',
+      isAdmin: true,
+      roles: ['role_admin'],
+    },
   });
 }
 

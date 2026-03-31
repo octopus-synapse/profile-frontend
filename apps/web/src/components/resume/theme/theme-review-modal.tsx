@@ -5,10 +5,11 @@
 
 'use client';
 
+import { Button } from '@octopus-synapse/profile-ui';
+import { useThemesReview } from '@profile/api-client';
+import { useI18n } from '@profile/i18n';
 import { useState } from 'react';
-import { useApproveTheme, useRejectTheme } from '../hooks';
-import type { Theme } from '../services/theme.types';
-import type { ResumeStyleConfig } from '../types/config';
+import type { ResumeStyleConfig, Theme } from '../types/config';
 import { ThemePreview } from './theme-preview';
 
 interface Props {
@@ -18,28 +19,32 @@ interface Props {
 }
 
 export function ThemeReviewModal({ theme, isOpen, onClose }: Props) {
+  const { t } = useI18n();
   const [rejectionReason, setRejectionReason] = useState('');
   const [showRejectForm, setShowRejectForm] = useState(false);
 
-  const approveTheme = useApproveTheme();
-  const rejectTheme = useRejectTheme();
+  const reviewMutation = useThemesReview();
 
   if (!isOpen) return null;
 
   const handleApprove = async () => {
-    await approveTheme.mutateAsync(theme.id);
+    await reviewMutation.mutateAsync({
+      data: { themeId: theme.id, approved: true },
+    });
     onClose();
   };
 
   const handleReject = async () => {
     if (!rejectionReason.trim()) return;
-    await rejectTheme.mutateAsync({ themeId: theme.id, reason: rejectionReason });
+    await reviewMutation.mutateAsync({
+      data: { themeId: theme.id, approved: false, rejectionReason },
+    });
     onClose();
     setRejectionReason('');
     setShowRejectForm(false);
   };
 
-  const isPending = approveTheme.isPending || rejectTheme.isPending;
+  const isPending = reviewMutation.isPending;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -47,13 +52,17 @@ export function ThemeReviewModal({ theme, isOpen, onClose }: Props) {
         {/* Header */}
         <div className="flex items-center justify-between border-b p-4">
           <h2 className="text-lg font-semibold">Review Theme: {theme.name}</h2>
-          <button
+          <Button
             type="button"
-            onClick={onClose}
-            className="text-muted-foreground hover:text-foreground"
+            variant="ghost"
+            tone="neutral"
+            size="xs"
+            iconOnly
+            aria-label="Close"
+            onPress={onClose}
           >
             ✕
-          </button>
+          </Button>
         </div>
 
         {/* Content */}
@@ -74,7 +83,7 @@ export function ThemeReviewModal({ theme, isOpen, onClose }: Props) {
               </p>
               <p>
                 <span className="text-muted-foreground">Created:</span>{' '}
-                {new Date(theme.createdAt).toLocaleDateString()}
+                {theme.createdAt ? new Date(theme.createdAt).toLocaleDateString() : 'Unknown'}
               </p>
             </div>
           </div>
@@ -82,7 +91,7 @@ export function ThemeReviewModal({ theme, isOpen, onClose }: Props) {
           {/* Details */}
           <div className="flex-1 space-y-4">
             <div>
-              <h3 className="font-medium">Description</h3>
+              <h3 className="font-medium">{t('resume.theme.review.description')}</h3>
               <p className="text-muted-foreground text-sm">
                 {theme.description || 'No description provided'}
               </p>
@@ -91,20 +100,22 @@ export function ThemeReviewModal({ theme, isOpen, onClose }: Props) {
             <div>
               <h3 className="font-medium">Tags</h3>
               <div className="mt-1 flex flex-wrap gap-1">
-                {theme.tags.length > 0 ? (
+                {theme.tags && theme.tags.length > 0 ? (
                   theme.tags.map((tag) => (
                     <span key={tag} className="bg-muted rounded px-2 py-0.5 text-xs">
                       {tag}
                     </span>
                   ))
                 ) : (
-                  <span className="text-muted-foreground text-sm">No tags</span>
+                  <span className="text-muted-foreground text-sm">
+                    {t('resume.theme.review.noTags')}
+                  </span>
                 )}
               </div>
             </div>
 
             <div>
-              <h3 className="font-medium">Style Configuration</h3>
+              <h3 className="font-medium">{t('resume.theme.review.styleConfig')}</h3>
               <pre className="bg-muted mt-1 max-h-48 overflow-auto rounded p-3 text-xs">
                 {JSON.stringify(theme.styleConfig, null, 2)}
               </pre>
@@ -114,14 +125,14 @@ export function ThemeReviewModal({ theme, isOpen, onClose }: Props) {
             {showRejectForm && (
               <div className="border-pf-danger-muted bg-pf-danger-subtle rounded border p-4">
                 <label className="text-pf-danger-emphasis mb-2 block text-sm font-medium">
-                  Rejection Reason
+                  {t('resume.theme.review.rejectionReason')}
                 </label>
                 <textarea
                   value={rejectionReason}
                   onChange={(e) => setRejectionReason(e.target.value)}
                   className="border-pf-border-default bg-pf-canvas-default w-full rounded border p-2 text-sm"
                   rows={3}
-                  placeholder="Explain why this theme is being rejected..."
+                  placeholder={t('resume.theme.review.rejectPlaceholder')}
                 />
               </div>
             )}
@@ -130,51 +141,62 @@ export function ThemeReviewModal({ theme, isOpen, onClose }: Props) {
 
         {/* Footer */}
         <div className="flex justify-end gap-2 border-t p-4">
-          <button
+          <Button
             type="button"
-            onClick={onClose}
-            className="hover:bg-muted rounded border px-4 py-2 text-sm"
+            variant="outline"
+            tone="neutral"
+            size="sm"
             disabled={isPending}
+            onPress={onClose}
           >
-            Cancel
-          </button>
+            {t('action.cancel')}
+          </Button>
           {showRejectForm ? (
             <>
-              <button
+              <Button
                 type="button"
-                onClick={() => setShowRejectForm(false)}
-                className="text-muted-foreground px-4 py-2 text-sm hover:underline"
+                variant="link"
+                tone="neutral"
+                size="sm"
                 disabled={isPending}
+                onPress={() => setShowRejectForm(false)}
               >
-                Back
-              </button>
-              <button
+                {t('action.back')}
+              </Button>
+              <Button
                 type="button"
-                onClick={() => void handleReject()}
-                disabled={!rejectionReason.trim() || isPending}
-                className="bg-pf-danger-emphasis text-pf-fg-on-emphasis rounded px-4 py-2 text-sm hover:opacity-90 disabled:opacity-50"
+                variant="solid"
+                tone="danger"
+                size="sm"
+                loading={reviewMutation.isPending}
+                disabled={!rejectionReason.trim()}
+                onPress={() => void handleReject()}
               >
-                {rejectTheme.isPending ? 'Rejecting...' : 'Confirm Rejection'}
-              </button>
+                Confirm Rejection
+              </Button>
             </>
           ) : (
             <>
-              <button
+              <Button
                 type="button"
-                onClick={() => setShowRejectForm(true)}
-                className="border-pf-danger-fg text-pf-danger-fg hover:bg-pf-danger-subtle rounded border px-4 py-2 text-sm"
+                variant="outline"
+                tone="danger"
+                size="sm"
                 disabled={isPending}
+                onPress={() => setShowRejectForm(true)}
               >
-                Reject
-              </button>
-              <button
+                {t('resume.theme.review.reject')}
+              </Button>
+              <Button
                 type="button"
-                onClick={() => void handleApprove()}
-                disabled={isPending}
-                className="bg-pf-success-emphasis text-pf-fg-on-emphasis rounded px-4 py-2 text-sm hover:opacity-90 disabled:opacity-50"
+                variant="solid"
+                tone="success"
+                size="sm"
+                loading={reviewMutation.isPending}
+                onPress={() => void handleApprove()}
               >
-                {approveTheme.isPending ? 'Approving...' : 'Approve & Publish'}
-              </button>
+                Approve & Publish
+              </Button>
             </>
           )}
         </div>

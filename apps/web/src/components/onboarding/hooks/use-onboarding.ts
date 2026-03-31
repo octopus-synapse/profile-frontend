@@ -1,14 +1,14 @@
 /**
- * useOnboarding — Thin SDK wrapper for the session/commands API.
+ * useOnboarding — Orchestrates generated onboarding session/command hooks.
  * Backend owns all navigation, validation, and field definitions.
  * Frontend sends commands, receives full session state.
  */
 'use client';
 
+import { showToast } from '@octopus-synapse/profile-ui';
 import {
   getOnboardingGetSessionQueryKey,
-  type SectionProgressDto,
-  type StepMetaDto,
+  selectEnvelopeData,
   useOnboardingCompleteFromSession,
   useOnboardingGetSession,
   useOnboardingGotoStep,
@@ -17,21 +17,20 @@ import {
   useOnboardingSaveStepData,
 } from '@profile/api-client';
 import { useQueryClient } from '@tanstack/react-query';
-
-type SectionItem = { id?: string; content: Record<string, unknown> };
-type SectionData = Omit<SectionProgressDto, 'items'> & { items: SectionItem[] };
+import type { SectionData, StepMetaDto } from './index';
 
 export function useOnboarding() {
   const qc = useQueryClient();
-  const q = useOnboardingGetSession(undefined, { query: { staleTime: 0, retry: 1 } });
+  const q = useOnboardingGetSession(undefined, {
+    query: { staleTime: 0, retry: 1, select: selectEnvelopeData },
+  });
   const nextMut = useOnboardingNextStep();
   const prevMut = useOnboardingPreviousStep();
   const gotoMut = useOnboardingGotoStep();
   const saveMut = useOnboardingSaveStepData();
   const completeMut = useOnboardingCompleteFromSession();
 
-  // Response structure: { data: OnboardingSessionDto, status: 200 }
-  const d = q.data?.status === 200 ? q.data.data : null;
+  const d = q.data ?? null;
 
   const invalidate = async () => {
     await qc.invalidateQueries({ queryKey: getOnboardingGetSessionQueryKey() });
@@ -42,31 +41,50 @@ export function useOnboarding() {
   // --- Commands ---
 
   const goToNextStep = async (stepData?: Record<string, unknown>) => {
-    // Send stepData directly in body (SDK wraps it correctly)
-    await nextMut.mutateAsync({ data: stepData ?? {} });
-    await invalidate();
+    try {
+      await nextMut.mutateAsync({ data: stepData ?? {} });
+      await invalidate();
+    } catch {
+      showToast.error('Failed to proceed', 'Please try again.');
+    }
   };
 
   const goToPreviousStep = async () => {
-    await prevMut.mutateAsync({ data: {} });
-    await invalidate();
+    try {
+      await prevMut.mutateAsync({});
+      await invalidate();
+    } catch {
+      showToast.error('Failed to go back', 'Please try again.');
+    }
   };
 
   const goToStep = async (stepId: string) => {
-    await gotoMut.mutateAsync({ data: { stepId } });
-    await invalidate();
+    try {
+      await gotoMut.mutateAsync({ data: { stepId } });
+      await invalidate();
+    } catch {
+      showToast.error('Failed to navigate', 'Please try again.');
+    }
   };
 
   const saveStepData = async (stepData: Record<string, unknown>) => {
-    // Send stepData as stringified JSON per the new API contract
-    await saveMut.mutateAsync({ data: { stepData: JSON.stringify(stepData) } });
-    await invalidate();
+    try {
+      await saveMut.mutateAsync({ data: stepData });
+      await invalidate();
+    } catch {
+      showToast.error('Failed to save', 'Your changes could not be saved. Please try again.');
+    }
   };
 
   const complete = async () => {
-    const r = await completeMut.mutateAsync({ data: {} });
-    await invalidate();
-    return r;
+    try {
+      const r = await completeMut.mutateAsync();
+      await invalidate();
+      return r;
+    } catch {
+      showToast.error('Failed to complete onboarding', 'Please try again.');
+      return null;
+    }
   };
 
   // --- Derived state ---

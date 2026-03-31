@@ -4,7 +4,11 @@
  */
 
 import { mock } from 'bun:test';
-import { createSession, type MockSession } from '../factories/auth.factory';
+import {
+  createSession,
+  type MockSession,
+  type SessionFactoryOptions,
+} from '../factories/auth.factory';
 
 export type AuthStatus = 'authenticated' | 'unauthenticated' | 'loading';
 
@@ -24,7 +28,7 @@ export function createMockUseAuth(options: MockAuthOptions = {}) {
     status,
     isAuthenticated: status === 'authenticated',
     isLoading: status === 'loading',
-    isAdmin: session?.user?.role === 'ADMIN',
+    isAdmin: session?.user?.isAdmin ?? false,
     signIn: mock(() => Promise.resolve(true)),
     signOut: mock(() => Promise.resolve()),
     refresh: mock(() => Promise.resolve()),
@@ -35,8 +39,8 @@ export function createMockUseAuth(options: MockAuthOptions = {}) {
 /**
  * Create authenticated auth mock
  */
-export function createAuthenticatedAuth(session?: Partial<MockSession>) {
-  const fullSession = createSession(session);
+export function createAuthenticatedAuth(sessionOptions?: SessionFactoryOptions) {
+  const fullSession = createSession(sessionOptions);
   return createMockUseAuth({
     status: 'authenticated',
     session: fullSession,
@@ -85,14 +89,15 @@ export const createLoadingSession = createLoadingAuth;
 
 /**
  * Create mock session provider context value
+ * @deprecated - use createMockUseAuth instead
  */
-export function createMockSessionContext(options: MockSessionOptions = {}) {
-  const sessionData = createMockUseSession(options);
+export function createMockSessionContext(options: MockAuthOptions = {}) {
+  const sessionData = createMockUseAuth(options);
 
   return {
-    session: sessionData.data,
+    session: sessionData.user,
     status: sessionData.status,
-    update: sessionData.update,
+    update: mock(() => Promise.resolve()),
   };
 }
 

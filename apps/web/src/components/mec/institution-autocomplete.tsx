@@ -3,27 +3,26 @@
 /**
  * Institution Autocomplete Component
  * Search and select Brazilian educational institutions from MEC data
+ * Uses SDK hooks and types directly.
  */
 
+import { Autocomplete, type AutocompleteOption } from '@octopus-synapse/profile-ui';
+import {
+  type MecInstitutionListDataDtoInstitutionsItem,
+  useMecInstitutionsSearchInstitutionsByName,
+} from '@profile/api-client';
 import * as React from 'react';
-import { Autocomplete, type AutocompleteOption } from '@/shared/components/ui/autocomplete';
-import { useSearchInstitutions } from './hooks';
-import type { MecInstitution } from './types';
 
 export interface InstitutionAutocompleteProps {
-  /** Selected institution code */
   value?: number | null;
-  /** Display name for the institution (when value is set externally) */
   displayValue?: string;
-  /** Called when selection changes */
-  onValueChange?: (codigoIes: number | null, institution?: MecInstitution) => void;
-  /** Placeholder text */
+  onValueChange?: (
+    codigoIes: number | null,
+    institution?: MecInstitutionListDataDtoInstitutionsItem,
+  ) => void;
   placeholder?: string;
-  /** Disabled state */
   disabled?: boolean;
-  /** Error state */
   error?: boolean;
-  /** Additional class names */
   className?: string;
 }
 
@@ -38,12 +37,17 @@ export function InstitutionAutocomplete({
 }: InstitutionAutocompleteProps) {
   const [search, setSearch] = React.useState('');
 
-  const { data, isLoading } = useSearchInstitutions(search);
+  const { data: response, isLoading } = useMecInstitutionsSearchInstitutionsByName(
+    { q: search },
+    { query: { enabled: search.length >= 2 } },
+  );
 
-  // Memoize institutions to avoid re-renders
-  const institutions = React.useMemo(() => data?.data ?? [], [data]);
+  const institutions =
+    response?.status === 200
+      ? ((response.data.data as { institutions?: MecInstitutionListDataDtoInstitutionsItem[] })
+          ?.institutions ?? [])
+      : [];
 
-  // Transform institutions to autocomplete options
   const options: AutocompleteOption[] = React.useMemo(() => {
     return institutions.map((inst) => ({
       value: String(inst.codigoIes),
@@ -61,7 +65,6 @@ export function InstitutionAutocomplete({
       onValueChange?.(null, undefined);
       return;
     }
-
     const codigoIes = Number(val);
     const institution = institutions.find((inst) => inst.codigoIes === codigoIes);
     onValueChange?.(codigoIes, institution);

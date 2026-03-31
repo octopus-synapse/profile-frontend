@@ -9,8 +9,13 @@ export interface UserFactoryOptions {
   username?: string;
   name?: string;
   role?: 'USER' | 'ADMIN';
+  roles?: string[];
+  isAdmin?: boolean;
+  isApprover?: boolean;
   hasCompletedOnboarding?: boolean;
   emailVerified?: boolean;
+  needsOnboarding?: boolean;
+  needsEmailVerification?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -21,8 +26,13 @@ export interface MockUser {
   username: string;
   name: string | null;
   role: 'USER' | 'ADMIN';
+  roles: string[];
+  isAdmin: boolean;
+  isApprover: boolean;
   hasCompletedOnboarding: boolean;
   emailVerified: boolean;
+  needsOnboarding: boolean;
+  needsEmailVerification: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -36,14 +46,25 @@ export function createUser(options: UserFactoryOptions = {}): MockUser {
   const id = options.id ?? `user-${userIdCounter++}`;
   const now = new Date();
 
+  const role = options.role ?? 'USER';
+  const isAdmin = options.isAdmin ?? role === 'ADMIN';
+  const roles = options.roles ?? (isAdmin ? ['role_admin'] : ['role_user']);
+  const hasCompletedOnboarding = options.hasCompletedOnboarding ?? false;
+  const emailVerified = options.emailVerified ?? true;
+
   return {
     id,
     email: options.email ?? `user-${id}@example.com`,
     username: options.username ?? `user_${id.replace('-', '_')}`,
     name: options.name ?? null,
-    role: options.role ?? 'USER',
-    hasCompletedOnboarding: options.hasCompletedOnboarding ?? false,
-    emailVerified: options.emailVerified ?? true,
+    role,
+    roles,
+    isAdmin,
+    isApprover: options.isApprover ?? false,
+    hasCompletedOnboarding,
+    emailVerified,
+    needsOnboarding: options.needsOnboarding ?? !hasCompletedOnboarding,
+    needsEmailVerification: options.needsEmailVerification ?? !emailVerified,
     createdAt: options.createdAt ?? now,
     updatedAt: options.updatedAt ?? now,
   };
@@ -52,17 +73,28 @@ export function createUser(options: UserFactoryOptions = {}): MockUser {
 /**
  * Create an admin user
  */
-export function createAdmin(options: Omit<UserFactoryOptions, 'role'> = {}): MockUser {
-  return createUser({ ...options, role: 'ADMIN' });
+export function createAdmin(
+  options: Omit<UserFactoryOptions, 'role' | 'isAdmin' | 'roles'> = {},
+): MockUser {
+  return createUser({
+    ...options,
+    role: 'ADMIN',
+    isAdmin: true,
+    roles: ['role_admin'],
+  });
 }
 
 /**
  * Create a user who has completed onboarding
  */
 export function createOnboardedUser(
-  options: Omit<UserFactoryOptions, 'hasCompletedOnboarding'> = {},
+  options: Omit<UserFactoryOptions, 'hasCompletedOnboarding' | 'needsOnboarding'> = {},
 ): MockUser {
-  return createUser({ ...options, hasCompletedOnboarding: true });
+  return createUser({
+    ...options,
+    hasCompletedOnboarding: true,
+    needsOnboarding: false,
+  });
 }
 
 /**

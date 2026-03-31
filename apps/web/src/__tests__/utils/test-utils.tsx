@@ -67,9 +67,14 @@ export function createMockUser(overrides = {}) {
   email: "test@example.com",
   name: "Test User",
   role: "USER" as const,
+  roles: ["role_user"],
   username: "testuser",
   hasCompletedOnboarding: false,
   emailVerified: true,
+  isAdmin: false,
+  isApprover: false,
+  needsOnboarding: true,
+  needsEmailVerification: false,
   ...overrides,
  };
 }

@@ -1,19 +1,21 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const baseURL = process.env.BASE_URL || 'http://localhost:3100';
+
 /**
  * Playwright E2E Test Configuration
  * @see https://playwright.dev/docs/test-configuration
  */
 export default defineConfig({
   testDir: './e2e',
-  /* Run tests in files in parallel */
-  fullyParallel: true,
+  /* Keep Next dev-backed UI flows deterministic */
+  fullyParallel: false,
   /* Fail the build on CI if you accidentally left test.only in the source code */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI */
-  workers: process.env.CI ? 1 : undefined,
+  /* Next dev + middleware/session compilation is flaky under parallel workers */
+  workers: 1,
   /* Global timeout per test */
   timeout: 30000,
   /* Expect timeout */
@@ -27,7 +29,7 @@ export default defineConfig({
   /* Shared settings for all the projects below */
   use: {
     /* Base URL to use in actions like `await page.goto('/')` */
-    baseURL: process.env.BASE_URL || 'http://localhost:3000',
+    baseURL,
     /* Collect trace when retrying the failed test */
     trace: 'on-first-retry',
     /* Screenshot on failure */
@@ -44,11 +46,22 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
+    {
+      name: 'performance',
+      testDir: './test/e2e/performance',
+      use: {
+        ...devices['Desktop Chrome'],
+        launchOptions: {
+          args: ['--enable-precise-memory-info'],
+        },
+      },
+      timeout: 60000, // More time for performance metrics
+    },
   ],
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'bun run dev',
-    url: 'http://localhost:3000',
+    command: 'PORT=3100 bun run dev',
+    url: baseURL,
     reuseExistingServer: true,
     timeout: 60000,
     stdout: 'ignore',

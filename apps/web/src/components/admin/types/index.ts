@@ -1,42 +1,56 @@
 /**
- * Admin Types
+ * Admin Dashboard Types.
+ * Types for admin widgets and dashboard data.
  */
 
-export interface AdminStats {
-  totalUsers: number;
-  activeUsers: number;
-  totalResumes: number;
-  publicProfiles: number;
-  newUsersToday: number;
-  newUsersThisWeek: number;
-  newUsersThisMonth: number;
+export type ActivityType = 'USER_REGISTERED' | 'USER_LOGIN' | 'RESUME_CREATED' | 'PROFILE_UPDATED';
+
+export interface RecentActivity {
+  id: string;
+  type: ActivityType;
+  userId: string;
+  userName: string;
+  userEmail: string;
+  timestamp: string;
+  metadata?: Record<string, unknown>;
 }
 
 export interface AdminUser {
   id: string;
   email: string;
-  name: string | null;
-  username: string | null;
-  role: 'USER' | 'ADMIN';
-  createdAt: string;
-  lastLoginAt: string | null;
-  hasCompletedOnboarding: boolean;
-  resumeCount: number;
+  name?: string | null;
+  displayName?: string | null;
   image?: string | null;
+  photoURL?: string | null;
+  role: 'USER' | 'ADMIN';
+  isEmailVerified: boolean;
+  createdAt: string;
+  lastLoginAt?: string | null;
 }
 
-export interface RecentActivity {
-  id: string;
-  type: 'USER_REGISTERED' | 'USER_LOGIN' | 'RESUME_CREATED' | 'PROFILE_UPDATED';
-  userId: string;
-  userName: string;
-  timestamp: string;
-  details?: string;
+export type HealthStatus = 'healthy' | 'degraded' | 'down';
+
+export interface ServiceHealth {
+  name: string;
+  status: HealthStatus;
+  latency?: number;
+  message?: string;
 }
 
 export interface SystemHealth {
-  database: 'healthy' | 'degraded' | 'down';
-  api: 'healthy' | 'degraded' | 'down';
-  storage: 'healthy' | 'degraded' | 'down';
-  lastChecked: string;
+  overall: HealthStatus;
+  services: {
+    database: ServiceHealth;
+    redis: ServiceHealth;
+    storage: ServiceHealth;
+    api: ServiceHealth;
+  };
+  uptime: number;
+  version: string;
+  lastChecked?: string;
+  [key: string]: unknown;
 }
+
+export * from './field-definition';
+export * from './section-types';
+export * from './style-config';

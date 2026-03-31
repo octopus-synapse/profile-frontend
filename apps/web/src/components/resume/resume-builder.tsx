@@ -1,226 +1,225 @@
 /**
  * Resume Builder
  * AST-powered resume editor - backend decides, frontend renders
+ * Uses SDK hooks directly - no custom wrappers.
  */
 
 'use client';
 
-import { Check, Download, FileText, Link2, Loader2, Settings } from 'lucide-react';
-import Link from 'next/link';
-import { useCallback, useState } from 'react';
-import { LoadingState } from '@/shared/components/ui';
-import { ASTRenderer } from './ast-renderer';
-import { BuilderSidebar } from './builder/builder-sidebar';
+import { showToast } from '@octopus-synapse/profile-ui';
 import {
-  useExportResumeDOCX,
-  useExportResumePDF,
-  useResume,
-  useResumeAst,
-  useResumes,
-} from './hooks';
-import { extractResumeListItems } from './resume-builder.utils';
+  useDslRender,
+  useResumeConfigBatchUpdate,
+  useResumeConfigReorderSection,
+  useResumeConfigToggleSection,
+  useResumesGetAllUserResumes,
+  useResumesGetResumeByIdForUser,
+} from '@profile/api-client';
+import { useI18n } from '@profile/i18n';
+import { useCallback } from 'react';
+import { useCopyFeedback } from '@/shared/hooks/use-copy-feedback';
+import { ASTRenderer } from './ast-renderer';
+import { BuilderDialogs } from './builder/builder-dialogs';
+import { BuilderSidebar } from './builder/builder-sidebar';
+import { BuilderEmptyState, BuilderLoadingState } from './builder/builder-states';
+import { BuilderToolbar } from './builder/builder-toolbar';
+import { useBuilderDialogs } from './builder/use-builder-dialogs';
+import type { SectionItem } from './config/section-reorder-panel';
+
+interface RawSection {
+  id?: string;
+  sectionTypeKey?: string;
+  order?: number;
+  visible?: boolean;
+  sectionType?: { key?: string; title?: string };
+}
+
+function deriveSectionItems(resume: Record<string, unknown>): SectionItem[] {
+  const raw = (resume.resumeSections ?? resume.sections ?? []) as RawSection[];
+  return raw.map((s, i) => ({
+    id: s.id ?? s.sectionTypeKey ?? `section-${i}`,
+    label: s.sectionType?.title ?? s.sectionTypeKey ?? `Section ${i + 1}`,
+    visible: s.visible ?? true,
+    order: s.order ?? i,
+  }));
+}
 
 export function ResumeBuilder() {
-  const [copied, setCopied] = useState(false);
+  const { copied, copy } = useCopyFeedback();
+  const { t } = useI18n();
+  const dialogs = useBuilderDialogs();
 
-  // Fetch user's resumes list
-  const { data: resumesResponse, isLoading: resumesListLoading } = useResumes();
-  const resumesList = extractResumeListItems(resumesResponse);
-  const resumeId = resumesList?.[0]?.id;
+  // Get first resume - SDK hook directly
+  const resumesQuery = useResumesGetAllUserResumes({ page: 1, limit: 1 });
+  const resumes = (resumesQuery.data?.data?.data as Record<string, unknown> | undefined)?.data as
+    | Array<{ id: string }>
+    | undefined;
+  const resumeId = resumes?.[0]?.id ?? '';
 
-  // Fetch full resume data
-  const { data: resumeResponse, isLoading: resumeLoading } = useResume(resumeId ?? '');
-  // Extract the actual resume data from response
-  const resume = resumeResponse?.data;
+  // Get resume details - SDK hook directly
+  const resumeQuery = useResumesGetResumeByIdForUser(resumeId, {
+    query: { enabled: !!resumeId },
+  });
+  const resume = (resumeQuery.data?.data?.data ?? null) as Record<string, unknown> | null;
+  const activeThemeId = resume?.activeThemeId as string | undefined;
+  const activeTheme = resume?.activeTheme as { id: string; name: string } | undefined;
+  const activeThemeName = activeTheme?.name;
 
-  // Fetch compiled AST from backend
-  const { data: ast, isLoading: astLoading, refetch: refetchAst } = useResumeAst(resumeId);
+  // Get AST from DSL render endpoint - SDK hook directly
+  const astQuery = useDslRender(resumeId, undefined, {
+    query: { enabled: !!resumeId && !!activeThemeId },
+  });
+  // Extract AST from the response envelope
+  const astResponse = astQuery.data?.data?.data;
+  const ast = astResponse?.ast as {
+    meta?: unknown;
+    page?: unknown;
+    sections?: unknown[];
+    globalStyles?: unknown;
+  } | null;
 
-  // Combined loading state
-  const isLoading = resumesListLoading || resumeLoading || (resumeId && astLoading);
+  // Mutations - SDK hooks directly
+  const toggleMutation = useResumeConfigToggleSection();
+  const reorderMutation = useResumeConfigReorderSection();
+  const batchMutation = useResumeConfigBatchUpdate();
 
-  // Export mutations
-  const exportPDF = useExportResumePDF();
-  const exportDOCX = useExportResumeDOCX();
+  const sectionItems = resume ? deriveSectionItems(resume) : [];
+  const isLoading =
+    resumesQuery.isLoading || resumeQuery.isLoading || (resumeId && astQuery.isLoading);
 
-  const handleThemeApplied = useCallback(() => {
-    void refetchAst();
-  }, [refetchAst]);
+  const handleThemeApplied = useCallback(() => void astQuery.refetch(), [astQuery]);
 
-  const handleExportPDF = async () => {
+  const handleCopyLink = useCallback(async () => {
     if (!resumeId) return;
-    try {
-      const blob = await exportPDF.mutateAsync(resumeId);
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${resume?.fullName ?? 'resume'}.pdf`;
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Failed to export PDF:', error);
-    }
-  };
-
-  const handleExportDOCX = async () => {
-    if (!resumeId) return;
-    try {
-      const blob = await exportDOCX.mutateAsync(resumeId);
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${resume?.fullName ?? 'resume'}.docx`;
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Failed to export DOCX:', error);
-    }
-  };
-
-  const handleCopyLink = async () => {
-    if (!resumeId) return;
-    // Use resumeId as fallback for the link (backend should support both slug and id)
     const url = `${window.location.origin}/r/${resumeId}`;
-    await navigator.clipboard.writeText(url);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+    const success = await copy(url);
+    if (!success) showToast.error(t('resume.builder.failedCopyLink'));
+  }, [resumeId, copy, t]);
 
-  // Loading state
-  if (isLoading) {
-    return (
-      <div className="min-h-[80vh] bg-white/5">
-        <LoadingState message="Loading resume..." minHeight="80vh" />
-      </div>
-    );
-  }
+  const handleOpenSectionEditor = useCallback(
+    (sectionTypeKey: string, title?: string) => {
+      dialogs.openSectionEditor(sectionTypeKey, title);
+    },
+    [dialogs],
+  );
 
-  // No resume found
-  if (!resume) {
-    return (
-      <div className="flex min-h-[80vh] flex-col items-center justify-center bg-white/5 px-4">
-        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/5">
-          <FileText className="h-8 w-8 text-zinc-500" strokeWidth={1.5} />
-        </div>
-        <h2 className="mt-6 text-lg font-semibold text-white">No Resume Yet</h2>
-        <p className="mt-2 max-w-sm text-center text-sm text-zinc-400">
-          Complete the onboarding to create your resume, or add information manually.
-        </p>
-        <div className="mt-8 flex items-center gap-3">
-          <Link
-            href="/protected/onboarding"
-            className="inline-flex h-10 items-center rounded-lg bg-white px-5 text-sm font-medium text-black transition-opacity hover:opacity-90"
-          >
-            Get Started
-          </Link>
-          <Link
-            href="/protected/settings"
-            className="inline-flex h-10 items-center gap-2 rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/5 hover:text-white"
-          >
-            <Settings className="h-4 w-4" strokeWidth={1.5} />
-            Settings
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  if (isLoading) return <BuilderLoadingState />;
+  if (!resume) return <BuilderEmptyState />;
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] bg-white/5">
-      {/* Sidebar */}
+    <div className="flex h-[calc(100vh-4rem)] bg-[#050505]">
       <BuilderSidebar
-        resume={{ id: resumeId ?? '', ...resume }}
-        activeThemeName={undefined}
+        resume={{ id: resumeId, activeThemeId, ...resume }}
+        activeThemeName={activeThemeName}
         onThemeApplied={handleThemeApplied}
-        onRefresh={() => void refetchAst()}
+        onRefresh={() => void astQuery.refetch()}
+        onImportOpen={() => dialogs.open('import')}
+        onHistoryOpen={() => dialogs.open('history')}
+        onShareOpen={() => dialogs.open('share')}
+        onAnalyticsOpen={() => dialogs.open('analytics')}
+        onAtsOpen={() => dialogs.open('ats')}
+        onSectionEdit={handleOpenSectionEditor}
+        onReorderOpen={() => dialogs.open('reorder')}
       />
 
-      {/* Main Content */}
       <main className="flex flex-1 flex-col">
-        {/* Toolbar */}
-        <header className="flex h-14 shrink-0 items-center justify-between border-b border-white/10 bg-[#0A0A0A]/80 px-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5">
-              <FileText className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
-            </div>
-            <div>
-              <h1 className="text-sm font-semibold text-white">
-                {resume.fullName ?? 'Untitled Resume'}
-              </h1>
-              <p className="text-xs text-zinc-500">Preview</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {/* Export PDF */}
-            <button
-              type="button"
-              onClick={() => void handleExportPDF()}
-              disabled={exportPDF.isPending}
-              className="inline-flex h-9 items-center gap-2 rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-3.5 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50"
-            >
-              {exportPDF.isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.5} />
-              ) : (
-                <Download className="h-4 w-4" strokeWidth={1.5} />
-              )}
-              PDF
-            </button>
-
-            {/* Export DOCX */}
-            <button
-              type="button"
-              onClick={() => void handleExportDOCX()}
-              disabled={exportDOCX.isPending}
-              className="inline-flex h-9 items-center gap-2 rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-3.5 text-sm font-medium text-zinc-400 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50"
-            >
-              {exportDOCX.isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.5} />
-              ) : (
-                <FileText className="h-4 w-4" strokeWidth={1.5} />
-              )}
-              DOCX
-            </button>
-
-            {/* Divider */}
-            <div className="mx-1 h-5 w-px bg-white/10" />
-
-            {/* Share */}
-            {resumeId ? (
-              <button
-                type="button"
-                onClick={() => void handleCopyLink()}
-                className="inline-flex h-9 items-center gap-2 rounded-lg bg-white px-4 text-sm font-medium text-black transition-opacity hover:opacity-90"
-              >
-                {copied ? (
-                  <>
-                    <Check className="h-4 w-4" strokeWidth={1.5} />
-                    Copied
-                  </>
-                ) : (
-                  <>
-                    <Link2 className="h-4 w-4" strokeWidth={1.5} />
-                    Share
-                  </>
-                )}
-              </button>
-            ) : null}
-          </div>
-        </header>
-
-        {/* Preview Area */}
-        <div className="flex-1 overflow-auto p-8">
+        <BuilderToolbar
+          resumeName={(resume.fullName as string) ?? ''}
+          copied={copied}
+          hasResumeId={Boolean(resumeId)}
+          onExport={() => dialogs.open('export')}
+          onShare={() => void handleCopyLink()}
+        />
+        <div className="flex-1 overflow-auto bg-[#0a0a0a] p-8">
           <div className="mx-auto max-w-4xl">
-            <div className="overflow-hidden rounded-lg bg-[#0A0A0A]/80 shadow-xl ring-1 ring-white/10">
-              {ast ? (
-                <ASTRenderer ast={ast} />
+            <div className="overflow-hidden rounded-lg bg-white shadow-2xl shadow-black/50 ring-1 ring-white/10">
+              {!activeThemeId ? (
+                <div className="flex min-h-[500px] flex-col items-center justify-center gap-4 p-12 text-zinc-400">
+                  <div className="flex h-20 w-20 items-center justify-center rounded-full bg-blue-50">
+                    <svg
+                      className="h-10 w-10 text-blue-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={1.5}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M9.53 16.122a3 3 0 0 0-5.78 1.128 2.25 2.25 0 0 1-2.4 2.245 4.5 4.5 0 0 0 8.4-2.245c0-.399-.078-.78-.22-1.128Zm0 0a15.998 15.998 0 0 0 3.388-1.62m-5.043-.025a15.994 15.994 0 0 1 1.622-3.395m3.42 3.42a15.995 15.995 0 0 0 4.764-4.648l3.876-5.814a1.151 1.151 0 0 0-1.597-1.597L14.146 6.32a15.996 15.996 0 0 0-4.649 4.763m3.42 3.42a6.776 6.776 0 0 0-3.42-3.42"
+                      />
+                    </svg>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-lg font-medium text-zinc-600">
+                      {t('resume.builder.selectTheme')}
+                    </p>
+                    <p className="mt-1 text-sm text-zinc-400">
+                      {t('resume.builder.selectThemeHint')}
+                    </p>
+                  </div>
+                </div>
+              ) : ast?.page && ast.sections && ast.globalStyles ? (
+                <ASTRenderer ast={ast as unknown as Parameters<typeof ASTRenderer>[0]['ast']} />
               ) : (
-                <div className="p-8 text-center text-gray-400">No AST data</div>
+                <div className="flex min-h-[500px] flex-col items-center justify-center gap-4 p-12 text-zinc-400">
+                  <div className="flex h-20 w-20 items-center justify-center rounded-full bg-zinc-100">
+                    <svg
+                      className="h-10 w-10 text-zinc-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={1.5}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+                      />
+                    </svg>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-lg font-medium text-zinc-600">
+                      {t('resume.builder.noAstData')}
+                    </p>
+                    <p className="mt-1 text-sm text-zinc-400">
+                      {t('resume.builder.noAstDataHint')}
+                    </p>
+                  </div>
+                </div>
               )}
             </div>
           </div>
         </div>
       </main>
+
+      <BuilderDialogs
+        resumeId={resumeId}
+        sections={sectionItems}
+        isOpen={dialogs.isOpen}
+        toggle={dialogs.toggle}
+        sectionEditor={dialogs.sectionEditor}
+        onToggleVisibility={async (sectionId, visible) => {
+          await toggleMutation.mutateAsync({
+            resumeId,
+            sectionId,
+            data: { visible },
+          });
+        }}
+        onReorder={async (sectionId, order) => {
+          await reorderMutation.mutateAsync({
+            resumeId,
+            sectionId,
+            data: { order },
+          });
+        }}
+        onBatchUpdate={async (sections) => {
+          await batchMutation.mutateAsync({
+            resumeId,
+            data: { sections },
+          });
+        }}
+      />
     </div>
   );
 }

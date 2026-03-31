@@ -1,11 +1,11 @@
 /**
  * i18n Configuration
  * Centralized configuration for internationalization
- * Supported locales: English (en) and Portuguese Brazil (pt-BR)
+ * Supported locales: English (en), Portuguese Brazil (pt-BR), Spanish (es)
  */
 
 // Define locales first to avoid circular reference
-const locales = ['en', 'pt-BR'] as const;
+const locales = ['en', 'pt-BR', 'es'] as const;
 
 export type Locale = (typeof locales)[number];
 
@@ -15,6 +15,7 @@ export const i18nConfig = {
   localeNames: {
     en: 'English',
     'pt-BR': 'Português',
+    es: 'Español',
   } as const satisfies Record<Locale, string>,
   // Mapping of country codes to locales (for geo-detection)
   countryLocaleMap: {
@@ -22,6 +23,13 @@ export const i18nConfig = {
     PT: 'pt-BR',
     AO: 'pt-BR', // Angola
     MZ: 'pt-BR', // Mozambique
+    ES: 'es', // Spain
+    MX: 'es', // Mexico
+    AR: 'es', // Argentina
+    CO: 'es', // Colombia
+    CL: 'es', // Chile
+    PE: 'es', // Peru
+    VE: 'es', // Venezuela
     // All other countries default to English
   } as Record<string, Locale>,
 } as const;
@@ -53,8 +61,8 @@ export function getLocaleFromHeaders(acceptLanguage: string | null): Locale {
     if (code === 'pt') return 'pt-BR';
     // en-US, en-GB -> en
     if (code.startsWith('en')) return 'en';
-    // es speakers fallback to English
-    if (code.startsWith('es')) return 'en';
+    // es -> es
+    if (code.startsWith('es')) return 'es';
   }
 
   return i18nConfig.defaultLocale;

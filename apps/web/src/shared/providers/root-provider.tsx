@@ -8,12 +8,12 @@
  * No AuthProvider needed - QueryClient handles session caching
  */
 
+import { Toaster, TooltipProvider } from '@octopus-synapse/profile-ui';
 import { setApiLocale } from '@profile/api-client';
 import { I18nProvider } from '@profile/i18n';
 import type { ReactNode } from 'react';
-import { Toaster } from '@/shared/components/ui/toast';
-import { TooltipProvider } from '@/shared/components/ui/tooltip';
 import { QueryProvider } from './query-provider';
+import { SocketProvider } from './socket-provider';
 import { ThemeProvider } from './theme-provider';
 
 interface RootProviderProps {
@@ -25,10 +25,12 @@ export function RootProvider({ children }: RootProviderProps) {
     <ThemeProvider defaultTheme="system">
       <QueryProvider>
         <I18nProvider onLocaleChange={setApiLocale}>
-          <TooltipProvider>
-            {children}
-            <Toaster position="bottom-right" />
-          </TooltipProvider>
+          <SocketProvider>
+            <TooltipProvider>
+              {children}
+              <Toaster position="bottom-right" />
+            </TooltipProvider>
+          </SocketProvider>
         </I18nProvider>
       </QueryProvider>
     </ThemeProvider>

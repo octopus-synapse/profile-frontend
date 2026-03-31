@@ -7,7 +7,8 @@
  * TDD: These tests catch data persistence issues and step validation.
  */
 
-import { expect, type APIRequestContext, test } from '@playwright/test';
+import { expect, type APIRequestContext, type Page, test } from '@playwright/test';
+import { loginWithSessionCookie, registerUniqueUser } from './helpers/playwright-helpers';
 
 const API_URL = 'http://localhost:3001';
 
@@ -23,6 +24,17 @@ async function loginUser(request: APIRequestContext, email: string, password: st
     data: { email, password },
   });
   return response.ok();
+}
+
+async function getCurrentOnboardingStep(page: Page): Promise<string | null> {
+  const response = await page.request.get(`${API_URL}/api/v1/onboarding/session`);
+
+  if (!response.ok()) {
+    return null;
+  }
+
+  const data = await response.json();
+  return data.data?.currentStep ?? null;
 }
 
 // ============================================================================
@@ -91,7 +103,7 @@ test.describe('Onboarding API - Data Persistence', () => {
     }
 
     const nextResponse = await request.post(`${API_URL}/api/v1/onboarding/session/next`, {
-      data: { stepData },
+      data: stepData,
     });
     expect(nextResponse.ok()).toBeTruthy();
 
@@ -163,7 +175,7 @@ test.describe('Onboarding API - Data Persistence', () => {
     // If at welcome, advance to personal-info
     if (sessionData.data.currentStep === 'welcome') {
       await request.post(`${API_URL}/api/v1/onboarding/session/next`, {
-        data: { stepData: {} },
+        data: {},
       });
     } else if (sessionData.data.currentStep !== 'personal-info') {
       // Try to goto personal-info if completed
@@ -183,7 +195,7 @@ test.describe('Onboarding API - Data Persistence', () => {
     };
 
     const saveResponse = await request.post(`${API_URL}/api/v1/onboarding/session/save`, {
-      data: { stepData: { personalInfo: testData } },
+      data: { personalInfo: testData },
     });
 
     if (!saveResponse.ok()) {
@@ -221,44 +233,92 @@ test.describe('Onboarding API - Data Persistence', () => {
 // UI-Level Tests (Browser-based testing)
 // ============================================================================
 
+test.describe('Onboarding Welcome CTA', () => {
+  test('should advance from welcome when clicking start setup', async ({ page, request }) => {
+    const user = await registerUniqueUser(request);
+    const loggedIn = await loginWithSessionCookie(page, request, user);
+
+    expect(loggedIn).toBe(true);
+
+    await page.goto('/en/protected/onboarding', { waitUntil: 'domcontentloaded', timeout: 30000 });
+
+    await expect(page.getByRole('button', { name: /start setup/i })).toBeVisible();
+    await expect.poll(async () => getCurrentOnboardingStep(page)).toBe('welcome');
+
+    await Promise.all([
+      page.waitForResponse(
+        response =>
+          response.url().includes('/api/v1/onboarding/session/next') &&
+          response.request().method() === 'POST',
+      ),
+      page.getByRole('button', { name: /start setup/i }).click(),
+    ]);
+
+    await expect.poll(async () => getCurrentOnboardingStep(page)).toBe('personal-info');
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await expect(page.getByText('Full name')).toBeVisible();
+  });
+
+  test('should advance from boas-vindas when clicking iniciar configuração', async ({
+    page,
+    request,
+  }) => {
+    const user = await registerUniqueUser(request);
+    const loggedIn = await loginWithSessionCookie(page, request, user);
+
+    expect(loggedIn).toBe(true);
+
+    await page.goto('/pt-BR/protected/onboarding', {
+      waitUntil: 'domcontentloaded',
+      timeout: 30000,
+    });
+
+    await expect(page.getByRole('button', { name: /iniciar configuração/i })).toBeVisible();
+    await expect.poll(async () => getCurrentOnboardingStep(page)).toBe('welcome');
+
+    await Promise.all([
+      page.waitForResponse(
+        response =>
+          response.url().includes('/api/v1/onboarding/session/next') &&
+          response.request().method() === 'POST',
+      ),
+      page.getByRole('button', { name: /iniciar configuração/i }).click(),
+    ]);
+
+    await expect.poll(async () => getCurrentOnboardingStep(page)).toBe('personal-info');
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await expect(page.getByText('Nome completo')).toBeVisible();
+  });
+});
+
 test.describe('Onboarding UI Flow', () => {
-  test.beforeEach(async ({ page }) => {
-    // Login via UI
-    await page.goto('/en/auth/sign-in');
-    await page.waitForSelector('#email', { timeout: 10000 });
-    await page.locator('#email').fill(TEST_USER.email);
-    await page.locator('#password').fill(TEST_USER.password);
-    await page.getByRole('button', { name: /sign in/i }).click();
-    
-    // Wait for redirect with longer timeout
-    try {
-      await page.waitForURL(/protected|dashboard/, { timeout: 20000 });
-    } catch {
-      // If redirect fails, check if we're still on sign-in (auth might have failed)
-      const currentUrl = page.url();
-      if (currentUrl.includes('sign-in')) {
-        console.log('Login failed, skipping UI test');
-        test.skip();
-      }
+  test.beforeEach(async ({ page, request }) => {
+    const user = await registerUniqueUser(request);
+    const loggedIn = await loginWithSessionCookie(page, request, user);
+
+    if (!loggedIn) {
+      console.log('Login failed, skipping UI test');
+      test.skip();
     }
   });
 
   test('should display current onboarding step with navigation', async ({ page }) => {
-    await page.goto('/en/protected/onboarding');
+    await page.goto('/en/protected/onboarding', { waitUntil: 'domcontentloaded', timeout: 30000 });
     await page.waitForLoadState('networkidle');
 
-    // Should have step navigation in sidebar
-    const stepNav = page.locator('nav.space-y-1');
-    await expect(stepNav).toBeVisible({ timeout: 10000 });
+    const progressHeading = page.getByRole('heading', {
+      name: /setup progress|progresso da configuração/i,
+    });
+    await expect(progressHeading).toBeVisible({ timeout: 10000 });
 
-    // Should have a heading showing current step
-    const heading = page.locator('h1, h2').first();
-    await expect(heading).toBeVisible();
-    console.log('Current step UI:', await heading.textContent());
+    const stepNav = page.locator('aside nav');
+    await expect(stepNav).toHaveCount(1);
+
+    console.log('Onboarding shell heading:', await progressHeading.textContent());
   });
 
   test('should show step progress indicator', async ({ page }) => {
-    await page.goto('/en/protected/onboarding');
+    await page.goto('/en/protected/onboarding', { waitUntil: 'domcontentloaded', timeout: 30000 });
     await page.waitForLoadState('networkidle');
 
     // Look for progress indicators (completed checkmarks, current step highlight)
@@ -268,7 +328,7 @@ test.describe('Onboarding UI Flow', () => {
   });
 
   test('should allow clicking back button to return to previous step', async ({ page }) => {
-    await page.goto('/en/protected/onboarding');
+    await page.goto('/en/protected/onboarding', { waitUntil: 'domcontentloaded', timeout: 30000 });
     await page.waitForLoadState('networkidle');
 
     const heading = page.locator('h1, h2').first();
@@ -288,7 +348,7 @@ test.describe('Onboarding UI Flow', () => {
   });
 
   test('should show form fields based on current step', async ({ page }) => {
-    await page.goto('/en/protected/onboarding');
+    await page.goto('/en/protected/onboarding', { waitUntil: 'domcontentloaded', timeout: 30000 });
     await page.waitForLoadState('networkidle');
 
     // Get current step from API
@@ -321,7 +381,7 @@ test.describe('Onboarding UI Flow', () => {
 
   test('should display validation errors for invalid input', async ({ page }) => {
     // Navigate to personal-info step
-    await page.goto('/en/protected/onboarding');
+    await page.goto('/en/protected/onboarding', { waitUntil: 'domcontentloaded', timeout: 30000 });
     
     // Use API to go to personal-info (may fail if not accessible)
     const gotoResponse = await page.request.post(`${API_URL}/api/v1/onboarding/session/goto`, {
@@ -353,7 +413,7 @@ test.describe('Onboarding UI Flow', () => {
   });
 
   test('should navigate to next step when form is valid', async ({ page }) => {
-    await page.goto('/en/protected/onboarding');
+    await page.goto('/en/protected/onboarding', { waitUntil: 'domcontentloaded', timeout: 30000 });
     await page.waitForLoadState('networkidle');
 
     const heading = page.locator('h1, h2').first();
@@ -413,7 +473,7 @@ test.describe('Onboarding Step-Specific Tests', () => {
 
     // Advance with noData flag
     const nextResponse = await request.post(`${API_URL}/api/v1/onboarding/session/next`, {
-      data: { stepData: { noData: true } },
+      data: { noData: true },
     });
     expect(nextResponse.ok()).toBeTruthy();
 
@@ -437,7 +497,7 @@ test.describe('Onboarding Step-Specific Tests', () => {
 
     // Save template selection using SDK format
     const nextResponse = await request.post(`${API_URL}/api/v1/onboarding/session/next`, {
-      data: { stepData: { templateSelection: { templateId: 'professional', colorScheme: 'lavender' } } },
+      data: { templateSelection: { templateId: 'professional', colorScheme: 'lavender' } },
     });
     
     if (!nextResponse.ok()) {

@@ -5,6 +5,7 @@
  * Ultra Premium dark theme - matching sign-in
  */
 
+import { Button } from '@octopus-synapse/profile-ui';
 import { useI18n } from '@profile/i18n';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Check, Github, Terminal, Zap } from 'lucide-react';
@@ -159,13 +160,18 @@ export default function SignUpPage() {
 
               <div className="relative rounded-xl border border-white/10 bg-[#0A0A0A]/80 p-8 shadow-2xl backdrop-blur-2xl">
                 {/* GitHub OAuth */}
-                <button
-                  type="button"
-                  className="mb-6 flex w-full items-center justify-center gap-3 rounded-lg border border-white/10 bg-white/5 py-3 font-mono text-sm font-medium text-white transition-all hover:border-white/20 hover:bg-white/10 active:scale-[0.98]"
-                >
-                  <Github className="h-4 w-4" strokeWidth={1.5} />
-                  {t('auth.continueWithGithub')}
-                </button>
+                <span className="mb-6 block">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    tone="neutral"
+                    size="lg"
+                    fullWidth
+                    leftIcon={<Github className="h-4 w-4" strokeWidth={1.5} />}
+                  >
+                    {t('auth.continueWithGithub')}
+                  </Button>
+                </span>
 
                 {/* Divider */}
                 <div className="relative mb-6">

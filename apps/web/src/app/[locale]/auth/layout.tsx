@@ -5,11 +5,12 @@
  */
 
 import type { ReactNode } from 'react';
+import { ErrorBoundary } from '@/shared/components/error-boundary';
 
 interface AuthLayoutProps {
   children: ReactNode;
 }
 
 export default function AuthLayout({ children }: AuthLayoutProps) {
-  return <>{children}</>;
+  return <ErrorBoundary>{children}</ErrorBoundary>;
 }

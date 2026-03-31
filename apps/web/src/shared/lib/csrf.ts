@@ -4,6 +4,11 @@
  *
  * Security Note: This implementation uses the double-submit cookie pattern
  * combined with Next.js Server Actions for maximum protection.
+ *
+ * TODO: Dead code — the backend has no CSRF middleware (no csurf, no CsrfModule).
+ * The app relies on SameSite cookies + CORS for cross-origin protection.
+ * Wire this into the API client request interceptor if the backend adds CSRF
+ * validation, or remove this module entirely if that decision is final.
  */
 
 const CSRF_COOKIE_NAME = 'csrf-token';

@@ -7,6 +7,7 @@
 
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { useBodyScrollLock } from '@/shared/hooks/use-body-scroll-lock';
 import type { MobileMenuState } from '../config/types';
 
 // Track pathname changes externally to avoid setState in effect
@@ -46,18 +47,7 @@ export function useMobileMenu(): MobileMenuState {
     }
   }, [pathname, isOpen]);
 
-  // Lock body scroll when menu is open
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isOpen]);
+  useBodyScrollLock(isOpen);
 
   const toggle = useCallback(() => {
     setIsOpen((prev) => !prev);

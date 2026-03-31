@@ -1,131 +1,212 @@
 /**
- * Preferences Section
- * Profile visibility and language preferences
+ * Preferences Section — Minimal design
  */
 
 'use client';
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Check, Eye, EyeOff, Globe, Loader2 } from 'lucide-react';
-import { preferencesRepository } from './services/settings-repository';
+import { Button } from '@octopus-synapse/profile-ui';
+import {
+  customFetch,
+  getUsersGetFullPreferencesQueryKey,
+  getUsersUpdateFullPreferencesUrl,
+  useUsersGetFullPreferences,
+} from '@profile/api-client';
+import { type Locale, type LocaleInfo, useI18n } from '@profile/i18n';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Check, Loader2 } from 'lucide-react';
+import { useCallback } from 'react';
 
 export function PreferencesSection() {
   const queryClient = useQueryClient();
+  const { t, language, setLanguage, locales } = useI18n();
 
-  const { data: preferences, isLoading } = useQuery({
-    queryKey: ['preferences', 'full'],
-    queryFn: () => preferencesRepository.getFullPreferences(),
-  });
+  const preferencesQuery = useUsersGetFullPreferences();
+  const preferencesData = preferencesQuery.data?.data?.data as
+    | { preferences?: Record<string, unknown> }
+    | undefined;
+  const preferences = preferencesData?.preferences;
+  const isLoading = preferencesQuery.isLoading;
 
   const updatePreferences = useMutation({
-    mutationFn: (data: { profileVisibility: 'public' | 'private' }) =>
-      preferencesRepository.updateFullPreferences(data),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['preferences'] });
+    mutationFn: async (data: Record<string, unknown>) => {
+      const response = await customFetch(getUsersUpdateFullPreferencesUrl(), {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      // Check if response indicates failure
+      if (response && typeof response === 'object' && 'success' in response && !response.success) {
+        throw new Error((response as { message?: string }).message ?? 'Update failed');
+      }
+      return response;
+    },
+    onMutate: async (newData) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: getUsersGetFullPreferencesQueryKey() });
+
+      // Snapshot previous value
+      const previousData = queryClient.getQueryData(getUsersGetFullPreferencesQueryKey());
+
+      // Optimistically update - correct structure: data.data.data.preferences
+      queryClient.setQueryData(getUsersGetFullPreferencesQueryKey(), (old: unknown) => {
+        if (!old || typeof old !== 'object') return old;
+        const oldResponse = old as {
+          data?: { data?: { preferences?: Record<string, unknown> } };
+        };
+        return {
+          ...oldResponse,
+          data: {
+            ...oldResponse.data,
+            data: {
+              ...oldResponse.data?.data,
+              preferences: {
+                ...oldResponse.data?.data?.preferences,
+                ...newData,
+              },
+            },
+          },
+        };
+      });
+
+      return { previousData };
+    },
+    onError: (_err, _newData, context) => {
+      // Rollback on error
+      if (context?.previousData) {
+        queryClient.setQueryData(getUsersGetFullPreferencesQueryKey(), context.previousData);
+      }
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: getUsersGetFullPreferencesQueryKey() });
     },
   });
 
-  const profileVisibility = preferences?.profileVisibility ?? 'private';
+  const handleLanguageChange = useCallback(
+    (newLocale: Locale) => {
+      setLanguage(newLocale);
+      updatePreferences.mutate({ language: newLocale });
+    },
+    [setLanguage, updatePreferences],
+  );
+
+  const profileVisibility = (preferences?.profileVisibility as 'public' | 'private') ?? 'private';
 
   const handleVisibilityChange = (visibility: 'public' | 'private') => {
     updatePreferences.mutate({ profileVisibility: visibility });
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-24">
+        <Loader2 className="h-5 w-5 animate-spin text-zinc-600" />
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-12">
       {/* Header */}
       <div>
-        <h2 className="text-lg font-semibold text-white">Preferences</h2>
-        <p className="mt-1 text-sm text-zinc-400">Customize your experience</p>
+        <h2 className="text-xl font-light text-white">{t('settings.preferences.title')}</h2>
+        <p className="mt-1 text-[13px] text-zinc-500">{t('settings.preferences.description')}</p>
       </div>
 
-      {/* Profile Visibility */}
-      <div className="rounded-xl border border-white/10 bg-white/5 p-6">
-        <h3 className="mb-2 text-sm font-semibold text-white">Profile Visibility</h3>
-        <p className="mb-4 text-sm text-zinc-400">Control who can see your public profile</p>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <button
-            type="button"
+      {/* Visibility */}
+      <div className="border-t border-zinc-800/50 pt-8">
+        <h3 className="mb-2 text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+          {t('settings.preferences.visibility.title')}
+        </h3>
+        <p className="mb-6 text-[13px] text-zinc-500">
+          {t('settings.preferences.visibility.description')}
+        </p>
+
+        <div className="flex gap-4">
+          <VisibilityOption
+            label={t('settings.preferences.visibility.public')}
+            description={t('settings.preferences.visibility.publicDesc')}
+            selected={profileVisibility === 'public'}
             onClick={() => handleVisibilityChange('public')}
-            disabled={updatePreferences.isPending || isLoading}
-            className={`flex items-center gap-3 rounded-xl border p-4 transition-all ${
-              profileVisibility === 'public'
-                ? 'border-emerald-500/50 bg-emerald-500/10'
-                : 'border-white/10 bg-[#0A0A0A]/80 hover:border-white/20 hover:bg-white/5'
-            } ${updatePreferences.isPending ? 'opacity-50' : ''}`}
-          >
-            <Eye
-              className={`h-5 w-5 ${
-                profileVisibility === 'public' ? 'text-emerald-400' : 'text-zinc-400'
-              }`}
-              strokeWidth={1.5}
-            />
-            <div className="flex-1 text-left">
-              <span
-                className={`block text-sm font-medium ${
-                  profileVisibility === 'public' ? 'text-emerald-400' : 'text-zinc-200'
-                }`}
-              >
-                Public
-              </span>
-              <span className="text-xs text-zinc-500">Anyone can view</span>
-            </div>
-            {profileVisibility === 'public' && <Check className="h-4 w-4 text-emerald-400" />}
-          </button>
-          <button
-            type="button"
+            disabled={updatePreferences.isPending}
+          />
+          <VisibilityOption
+            label={t('settings.preferences.visibility.private')}
+            description={t('settings.preferences.visibility.privateDesc')}
+            selected={profileVisibility === 'private'}
             onClick={() => handleVisibilityChange('private')}
-            disabled={updatePreferences.isPending || isLoading}
-            className={`flex items-center gap-3 rounded-xl border p-4 transition-all ${
-              profileVisibility === 'private'
-                ? 'border-white/30 bg-white/10'
-                : 'border-white/10 bg-[#0A0A0A]/80 hover:border-white/20 hover:bg-white/5'
-            } ${updatePreferences.isPending ? 'opacity-50' : ''}`}
-          >
-            <EyeOff
-              className={`h-5 w-5 ${
-                profileVisibility === 'private' ? 'text-white' : 'text-zinc-400'
-              }`}
-              strokeWidth={1.5}
-            />
-            <div className="flex-1 text-left">
-              <span
-                className={`block text-sm font-medium ${
-                  profileVisibility === 'private' ? 'text-white' : 'text-zinc-200'
-                }`}
-              >
-                Private
-              </span>
-              <span className="text-xs text-zinc-500">Only you can view</span>
-            </div>
-            {profileVisibility === 'private' && <Check className="h-4 w-4 text-white" />}
-          </button>
+            disabled={updatePreferences.isPending}
+          />
         </div>
+
         {updatePreferences.isPending && (
-          <p className="mt-4 flex items-center gap-2 text-xs text-zinc-400">
+          <p className="mt-4 flex items-center gap-2 text-[11px] text-zinc-500">
             <Loader2 className="h-3 w-3 animate-spin" />
-            Updating...
+            {t('settings.preferences.visibility.updating')}
           </p>
         )}
       </div>
 
-      {/* Language Setting - Preview (not connected yet) */}
-      <div className="rounded-xl border border-white/10 bg-white/5 p-6">
-        <h3 className="mb-2 text-sm font-semibold text-white">Interface Language</h3>
-        <p className="mb-4 text-sm text-zinc-400">Choose your preferred interface language</p>
-        <div className="flex items-center gap-3">
-          <Globe className="h-5 w-5 text-zinc-400" strokeWidth={1.5} />
-          <select
-            disabled
-            className="flex-1 rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-zinc-300 opacity-60"
-          >
-            <option value="en">English</option>
-            <option value="pt">Português</option>
-            <option value="es">Español</option>
-          </select>
+      {/* Language */}
+      <div className="border-t border-zinc-800/50 pt-8">
+        <h3 className="mb-2 text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+          {t('settings.preferences.language.title')}
+        </h3>
+        <p className="mb-6 text-[13px] text-zinc-500">
+          {t('settings.preferences.language.description')}
+        </p>
+
+        <div className="flex gap-2">
+          {locales.map((locale: LocaleInfo) => (
+            <Button
+              key={locale.code}
+              type="button"
+              variant={language === locale.code ? 'solid' : 'ghost'}
+              tone="neutral"
+              size="sm"
+              onPress={() => handleLanguageChange(locale.code)}
+            >
+              {locale.label}
+            </Button>
+          ))}
         </div>
-        <p className="mt-4 text-xs text-zinc-500">Multi-language support coming soon</p>
       </div>
     </div>
+  );
+}
+
+function VisibilityOption({
+  label,
+  description,
+  selected,
+  onClick,
+  disabled,
+}: {
+  label: string;
+  description: string;
+  selected: boolean;
+  onClick: () => void;
+  disabled: boolean;
+}) {
+  return (
+    <Button
+      type="button"
+      variant={selected ? 'soft' : 'outline'}
+      tone="neutral"
+      size="lg"
+      disabled={disabled}
+      pressed={selected}
+      rightIcon={
+        selected ? (
+          <div className="flex h-5 w-5 items-center justify-center rounded-full bg-white">
+            <Check className="h-3 w-3 text-black" strokeWidth={2.5} />
+          </div>
+        ) : undefined
+      }
+      onPress={onClick}
+    >
+      <div className="flex-1 text-left">
+        <span className="block text-sm font-medium">{label}</span>
+        <span className="mt-1 block text-[12px] text-zinc-600">{description}</span>
+      </div>
+    </Button>
   );
 }

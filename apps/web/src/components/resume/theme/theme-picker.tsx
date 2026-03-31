@@ -5,19 +5,19 @@
 
 'use client';
 
+import { Button, ConfirmDialog, useConfirmDialog } from '@octopus-synapse/profile-ui';
+import {
+  useThemesApply,
+  useThemesDeleteThemeForUser,
+  useThemesFindAllSystemThemes,
+  useThemesFindPopularThemes,
+  useThemesFork,
+  useThemesGetAllThemesByUser,
+  useThemesSubmit,
+} from '@profile/api-client';
 import { Palette, Plus, Sparkles, Upload, Users } from 'lucide-react';
 import { useState } from 'react';
-import { cn } from '@/shared/utils';
-import {
-  useApplyTheme,
-  useDeleteTheme,
-  useForkTheme,
-  useMyThemes,
-  usePopularThemes,
-  useSubmitForApproval,
-  useSystemThemes,
-} from '../hooks';
-import type { Theme } from '../services/theme.types';
+import type { Theme } from '../types/config';
 import { JsonImportModal } from './json-import-modal';
 import { ThemeCard } from './theme-card';
 
@@ -39,39 +39,74 @@ const tabs: { id: TabId; label: string; icon: typeof Sparkles }[] = [
 export function ThemePicker({ resumeId, activeThemeId, onThemeApplied, onEditTheme }: Props) {
   const [tab, setTab] = useState<TabId>('system');
   const [showImport, setShowImport] = useState(false);
+  const { dialogProps, confirm } = useConfirmDialog();
 
-  const { data: systemThemes = [], isLoading: loadingSystem } = useSystemThemes();
-  const { data: popularThemes = [], isLoading: loadingPopular } = usePopularThemes(10);
-  const { data: myThemes = [], isLoading: loadingMine } = useMyThemes();
+  const systemQuery = useThemesFindAllSystemThemes();
+  const popularQuery = useThemesFindPopularThemes({ limit: 10 });
+  const myQuery = useThemesGetAllThemesByUser();
 
-  const applyTheme = useApplyTheme();
-  const forkTheme = useForkTheme();
-  const deleteTheme = useDeleteTheme();
-  const submitForApproval = useSubmitForApproval();
+  const systemThemes =
+    (systemQuery.data?.data?.data as { themes?: Theme[] } | undefined)?.themes ?? [];
+  const popularThemes =
+    (popularQuery.data?.data?.data as { themes?: Theme[] } | undefined)?.themes ?? [];
+  const myThemes = (myQuery.data?.data?.data as { themes?: Theme[] } | undefined)?.themes ?? [];
+  const loadingSystem = systemQuery.isLoading;
+  const loadingPopular = popularQuery.isLoading;
+  const loadingMine = myQuery.isLoading;
 
-  const themes = tab === 'system' ? systemThemes : tab === 'popular' ? popularThemes : myThemes;
-  const isLoading =
-    tab === 'system' ? loadingSystem : tab === 'popular' ? loadingPopular : loadingMine;
+  const applyMutation = useThemesApply();
+  const forkMutation = useThemesFork();
+  const deleteMutation = useThemesDeleteThemeForUser();
+  const submitMutation = useThemesSubmit();
+
+  const getThemesForTab = (tabId: TabId): Theme[] => {
+    const themesByTab: Record<TabId, Theme[]> = {
+      system: systemThemes,
+      popular: popularThemes,
+      mine: myThemes,
+    };
+    return themesByTab[tabId];
+  };
+
+  const getLoadingForTab = (tabId: TabId): boolean => {
+    const loadingByTab: Record<TabId, boolean> = {
+      system: loadingSystem,
+      popular: loadingPopular,
+      mine: loadingMine,
+    };
+    return loadingByTab[tabId];
+  };
+
+  const themes = getThemesForTab(tab);
+  const isLoading = getLoadingForTab(tab);
 
   const handleSelect = async (theme: Theme) => {
-    await applyTheme.mutateAsync({ resumeId, themeId: theme.id });
+    await applyMutation.mutateAsync({ data: { themeId: theme.id, resumeId } });
     onThemeApplied?.();
   };
 
   const handleFork = async (theme: Theme) => {
-    const response = await forkTheme.mutateAsync({
-      themeId: theme.id,
-      name: `${theme.name} (Custom)`,
-      description: theme.description ?? '',
+    const response = await forkMutation.mutateAsync({
+      data: {
+        themeId: theme.id,
+        name: `${theme.name} (Custom)`,
+        description: theme.description ?? '',
+      },
     });
-    // SDK response: { data: { theme: Theme } }
-    const forked = (response?.data as unknown as { theme: Theme })?.theme;
-    onEditTheme?.(forked);
+    const forked = response?.data?.data as unknown as Theme | undefined;
+    if (forked) {
+      onEditTheme?.(forked);
+    }
   };
 
   const handleDelete = async (theme: Theme) => {
-    if (confirm(`Delete "${theme.name}"?`)) {
-      await deleteTheme.mutateAsync(theme.id);
+    const confirmed = await confirm(
+      `Delete "${theme.name}"?`,
+      'This theme will be permanently removed.',
+      { variant: 'danger', confirmLabel: 'Delete' },
+    );
+    if (confirmed) {
+      await deleteMutation.mutateAsync({ id: theme.id });
     }
   };
 
@@ -80,7 +115,7 @@ export function ThemePicker({ resumeId, activeThemeId, onThemeApplied, onEditThe
   };
 
   const handleSubmitForApproval = async (theme: Theme) => {
-    await submitForApproval.mutateAsync(theme.id);
+    await submitMutation.mutateAsync({ id: theme.id });
   };
 
   const handleImported = () => {
@@ -92,31 +127,31 @@ export function ThemePicker({ resumeId, activeThemeId, onThemeApplied, onEditThe
     <div className="space-y-4">
       <div className="flex gap-1 rounded-xl border border-white/10 bg-[#0A0A0A]/70 p-1">
         {tabs.map(({ id, label, icon: Icon }) => (
-          <button
-            type="button"
+          <Button
             key={id}
-            onClick={() => setTab(id)}
-            className={cn(
-              'flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-all',
-              tab === id
-                ? 'bg-blue-500/15 text-white ring-1 ring-blue-500/30'
-                : 'text-zinc-400 hover:bg-white/5 hover:text-white',
-            )}
+            type="button"
+            variant={tab === id ? 'soft' : 'ghost'}
+            tone={tab === id ? 'info' : 'neutral'}
+            size="sm"
+            leftIcon={<Icon className="h-3 w-3" strokeWidth={1.5} />}
+            onPress={() => setTab(id)}
           >
-            <Icon className="h-3 w-3" strokeWidth={1.5} />
             {label}
-          </button>
+          </Button>
         ))}
       </div>
 
-      <button
+      <Button
         type="button"
-        onClick={() => setShowImport(true)}
-        className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-[#0A0A0A]/80 px-4 py-3 text-sm font-medium text-zinc-200 transition-colors hover:bg-white/5 hover:text-white"
+        variant="outline"
+        tone="neutral"
+        size="md"
+        fullWidth
+        leftIcon={<Upload className="h-4 w-4" strokeWidth={1.5} />}
+        onPress={() => setShowImport(true)}
       >
-        <Upload className="h-4 w-4" strokeWidth={1.5} />
         Import JSON Theme
-      </button>
+      </Button>
 
       {/* Loading */}
       {isLoading && (
@@ -148,16 +183,17 @@ export function ThemePicker({ resumeId, activeThemeId, onThemeApplied, onEditThe
 
           {/* Create New (My Themes only) */}
           {tab === 'mine' && (
-            <button
+            <Button
               type="button"
-              onClick={() => setShowImport(true)}
-              className="group flex h-16 w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-white/10 transition-colors hover:border-white/20 hover:bg-white/5"
+              variant="ghost"
+              tone="neutral"
+              size="lg"
+              fullWidth
+              leftIcon={<Plus className="h-4 w-4" strokeWidth={1.5} />}
+              onPress={() => setShowImport(true)}
             >
-              <Plus className="h-4 w-4 text-zinc-500 group-hover:text-zinc-300" strokeWidth={1.5} />
-              <span className="text-sm font-medium text-zinc-500 group-hover:text-zinc-300">
-                Create New Theme
-              </span>
-            </button>
+              Create New Theme
+            </Button>
           )}
         </div>
       )}
@@ -173,6 +209,8 @@ export function ThemePicker({ resumeId, activeThemeId, onThemeApplied, onEditThe
           </p>
         </div>
       )}
+
+      <ConfirmDialog {...dialogProps} />
 
       {/* Import Modal */}
       <JsonImportModal

@@ -4,7 +4,6 @@
  * Type definitions for navigation system.
  */
 
-import type { SessionUserResponseDtoRole } from '@profile/api-client';
 import type { DictionaryKey } from '@profile/i18n';
 import type { LucideIcon } from 'lucide-react';
 
@@ -23,7 +22,7 @@ export interface NavItem {
   /** Whether this item requires authentication */
   requiresAuth: boolean;
   /** Optional roles required to see this item */
-  requiredRoles?: SessionUserResponseDtoRole[];
+  requiredRoles?: ('USER' | 'ADMIN')[];
   /** Whether this is an external link (opens in new tab) */
   external?: boolean;
 }

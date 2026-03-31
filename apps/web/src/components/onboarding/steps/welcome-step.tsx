@@ -7,6 +7,7 @@
 
 'use client';
 
+import { useI18n } from '@profile/i18n';
 import { Clock, Code, Shield, Sparkles } from 'lucide-react';
 import { useOnboarding } from '../hooks';
 import { OnboardingStepHeader } from '../step-header';
@@ -14,6 +15,7 @@ import { StepNavigation } from '../step-navigation';
 
 export function WelcomeStep() {
   const { goToNextStep } = useOnboarding();
+  const { t } = useI18n();
 
   const handleStartSetup = async () => {
     await goToNextStep();
@@ -26,27 +28,27 @@ export function WelcomeStep() {
           <Sparkles className="h-8 w-8" strokeWidth={1.5} />
         </div>
         <OnboardingStepHeader
-          eyebrow="Welcome"
-          title="Welcome to PATCH"
-          description="We’ll guide you through a focused setup to build a polished, recruiter-ready profile."
+          eyebrow={t('onboarding.welcome.eyebrow')}
+          title={t('onboarding.welcome.title')}
+          description={t('onboarding.welcome.description')}
         />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
         <FeatureCard
           icon={<Code className="h-5 w-5" strokeWidth={1.5} />}
-          title="Built for tech talent"
-          description="A clean profile structure designed for modern resumes and hiring flows."
+          title={t('onboarding.welcome.featureTechTitle')}
+          description={t('onboarding.welcome.featureTechDescription')}
         />
         <FeatureCard
           icon={<Clock className="h-5 w-5" strokeWidth={1.5} />}
-          title="Fast to complete"
-          description="Finish the essentials now and refine details later from your dashboard."
+          title={t('onboarding.welcome.featureFastTitle')}
+          description={t('onboarding.welcome.featureFastDescription')}
         />
         <FeatureCard
           icon={<Shield className="h-5 w-5" strokeWidth={1.5} />}
-          title="You stay in control"
-          description="Your information stays editable, portable, and ready for export at any time."
+          title={t('onboarding.welcome.featureControlTitle')}
+          description={t('onboarding.welcome.featureControlDescription')}
         />
       </div>
 
@@ -56,21 +58,29 @@ export function WelcomeStep() {
             i
           </span>
           <div className="text-sm text-zinc-400">
-            <p>PATCH will compile your career into the optimal format for each opportunity.</p>
+            <p>{t('onboarding.welcome.infoText')}</p>
             <p className="mt-2">
-              <span className="font-medium text-white">Required:</span> Personal info, username,
-              professional profile, and theme.
+              <span className="font-medium text-white">
+                {t('onboarding.welcome.requiredLabel')}
+              </span>{' '}
+              {t('onboarding.welcome.requiredItems')}
             </p>
             <p>
-              <span className="font-medium text-white">Optional:</span> Experience, education, and
-              languages.
+              <span className="font-medium text-white">
+                {t('onboarding.welcome.optionalLabel')}
+              </span>{' '}
+              {t('onboarding.welcome.optionalItems')}
             </p>
           </div>
         </div>
       </div>
 
       {/* Navigation */}
-      <StepNavigation onNext={handleStartSetup} nextLabel="start setup" canProceed={true} />
+      <StepNavigation
+        onNext={handleStartSetup}
+        nextLabel={t('onboarding.welcome.startSetup')}
+        canProceed={true}
+      />
     </div>
   );
 }

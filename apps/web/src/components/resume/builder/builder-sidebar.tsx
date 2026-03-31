@@ -1,27 +1,32 @@
 /**
- * Builder Sidebar
- * Clean panel for customization options
+ * BuilderSidebar — clean panel for customization options.
  */
 
 'use client';
 
-import { ChevronRight, Eye, Layers, Palette, RotateCcw, Settings } from 'lucide-react';
-import Link from 'next/link';
+import { useI18n } from '@profile/i18n';
+import { Eye, Palette } from 'lucide-react';
 import { useState } from 'react';
-import { cn } from '@/shared/utils';
-import type { Theme } from '../services/theme.types';
 import { ThemeEditor, ThemePicker } from '../theme';
+import type { Theme } from '../types/config';
+import { SidebarTabButton } from './sidebar-helpers';
+import { SidebarOverviewPanel } from './sidebar-overview-panel';
 
 type ViewMode = 'preview' | 'themes' | 'editor';
 
-/**
- * Minimal resume data needed for sidebar display.
- * Accepts both ResumeDto (sections[]) and ResumeFullResponseDto (resumeSections[]).
- */
 interface ResumeForSidebar {
   id: string;
-  sections?: Array<{ sectionTypeKey?: string; items?: unknown[] }>;
-  resumeSections?: Array<{ sectionTypeKey?: string; items?: unknown[] }>;
+  activeThemeId?: string;
+  sections?: Array<{
+    sectionTypeKey?: string;
+    items?: unknown[];
+    sectionType?: { title?: string };
+  }>;
+  resumeSections?: Array<{
+    sectionTypeKey?: string;
+    items?: unknown[];
+    sectionType?: { title?: string };
+  }>;
 }
 
 interface BuilderSidebarProps {
@@ -29,6 +34,13 @@ interface BuilderSidebarProps {
   activeThemeName?: string;
   onThemeApplied: () => void;
   onRefresh: () => void;
+  onImportOpen: () => void;
+  onHistoryOpen: () => void;
+  onShareOpen: () => void;
+  onAnalyticsOpen: () => void;
+  onAtsOpen: () => void;
+  onSectionEdit: (sectionTypeKey: string, title?: string) => void;
+  onReorderOpen: () => void;
 }
 
 export function BuilderSidebar({
@@ -36,7 +48,15 @@ export function BuilderSidebar({
   activeThemeName,
   onThemeApplied,
   onRefresh,
+  onImportOpen,
+  onHistoryOpen,
+  onShareOpen,
+  onAnalyticsOpen,
+  onAtsOpen,
+  onSectionEdit,
+  onReorderOpen,
 }: BuilderSidebarProps) {
+  const { t } = useI18n();
   const [viewMode, setViewMode] = useState<ViewMode>('preview');
   const [editingTheme, setEditingTheme] = useState<Theme | null>(null);
 
@@ -44,125 +64,78 @@ export function BuilderSidebar({
     setEditingTheme(theme);
     setViewMode('editor');
   };
-
   const handleEditorClose = () => {
     setEditingTheme(null);
     setViewMode('themes');
   };
-
   const handleThemeSaved = () => {
     onThemeApplied();
     setEditingTheme(null);
     setViewMode('themes');
   };
-
   const handleThemeApplied = () => {
     onThemeApplied();
     setViewMode('preview');
   };
 
-  // Stats derived from generic sections (supports both ResumeDto and ResumeFullResponseDto)
   const allSections = resume.sections ?? resume.resumeSections ?? [];
-  const getSectionCount = (key: string) =>
-    allSections.find((s) => s.sectionTypeKey === key)?.items?.length ?? 0;
-
-  const stats = [
-    { label: 'Experience', value: getSectionCount('work_experience_v1') },
-    { label: 'Education', value: getSectionCount('education_v1') },
-    { label: 'Skills', value: getSectionCount('skill_set_v1') },
-    { label: 'Languages', value: getSectionCount('language_v1') },
-  ];
+  const stats = allSections
+    .filter((s) => (s.items?.length ?? 0) > 0)
+    .map((s) => ({
+      label:
+        s.sectionType?.title ??
+        s.sectionTypeKey?.replace(/_v\d+$/, '').replace(/_/g, ' ') ??
+        'Section',
+      value: s.items?.length ?? 0,
+    }));
+  const editableSections = allSections
+    .filter((s) => s.sectionTypeKey)
+    .map((s) => ({ key: s.sectionTypeKey!, title: s.sectionType?.title ?? s.sectionTypeKey! }));
 
   return (
-    <aside className="border-pf-border-muted bg-pf-canvas-overlay flex w-80 flex-col border-r">
-      {/* Tabs */}
-      <div className="border-pf-border-muted flex border-b">
-        <TabButton
+    <aside className="flex w-80 flex-col border-r border-pf-border-default bg-pf-canvas-subtle">
+      <div className="flex border-b border-pf-border-default">
+        <SidebarTabButton
           active={viewMode === 'preview'}
           onClick={() => setViewMode('preview')}
           icon={<Eye className="h-4 w-4" strokeWidth={1.5} />}
-          label="Overview"
+          label={t('resume.sidebar.tabs.overview')}
         />
-        <TabButton
+        <SidebarTabButton
           active={viewMode === 'themes' || viewMode === 'editor'}
           onClick={() => setViewMode('themes')}
           icon={<Palette className="h-4 w-4" strokeWidth={1.5} />}
-          label="Themes"
+          label={t('resume.sidebar.tabs.themes')}
         />
       </div>
 
-      {/* Content */}
       <div className="flex-1 overflow-y-auto">
         {viewMode === 'preview' && (
-          <div className="p-4">
-            {/* Current Theme */}
-            <Section title="Active Theme">
-              <button
-                type="button"
-                onClick={() => setViewMode('themes')}
-                className="border-pf-border-default bg-pf-canvas-subtle group hover:border-pf-border-emphasis hover:bg-pf-canvas-inset flex w-full items-center justify-between rounded-lg border p-3 text-left transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="bg-pf-canvas-overlay flex h-8 w-8 items-center justify-center rounded-md shadow-sm">
-                    <Layers className="text-pf-fg-muted h-4 w-4" strokeWidth={1.5} />
-                  </div>
-                  <span className="text-pf-fg-default text-sm font-medium">
-                    {activeThemeName ?? 'Modern'}
-                  </span>
-                </div>
-                <ChevronRight
-                  className="text-pf-fg-subtle h-4 w-4 transition-transform group-hover:translate-x-0.5"
-                  strokeWidth={1.5}
-                />
-              </button>
-            </Section>
-
-            {/* Stats */}
-            <Section title="Resume Stats">
-              <div className="grid grid-cols-2 gap-2">
-                {stats.map((stat) => (
-                  <div key={stat.label} className="bg-pf-canvas-subtle rounded-lg p-3">
-                    <p className="text-pf-fg-default text-2xl font-semibold">{stat.value}</p>
-                    <p className="text-pf-fg-subtle text-xs">{stat.label}</p>
-                  </div>
-                ))}
-              </div>
-            </Section>
-
-            {/* Quick Actions */}
-            <Section title="Quick Actions">
-              <div className="space-y-2">
-                <Link
-                  href="/protected/settings"
-                  className="border-pf-border-default text-pf-fg-muted hover:bg-pf-canvas-subtle hover:text-pf-fg-default flex w-full items-center gap-3 rounded-lg border p-3 text-sm font-medium transition-colors"
-                >
-                  <Settings className="text-pf-fg-subtle h-4 w-4" strokeWidth={1.5} />
-                  Edit Content
-                </Link>
-                <button
-                  type="button"
-                  onClick={onRefresh}
-                  className="border-pf-border-default text-pf-fg-muted hover:bg-pf-canvas-subtle hover:text-pf-fg-default flex w-full items-center gap-3 rounded-lg border p-3 text-sm font-medium transition-colors"
-                >
-                  <RotateCcw className="text-pf-fg-subtle h-4 w-4" strokeWidth={1.5} />
-                  Refresh Preview
-                </button>
-              </div>
-            </Section>
-          </div>
+          <SidebarOverviewPanel
+            activeThemeName={activeThemeName}
+            stats={stats}
+            editableSections={editableSections}
+            onThemeClick={() => setViewMode('themes')}
+            onRefresh={onRefresh}
+            onImportOpen={onImportOpen}
+            onHistoryOpen={onHistoryOpen}
+            onShareOpen={onShareOpen}
+            onAnalyticsOpen={onAnalyticsOpen}
+            onAtsOpen={onAtsOpen}
+            onSectionEdit={onSectionEdit}
+            onReorderOpen={onReorderOpen}
+          />
         )}
-
         {viewMode === 'themes' && (
           <div className="p-4">
             <ThemePicker
               resumeId={resume.id}
-              activeThemeId={undefined}
+              activeThemeId={resume.activeThemeId ?? null}
               onThemeApplied={handleThemeApplied}
               onEditTheme={handleEditTheme}
             />
           </div>
         )}
-
         {viewMode === 'editor' && editingTheme && (
           <ThemeEditor
             theme={editingTheme}
@@ -172,46 +145,5 @@ export function BuilderSidebar({
         )}
       </div>
     </aside>
-  );
-}
-
-// Helper Components
-
-function TabButton({
-  active,
-  onClick,
-  icon,
-  label,
-}: {
-  active: boolean;
-  onClick: () => void;
-  icon: React.ReactNode;
-  label: string;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        'flex flex-1 items-center justify-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-colors',
-        active
-          ? 'border-pf-border-emphasis text-pf-fg-default'
-          : 'text-pf-fg-muted hover:text-pf-fg-default border-transparent',
-      )}
-    >
-      {icon}
-      {label}
-    </button>
-  );
-}
-
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div className="mb-6">
-      <h3 className="text-pf-fg-muted mb-3 text-xs font-medium tracking-wider uppercase">
-        {title}
-      </h3>
-      {children}
-    </div>
   );
 }

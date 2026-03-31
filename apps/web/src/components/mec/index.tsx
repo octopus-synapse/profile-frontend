@@ -3,30 +3,25 @@
 /**
  * Course Autocomplete Component
  * Search and select Brazilian courses from MEC data
- * Can be filtered by institution or search all courses
+ * Uses SDK hooks and types directly.
  */
 
+import { Autocomplete, type AutocompleteOption } from '@octopus-synapse/profile-ui';
+import {
+  type MecCourseListDataDtoCoursesItem,
+  useMecCoursesSearchCoursesByName,
+  useMecInstitutionsListCoursesByInstitutionCode,
+} from '@profile/api-client';
 import * as React from 'react';
-import { Autocomplete, type AutocompleteOption } from '@/shared/components/ui/autocomplete';
-import { useCoursesByInstitution, useSearchCourses } from './hooks';
-import type { MecCourse } from './types';
 
 export interface CourseAutocompleteProps {
-  /** Selected course code */
   value?: number | null;
-  /** Display name for the course (when value is set externally) */
   displayValue?: string;
-  /** Filter courses by institution code */
   institutionCode?: number | null;
-  /** Called when selection changes */
-  onValueChange?: (codigoCurso: number | null, course?: MecCourse) => void;
-  /** Placeholder text */
+  onValueChange?: (codigoCurso: number | null, course?: MecCourseListDataDtoCoursesItem) => void;
   placeholder?: string;
-  /** Disabled state */
   disabled?: boolean;
-  /** Error state */
   error?: boolean;
-  /** Additional class names */
   className?: string;
 }
 
@@ -42,34 +37,40 @@ export function CourseAutocomplete({
 }: CourseAutocompleteProps) {
   const [search, setSearch] = React.useState('');
 
-  // If institution is selected, get courses from that institution
-  const { data: institutionCourses, isLoading: isLoadingInstitutionCourses } =
-    useCoursesByInstitution(institutionCode ?? null);
+  const { data: instResponse, isLoading: isLoadingInst } =
+    useMecInstitutionsListCoursesByInstitutionCode(institutionCode ?? 0, {
+      query: { enabled: institutionCode !== null },
+    });
 
-  // Otherwise, search all courses
-  const { data: searchResults, isLoading: isLoadingSearch } = useSearchCourses(
-    search,
-    !institutionCode,
+  const { data: searchResponse, isLoading: isLoadingSearch } = useMecCoursesSearchCoursesByName(
+    { q: search },
+    { query: { enabled: !institutionCode && search.length >= 2 } },
   );
 
-  // Determine which courses to show
+  const institutionCourses =
+    instResponse?.status === 200
+      ? ((instResponse.data.data as { courses?: MecCourseListDataDtoCoursesItem[] })?.courses ?? [])
+      : [];
+
+  const searchCourses =
+    searchResponse?.status === 200
+      ? ((searchResponse.data.data as { courses?: MecCourseListDataDtoCoursesItem[] })?.courses ??
+        [])
+      : [];
+
   const courses = React.useMemo(() => {
-    if (institutionCode && institutionCourses) {
-      // Filter by search if provided
+    if (institutionCode && institutionCourses.length > 0) {
       if (search.length >= 2) {
         const searchLower = search.toLowerCase();
-        return institutionCourses.filter((course) =>
-          course.nome.toLowerCase().includes(searchLower),
-        );
+        return institutionCourses.filter((c) => c.nome.toLowerCase().includes(searchLower));
       }
       return institutionCourses;
     }
-    return searchResults?.data ?? [];
-  }, [institutionCode, institutionCourses, searchResults, search]);
+    return searchCourses;
+  }, [institutionCode, institutionCourses, searchCourses, search]);
 
-  const isLoading = institutionCode ? isLoadingInstitutionCourses : isLoadingSearch;
+  const isLoading = institutionCode ? isLoadingInst : isLoadingSearch;
 
-  // Transform courses to autocomplete options
   const options: AutocompleteOption[] = React.useMemo(() => {
     return courses.map((course) => ({
       value: String(course.codigoCurso),
@@ -83,7 +84,6 @@ export function CourseAutocomplete({
       onValueChange?.(null, undefined);
       return;
     }
-
     const codigoCurso = Number(val);
     const course = courses.find((c) => c.codigoCurso === codigoCurso);
     onValueChange?.(codigoCurso, course);
@@ -114,14 +114,11 @@ export function CourseAutocomplete({
 
 CourseAutocomplete.displayName = 'CourseAutocomplete';
 
-export {
-  useCoursesByInstitution,
-  useSearchCourses,
-  useSearchInstitutions,
-} from './hooks';
-// Re-export InstitutionAutocomplete and types from this barrel
+export type {
+  MecCourseListDataDtoCoursesItem,
+  MecInstitutionListDataDtoInstitutionsItem,
+} from '@profile/api-client';
 export {
   InstitutionAutocomplete,
   type InstitutionAutocompleteProps,
 } from './institution-autocomplete';
-export type { MecCourse, MecInstitution } from './types';

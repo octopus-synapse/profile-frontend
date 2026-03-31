@@ -31,8 +31,24 @@ export function getBackendHost(): string {
 // Generated Routes (Static)
 // ============================================================================
 
+export const ACCOUNT_LIFECYCLE_ROUTES = {
+  DELETE_ACCOUNT_HANDLE: '/api/accounts',
+  DEACTIVATE_ACCOUNT_HANDLE: '/api/accounts/deactivate',
+} as const;
+
 export const ACCOUNTS_ROUTES = {
   ACCOUNTS_SIGNUP: '/api/accounts',
+} as const;
+
+export const ADMIN_SECTION_TYPES_ROUTES = {
+  ADMIN_SECTION_TYPES_FIND_ALL: '/api/v1/admin/section-types',
+  ADMIN_SECTION_TYPES_CREATE: '/api/v1/admin/section-types',
+  ADMIN_SECTION_TYPES_GET_SEMANTIC_KINDS: '/api/v1/admin/section-types/semantic-kinds',
+} as const;
+
+export const APP_ROUTES = {
+  APP_GET_VERSION: '/api/version',
+  APP_GET_OPEN_API_SPEC: '/api/openapi.json',
 } as const;
 
 export const ATS_VALIDATION_ROUTES = {
@@ -40,22 +56,25 @@ export const ATS_VALIDATION_ROUTES = {
 } as const;
 
 export const AUTH_ROUTES = {
-  AUTH_DISABLE: '/api/auth/2fa',
   AUTH_LOGIN: '/api/auth/login',
+  AUTH_LOGIN_VERIFY2FA: '/api/auth/login/verify-2fa',
   AUTH_LOGOUT: '/api/auth/logout',
+  AUTH_SESSION: '/api/auth/session',
+} as const;
+
+export const AUTHENTICATION_ROUTES = {
   AUTH_REFRESH: '/api/auth/refresh',
-  AUTH_GET_SESSION: '/api/auth/session',
 } as const;
 
 export const CHAT_ROUTES = {
-  CHAT_GET_CONVERSATIONS: '/api/chat/conversations',
   CHAT_SEND_MESSAGE: '/api/chat/messages',
+  CHAT_GET_CONVERSATIONS: '/api/chat/conversations',
   CHAT_GET_UNREAD_COUNT: '/api/chat/unread',
 } as const;
 
 export const CHAT_BLOCK_USERS_ROUTES = {
-  CHAT_BLOCK_USERS_GET_BLOCKED_USERS: '/api/chat/blocked',
   CHAT_BLOCK_USERS_BLOCK_USER: '/api/chat/blocked',
+  CHAT_BLOCK_USERS_GET_BLOCKED_USERS: '/api/chat/blocked',
 } as const;
 
 export const COLLABORATION_ROUTES = {
@@ -64,72 +83,118 @@ export const COLLABORATION_ROUTES = {
 
 export const DSL_ROUTES = {
   DSL_VALIDATE: '/api/v1/dsl/validate',
+  DSL_PREVIEW: '/api/v1/dsl/preview',
 } as const;
 
 export const EMAIL_VERIFICATION_ROUTES = {
-  EMAIL_VERIFICATION_HANDLE: '/api/email-verification/verify',
+  SEND_VERIFICATION_HANDLE: '/api/email-verification/send',
+  VERIFY_EMAIL_HANDLE: '/api/email-verification/verify',
 } as const;
 
 export const ENUMS_ROUTES = {
   ENUMS_GET_EXPORT_FORMATS: '/api/v1/enums/export-formats',
-  ENUMS_GET_SECTION_TYPES: '/api/v1/enums/section-types',
   ENUMS_GET_USER_ROLES: '/api/v1/enums/user-roles',
+  ENUMS_GET_SECTION_TYPES: '/api/v1/enums/section-types',
 } as const;
 
 export const EXPORT_ROUTES = {
+  EXPORT_EXPORT_BANNER: '/api/v1/export/banner',
+  EXPORT_EXPORT_RESUME_P_D_F: '/api/v1/export/resume/pdf',
   EXPORT_EXPORT_RESUME_D_O_C_X: '/api/v1/export/resume/docx',
+} as const;
+
+export const GDPR_ROUTES = {
+  USER_CONSENT_EXPORT_DATA: '/api/gdpr/export',
 } as const;
 
 export const GITHUB_ROUTES = {
   GITHUB_SYNC_GIT_HUB: '/api/v1/integrations/github/sync',
 } as const;
 
-export const MEC_INTERNAL_ROUTES = {
-  MEC_INTERNAL_TRIGGER_SYNC: '/api/v1/mec/internal/sync',
-  MEC_INTERNAL_GET_SYNC_STATUS: '/api/v1/mec/internal/sync/status',
-} as const;
-
-export const MEC_METADATA_ROUTES = {
-  MEC_METADATA_LIST_ALL_KNOWLEDGE_AREAS: '/api/v1/mec/areas',
-  MEC_METADATA_GET_MEC_STATISTICS: '/api/v1/mec/stats',
-  MEC_METADATA_LIST_ALL_STATE_CODES: '/api/v1/mec/ufs',
-} as const;
-
-export const ONBOARDING_ROUTES = {
-  ONBOARDING_COMPLETE_ONBOARDING: '/api/v1/onboarding',
-  ONBOARDING_GET_PROGRESS: '/api/v1/onboarding/progress',
-  ONBOARDING_SAVE_PROGRESS: '/api/v1/onboarding/progress',
-  ONBOARDING_COMPLETE_FROM_SESSION: '/api/v1/onboarding/session/complete',
-} as const;
-
-export const PLATFORM_ROUTES = {
+export const HEALTH_ROUTES = {
   PLATFORM_CHECK: '/api/health',
   PLATFORM_CHECK_DATABASE: '/api/health/db',
   PLATFORM_CHECK_REDIS: '/api/health/redis',
   PLATFORM_CHECK_STORAGE: '/api/health/storage',
   PLATFORM_CHECK_TRANSLATE: '/api/health/translate',
+} as const;
+
+export const MEC_COURSES_ROUTES = {
+  MEC_COURSES_SEARCH_COURSES_BY_NAME: '/api/v1/mec/courses/search',
+} as const;
+
+export const MEC_INSTITUTIONS_ROUTES = {
+  MEC_INSTITUTIONS_LIST_INSTITUTIONS: '/api/v1/mec/institutions',
+  MEC_INSTITUTIONS_SEARCH_INSTITUTIONS_BY_NAME: '/api/v1/mec/institutions/search',
+} as const;
+
+export const MEC_INTERNAL_ROUTES = {
+  MEC_INTERNAL_TRIGGER_SYNC: '/api/v1/mec/internal/sync',
+  MEC_INTERNAL_GET_SYNC_STATUS: '/api/v1/mec/internal/sync/status',
+  MEC_INTERNAL_GET_SYNC_HISTORY: '/api/v1/mec/internal/sync/history',
+} as const;
+
+export const MEC_METADATA_ROUTES = {
+  MEC_METADATA_LIST_ALL_STATE_CODES: '/api/v1/mec/ufs',
+  MEC_METADATA_LIST_ALL_KNOWLEDGE_AREAS: '/api/v1/mec/areas',
+  MEC_METADATA_GET_MEC_STATISTICS: '/api/v1/mec/stats',
+} as const;
+
+export const METRICS_ROUTES = {
+  METRICS_GET_METRICS: '/api/metrics',
+} as const;
+
+export const ONBOARDING_ROUTES = {
+  ONBOARDING_GET_SESSION: '/api/v1/onboarding/session',
+  ONBOARDING_NEXT_STEP: '/api/v1/onboarding/session/next',
+  ONBOARDING_PREVIOUS_STEP: '/api/v1/onboarding/session/previous',
+  ONBOARDING_GOTO_STEP: '/api/v1/onboarding/session/goto',
+  ONBOARDING_SAVE_STEP_DATA: '/api/v1/onboarding/session/save',
+  ONBOARDING_COMPLETE_FROM_SESSION: '/api/v1/onboarding/session/complete',
+  ONBOARDING_GET_PROGRESS: '/api/v1/onboarding/progress',
+  ONBOARDING_SAVE_PROGRESS: '/api/v1/onboarding/progress',
+  ONBOARDING_GET_STATUS: '/api/v1/onboarding/status',
+  ONBOARDING_COMPLETE_ONBOARDING: '/api/v1/onboarding',
+} as const;
+
+export const PASSWORD_MANAGEMENT_ROUTES = {
+  FORGOT_PASSWORD_HANDLE: '/api/password/forgot',
+  RESET_PASSWORD_HANDLE: '/api/password/reset',
+  CHANGE_PASSWORD_HANDLE: '/api/password/change',
+} as const;
+
+export const PLATFORM_ROUTES = {
   PLATFORM_GET_STATISTICS: '/api/v1/platform/stats',
 } as const;
 
 export const RESUME_IMPORT_ROUTES = {
-  RESUME_IMPORT_GET_HISTORY: '/api/resume-import',
   RESUME_IMPORT_IMPORT_JSON: '/api/resume-import/json',
   RESUME_IMPORT_PARSE_JSON: '/api/resume-import/parse',
+  RESUME_IMPORT_GET_HISTORY: '/api/resume-import',
 } as const;
 
 export const RESUMES_ROUTES = {
   RESUMES_GET_ALL_USER_RESUMES: '/api/v1/resumes',
   RESUMES_CREATE_RESUME_FOR_USER: '/api/v1/resumes',
   RESUMES_GET_REMAINING_SLOTS: '/api/v1/resumes/slots',
+} as const;
+
+export const SEARCH_ROUTES = {
+  SEARCH_SEARCH: '/api/search',
+  SEARCH_SUGGESTIONS: '/api/search/suggestions',
+} as const;
+
+export const SHARES_ROUTES = {
   RESUMES_CREATE_SHARE: '/api/v1/shares',
 } as const;
 
-export const SKILLS_ROUTES = {
-  SKILLS_FIND_ALL_ACTIVE_LANGUAGES: '/api/v1/spoken-languages',
+export const SOCIAL_FEED_ROUTES = {
+  SOCIAL_SUBSCRIBE_TO_FEED: '/api/v1/feed/subscribe',
 } as const;
 
-export const SOCIAL_ROUTES = {
-  SOCIAL_SUBSCRIBE_TO_FEED: '/api/v1/feed/subscribe',
+export const SPOKEN_LANGUAGES_ROUTES = {
+  SKILLS_FIND_ALL_ACTIVE_LANGUAGES: '/api/v1/spoken-languages',
+  SKILLS_SEARCH_LANGUAGES_BY_NAME: '/api/v1/spoken-languages/search',
 } as const;
 
 export const TECH_AREAS_ROUTES = {
@@ -141,26 +206,49 @@ export const TECH_NICHES_ROUTES = {
 } as const;
 
 export const TECH_SKILLS_ROUTES = {
+  TECH_SKILLS_SEARCH_SKILLS: '/api/v1/tech-skills/search',
   TECH_SKILLS_GET_SKILLS: '/api/v1/tech-skills',
+} as const;
+
+export const TECH_SKILLS_QUERY_ROUTES = {
+  TECH_SKILLS_QUERY_GET_AREAS: '/api/v1/tech-skills/areas',
+  TECH_SKILLS_QUERY_GET_NICHES: '/api/v1/tech-skills/niches',
+  TECH_SKILLS_QUERY_GET_LANGUAGES: '/api/v1/tech-skills/languages',
+  TECH_SKILLS_QUERY_SEARCH_LANGUAGES: '/api/v1/tech-skills/languages/search',
+  TECH_SKILLS_QUERY_GET_SKILLS: '/api/v1/tech-skills/skills',
+  TECH_SKILLS_QUERY_SEARCH_SKILLS: '/api/v1/tech-skills/skills/search',
+} as const;
+
+export const TECH_SKILLS_SYNC_ROUTES = {
+  TECH_SKILLS_SYNC_TRIGGER_SYNC: '/api/v1/tech-skills/sync',
 } as const;
 
 export const THEMES_ROUTES = {
   THEMES_FIND_ALL_THEMES_WITH_PAGINATION: '/api/v1/themes',
   THEMES_CREATE_THEME_FOR_USER: '/api/v1/themes',
+  THEMES_FIND_POPULAR_THEMES: '/api/v1/themes/popular',
+  THEMES_FIND_ALL_SYSTEM_THEMES: '/api/v1/themes/system',
+  THEMES_GET_ALL_THEMES_BY_USER: '/api/v1/themes/me',
+  THEMES_FORK: '/api/v1/themes/fork',
   THEMES_APPLY: '/api/v1/themes/apply',
   THEMES_GET_PENDING: '/api/v1/themes/approval/pending',
   THEMES_REVIEW: '/api/v1/themes/approval/review',
-  THEMES_FORK: '/api/v1/themes/fork',
-  THEMES_GET_ALL_THEMES_BY_USER: '/api/v1/themes/me',
-  THEMES_FIND_ALL_SYSTEM_THEMES: '/api/v1/themes/system',
 } as const;
 
 export const TRANSLATION_ROUTES = {
-  TRANSLATION_TRANSLATE_BATCH: '/api/v1/translation/batch',
-  TRANSLATION_TRANSLATE_EN_TO_PT: '/api/v1/translation/en-to-pt',
   TRANSLATION_HEALTH_CHECK: '/api/v1/translation/health',
-  TRANSLATION_TRANSLATE_PT_TO_EN: '/api/v1/translation/pt-to-en',
   TRANSLATION_TRANSLATE_TEXT: '/api/v1/translation/text',
+  TRANSLATION_TRANSLATE_BATCH: '/api/v1/translation/batch',
+  TRANSLATION_TRANSLATE_PT_TO_EN: '/api/v1/translation/pt-to-en',
+  TRANSLATION_TRANSLATE_EN_TO_PT: '/api/v1/translation/en-to-pt',
+} as const;
+
+export const TWO_FACTOR_AUTH_ROUTES = {
+  TWO_FACTOR_AUTH_SETUP: '/api/auth/2fa/setup',
+  TWO_FACTOR_AUTH_VERIFY: '/api/auth/2fa/verify',
+  AUTH_DISABLE: '/api/auth/2fa',
+  TWO_FACTOR_AUTH_GET_STATUS: '/api/auth/2fa/status',
+  TWO_FACTOR_AUTH_REGENERATE: '/api/auth/2fa/backup-codes/regenerate',
 } as const;
 
 export const UPLOAD_ROUTES = {
@@ -168,41 +256,67 @@ export const UPLOAD_ROUTES = {
 } as const;
 
 export const USER_CONSENT_ROUTES = {
-  USER_CONSENT_EXPORT_DATA: '/api/gdpr/export',
   USER_CONSENT_ACCEPT_CONSENT: '/api/v1/users/me/accept-consent',
+  GET_CONSENT_STATUS_CHECK_CONSENT_STATUS: '/api/v1/users/me/consent-status',
+  GET_CONSENT_HISTORY_GET_CONSENT_HISTORY: '/api/v1/users/me/consent-history',
 } as const;
 
 export const USERS_ROUTES = {
-  USERS_HANDLE: '/api/password/reset',
-  USERS_CREATE_USER: '/api/v1/users/manage',
+  USERS_GET_PROFILE: '/api/v1/users/profile',
+  USERS_UPDATE_PROFILE: '/api/v1/users/profile',
+  USERS_UPDATE_USERNAME: '/api/v1/users/username',
+  USERS_CHECK_USERNAME_AVAILABILITY: '/api/v1/users/username/check',
   USERS_GET_PREFERENCES: '/api/v1/users/preferences',
   USERS_UPDATE_PREFERENCES: '/api/v1/users/preferences',
   USERS_GET_FULL_PREFERENCES: '/api/v1/users/preferences/full',
   USERS_UPDATE_FULL_PREFERENCES: '/api/v1/users/preferences/full',
-  USERS_GET_PROFILE: '/api/v1/users/profile',
-  USERS_UPDATE_PROFILE: '/api/v1/users/profile',
-  USERS_UPDATE_USERNAME: '/api/v1/users/username',
-  USERS_VALIDATE_USERNAME: '/api/v1/users/username/validate',
+  USERS_LIST_USERS: '/api/v1/users/manage',
+  USERS_CREATE_USER: '/api/v1/users/manage',
 } as const;
 
 // ============================================================================
 // URL Functions (with parameters) - Re-exported from SDK
 // ============================================================================
 
+// account-lifecycle
+export {
+  getDeactivateAccountHandleUrl,
+  getDeleteAccountHandleUrl,
+} from '../generated/api/account-lifecycle/account-lifecycle';
+
 // accounts
 export { getAccountsSignupUrl } from '../generated/api/accounts/accounts';
+
+// admin-section-types
+export {
+  getAdminSectionTypesCreateUrl,
+  getAdminSectionTypesFindAllUrl,
+  getAdminSectionTypesFindOneUrl,
+  getAdminSectionTypesGetSemanticKindsUrl,
+  getAdminSectionTypesRemoveUrl,
+  getAdminSectionTypesUpdateUrl,
+} from '../generated/api/admin-section-types/admin-section-types';
+
+// app
+export {
+  getAppGetHelloUrl,
+  getAppGetOpenApiSpecUrl,
+  getAppGetVersionUrl,
+} from '../generated/api/app/app';
 
 // ats-validation
 export { getAtsValidationValidateCVUrl } from '../generated/api/ats-validation/ats-validation';
 
 // auth
 export {
-  getAuthDisableUrl,
-  getAuthGetSessionUrl,
   getAuthLoginUrl,
+  getAuthLoginVerify2faUrl,
   getAuthLogoutUrl,
-  getAuthRefreshUrl,
+  getAuthSessionUrl,
 } from '../generated/api/auth/auth';
+
+// authentication
+export { getAuthRefreshUrl } from '../generated/api/authentication/authentication';
 
 // chat
 export {
@@ -242,7 +356,10 @@ export {
 } from '../generated/api/dsl/dsl';
 
 // email-verification
-export { getEmailVerificationHandleUrl } from '../generated/api/email-verification/email-verification';
+export {
+  getSendVerificationHandleUrl,
+  getVerifyEmailHandleUrl,
+} from '../generated/api/email-verification/email-verification';
 
 // enums
 export {
@@ -260,6 +377,9 @@ export {
   getExportExportResumePDFUrl,
 } from '../generated/api/export/export';
 
+// gdpr
+export { getUserConsentExportDataUrl } from '../generated/api/gdpr/gdpr';
+
 // github
 export {
   getGithubAutoSyncGitHubUrl,
@@ -267,6 +387,15 @@ export {
   getGithubGetSyncStatusUrl,
   getGithubSyncGitHubUrl,
 } from '../generated/api/github/github';
+
+// health
+export {
+  getPlatformCheckDatabaseUrl,
+  getPlatformCheckRedisUrl,
+  getPlatformCheckStorageUrl,
+  getPlatformCheckTranslateUrl,
+  getPlatformCheckUrl,
+} from '../generated/api/health/health';
 
 // mec-courses
 export {
@@ -296,12 +425,16 @@ export {
   getMecMetadataListAllStateCodesUrl,
 } from '../generated/api/mec-metadata/mec-metadata';
 
+// metrics
+export { getMetricsGetMetricsUrl } from '../generated/api/metrics/metrics';
+
 // onboarding
 export {
   getOnboardingCompleteFromSessionUrl,
   getOnboardingCompleteOnboardingUrl,
   getOnboardingGetProgressUrl,
   getOnboardingGetSessionUrl,
+  getOnboardingGetStatusUrl,
   getOnboardingGotoStepUrl,
   getOnboardingNextStepUrl,
   getOnboardingPreviousStepUrl,
@@ -309,15 +442,21 @@ export {
   getOnboardingSaveStepDataUrl,
 } from '../generated/api/onboarding/onboarding';
 
-// platform
+// password-management
 export {
-  getPlatformCheckDatabaseUrl,
-  getPlatformCheckRedisUrl,
-  getPlatformCheckStorageUrl,
-  getPlatformCheckTranslateUrl,
-  getPlatformCheckUrl,
-  getPlatformGetStatisticsUrl,
-} from '../generated/api/platform/platform';
+  getChangePasswordHandleUrl,
+  getForgotPasswordHandleUrl,
+  getResetPasswordHandleUrl,
+} from '../generated/api/password-management/password-management';
+
+// platform
+export { getPlatformGetStatisticsUrl } from '../generated/api/platform/platform';
+
+// public-resumes
+export {
+  getResumesDownloadPublicResumeUrl,
+  getResumesGetPublicResumeUrl,
+} from '../generated/api/public-resumes/public-resumes';
 
 // resume-analytics
 export {
@@ -330,11 +469,15 @@ export {
   getResumeAnalyticsGetProgressionUrl,
   getResumeAnalyticsGetViewStatsUrl,
   getResumeAnalyticsMatchJobUrl,
+  getResumeAnalyticsTrackViewUrl,
+} from '../generated/api/resume-analytics/resume-analytics';
+
+// resume-analytics-stream
+export {
   getResumeAnalyticsSubscribeToAtsScoreUrl,
   getResumeAnalyticsSubscribeToResumeAnalyticsUrl,
   getResumeAnalyticsSubscribeToViewsUrl,
-  getResumeAnalyticsTrackViewUrl,
-} from '../generated/api/resume-analytics/resume-analytics';
+} from '../generated/api/resume-analytics-stream/resume-analytics-stream';
 
 // resume-config
 export {
@@ -363,24 +506,28 @@ export {
   getResumeSkillsUpdateSkillUrl,
 } from '../generated/api/resume-skills/resume-skills';
 
+// resume-versions
+export {
+  getResumeVersionGetVersionsNestedUrl,
+  getResumeVersionGetVersionsUrl,
+  getResumeVersionGetVersionUrl,
+  getResumeVersionRestoreVersionNestedUrl,
+  getResumeVersionRestoreVersionUrl,
+} from '../generated/api/resume-versions/resume-versions';
+
 // resumes
 export {
   getResumesCreateItemUrl,
   getResumesCreateResumeForUserUrl,
-  getResumesCreateShareUrl,
   getResumesDeleteItemUrl,
   getResumesDeleteResumeForUserUrl,
   getResumesDeleteResumeUrl,
-  getResumesDeleteShareUrl,
-  getResumesDownloadPublicResumeUrl,
   getResumesGetAllUserResumesUrl,
-  getResumesGetPublicResumeUrl,
   getResumesGetRemainingSlotsUrl,
   getResumesGetResumeByIdForUserUrl,
   getResumesGetResumeByIdWithAllSectionsUrl,
   getResumesGetResumeDetailsUrl,
   getResumesListResumeSectionsUrl,
-  getResumesListResumeSharesUrl,
   getResumesListResumesForUserUrl,
   getResumesListTypesUrl,
   getResumesUpdateItemUrl,
@@ -394,18 +541,49 @@ export {
   getSearchSuggestionsUrl,
 } from '../generated/api/search/search';
 
-// skills
+// share-analytics
+export {
+  getShareAnalyticsGetAnalyticsEventsUrl,
+  getShareAnalyticsGetAnalyticsNestedUrl,
+  getShareAnalyticsGetAnalyticsUrl,
+} from '../generated/api/share-analytics/share-analytics';
+
+// shares
+export {
+  getResumesCreateShareUrl,
+  getResumesDeleteShareUrl,
+  getResumesListResumeSharesUrl,
+} from '../generated/api/shares/shares';
+
+// social-activity
+export {
+  getActivityGetActivitiesByTypeUrl,
+  getActivityGetFeedUrl,
+  getActivityGetUserActivitiesUrl,
+} from '../generated/api/social-activity/social-activity';
+
+// social-feed
+export {
+  getSocialSubscribeToActivityTypeUrl,
+  getSocialSubscribeToFeedUrl,
+} from '../generated/api/social-feed/social-feed';
+
+// social-follow
+export {
+  getFollowFollowUrl,
+  getFollowGetFollowersUrl,
+  getFollowGetFollowingUrl,
+  getFollowGetSocialStatsUrl,
+  getFollowIsFollowingUrl,
+  getFollowUnfollowUrl,
+} from '../generated/api/social-follow/social-follow';
+
+// spoken-languages
 export {
   getSkillsFindAllActiveLanguagesUrl,
   getSkillsFindLanguageByCodeUrl,
   getSkillsSearchLanguagesByNameUrl,
-} from '../generated/api/skills/skills';
-
-// social
-export {
-  getSocialSubscribeToActivityTypeUrl,
-  getSocialSubscribeToFeedUrl,
-} from '../generated/api/social/social';
+} from '../generated/api/spoken-languages/spoken-languages';
 
 // tech-areas
 export {
@@ -423,7 +601,24 @@ export {
 export {
   getTechSkillsGetSkillsByTypeUrl,
   getTechSkillsGetSkillsUrl,
+  getTechSkillsSearchSkillsUrl,
 } from '../generated/api/tech-skills/tech-skills';
+
+// tech-skills-query
+export {
+  getTechSkillsQueryGetAreasUrl,
+  getTechSkillsQueryGetLanguagesUrl,
+  getTechSkillsQueryGetNichesByAreaUrl,
+  getTechSkillsQueryGetNichesUrl,
+  getTechSkillsQueryGetSkillsByNicheUrl,
+  getTechSkillsQueryGetSkillsByTypeUrl,
+  getTechSkillsQueryGetSkillsUrl,
+  getTechSkillsQuerySearchLanguagesUrl,
+  getTechSkillsQuerySearchSkillsUrl,
+} from '../generated/api/tech-skills-query/tech-skills-query';
+
+// tech-skills-sync
+export { getTechSkillsSyncTriggerSyncUrl } from '../generated/api/tech-skills-sync/tech-skills-sync';
 
 // themes
 export {
@@ -452,6 +647,15 @@ export {
   getTranslationTranslateTextUrl,
 } from '../generated/api/translation/translation';
 
+// two-factor-auth
+export {
+  getAuthDisableUrl,
+  getTwoFactorAuthGetStatusUrl,
+  getTwoFactorAuthRegenerateUrl,
+  getTwoFactorAuthSetupUrl,
+  getTwoFactorAuthVerifyUrl,
+} from '../generated/api/two-factor-auth/two-factor-auth';
+
 // upload
 export {
   getUploadDeleteFileUrl,
@@ -461,8 +665,9 @@ export {
 
 // user-consent
 export {
+  getGetConsentHistoryGetConsentHistoryUrl,
+  getGetConsentStatusCheckConsentStatusUrl,
   getUserConsentAcceptConsentUrl,
-  getUserConsentExportDataUrl,
 } from '../generated/api/user-consent/user-consent';
 
 // users
@@ -475,7 +680,6 @@ export {
   getUsersGetProfileUrl,
   getUsersGetPublicProfileByUsernameUrl,
   getUsersGetUserDetailsUrl,
-  getUsersHandleUrl,
   getUsersListUsersUrl,
   getUsersResetPasswordUrl,
   getUsersUpdateFullPreferencesUrl,
@@ -483,5 +687,4 @@ export {
   getUsersUpdateProfileUrl,
   getUsersUpdateUsernameUrl,
   getUsersUpdateUserUrl,
-  getUsersValidateUsernameUrl,
 } from '../generated/api/users/users';

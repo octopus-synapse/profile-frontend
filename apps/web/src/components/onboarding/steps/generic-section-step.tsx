@@ -7,7 +7,8 @@
 
 'use client';
 
-import type { StepFieldDto } from '@profile/api-client';
+import { Button } from '@octopus-synapse/profile-ui';
+import { useI18n } from '@profile/i18n';
 import { CheckCircle2, Plus, X } from 'lucide-react';
 import { nanoid } from 'nanoid';
 import { useCallback, useState } from 'react';
@@ -15,6 +16,7 @@ import {
   getSectionTypeFromStep,
   type SectionItem,
   type SectionStep,
+  type StepFieldDto,
   useOnboarding,
 } from '../hooks';
 import { StepNavigation } from '../step-navigation';
@@ -25,6 +27,7 @@ interface GenericSectionStepProps {
 
 export function GenericSectionStep({ stepId }: GenericSectionStepProps) {
   const { getSection, goToNextStep, isSaving, currentStepMeta } = useOnboarding();
+  const { t } = useI18n();
 
   const sectionTypeKey = getSectionTypeFromStep(stepId);
   const sectionData = getSection(sectionTypeKey);
@@ -118,13 +121,19 @@ export function GenericSectionStep({ stepId }: GenericSectionStepProps) {
                   key={item.id}
                   className="border-white/10 bg-zinc-900/50 group relative rounded border p-4"
                 >
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveItem(item.id!)}
-                    className="hover:bg-red-500/20 hover:text-red-400 absolute right-2 top-2 rounded p-1 text-zinc-500 transition-colors"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
+                  <span className="absolute right-2 top-2">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      tone="danger"
+                      size="xs"
+                      iconOnly
+                      aria-label="Remove item"
+                      onPress={() => handleRemoveItem(item.id!)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </span>
                   <div className="grid gap-3 pr-8">
                     {fields.map((field) => (
                       <FieldInput
@@ -154,22 +163,26 @@ export function GenericSectionStep({ stepId }: GenericSectionStepProps) {
                 />
               ))}
             </div>
-            <button
+            <Button
               type="button"
-              onClick={handleAddItem}
+              variant="soft"
+              tone="info"
+              size="sm"
               disabled={!isNewItemValid}
-              className="mt-3 flex items-center gap-2 rounded bg-cyan-500/20 px-4 py-2 font-mono text-sm text-cyan-400 transition-colors hover:bg-cyan-500/30 disabled:cursor-not-allowed disabled:opacity-50"
+              leftIcon={<Plus className="h-4 w-4" />}
+              onPress={handleAddItem}
             >
-              <Plus className="h-4 w-4" />
               {addLabel}
-            </button>
+            </Button>
           </div>
         </>
       )}
 
       {/* Empty state */}
       {!noData && items.length === 0 && (
-        <p className="py-4 text-center font-mono text-sm text-zinc-500">No items added yet</p>
+        <p className="py-4 text-center font-mono text-sm text-zinc-500">
+          {t('onboarding.section.noItemsYet')}
+        </p>
       )}
 
       {/* Item count */}
@@ -177,7 +190,9 @@ export function GenericSectionStep({ stepId }: GenericSectionStepProps) {
         <div className="flex items-center gap-2 text-emerald-500">
           <CheckCircle2 className="h-4 w-4" />
           <span className="font-mono text-sm">
-            {items.length} {items.length === 1 ? 'item' : 'items'} added
+            {items.length === 1
+              ? t('onboarding.section.itemAdded', { count: items.length })
+              : t('onboarding.section.itemsAdded', { count: items.length })}
           </span>
         </div>
       )}
@@ -186,7 +201,7 @@ export function GenericSectionStep({ stepId }: GenericSectionStepProps) {
         onNext={handleNext}
         canProceed={canProceed}
         isLoading={isSaving}
-        nextLabel="Continue"
+        nextLabel={t('onboarding.section.continue')}
       />
     </div>
   );
@@ -205,6 +220,7 @@ function FieldInput({
   onChange: (v: string) => void;
   showPlaceholder?: boolean;
 }) {
+  const { t } = useI18n();
   const strVal = String(value ?? '');
   const inputType = field.widget === 'textarea' ? 'textarea' : field.type;
   const placeholder = showPlaceholder ? `Enter ${field.label.toLowerCase()}...` : undefined;
@@ -229,7 +245,7 @@ function FieldInput({
           onChange={(e) => onChange(e.target.value)}
           className="border-white/10 bg-zinc-900 w-full rounded border px-3 py-2 font-mono text-sm text-white focus:border-cyan-500 focus:outline-none"
         >
-          <option value="">Select...</option>
+          <option value="">{t('onboarding.section.select')}</option>
           {field.options.map((opt) => (
             <option key={opt} value={opt}>
               {opt}

@@ -50,16 +50,34 @@ function extractRoutesFromFile(filePath: string, category: string): Route[] {
   const content = fs.readFileSync(filePath, 'utf-8');
   const routes: Route[] = [];
 
-  // Match: export const getSomethingUrl = () => { ... return "/api/..."; }
-  // Allow whitespace between function declaration and return statement (non-greedy)
-  const urlFunctionRegex =
-    /export const (get\w+Url) = \(\) => \{[\s\S]*?return [`'"]([^`'"]+)[`'"][\s\S]*?\}/g;
+  const urlFunctionRegex = /export const (get\w+Url) = \(([^)]*)\) => \{/g;
 
   let match;
   while ((match = urlFunctionRegex.exec(content)) !== null) {
-    const [, functionName, routePath] = match;
-    // Include routes that start with /api/ (v1, auth, accounts, etc.)
-    if (routePath.startsWith('/api/')) {
+    const [fullMatch, functionName] = match;
+    const blockStart = match.index + fullMatch.length - 1;
+    const blockEnd = findBlockEnd(content, blockStart);
+
+    if (blockEnd === -1) {
+      continue;
+    }
+
+    const functionBody = content.slice(blockStart + 1, blockEnd);
+
+    const hasPathInterpolation = [...functionBody.matchAll(/\$\{/g)].some((interpolation) => {
+      const index = interpolation.index ?? 0;
+      const previousCharacter = functionBody[index - 1];
+
+      return previousCharacter !== '?' && previousCharacter !== '&';
+    });
+
+    if (hasPathInterpolation) {
+      continue;
+    }
+
+    const routePath = extractStaticRoutePath(functionBody);
+
+    if (routePath) {
       routes.push({
         name: functionName,
         path: routePath,
@@ -69,6 +87,43 @@ function extractRoutesFromFile(filePath: string, category: string): Route[] {
   }
 
   return routes;
+}
+
+function findBlockEnd(source: string, blockStart: number): number {
+  let depth = 0;
+
+  for (let index = blockStart; index < source.length; index += 1) {
+    const character = source[index];
+
+    if (character === '{') {
+      depth += 1;
+      continue;
+    }
+
+    if (character === '}') {
+      depth -= 1;
+
+      if (depth === 0) {
+        return index;
+      }
+    }
+  }
+
+  return -1;
+}
+
+function extractStaticRoutePath(functionBody: string): string | null {
+  const routeMatches = [...functionBody.matchAll(/[`'"]((?:\/api\/)[^`'"]*)[`'"]/g)];
+
+  for (const routeMatch of routeMatches) {
+    const candidatePath = routeMatch[1]?.replace(/\?.*$/, '');
+
+    if (candidatePath?.startsWith('/api/')) {
+      return candidatePath;
+    }
+  }
+
+  return null;
 }
 
 function generateRoutesFile(): void {

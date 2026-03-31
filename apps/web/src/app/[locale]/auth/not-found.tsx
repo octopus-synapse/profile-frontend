@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@octopus-synapse/profile-ui';
 import { ArrowLeft, Home, KeyRound, LogIn, UserPlus } from 'lucide-react';
 import Link from 'next/link';
 
@@ -85,14 +86,16 @@ export default function AuthNotFound() {
             go_home
           </Link>
           <span className="text-pf-fg-subtle">|</span>
-          <button
+          <Button
             type="button"
-            onClick={() => history.back()}
-            className="text-pf-fg-muted hover:text-pf-fg-default inline-flex items-center gap-2 transition-colors"
+            variant="ghost"
+            tone="neutral"
+            size="xs"
+            leftIcon={<ArrowLeft className="h-3 w-3" strokeWidth={1.5} />}
+            onPress={() => history.back()}
           >
-            <ArrowLeft className="h-3 w-3" strokeWidth={1.5} />
             go_back
-          </button>
+          </Button>
         </div>
       </div>
     </div>

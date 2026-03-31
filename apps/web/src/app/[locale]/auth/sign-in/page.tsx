@@ -1,9 +1,11 @@
 'use client';
 
+import { Button } from '@octopus-synapse/profile-ui';
 import { useI18n } from '@profile/i18n';
-import { motion } from 'framer-motion'; // Opcional: npm install framer-motion
-import { ArrowLeft, Github, Terminal } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ArrowLeft, Github } from 'lucide-react';
 import { SignInForm } from '@/components/auth';
+import { PatchLogo } from '@/components/navigation/patch-logo';
 import { ROUTES } from '@/config/routes';
 import { LocalizedLink } from '@/shared/components/localized-link';
 
@@ -31,11 +33,6 @@ export default function SignInPage() {
             />
             <span className="font-mono text-xs tracking-widest uppercase">{t('auth.back')}</span>
           </LocalizedLink>
-
-          <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1">
-            <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
-            <span className="font-mono text-[10px] tracking-tighter uppercase">System Online</span>
-          </div>
         </div>
       </header>
 
@@ -49,17 +46,12 @@ export default function SignInPage() {
         >
           {/* Logo/Title Section */}
           <div className="mb-10 text-center">
-            <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-gradient-to-b from-white/10 to-transparent shadow-2xl">
-              <Terminal className="h-6 w-6 text-white" strokeWidth={1.5} />
+            <div className="mb-6 flex justify-center">
+              <PatchLogo className="h-14 w-auto" />
             </div>
-            <h1 className="mb-2 text-3xl font-bold tracking-tight text-white">
+            <h1 className="text-3xl font-bold tracking-tight text-white">
               {t('auth.signIn.title')}
             </h1>
-            <div className="flex items-center justify-center gap-2 font-mono text-[10px] tracking-[0.2em] text-zinc-500 uppercase">
-              <span className="text-cyan-400">Ready to patch</span>
-              <span className="text-white opacity-20">|</span>
-              <span>Version 2.0.4</span>
-            </div>
           </div>
 
           {/* Form Card com borda "Glass" */}
@@ -81,13 +73,16 @@ export default function SignInPage() {
                 </div>
               </div>
 
-              <button
+              <Button
                 type="button"
-                className="flex w-full items-center justify-center gap-3 rounded-lg border border-white/10 bg-white/5 py-3 font-mono text-sm font-medium transition-all hover:border-white/20 hover:bg-white/10 active:scale-[0.98]"
+                variant="outline"
+                tone="neutral"
+                size="lg"
+                fullWidth
+                leftIcon={<Github className="h-4 w-4" />}
               >
-                <Github className="h-4 w-4 text-white" />
-                <span className="text-white">{t('auth.continueWithGithub')}</span>
-              </button>
+                {t('auth.continueWithGithub')}
+              </Button>
             </div>
           </div>
 

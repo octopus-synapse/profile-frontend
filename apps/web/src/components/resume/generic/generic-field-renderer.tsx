@@ -8,6 +8,7 @@
 'use client';
 
 import type { SectionStylesDto } from '@profile/api-client';
+import { useI18n } from '@profile/i18n';
 
 interface GenericFieldRendererProps {
   fieldKey: string;
@@ -19,16 +20,27 @@ interface GenericFieldRendererProps {
 }
 
 /**
+ * Map app locale to a valid date locale string.
+ */
+function toDateLocale(locale: string): string {
+  const map: Record<string, string> = {
+    'pt-BR': 'pt-BR',
+    pt: 'pt-BR',
+    en: 'en-US',
+  };
+  return map[locale] ?? 'en-US';
+}
+
+/**
  * Format a date value for display
  */
-function formatDate(value: unknown): string {
+function formatDate(value: unknown, dateLocale: string): string {
   if (!value) return '';
 
   if (typeof value === 'string') {
-    // Check if it's an ISO date
     const date = new Date(value);
     if (!Number.isNaN(date.getTime())) {
-      return date.toLocaleDateString('en-US', {
+      return date.toLocaleDateString(dateLocale, {
         month: 'short',
         year: 'numeric',
       });
@@ -49,6 +61,50 @@ function humanizeFieldKey(key: string): string {
     .trim();
 }
 
+/**
+ * Render an object value as formatted key-value pairs
+ */
+function renderObjectValue(value: Record<string, unknown>) {
+  const entries = Object.entries(value);
+  if (entries.length === 0) return null;
+
+  return (
+    <dl style={{ margin: 0, paddingLeft: '8px' }}>
+      {entries.map(([key, val]) => (
+        <div key={key} style={{ display: 'flex', gap: '4px', marginBottom: '2px' }}>
+          <dt style={{ fontWeight: 500, color: '#888' }}>{humanizeFieldKey(key)}:</dt>
+          <dd style={{ margin: 0 }}>
+            {typeof val === 'object' && val !== null
+              ? JSON.stringify(val, null, 2)
+              : String(val ?? '')}
+          </dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+/**
+ * Render a non-string value with graceful handling of objects and arrays
+ */
+function renderValue(value: unknown): React.ReactNode {
+  if (typeof value === 'string') return value;
+  if (value === null || value === undefined) return '';
+  if (Array.isArray(value)) return value.map(String).join(', ');
+  if (typeof value === 'object') return renderObjectValue(value as Record<string, unknown>);
+  return String(value);
+}
+
+/**
+ * Generate a stable key for an array item
+ */
+function itemKey(item: unknown, index: number): string {
+  if (typeof item === 'string') return `${item}-${index}`;
+  if (typeof item === 'object' && item !== null && 'id' in item)
+    return String((item as { id: unknown }).id);
+  return String(index);
+}
+
 export function GenericFieldRenderer({
   fieldKey,
   value,
@@ -57,6 +113,9 @@ export function GenericFieldRenderer({
   isDescription = false,
   styles,
 }: GenericFieldRendererProps) {
+  const { language } = useI18n();
+  const dateLocale = toDateLocale(language);
+
   // Skip null/undefined values
   if (value === null || value === undefined) return null;
 
@@ -81,9 +140,7 @@ export function GenericFieldRenderer({
       fontSize: `${(styles.content?.fontSizePx ?? 14) + 2}px`,
     };
 
-    return (
-      <div style={headerStyle}>{typeof value === 'string' ? value : JSON.stringify(value)}</div>
-    );
+    return <div style={headerStyle}>{renderValue(value)}</div>;
   }
 
   // Date style (muted, smaller)
@@ -96,14 +153,13 @@ export function GenericFieldRenderer({
           fontSize: `${(styles.content?.fontSizePx ?? 14) - 1}px`,
         }}
       >
-        {formatDate(value)}
+        {formatDate(value, dateLocale)}
       </span>
     );
   }
 
   // Description style (normal body text)
   if (isDescription) {
-    // Handle arrays (like achievements)
     if (Array.isArray(value)) {
       return (
         <ul
@@ -114,28 +170,23 @@ export function GenericFieldRenderer({
           }}
         >
           {value.map((item, index) => (
-            <li key={index} style={{ marginBottom: '4px' }}>
-              {typeof item === 'string' ? item : JSON.stringify(item)}
+            <li key={itemKey(item, index)} style={{ marginBottom: '4px' }}>
+              {renderValue(item)}
             </li>
           ))}
         </ul>
       );
     }
 
-    return (
-      <p style={{ ...bodyStyle, margin: '8px 0' }}>
-        {typeof value === 'string' ? value : JSON.stringify(value)}
-      </p>
-    );
+    return <p style={{ ...bodyStyle, margin: '8px 0' }}>{renderValue(value)}</p>;
   }
 
   // Default: show label and value
-  // Handle arrays
   if (Array.isArray(value)) {
     return (
       <div style={{ ...bodyStyle, marginBottom: '4px' }}>
         <span style={{ fontWeight: 500, marginRight: '4px' }}>{humanizeFieldKey(fieldKey)}:</span>
-        {value.join(', ')}
+        {value.map(String).join(', ')}
       </div>
     );
   }
@@ -145,7 +196,7 @@ export function GenericFieldRenderer({
     return (
       <div style={{ ...bodyStyle, marginBottom: '4px' }}>
         <span style={{ fontWeight: 500, marginRight: '4px' }}>{humanizeFieldKey(fieldKey)}:</span>
-        <span style={{ color: '#666' }}>{JSON.stringify(value)}</span>
+        {renderObjectValue(value as Record<string, unknown>)}
       </div>
     );
   }

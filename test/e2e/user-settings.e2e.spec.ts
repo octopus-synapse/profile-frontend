@@ -4,7 +4,7 @@
  * Tests user profile, preferences, and username management.
  * Tests: profile CRUD, preferences CRUD, username validation
  *
- * Decision: Uses centralized routes from routes.ts.
+ * Decision: Uses centralized USERS_ROUTES from routes.ts (single source of truth).
  * Requires authenticated user.
  */
 
@@ -15,20 +15,9 @@ import type {
 import {
 	e2eFetch,
 	skipIfBackendUnavailable,
-	AUTHENTICATION_ROUTES,
+	AUTH_ROUTES,
 	USERS_ROUTES,
 } from "./setup";
-
-// Import USERS_ROUTES if not already exported
-const USERS_API = {
-	GET_PROFILE: "/api/v1/users/profile",
-	UPDATE_PROFILE: "/api/v1/users/profile",
-	GET_PREFERENCES: "/api/v1/users/preferences",
-	UPDATE_PREFERENCES: "/api/v1/users/preferences",
-	VALIDATE_USERNAME: "/api/v1/users/username/validate",
-	UPDATE_USERNAME: "/api/v1/users/username",
-	CHECK_USERNAME: "/api/v1/users/username/check",
-} as const;
 
 describe("E2E: User Settings API", () => {
 	// Use admin user from seed data
@@ -44,7 +33,7 @@ describe("E2E: User Settings API", () => {
 
 		// Login test user
 		const loginResponse = await e2eFetch<LoginResponseDto>(
-			AUTHENTICATION_ROUTES.AUTH_LOGIN,
+			AUTH_ROUTES.AUTH_LOGIN,
 			{
 				method: "POST",
 				body: JSON.stringify({
@@ -69,16 +58,18 @@ describe("E2E: User Settings API", () => {
 			}
 
 			const response = await e2eFetch<{
-				fullName: string;
-				email: string;
-				avatar?: string;
-			}>(USERS_API.GET_PROFILE, {
+				profile: {
+					displayName?: string;
+					email: string;
+					photoURL?: string;
+				};
+			}>(USERS_ROUTES.USERS_GET_PROFILE, {
 				method: "GET",
 				token: accessToken,
 			});
 
 			expect(response.status).toBe(200);
-			expect(response.data.email).toBeDefined();
+			expect(response.data.profile.email).toBeDefined();
 		});
 
 		it("should update user profile", async () => {
@@ -88,11 +79,13 @@ describe("E2E: User Settings API", () => {
 			}
 
 			const updateData = {
-				fullName: `Test User ${Date.now()}`,
+				displayName: `Test User ${Date.now()}`,
 			};
 
-			const response = await e2eFetch<{ fullName: string }>(
-				USERS_API.UPDATE_PROFILE,
+			const response = await e2eFetch<{
+				profile: { displayName?: string };
+			}>(
+				USERS_ROUTES.USERS_UPDATE_PROFILE,
 				{
 					method: "PATCH",
 					token: accessToken,
@@ -101,11 +94,11 @@ describe("E2E: User Settings API", () => {
 			);
 
 			expect([200, 201]).toContain(response.status);
-			expect(response.data.fullName).toContain("Test User");
+			expect(response.data.profile.displayName).toContain("Test User");
 		});
 
 		it("should require authentication to get profile", async () => {
-			const response = await e2eFetch<unknown>(USERS_API.GET_PROFILE, {
+			const response = await e2eFetch<unknown>(USERS_ROUTES.USERS_GET_PROFILE, {
 				method: "GET",
 				// No token
 			});
@@ -124,7 +117,7 @@ describe("E2E: User Settings API", () => {
 			const response = await e2eFetch<{
 				theme?: string;
 				language?: string;
-			}>(USERS_API.GET_PREFERENCES, {
+			}>(USERS_ROUTES.USERS_GET_PREFERENCES, {
 				method: "GET",
 				token: accessToken,
 			});
@@ -146,7 +139,7 @@ describe("E2E: User Settings API", () => {
 			};
 
 			const response = await e2eFetch<{ theme?: string; language?: string }>(
-				USERS_API.UPDATE_PREFERENCES,
+				USERS_ROUTES.USERS_UPDATE_PREFERENCES,
 				{
 					method: "PATCH",
 					token: accessToken,
@@ -158,7 +151,7 @@ describe("E2E: User Settings API", () => {
 		});
 
 		it("should require authentication to get preferences", async () => {
-			const response = await e2eFetch<unknown>(USERS_API.GET_PREFERENCES, {
+			const response = await e2eFetch<unknown>(USERS_ROUTES.USERS_GET_PREFERENCES, {
 				method: "GET",
 				// No token
 			});
@@ -168,22 +161,22 @@ describe("E2E: User Settings API", () => {
 	});
 
 	describe("Username Operations", () => {
-		it("should validate username format", async () => {
+		it("should check username availability (valid format)", async () => {
 			if (!accessToken) {
 				console.log("Skipping: no access token");
 				return;
 			}
 
-			// Valid username format
-			const validResponse = await e2eFetch<{ valid: boolean; message?: string }>(
-				`${USERS_API.VALIDATE_USERNAME}?username=validuser123`,
+			const response = await e2eFetch<{ available: boolean; username?: string }>(
+				`${USERS_ROUTES.USERS_CHECK_USERNAME_AVAILABILITY}?username=validuser123`,
 				{
 					method: "GET",
 					token: accessToken,
 				},
 			);
 
-			expect(validResponse.status).toBe(200);
+			expect(response.status).toBe(200);
+			expect(response.data.available).toBeDefined();
 		});
 
 		it("should reject invalid username format", async () => {
@@ -192,29 +185,28 @@ describe("E2E: User Settings API", () => {
 				return;
 			}
 
-			// Invalid username (too short or special chars)
-			const response = await e2eFetch<{ valid: boolean; message?: string }>(
-				`${USERS_API.VALIDATE_USERNAME}?username=a`,
+			// Invalid username (too short)
+			const response = await e2eFetch<{ available: boolean; errors?: string[] }>(
+				`${USERS_ROUTES.USERS_CHECK_USERNAME_AVAILABILITY}?username=a`,
 				{
 					method: "GET",
 					token: accessToken,
 				},
 			);
 
-			// Should return 200 with valid: false OR 400 for validation error
+			// Should return 200 with available: false OR 400 for validation error
 			expect([200, 400]).toContain(response.status);
 		});
 
-		it("should check username availability", async () => {
+		it("should confirm unique username is available", async () => {
 			if (!accessToken) {
 				console.log("Skipping: no access token");
 				return;
 			}
 
-			// Check availability of a unique username
 			const uniqueUsername = `testuser${Date.now()}`;
-			const response = await e2eFetch<{ available: boolean }>(
-				`${USERS_API.CHECK_USERNAME}?username=${uniqueUsername}`,
+			const response = await e2eFetch<{ available: boolean; username?: string }>(
+				`${USERS_ROUTES.USERS_CHECK_USERNAME_AVAILABILITY}?username=${uniqueUsername}`,
 				{
 					method: "GET",
 					token: accessToken,

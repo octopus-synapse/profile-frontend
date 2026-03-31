@@ -15,13 +15,12 @@ describe("Smoke: API Client SDK Exports", () => {
 
    expect(auth.authLogin).toBeDefined();
    expect(auth.authLogout).toBeDefined();
-   expect(auth.authRefresh).toBeDefined();
-   expect(auth.authGetSession).toBeDefined();
+   expect(auth.authSession).toBeDefined();
 
    // Hooks should also be exported
    expect(auth.useAuthLogin).toBeDefined();
    expect(auth.useAuthLogout).toBeDefined();
-   expect(auth.useAuthRefresh).toBeDefined();
+   expect(auth.useAuthSession).toBeDefined();
   });
 
   it("should export accounts functions", async () => {
@@ -75,8 +74,6 @@ describe("Smoke: API Client SDK Exports", () => {
   it("should export fetcher utilities", async () => {
    const client = await import("../../packages/api-client/src/client");
 
-   expect(client.setAuthToken).toBeDefined();
-   expect(client.clearAuthToken).toBeDefined();
    expect(client.isApiError).toBeDefined();
   });
  });
@@ -86,8 +83,6 @@ describe("Smoke: API Client SDK Exports", () => {
    const apiClient = await import("../../packages/api-client/src");
 
    // Check main exports exist
-   expect(apiClient.setAuthToken).toBeDefined();
-   expect(apiClient.clearAuthToken).toBeDefined();
    expect(apiClient.isApiError).toBeDefined();
   });
  });

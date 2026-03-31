@@ -3,17 +3,15 @@
  * Developer-inspired design with code aesthetic
  */
 
+'use client';
+
+import { useT } from '@profile/i18n';
 import { ArrowLeft, Home, ShieldX } from 'lucide-react';
-import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ROUTES } from '@/config/routes';
 
-export const metadata: Metadata = {
-  title: 'Unauthorized | PATCH',
-  description: "You don't have permission to access this resource",
-};
-
 export default function UnauthorizedPage() {
+  const t = useT();
   return (
     <div className="bg-pf-canvas-default flex min-h-screen flex-col items-center justify-center px-4">
       <div className="relative z-10 flex flex-col items-center text-center">
@@ -32,10 +30,11 @@ export default function UnauthorizedPage() {
         </div>
 
         {/* Message */}
-        <h1 className="text-pf-fg-default mb-3 text-xl font-semibold">Access Denied</h1>
+        <h1 className="text-pf-fg-default mb-3 text-xl font-semibold">
+          {t('app.unauthorized.title')}
+        </h1>
         <p className="text-pf-fg-muted mb-8 max-w-md font-mono text-sm">
-          You don&apos;t have permission to access this page. Please contact an administrator if you
-          believe this is an error.
+          {t('app.unauthorized.description')}
         </p>
 
         {/* Action Buttons */}
@@ -45,14 +44,14 @@ export default function UnauthorizedPage() {
             className="bg-pf-canvas-emphasis text-pf-fg-on-emphasis inline-flex items-center justify-center gap-2 px-6 py-3 font-mono text-sm transition-opacity hover:opacity-90"
           >
             <Home className="h-4 w-4" strokeWidth={1.5} />
-            go_home()
+            {t('app.unauthorized.goHome')}
           </Link>
           <Link
             href={ROUTES.AUTH.SIGN_IN}
             className="border-pf-border-default text-pf-fg-default hover:bg-pf-canvas-subtle inline-flex items-center justify-center gap-2 border bg-transparent px-6 py-3 font-mono text-sm transition-colors"
           >
             <ArrowLeft className="h-4 w-4" strokeWidth={1.5} />
-            try_different_account()
+            {t('app.unauthorized.tryDifferent')}
           </Link>
         </div>
 
@@ -77,11 +76,13 @@ export default function UnauthorizedPage() {
             </div>
             <div className="ml-4">
               <span className="code-function">error</span>:{' '}
-              <span className="code-string">&quot;FORBIDDEN&quot;</span>,
+              <span className="code-string">&quot;{t('app.unauthorized.forbidden')}&quot;</span>,
             </div>
             <div className="ml-4">
               <span className="code-function">message</span>:{' '}
-              <span className="code-string">&quot;Access denied&quot;</span>
+              <span className="code-string">
+                &quot;{t('app.unauthorized.checkPermissions')}&quot;
+              </span>
             </div>
             <div>{'}'}</div>
           </div>

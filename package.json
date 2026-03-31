@@ -8,7 +8,6 @@
   ],
   "scripts": {
     "dev": "bun --filter @profile/web dev",
-    "dev:mobile": "bun --filter @profile/mobile start",
     "build": "bun --filter @profile/api-client build && bun --filter @profile/i18n build && bun --filter @profile/web build",
     "start": "bun --filter @profile/web start",
     "lint": "biome check .",
@@ -16,7 +15,7 @@
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",
     "format:check": "biome format .",
-    "typecheck": "tsc --noEmit && tsc --noEmit -p apps/web/tsconfig.json",
+    "typecheck": "bun --filter @profile/api-client build && bun --filter @profile/i18n build && tsc --noEmit && tsc --noEmit -p apps/web/tsconfig.json",
     "test": "bun test",
     "test:unit": "bun test apps/web/src/",
     "test:arch": "bun test test/architecture/",

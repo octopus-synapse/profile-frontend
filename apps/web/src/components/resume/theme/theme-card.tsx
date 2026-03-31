@@ -5,6 +5,8 @@
 
 'use client';
 
+import { Button } from '@octopus-synapse/profile-ui';
+import { useI18n } from '@profile/i18n';
 import {
   Check,
   Clock,
@@ -18,8 +20,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import { cn } from '@/shared/utils';
-import type { Theme } from '../services/theme.types';
-import type { ResumeStyleConfig } from '../types/config';
+import type { ResumeStyleConfig, Theme } from '../types/config';
 
 interface Props {
   theme: Theme;
@@ -54,9 +55,13 @@ export function ThemeCard({
 
   // Extract colors from styleConfig
   const styleConfig = theme.styleConfig as Partial<ResumeStyleConfig> | undefined;
-  const primaryColor = styleConfig?.tokens?.colors?.colors?.primary ?? '#3B82F6';
-  const bgColor = styleConfig?.tokens?.colors?.colors?.background ?? '#FFFFFF';
-  const textColor = styleConfig?.tokens?.colors?.colors?.text?.primary ?? '#1E293B';
+  const colors = styleConfig?.colors ?? styleConfig?.tokens?.colors;
+  const primaryRaw = colors?.primary;
+  const primaryColor = typeof primaryRaw === 'string' ? primaryRaw : '#3B82F6';
+  const bgRaw = colors?.background;
+  const bgColor = typeof bgRaw === 'string' ? bgRaw : '#FFFFFF';
+  const textRaw = colors?.text;
+  const textColor = typeof textRaw === 'string' ? textRaw : (textRaw?.primary ?? '#1E293B');
 
   return (
     <div
@@ -70,8 +75,8 @@ export function ThemeCard({
       {/* Clickable area */}
       <button
         type="button"
-        onClick={onSelect}
         className="flex w-full items-start gap-3 p-3 text-left"
+        onClick={onSelect}
       >
         {/* Color preview */}
         <div
@@ -136,21 +141,11 @@ export function ThemeCard({
           )}
 
           {canSubmit && (
-            <ActionButton
-              onClick={onSubmitForApproval}
-              icon={Send}
-              label="Submit"
-              className="text-amber-400 hover:text-amber-300"
-            />
+            <ActionButton onClick={onSubmitForApproval} icon={Send} label="Submit" tone="warning" />
           )}
 
           {canDelete && !isPending && (
-            <ActionButton
-              onClick={onDelete}
-              icon={Trash2}
-              label="Delete"
-              className="text-red-400 hover:text-red-300"
-            />
+            <ActionButton onClick={onDelete} icon={Trash2} label="Delete" tone="danger" />
           )}
         </div>
       )}
@@ -168,9 +163,14 @@ export function ThemeCard({
 }
 
 function StatusIcon({ theme }: { theme: Theme }) {
+  const { t } = useI18n();
+
   if (theme.isSystemTheme) {
     return (
-      <span className="rounded-full bg-white/10 p-0.5 text-zinc-400" title="System">
+      <span
+        className="rounded-full bg-white/10 p-0.5 text-zinc-400"
+        title={t('resume.theme.card.system')}
+      >
         <Sparkles className="h-3 w-3" strokeWidth={1.5} />
       </span>
     );
@@ -178,25 +178,37 @@ function StatusIcon({ theme }: { theme: Theme }) {
   switch (theme.status) {
     case 'PUBLISHED':
       return (
-        <span className="rounded-full bg-emerald-500/20 p-0.5 text-emerald-400" title="Public">
+        <span
+          className="rounded-full bg-emerald-500/20 p-0.5 text-emerald-400"
+          title={t('resume.theme.card.public')}
+        >
           <Globe className="h-3 w-3" strokeWidth={1.5} />
         </span>
       );
     case 'PENDING_APPROVAL':
       return (
-        <span className="rounded-full bg-amber-500/20 p-0.5 text-amber-400" title="Pending">
+        <span
+          className="rounded-full bg-amber-500/20 p-0.5 text-amber-400"
+          title={t('resume.theme.card.pending')}
+        >
           <Clock className="h-3 w-3" strokeWidth={1.5} />
         </span>
       );
     case 'REJECTED':
       return (
-        <span className="rounded-full bg-red-500/20 p-0.5 text-red-400" title="Rejected">
+        <span
+          className="rounded-full bg-red-500/20 p-0.5 text-red-400"
+          title={t('resume.theme.card.rejected')}
+        >
           <XCircle className="h-3 w-3" strokeWidth={1.5} />
         </span>
       );
     default:
       return (
-        <span className="rounded-full bg-white/10 p-0.5 text-zinc-400" title="Private">
+        <span
+          className="rounded-full bg-white/10 p-0.5 text-zinc-400"
+          title={t('resume.theme.card.private')}
+        >
           <Lock className="h-3 w-3" strokeWidth={1.5} />
         </span>
       );
@@ -207,32 +219,29 @@ function ActionButton({
   onClick,
   icon: Icon,
   label,
-  className,
+  tone = 'neutral',
 }: {
   onClick?: () => void;
   icon: typeof Pencil;
   label: string;
-  className?: string;
+  tone?: 'neutral' | 'warning' | 'danger';
 }) {
   return (
-    <button
+    <Button
       type="button"
-      onClick={(e) => {
-        e.stopPropagation();
-        onClick?.();
-      }}
-      className={cn(
-        'flex flex-1 items-center justify-center gap-1.5 py-2 text-xs font-medium text-zinc-400 transition-colors hover:bg-white/5 hover:text-white',
-        className,
-      )}
+      variant="ghost"
+      tone={tone}
+      size="xs"
+      leftIcon={<Icon className="h-3 w-3" strokeWidth={1.5} />}
+      onPress={onClick}
     >
-      <Icon className="h-3 w-3" strokeWidth={1.5} />
       {label}
-    </button>
+    </Button>
   );
 }
 
-function getCategoryLabel(category: string): string {
+function getCategoryLabel(category?: string): string {
+  if (!category) return 'Custom theme';
   const labels: Record<string, string> = {
     PROFESSIONAL: 'Professional style',
     CREATIVE: 'Creative design',

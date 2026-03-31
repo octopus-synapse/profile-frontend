@@ -5,55 +5,42 @@
  * Ultra Premium Version - Inspired by Linear, Vercel & Cursor
  */
 
+import { Button, Input, Label, Spinner } from '@octopus-synapse/profile-ui';
+import { type ForgotPasswordDto, forgotPasswordHandle } from '@profile/api-client';
 import { useT } from '@profile/i18n';
+import { useMutation } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle, CheckCircle2, ChevronRight, Mail } from 'lucide-react';
 import { useState } from 'react';
-import { Button, Input, Spinner } from '@/shared/components/ui';
-import { Label } from '@/shared/components/ui/label';
-import { apiClient } from '@/shared/lib/api-client';
+
+async function requestPasswordReset(dto: ForgotPasswordDto) {
+  return forgotPasswordHandle(dto);
+}
 
 export function ForgotPasswordForm() {
   const t = useT();
   const [email, setEmail] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setSuccess(false);
-    setIsLoading(true);
+  const resetMutation = useMutation({
+    mutationFn: (dto: ForgotPasswordDto) => requestPasswordReset(dto),
+    onSuccess: () => setEmail(''),
+  });
 
-    try {
-      // Use shared api-client
-      const result = await apiClient.auth.forgotPassword({ email });
-
-      // If we get here without error, the request was successful
-      if (result.success) {
-        setSuccess(true);
-        setEmail(''); // Clear email after successful submission
-      } else {
-        // Request failed
-        setError(
-          t('auth.error.emailNotSent') || 'Unable to send reset email. Please try again later.',
-        );
-      }
-    } catch (err) {
-      // Email service failed or other error
-      const errorMessage = err instanceof Error ? err.message : '';
-      if (errorMessage.includes('Forbidden') || errorMessage.includes('email')) {
-        setError(
-          t('auth.error.emailServiceError') ||
-            'Email service is temporarily unavailable. Please try again later.',
-        );
-      } else {
-        setError(t('error.generic'));
-      }
-    } finally {
-      setIsLoading(false);
+  const error = (() => {
+    if (!resetMutation.error) return null;
+    const msg = resetMutation.error.message ?? '';
+    if (msg.includes('Forbidden') || msg.includes('email')) {
+      return (
+        t('auth.error.emailServiceError') ||
+        'Email service is temporarily unavailable. Please try again later.'
+      );
     }
+    return t('error.generic');
+  })();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    resetMutation.mutate({ email });
   };
 
   return (
@@ -69,7 +56,7 @@ export function ForgotPasswordForm() {
       <form onSubmit={(e) => void handleSubmit(e)} className="space-y-5">
         {/* Success Alert */}
         <AnimatePresence mode="wait">
-          {success && (
+          {resetMutation.isSuccess && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
@@ -120,7 +107,7 @@ export function ForgotPasswordForm() {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
               placeholder="name@company.com"
               required
-              disabled={success || isLoading}
+              disabled={resetMutation.isSuccess || resetMutation.isPending}
               className="h-11 border-white/10 bg-white/[0.02] pl-10 transition-all focus:border-cyan-500/50 focus:bg-white/[0.05] focus:ring-cyan-500/20 disabled:opacity-50"
             />
           </div>
@@ -129,10 +116,10 @@ export function ForgotPasswordForm() {
         {/* Submit Button */}
         <Button
           type="submit"
-          disabled={isLoading || success}
+          disabled={resetMutation.isPending || resetMutation.isSuccess}
           className="group relative h-12 w-full overflow-hidden rounded-lg bg-white text-sm font-bold text-black transition-all hover:bg-white/90 active:scale-[0.98] disabled:opacity-50"
         >
-          {isLoading ? (
+          {resetMutation.isPending ? (
             <Spinner size="sm" className="border-black/20 border-t-black" />
           ) : (
             <span className="relative z-10 flex items-center justify-center gap-2">
@@ -149,11 +136,11 @@ export function ForgotPasswordForm() {
         <div className="mt-4 flex items-center justify-center gap-4 font-mono text-[10px] tracking-tighter text-zinc-600 uppercase">
           <div className="flex items-center gap-1">
             <div className="h-1 w-1 rounded-full bg-cyan-500" />
-            <span>Secure</span>
+            <span>{t('auth.security.secure')}</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="h-1 w-1 rounded-full bg-cyan-500" />
-            <span>Encrypted</span>
+            <span>{t('auth.security.encrypted')}</span>
           </div>
         </div>
       </form>

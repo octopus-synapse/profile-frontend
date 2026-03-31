@@ -4,7 +4,7 @@
  * Generates TypeScript SDK from backend OpenAPI specification.
  *
  * SINGLE SOURCE OF TRUTH: Backend's swagger.json
- * No manual type definitions, no profile-contracts dependency.
+ * No manual type definitions — types generated from OpenAPI spec.
  *
  * Usage:
  * - Local dev: bun run sdk:generate (reads from ../profile-services/swagger.json)

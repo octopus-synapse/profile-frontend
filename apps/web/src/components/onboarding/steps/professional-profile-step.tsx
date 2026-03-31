@@ -6,36 +6,25 @@
 
 'use client';
 
-import {
-  AlertCircle,
-  Briefcase,
-  Check,
-  ExternalLink,
-  FileText,
-  Github,
-  Globe,
-  Linkedin,
-  Loader2,
-} from 'lucide-react';
+import { useI18n } from '@profile/i18n';
+import { AlertCircle, Briefcase, FileText, Globe, Linkedin } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
 import { type ProfessionalProfile, useGitHubUser, useOnboarding } from '../hooks';
 import { OnboardingStepHeader } from '../step-header';
 import { StepNavigation } from '../step-navigation';
+import { GitHubField } from './professional-profile-github-field';
+import {
+  extractGitHubUsername,
+  normalizeUrl,
+  SUMMARY_MAX,
+  SUMMARY_MIN,
+} from './professional-profile-step.utils';
 
 export function ProfessionalProfileStep() {
-  const { professionalProfile, goToNextStep } = useOnboarding();
+  const { professionalProfile, goToNextStep, currentStepIndex, allSteps } = useOnboarding();
+  const { t } = useI18n();
 
-  // Extract GitHub username from URL if it's a full URL
-  const extractGitHubUsername = (url: string | undefined): string => {
-    if (!url) return '';
-    // If it's already just a username, return it
-    if (!url.includes('github.com')) return url.trim();
-    // Extract username from URL
-    const match = url.match(/github\.com\/([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)/);
-    return match?.[1] ?? url.replace(/^https?:\/\/(www\.)?github\.com\//, '').trim();
-  };
-
-  const initialGithub: string = extractGitHubUsername(professionalProfile?.github ?? '');
+  const initialGithub = extractGitHubUsername(professionalProfile?.github ?? '');
 
   const [formData, setFormData] = useState({
     jobTitle: professionalProfile?.jobTitle || '',
@@ -45,7 +34,6 @@ export function ProfessionalProfileStep() {
     website: professionalProfile?.website || '',
   });
 
-  // Fetch GitHub user data
   const {
     user: githubUser,
     isLoading: isGithubLoading,
@@ -54,46 +42,44 @@ export function ProfessionalProfileStep() {
 
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-  // Character count for summary
   const summaryLength = formData.summary.length;
-  const minSummary = 50;
-  const maxSummary = 2000;
 
-  // Validate using useMemo instead of useEffect + setState
   const errors = useMemo(() => {
     const newErrors: Record<string, string> = {};
 
     if (touched.jobTitle && formData.jobTitle.length < 2) {
-      newErrors.jobTitle = 'Job title must be at least 2 characters';
+      newErrors.jobTitle = t('onboarding.professionalProfile.jobTitleMinLength');
     }
 
     if (touched.summary) {
-      if (summaryLength < minSummary) {
-        newErrors.summary = `Summary must be at least ${minSummary} characters`;
-      } else if (summaryLength > maxSummary) {
-        newErrors.summary = `Summary must be less than ${maxSummary} characters`;
+      if (summaryLength < SUMMARY_MIN) {
+        newErrors.summary = t('onboarding.professionalProfile.summaryMinLength', {
+          min: SUMMARY_MIN,
+        });
+      } else if (summaryLength > SUMMARY_MAX) {
+        newErrors.summary = t('onboarding.professionalProfile.summaryMaxLength', {
+          max: SUMMARY_MAX,
+        });
       }
     }
 
-    // URL validations (only for linkedin and website, github is validated via API)
     const urlFields = ['linkedin', 'website'] as const;
     urlFields.forEach((field) => {
       if (touched[field] && formData[field]) {
         try {
           new URL(formData[field]);
         } catch {
-          newErrors[field] = 'Invalid URL format';
+          newErrors[field] = t('onboarding.professionalProfile.invalidUrl');
         }
       }
     });
 
-    // GitHub validation: show error if user not found
     if (touched.github && formData.github && githubError && !isGithubLoading) {
       newErrors.github = githubError;
     }
 
     return newErrors;
-  }, [formData, touched, summaryLength, githubError, isGithubLoading]);
+  }, [formData, touched, summaryLength, githubError, isGithubLoading, t]);
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -112,11 +98,14 @@ export function ProfessionalProfileStep() {
       website: true,
     });
 
-    if (formData.jobTitle.length < 2 || summaryLength < minSummary || summaryLength > maxSummary) {
+    if (
+      formData.jobTitle.length < 2 ||
+      summaryLength < SUMMARY_MIN ||
+      summaryLength > SUMMARY_MAX
+    ) {
       return;
     }
 
-    // Validate URLs even if not touched (only linkedin and website)
     const urlFields = ['linkedin', 'website'] as const;
     const urlErrors: Record<string, string> = {};
     urlFields.forEach((field) => {
@@ -124,23 +113,15 @@ export function ProfessionalProfileStep() {
         try {
           new URL(formData[field]);
         } catch {
-          urlErrors[field] = 'Invalid URL format';
+          urlErrors[field] = t('onboarding.professionalProfile.invalidUrl');
         }
       }
     });
 
     if (Object.keys(urlErrors).length > 0) {
-      // Show errors but don't prevent proceeding if URLs are optional
-      console.warn('URL validation errors:', urlErrors);
+      return;
     }
 
-    // Normalize empty URLs to undefined
-    const normalizeUrl = (url: string | undefined): string | undefined => {
-      if (!url || url.trim() === '') return undefined;
-      return url;
-    };
-
-    // Build GitHub URL from username if provided
     const githubUrl = formData.github ? `https://github.com/${formData.github.trim()}` : undefined;
 
     const profile: ProfessionalProfile = {
@@ -151,33 +132,36 @@ export function ProfessionalProfileStep() {
       website: normalizeUrl(formData.website),
     };
     await goToNextStep({ professionalProfile: profile });
-  }, [formData, summaryLength, goToNextStep]);
+  }, [formData, summaryLength, goToNextStep, t]);
 
   const canProceed =
-    formData.jobTitle.length >= 2 && summaryLength >= minSummary && summaryLength <= maxSummary;
+    formData.jobTitle.length >= 2 && summaryLength >= SUMMARY_MIN && summaryLength <= SUMMARY_MAX;
 
   return (
     <div className="space-y-6">
       <OnboardingStepHeader
-        eyebrow="Step 3"
-        title="Professional profile"
-        description="Summarize your role, your strengths, and the links that support your profile."
+        eyebrow={t('onboarding.shell.stepOf', {
+          current: currentStepIndex + 1,
+          total: allSteps.length,
+        })}
+        title={t('onboarding.professionalProfile.title')}
+        description={t('onboarding.professionalProfile.description')}
       />
 
-      {/* Form */}
       <div className="space-y-4">
         {/* Job Title */}
         <div>
           <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-white">
             <Briefcase className="h-4 w-4" strokeWidth={1.5} />
-            Job title<span className="text-red-500">*</span>
+            {t('onboarding.professionalProfile.jobTitleLabel')}
+            <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
             value={formData.jobTitle}
             onChange={(e) => handleChange('jobTitle', e.target.value)}
             onBlur={() => handleBlur('jobTitle')}
-            placeholder="Senior Software Engineer"
+            placeholder={t('onboarding.professionalProfile.jobTitlePlaceholder')}
             className={`w-full rounded-xl border border-white/10 bg-zinc-950/60 px-3 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${errors.jobTitle ? 'border-red-500' : ''} `}
           />
           {errors.jobTitle && (
@@ -192,13 +176,14 @@ export function ProfessionalProfileStep() {
         <div>
           <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-white">
             <FileText className="h-4 w-4" strokeWidth={1.5} />
-            Summary<span className="text-red-500">*</span>
+            {t('onboarding.professionalProfile.summaryLabel')}
+            <span className="text-red-500">*</span>
           </label>
           <textarea
             value={formData.summary}
             onChange={(e) => handleChange('summary', e.target.value)}
             onBlur={() => handleBlur('summary')}
-            placeholder="Passionate full-stack developer with 5+ years of experience building scalable web applications. Specialized in React, Node.js, and cloud infrastructure..."
+            placeholder={t('onboarding.professionalProfile.summaryPlaceholder')}
             rows={4}
             className={`w-full resize-none rounded-xl border border-white/10 bg-zinc-950/60 px-3 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${errors.summary ? 'border-red-500' : ''} `}
           />
@@ -209,39 +194,40 @@ export function ProfessionalProfileStep() {
                 {errors.summary}
               </p>
             ) : (
-              <span className="text-xs text-zinc-500">Minimum {minSummary} characters</span>
+              <span className="text-xs text-zinc-500">
+                {t('onboarding.professionalProfile.minimumChars', { min: SUMMARY_MIN })}
+              </span>
             )}
             <span
               className={`text-xs ${
-                summaryLength < minSummary
+                summaryLength < SUMMARY_MIN
                   ? 'text-amber-500'
-                  : summaryLength > maxSummary
+                  : summaryLength > SUMMARY_MAX
                     ? 'text-red-500'
                     : 'text-emerald-500'
               }`}
             >
-              {summaryLength}/{maxSummary}
+              {summaryLength}/{SUMMARY_MAX}
             </span>
           </div>
         </div>
 
-        {/* Divider */}
         <div className="rounded-2xl border border-white/10 bg-zinc-950/40 px-4 py-3 text-sm text-zinc-400">
-          Social links are optional, but they help make your profile more credible.
+          {t('onboarding.professionalProfile.socialLinksHint')}
         </div>
 
         {/* LinkedIn */}
         <div>
           <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-white">
             <Linkedin className="h-4 w-4" strokeWidth={1.5} />
-            LinkedIn
+            {t('onboarding.professionalProfile.linkedinLabel')}
           </label>
           <input
             type="url"
             value={formData.linkedin}
             onChange={(e) => handleChange('linkedin', e.target.value)}
             onBlur={() => handleBlur('linkedin')}
-            placeholder="https://linkedin.com/in/username"
+            placeholder={t('onboarding.professionalProfile.linkedinPlaceholder')}
             className={`w-full rounded-xl border border-white/10 bg-zinc-950/60 px-3 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${errors.linkedin ? 'border-red-500' : ''} `}
           />
           {errors.linkedin && (
@@ -252,95 +238,28 @@ export function ProfessionalProfileStep() {
           )}
         </div>
 
-        {/* GitHub */}
-        <div>
-          <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-white">
-            <Github className="h-4 w-4" strokeWidth={1.5} />
-            GitHub
-          </label>
-          <div className="relative">
-            <input
-              type="search"
-              value={formData.github}
-              onChange={(e) => {
-                // Only allow alphanumeric, hyphens, and underscores
-                const value = e.target.value.replace(/[^a-zA-Z0-9_-]/g, '');
-                handleChange('github', value);
-              }}
-              onBlur={() => handleBlur('github')}
-              placeholder="username"
-              className={`w-full rounded-xl border border-white/10 bg-zinc-950/60 px-3 py-2.5 pr-10 text-sm text-white placeholder:text-zinc-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${
-                errors.github ? 'border-red-500' : githubUser ? 'border-emerald-500' : ''
-              }`}
-            />
-            <div className="absolute top-1/2 right-3 -translate-y-1/2">
-              {isGithubLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin text-zinc-400" />
-              ) : githubUser ? (
-                <Check className="h-4 w-4 text-emerald-500" />
-              ) : githubError && formData.github ? (
-                <AlertCircle className="h-4 w-4 text-red-500" />
-              ) : null}
-            </div>
-          </div>
-          {errors.github && (
-            <p className="mt-1 flex items-center gap-1 text-xs text-red-500">
-              <AlertCircle className="h-3 w-3" />
-              {errors.github}
-            </p>
-          )}
-
-          {/* GitHub User Preview */}
-          {githubUser && !isGithubLoading && (
-            <div className="mt-3 flex items-center gap-3 rounded-2xl border border-blue-500/20 bg-blue-500/5 p-3">
-              <img
-                src={githubUser.avatar_url}
-                alt={githubUser.login}
-                className="h-10 w-10 rounded-full"
-              />
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold text-white">{githubUser.login}</span>
-                  {githubUser.name && (
-                    <span className="text-xs text-zinc-400">({githubUser.name})</span>
-                  )}
-                </div>
-                <a
-                  href={githubUser.html_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-0.5 flex items-center gap-1 text-xs text-blue-400 transition-colors hover:text-blue-300"
-                >
-                  <ExternalLink className="h-3 w-3" />
-                  {githubUser.html_url}
-                </a>
-              </div>
-            </div>
-          )}
-
-          {/* Non-intrusive error message when user not found */}
-          {githubError && formData.github && !isGithubLoading && !githubUser && (
-            <p className="mt-1 text-xs text-amber-500">{githubError}</p>
-          )}
-
-          {/* Helper text */}
-          {!formData.github && !githubError && (
-            <p className="mt-1 text-xs text-zinc-500">Digite apenas o username (ex: octocat)</p>
-          )}
-        </div>
+        <GitHubField
+          value={formData.github}
+          onChange={(value) => handleChange('github', value)}
+          onBlur={() => handleBlur('github')}
+          error={errors.github}
+          githubUser={githubUser}
+          isGithubLoading={isGithubLoading}
+          githubError={githubError}
+        />
 
         {/* Website */}
         <div>
           <label className="mb-1.5 flex items-center gap-2 text-sm font-medium text-white">
             <Globe className="h-4 w-4" strokeWidth={1.5} />
-            Website
+            {t('onboarding.professionalProfile.websiteLabel')}
           </label>
           <input
             type="url"
             value={formData.website}
             onChange={(e) => handleChange('website', e.target.value)}
             onBlur={() => handleBlur('website')}
-            placeholder="https://yoursite.dev"
+            placeholder={t('onboarding.professionalProfile.websitePlaceholder')}
             className={`w-full rounded-xl border border-white/10 bg-zinc-950/60 px-3 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${errors.website ? 'border-red-500' : ''} `}
           />
           {errors.website && (
@@ -352,7 +271,6 @@ export function ProfessionalProfileStep() {
         </div>
       </div>
 
-      {/* Navigation */}
       <StepNavigation onNext={handleNext} canProceed={canProceed} />
     </div>
   );

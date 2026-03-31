@@ -3,13 +3,25 @@
  *
  * Renders appropriate input type based on field.type from section definition.
  * Handles validation based on field.required and type-specific constraints.
+ *
+ * Field-type renderers for array fields are in ./array-field-input.tsx.
+ * Shared types, styles, and utilities are in ./field-input-shared.ts.
  */
 
 'use client';
 
 import type React from 'react';
 import { useId } from 'react';
-import type { FieldDefinition } from '../types/generic-section.types';
+import { renderArrayField } from './array-field-input';
+import {
+  type FieldDefinition,
+  type FieldRenderProps,
+  type FieldType,
+  formatDateValue,
+  formatEnumLabel,
+  INPUT_BASE,
+  INPUT_ERROR,
+} from './field-input-shared';
 
 interface GenericFieldInputProps {
   field: FieldDefinition;
@@ -18,25 +30,6 @@ interface GenericFieldInputProps {
   error?: string;
   disabled?: boolean;
 }
-
-const INPUT_BASE =
-  'w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white ' +
-  'placeholder:text-zinc-600 focus:border-white/20 focus:outline-none disabled:opacity-50';
-
-const INPUT_ERROR =
-  'w-full rounded-lg border border-red-500/50 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white ' +
-  'placeholder:text-zinc-600 focus:border-red-500/70 focus:outline-none disabled:opacity-50';
-
-type FieldRenderProps = {
-  field: FieldDefinition;
-  value: unknown;
-  onChange: (value: unknown) => void;
-  error?: string;
-  disabled: boolean;
-  inputId: string;
-  errorId: string;
-  inputClass: string;
-};
 
 function renderStringField({
   field,
@@ -165,7 +158,7 @@ function renderBooleanField({
         aria-invalid={!!error}
         aria-describedby={error ? errorId : undefined}
       />
-      <span className="text-sm text-zinc-300">{field.placeholder || field.label}</span>
+      <span className="text-sm text-zinc-300">{field.placeholder || field.label || field.key}</span>
     </label>
   );
 }
@@ -191,7 +184,9 @@ function renderEnumField({
       aria-invalid={!!error}
       aria-describedby={error ? errorId : undefined}
     >
-      <option value="">{field.placeholder ?? `Select ${field.label.toLowerCase()}`}</option>
+      <option value="">
+        {field.placeholder ?? `Select ${(field.label || field.key || 'option').toLowerCase()}`}
+      </option>
       {(field.enumValues ?? []).map((option) => (
         <option key={option} value={option}>
           {formatEnumLabel(option)}
@@ -201,22 +196,7 @@ function renderEnumField({
   );
 }
 
-function renderArrayField({ field, value, onChange, error, disabled, errorId }: FieldRenderProps) {
-  return (
-    <ArrayFieldInput
-      field={field}
-      value={Array.isArray(value) ? value : []}
-      onChange={onChange}
-      disabled={disabled}
-      error={error}
-      errorId={errorId}
-    />
-  );
-}
-
-const FIELD_RENDERERS: Partial<
-  Record<FieldDefinition['type'], (props: FieldRenderProps) => React.ReactNode>
-> = {
+const FIELD_RENDERERS: Partial<Record<FieldType, (props: FieldRenderProps) => React.ReactNode>> = {
   string: renderStringField,
   text: renderTextField,
   number: renderNumberField,
@@ -266,7 +246,7 @@ export function GenericFieldInput({
   return (
     <div className="space-y-2">
       <label htmlFor={inputId} className="block text-sm font-medium text-white">
-        {field.label}
+        {field.label || field.key}
         {field.required && <span className="ml-0.5 text-red-500">*</span>}
       </label>
       {input}
@@ -277,99 +257,4 @@ export function GenericFieldInput({
       )}
     </div>
   );
-}
-
-function ArrayFieldInput({
-  field,
-  value,
-  onChange,
-  disabled,
-  error,
-  errorId,
-}: {
-  field: FieldDefinition;
-  value: unknown[];
-  onChange: (value: unknown) => void;
-  disabled: boolean;
-  error?: string;
-  errorId: string;
-}) {
-  const addItem = () => onChange([...value, '']);
-
-  const removeItem = (index: number) => {
-    const next = [...value];
-    next.splice(index, 1);
-    onChange(next);
-  };
-
-  const updateItem = (index: number, itemValue: string) => {
-    const next = [...value];
-    next[index] = itemValue;
-    onChange(next);
-  };
-
-  const inputClass = error ? INPUT_ERROR : INPUT_BASE;
-
-  return (
-    <div className="space-y-2">
-      {value.map((item, index) => (
-        <div key={index} className="flex items-center gap-2">
-          <input
-            type="text"
-            className={`${inputClass} flex-1`}
-            value={String(item ?? '')}
-            onChange={(e) => updateItem(index, e.target.value)}
-            placeholder={field.placeholder}
-            disabled={disabled}
-            aria-invalid={!!error}
-            aria-describedby={error ? errorId : undefined}
-          />
-          <button
-            type="button"
-            onClick={() => removeItem(index)}
-            disabled={disabled}
-            className="shrink-0 rounded-lg p-2 text-zinc-400 transition-colors hover:text-red-400 disabled:opacity-50"
-            aria-label={`Remove ${field.label.toLowerCase()} item`}
-          >
-            ✕
-          </button>
-        </div>
-      ))}
-      <button
-        type="button"
-        onClick={addItem}
-        disabled={disabled}
-        className="text-sm text-zinc-400 transition-colors hover:text-white disabled:opacity-50"
-      >
-        + Add {field.label.toLowerCase()}
-      </button>
-      {error && (
-        <p id={errorId} className="text-xs text-red-400">
-          {error}
-        </p>
-      )}
-    </div>
-  );
-}
-
-function formatDateValue(value: unknown): string {
-  if (!value) return '';
-  if (typeof value === 'string') {
-    const date = new Date(value);
-    if (!Number.isNaN(date.getTime())) {
-      return date.toISOString().split('T')[0] ?? '';
-    }
-    return value;
-  }
-  if (value instanceof Date) {
-    return value.toISOString().split('T')[0] ?? '';
-  }
-  return '';
-}
-
-function formatEnumLabel(value: string): string {
-  return value
-    .split('_')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ');
 }

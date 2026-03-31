@@ -7,6 +7,8 @@
 
 'use client';
 
+import { Button } from '@octopus-synapse/profile-ui';
+import { useI18n } from '@profile/i18n';
 import { Check, ChevronRight } from 'lucide-react';
 import { type OnboardingStep, useOnboarding } from './hooks';
 
@@ -15,6 +17,7 @@ interface OnboardingShellProps {
 }
 
 export function OnboardingShell({ children }: OnboardingShellProps) {
+  const { t } = useI18n();
   const { currentStep, currentStepIndex, completedSteps, allSteps, goToStep } = useOnboarding();
   const currentStepInfo = allSteps[currentStepIndex];
 
@@ -36,9 +39,14 @@ export function OnboardingShell({ children }: OnboardingShellProps) {
             <div className="mb-5 border-b border-zinc-800/80 pb-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-sm font-semibold text-white">Setup progress</h2>
+                  <h2 className="text-sm font-semibold text-white">
+                    {t('onboarding.shell.progress')}
+                  </h2>
                   <p className="mt-1 text-xs text-zinc-500">
-                    {completedCount} of {totalRequired} required steps completed
+                    {t('onboarding.shell.stepsCompleted', {
+                      completed: completedCount,
+                      total: totalRequired,
+                    })}
                   </p>
                 </div>
                 <span className="text-xs tabular-nums text-zinc-500">
@@ -81,54 +89,52 @@ export function OnboardingShell({ children }: OnboardingShellProps) {
                 const isAccessible = index <= currentStepIndex || isCompleted;
 
                 return (
-                  <button
+                  <Button
                     type="button"
                     key={step.id}
-                    aria-current={isCurrent ? 'step' : undefined}
-                    aria-label={`Go to ${step.label}`}
+                    variant={isCurrent ? 'soft' : isCompleted ? 'ghost' : 'ghost'}
+                    tone={isCurrent ? 'info' : 'neutral'}
+                    size="lg"
+                    fullWidth
                     disabled={!isAccessible || isCurrent}
-                    onClick={() => {
+                    aria-current={isCurrent ? 'step' : undefined}
+                    aria-label={t('onboarding.shell.goToStep', { step: step.label })}
+                    leftIcon={
+                      <span
+                        className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-medium ${
+                          isCompleted
+                            ? 'bg-blue-500/15 text-blue-400'
+                            : isCurrent
+                              ? 'bg-blue-500 text-white'
+                              : 'bg-zinc-800 text-zinc-500'
+                        }`}
+                      >
+                        {isCompleted ? (
+                          <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
+                        ) : (
+                          <span>{index + 1}</span>
+                        )}
+                      </span>
+                    }
+                    rightIcon={
+                      isCurrent ? (
+                        <ChevronRight className="h-4 w-4 text-blue-400" strokeWidth={2} />
+                      ) : undefined
+                    }
+                    onPress={() => {
                       if (!isAccessible || isCurrent) return;
                       void goToStep(step.id);
                     }}
-                    className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm transition-all ${
-                      isCurrent
-                        ? 'bg-white/8 text-white ring-1 ring-blue-500/30'
-                        : isCompleted
-                          ? 'text-white'
-                          : isAccessible
-                            ? 'text-zinc-400 hover:bg-white/5 hover:text-zinc-200'
-                            : 'cursor-not-allowed text-zinc-600'
-                    }`}
                   >
-                    {/* Step indicator */}
-                    <span
-                      className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-medium ${
-                        isCompleted
-                          ? 'bg-blue-500/15 text-blue-400'
-                          : isCurrent
-                            ? 'bg-blue-500 text-white'
-                            : 'bg-zinc-800 text-zinc-500'
-                      }`}
-                    >
-                      {isCompleted ? (
-                        <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
-                      ) : (
-                        <span>{index + 1}</span>
+                    <span className="flex flex-1 flex-col text-left">
+                      <span>{step.label}</span>
+                      {!step.required && (
+                        <span className="text-xs text-zinc-600">
+                          {t('onboarding.shell.optional')}
+                        </span>
                       )}
                     </span>
-
-                    {/* Step label */}
-                    <span className="flex flex-1 flex-col">
-                      <span>{step.label}</span>
-                      {!step.required && <span className="text-xs text-zinc-600">Optional</span>}
-                    </span>
-
-                    {/* Current indicator */}
-                    {isCurrent && (
-                      <ChevronRight className="h-4 w-4 text-blue-400" strokeWidth={2} />
-                    )}
-                  </button>
+                  </Button>
                 );
               })}
             </nav>
@@ -142,7 +148,10 @@ export function OnboardingShell({ children }: OnboardingShellProps) {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-zinc-500">
-                  Step {currentStepIndex + 1} of {allSteps.length}
+                  {t('onboarding.shell.stepOf', {
+                    current: currentStepIndex + 1,
+                    total: allSteps.length,
+                  })}
                 </p>
                 <p className="mt-0.5 font-medium text-white">{currentStepInfo?.label}</p>
               </div>

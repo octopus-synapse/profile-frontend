@@ -6,17 +6,17 @@
  * Uses Strategy Pattern for role checking
  */
 
-import { type SessionUserResponseDtoRole, useAuthSession } from '@profile/api-client';
+import { Spinner } from '@octopus-synapse/profile-ui';
+import { selectEnvelopeData, useAuthSession } from '@profile/api-client';
 import type { ReactNode } from 'react';
-import { Spinner } from '@/shared/components/ui';
 
 // ============================================================================
 // Strategy Pattern: Role Check Strategies
 // ============================================================================
 
 type RoleCheckStrategy = (
-  userRole: SessionUserResponseDtoRole | undefined,
-  requiredRoles: SessionUserResponseDtoRole[],
+  userRole: 'USER' | 'ADMIN' | undefined,
+  requiredRoles: ('USER' | 'ADMIN')[],
 ) => boolean;
 
 const roleStrategies: Record<string, RoleCheckStrategy> = {
@@ -42,7 +42,7 @@ const roleStrategies: Record<string, RoleCheckStrategy> = {
 
 interface RoleGuardProps {
   children: ReactNode;
-  roles: SessionUserResponseDtoRole[];
+  roles: ('USER' | 'ADMIN')[];
   strategy?: 'exact' | 'any' | 'all';
   fallback?: ReactNode;
   loading?: ReactNode;
@@ -59,8 +59,8 @@ export function RoleGuard({
   fallback = null,
   loading,
 }: RoleGuardProps) {
-  const { data, isLoading } = useAuthSession();
-  const user = data?.data?.user;
+  const { data, isLoading } = useAuthSession({ query: { select: selectEnvelopeData } });
+  const user = data?.user;
 
   // Show loading state
   if (isLoading) {
@@ -107,8 +107,8 @@ interface AuthenticatedOnlyProps {
 }
 
 export function AuthenticatedOnly({ children, fallback }: AuthenticatedOnlyProps) {
-  const { data, isLoading } = useAuthSession();
-  const isAuthenticated = data?.data?.authenticated ?? false;
+  const { data, isLoading } = useAuthSession({ query: { select: selectEnvelopeData } });
+  const isAuthenticated = data?.authenticated ?? false;
 
   if (isLoading) {
     return (

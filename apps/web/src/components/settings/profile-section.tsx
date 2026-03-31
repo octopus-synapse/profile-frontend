@@ -1,174 +1,233 @@
 /**
- * Profile Section
- * Edit user profile information
+ * ProfileSection — Minimal profile editor
  */
 
 'use client';
 
-import { AlertCircle, Check, Github, Globe, Linkedin, Loader2, Save } from 'lucide-react';
+import { Button, showToast } from '@octopus-synapse/profile-ui';
+import {
+  type UpdateUserProfileRequestDto,
+  useUsersGetProfile,
+  useUsersUpdateProfile,
+} from '@profile/api-client';
+import { useI18n } from '@profile/i18n';
+import { Check, Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { HelpTooltip } from '@/shared/components/ui';
-import { useProfile, useUpdateProfile } from './hooks';
-import type { UpdateProfilePayload } from './types';
 import { UsernameField } from './username-field';
 
 export function ProfileSection() {
-  const { data: profile, isLoading, isError, error } = useProfile();
-  const updateProfile = useUpdateProfile();
+  const profileQuery = useUsersGetProfile();
+  const profile = profileQuery.data?.data?.data?.profile as Record<string, unknown> | undefined;
+  const isLoading = profileQuery.isLoading;
+  const isError = profileQuery.isError;
+  const updateProfileMutation = useUsersUpdateProfile();
+  const { t } = useI18n();
 
-  const [formData, setFormData] = useState<UpdateProfilePayload>({
+  const [formData, setFormData] = useState<UpdateUserProfileRequestDto>({
+    name: '',
+    bio: '',
+    location: '',
+    phone: '',
     website: '',
     linkedin: '',
     github: '',
   });
-
   const [isDirty, setIsDirty] = useState(false);
 
   useEffect(() => {
     if (profile) {
       queueMicrotask(() => {
         setFormData({
-          website: profile.website || '',
-          linkedin: profile.linkedin || '',
-          github: profile.github || '',
+          name: (profile.name as string) || (profile.displayName as string) || '',
+          bio: (profile.bio as string) || '',
+          location: (profile.location as string) || '',
+          phone: (profile.phone as string) || '',
+          website: (profile.website as string) || '',
+          linkedin: (profile.linkedin as string) || '',
+          github: (profile.github as string) || '',
         });
       });
     }
   }, [profile]);
 
-  const handleChange = (field: keyof UpdateProfilePayload, value: string) => {
+  const handleChange = (field: keyof UpdateUserProfileRequestDto, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     setIsDirty(true);
   };
 
   const handleSave = async () => {
     try {
-      await updateProfile.mutateAsync(formData);
+      await updateProfileMutation.mutateAsync({ data: formData });
       setIsDirty(false);
-    } catch (error) {
-      console.error('Failed to update profile:', error);
+    } catch {
+      showToast.error(t('settings.profile.failedUpdate'));
     }
   };
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+      <div className="flex items-center justify-center py-24">
+        <Loader2 className="h-5 w-5 animate-spin text-zinc-600" />
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
-        <AlertCircle className="h-8 w-8 text-red-500 mb-4" />
-        <h3 className="text-lg font-medium text-white mb-2">Failed to load profile</h3>
-        <p className="text-sm text-zinc-400 max-w-md">
-          {error instanceof Error
-            ? error.message
-            : 'An unexpected error occurred. Please try again.'}
-        </p>
+      <div className="py-12 text-center">
+        <p className="text-sm text-zinc-500">{t('settings.profile.failedLoad')}</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-12">
+      {/* Header */}
+      <div className="flex items-start justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-white">Public profile</h2>
-          <p className="mt-1 text-sm text-zinc-400">
-            Keep account-level identity here. Resume identity lives in the Resume section.
-          </p>
+          <h2 className="text-xl font-light text-white">{t('settings.profile.title')}</h2>
+          <p className="mt-1 text-[13px] text-zinc-500">{t('settings.profile.description')}</p>
         </div>
         {isDirty && (
-          <button
+          <Button
             type="button"
-            onClick={() => void handleSave()}
-            disabled={updateProfile.isPending}
-            className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition-opacity hover:opacity-90 disabled:opacity-50"
+            variant="solid"
+            tone="neutral"
+            size="sm"
+            loading={updateProfileMutation.isPending}
+            leftIcon={<Check className="h-4 w-4" />}
+            onPress={() => void handleSave()}
           >
-            {updateProfile.isPending ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Save className="h-4 w-4" strokeWidth={1.5} />
-            )}
-            Save Changes
-          </button>
+            {t('settings.profile.saveChanges')}
+          </Button>
         )}
       </div>
 
-      <div className="rounded-xl border border-white/10 bg-white/5 p-6">
+      {/* Username */}
+      <Section>
         <UsernameField />
-      </div>
+      </Section>
 
-      <div className="space-y-5 rounded-xl border border-white/10 bg-white/5 p-6">
-        <div className="rounded-xl border border-blue-500/10 bg-blue-500/5 p-4 text-sm text-zinc-300">
-          Use <span className="font-medium text-white">Resume</span> to edit your name, contact
-          details, location and summary. Keep this area focused on your public profile links.
-        </div>
-
-        <div>
-          <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
-            <Globe className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
-            Website
-          </label>
-          <input
-            type="url"
-            value={formData.website}
-            onChange={(e) => handleChange('website', e.target.value)}
-            placeholder="https://yoursite.com"
-            className="w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
+      {/* Basic Info */}
+      <Section title={t('settings.profile.displayName')}>
+        <div className="grid gap-6 sm:grid-cols-2">
+          <Field
+            label={t('settings.profile.displayName')}
+            value={formData.name ?? ''}
+            onChange={(v) => handleChange('name', v)}
+            placeholder={t('settings.profile.displayNamePlaceholder')}
+          />
+          <Field
+            label={t('settings.profile.location')}
+            value={formData.location ?? ''}
+            onChange={(v) => handleChange('location', v)}
+            placeholder={t('settings.profile.locationPlaceholder')}
           />
         </div>
-
-        <div className="grid gap-5 sm:grid-cols-2">
-          <div>
-            <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
-              <Linkedin className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
-              LinkedIn
-              <HelpTooltip content="Link to your LinkedIn profile. Visible as a social link on your public profile." />
-            </label>
-            <input
-              type="url"
-              value={formData.linkedin}
-              onChange={(e) => handleChange('linkedin', e.target.value)}
-              placeholder="https://linkedin.com/in/username"
-              className="w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
-            />
-          </div>
-
-          <div>
-            <label className="mb-2 flex items-center gap-2 text-sm font-medium text-white">
-              <Github className="h-4 w-4 text-zinc-400" strokeWidth={1.5} />
-              GitHub
-              <HelpTooltip content="Link to your GitHub profile. Great for showcasing your open source contributions." />
-            </label>
-            <input
-              type="url"
-              value={formData.github}
-              onChange={(e) => handleChange('github', e.target.value)}
-              placeholder="https://github.com/username"
-              className="w-full rounded-lg border border-white/10 bg-[#0A0A0A]/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/20 focus:outline-none"
-            />
+        <div className="mt-6">
+          <label className="mb-2 block text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+            {t('settings.profile.bio')}
+          </label>
+          <textarea
+            value={formData.bio ?? ''}
+            onChange={(e) => handleChange('bio', e.target.value)}
+            placeholder={t('settings.profile.bioPlaceholder')}
+            maxLength={300}
+            rows={3}
+            className="w-full resize-none bg-transparent text-[15px] text-white placeholder:text-zinc-600 focus:outline-none"
+          />
+          <div className="mt-1 text-right text-[11px] text-zinc-600">
+            {(formData.bio ?? '').length}/300
           </div>
         </div>
-      </div>
+      </Section>
 
-      {/* Status */}
-      {updateProfile.isSuccess && !isDirty && (
-        <div className="flex items-center gap-2 text-sm text-emerald-500">
-          <Check className="h-4 w-4" />
-          Changes saved successfully
+      {/* Contact */}
+      <Section title={t('settings.profile.contact')}>
+        <div className="grid gap-6 sm:grid-cols-2">
+          <Field
+            label={t('settings.profile.phone')}
+            value={formData.phone ?? ''}
+            onChange={(v) => handleChange('phone', v)}
+            placeholder="+1 (555) 000-0000"
+            type="tel"
+          />
+          <Field
+            label={t('settings.profile.website')}
+            value={formData.website ?? ''}
+            onChange={(v) => handleChange('website', v)}
+            placeholder="https://yoursite.com"
+            type="url"
+          />
         </div>
-      )}
+      </Section>
 
-      {updateProfile.isError && (
-        <div className="flex items-center gap-2 text-sm text-red-500">
-          <AlertCircle className="h-4 w-4" />
-          Failed to save changes
+      {/* Social */}
+      <Section title={t('settings.profile.social')}>
+        <div className="grid gap-6 sm:grid-cols-2">
+          <Field
+            label={t('settings.profile.linkedin')}
+            value={formData.linkedin ?? ''}
+            onChange={(v) => handleChange('linkedin', v)}
+            placeholder="linkedin.com/in/username"
+            type="url"
+          />
+          <Field
+            label={t('settings.profile.github')}
+            value={formData.github ?? ''}
+            onChange={(v) => handleChange('github', v)}
+            placeholder="github.com/username"
+            type="url"
+          />
         </div>
+      </Section>
+
+      {/* Success message */}
+      {updateProfileMutation.isSuccess && !isDirty && (
+        <p className="text-[13px] text-emerald-400">{t('settings.profile.savedSuccess')}</p>
       )}
+    </div>
+  );
+}
+
+function Section({ title, children }: { title?: string; children: React.ReactNode }) {
+  return (
+    <div className="border-t border-zinc-800/50 pt-8">
+      {title && (
+        <h3 className="mb-6 text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+          {title}
+        </h3>
+      )}
+      {children}
+    </div>
+  );
+}
+
+function Field({
+  label,
+  value,
+  onChange,
+  placeholder,
+  type = 'text',
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  type?: string;
+}) {
+  return (
+    <div>
+      <label className="mb-2 block text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+        {label}
+      </label>
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="w-full border-b border-zinc-800 bg-transparent py-2 text-[15px] text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+      />
     </div>
   );
 }

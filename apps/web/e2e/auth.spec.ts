@@ -26,6 +26,12 @@ const INVALID_CREDENTIALS = {
   password: 'wrongpassword',
 };
 
+const EXISTING_SIGNUP_USER = {
+  name: 'Existing User',
+  email: 'efpatti.dev@gmail.com',
+  password: 'Ilelo@dev07',
+};
+
 test.describe('Authentication Flow', () => {
   test.beforeEach(async ({ page }) => {
     // Start fresh - clear any existing session
@@ -83,11 +89,7 @@ test.describe('Authentication Flow', () => {
       await emailInput.fill(TEST_USER.email);
       await page.locator('#password').fill(TEST_USER.password);
 
-      // Click submit and wait for network + navigation
-      await Promise.all([
-        page.waitForResponse(response => response.url().includes('auth/login')),
-        page.getByRole('button', { name: /sign in/i }).click(),
-      ]);
+      await page.locator('button[type="submit"]').click();
 
       // Wait for redirect to protected area (may take time for session validation)
       await page.waitForURL(/protected/, { timeout: 15000 });
@@ -95,6 +97,37 @@ test.describe('Authentication Flow', () => {
       // Verify we're no longer on sign-in page
       expect(page.url()).not.toContain('sign-in');
       expect(page.url()).toContain('protected');
+    });
+  });
+
+  test.describe('Sign Up Page', () => {
+    test('should show validation error when passwords do not match', async ({ page }) => {
+      await page.goto('/pt-BR/auth/sign-up');
+
+      await page.locator('#name').fill('Mismatch User');
+      await page.locator('#email').fill('mismatch-user@test.com');
+      await page.locator('#password').fill('Ilelo@dev07');
+      await page.locator('#confirmPassword').fill('Different@123');
+      await page.getByRole('button', { name: /criar conta/i }).click();
+
+      await expect(page.getByText('As senhas não coincidem')).toBeVisible();
+      await expect(page).toHaveURL(/sign-up/);
+    });
+
+    test('should show duplicate-email message for existing account', async ({ page }) => {
+      await page.goto('/pt-BR/auth/sign-up');
+
+      await page.locator('#name').fill(EXISTING_SIGNUP_USER.name);
+      await page.locator('#email').fill(EXISTING_SIGNUP_USER.email);
+      await page.locator('#password').fill(EXISTING_SIGNUP_USER.password);
+      await page.locator('#confirmPassword').fill(EXISTING_SIGNUP_USER.password);
+
+      await page.locator('button[type="submit"]').click();
+
+      await expect(page.getByText('Já existe uma conta com este email')).toBeVisible({
+        timeout: 10000,
+      });
+      await expect(page).toHaveURL(/sign-up/);
     });
   });
 });
